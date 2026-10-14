@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --misincol-terracotta: #8B251E;
+    --misincol-terracotta-dark: #6E1A14;
+    --misincol-terracotta-light: #A73830;
+    --misincol-ochre: #E67324;
+    --misincol-ochre-light: #F38C44;
+    --misincol-amber: #F59E0B;
+    --misincol-earth: #38150F;
+    --misincol-cream: #FBF8F3;
+    --misincol-sand: #F3EBDD;
+  }
+
+  body {
+    background-color: #FAF7F2;
+    color: #2D1B18;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom Misincol Utility Gradients & Accents */
+.bg-misincol-gradient {
+  background: linear-gradient(135deg, #8B251E 0%, #B83A2D 50%, #E67324 100%);
+}
+
+.bg-misincol-ochre-gradient {
+  background: linear-gradient(135deg, #E67324 0%, #F59E0B 100%);
+}
+
+.bg-misincol-subtle {
+  background: linear-gradient(180deg, #FBF8F3 0%, #F5EFE6 100%);
+}
+
+.border-misincol-warm {
+  border-color: #EBDDCF;
+}
+
+.text-misincol-terracotta {
+  color: #8B251E;
+}
+
+.text-misincol-ochre {
+  color: #E67324;
+}
+
+/* Print Styles for Executive Ministerial Report */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+}
