@@ -9,6 +9,8 @@ export interface MissionaryTeam {
   region: string;
   leader: string;
   members: string[];
+  themeColor?: string;
+  leaderPhone?: string;
 }
 
 export interface UserSession {

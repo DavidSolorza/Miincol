@@ -1,21 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PlanSidebar } from '../modules/plans/ui/PlanSidebar';
 import { PhaseView } from '../modules/plans/ui/PhaseView';
 import { SuperAdminView } from '../modules/admin/ui/SuperAdminView';
 import { ReportModal } from '../modules/reports/ui/ReportModal';
 import { TeamSelector } from '../modules/auth/ui/TeamSelector';
-import { useAuth } from '../modules/auth/application/useAuth';
+import { useAdminDashboard } from '../modules/admin/application/useAdminDashboard';
 import { usePlan } from '../modules/plans/application/usePlan';
 import { formatCurrencyCOP } from '../shared/utils/formatters';
+import type { MissionaryTeam } from '../modules/auth/domain/auth.types';
 import {
   Menu,
   ChevronRight,
   ShieldCheck,
   User,
+  ArrowLeft,
+  MessageCircle,
 } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { session, activeTeam, teams, switchTeam } = useAuth();
+  // Hook central de administración con persistencia reactiva en localStorage
+  const dashboardHook = useAdminDashboard();
+  const { allTeams } = dashboardHook;
+
+  // Estado del equipo activo
+  const [activeTeamId, setActiveTeamId] = useState<string>('team-wayuu');
+  const [isAdminPreview, setIsAdminPreview] = useState<boolean>(false);
+
+  // Mapear el catálogo dinámico de equipos
+  const mappedTeams: MissionaryTeam[] = useMemo(() => {
+    return allTeams.map((t) => ({
+      id: t.id,
+      name: t.name,
+      ethnicity: t.ethnicity,
+      region: t.region,
+      leader: t.leader,
+      members: t.members && t.members.length > 0 ? t.members : [t.leader],
+      themeColor: t.themeColor,
+      leaderPhone: t.leaderPhone,
+    }));
+  }, [allTeams]);
+
+  // Equipo activo actual
+  const activeTeamSummary = useMemo(() => {
+    return allTeams.find((t) => t.id === activeTeamId || t.slug === activeTeamId) || allTeams[0];
+  }, [allTeams, activeTeamId]);
+
+  const activeTeam: MissionaryTeam = useMemo(() => {
+    return (
+      mappedTeams.find((t) => t.id === activeTeamId) ||
+      mappedTeams[0] || {
+        id: 'team-wayuu',
+        name: 'Misión Wayuu - Alta Guajira',
+        ethnicity: 'Wayuu',
+        region: 'La Guajira',
+        leader: 'Pr. David Morales',
+        members: ['David Morales'],
+        themeColor: '#8B251E',
+      }
+    );
+  }, [mappedTeams, activeTeamId]);
+
+  // Hook del Plan Ministerial aislado por teamId
   const {
     plan,
     allPlans,
@@ -26,7 +71,7 @@ export const App: React.FC = () => {
     addActivity,
     deleteActivity,
     resetToDefaults,
-  } = usePlan('investigacion');
+  } = usePlan(activeTeamSummary?.currentPhaseId || 'investigacion', activeTeam.id, activeTeamSummary);
 
   const [activeObjectiveNumber, setActiveObjectiveNumber] = useState<number>(1);
   const [activeView, setActiveView] = useState<'plans' | 'all-phases' | 'superadmin'>('plans');
@@ -41,11 +86,17 @@ export const App: React.FC = () => {
     setActiveObjectiveNumber(1);
   };
 
-  // Función para que el Super Admin entre a supervisar un equipo específico
+  // Función para que el Super Admin entre a supervisar un equipo específico (Modo Vista Previa como en PortalClientes)
   const handleInspectTeamFromAdmin = (teamId: string) => {
-    switchTeam(teamId);
+    setActiveTeamId(teamId);
+    setIsAdminPreview(true);
     setActiveView('plans');
     setActiveObjectiveNumber(1);
+  };
+
+  const handleBackToAdmin = () => {
+    setIsAdminPreview(false);
+    setActiveView('superadmin');
   };
 
   // Totales de todas las 5 fases combinadas para la vista resumen
@@ -66,12 +117,19 @@ export const App: React.FC = () => {
     return (
       acc +
       p.objectives.reduce(
-        (objAcc, o) =>
-          objAcc + o.activities.filter((a) => a.state === 'Completado').length,
+        (objAcc, o) => objAcc + o.activities.filter((a) => a.state === 'Completado').length,
         0
       )
     );
   }, 0);
+
+  const themeColor = activeTeam.themeColor || '#8B251E';
+  const cleanPhone = (activeTeam.leaderPhone || '').replace(/[^\d]/g, '');
+  const whatsappUrl = cleanPhone
+    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+        `Hola ${activeTeam.leader}, te contacto de la Dirección Nacional de Misincol para seguimiento al plan territorial.`
+      )}`
+    : null;
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex font-['Plus_Jakarta_Sans'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E]">
@@ -87,15 +145,56 @@ export const App: React.FC = () => {
         onOpenTeamModal={() => setIsTeamModalOpen(true)}
         onOpenReportModal={() => setIsReportModalOpen(true)}
         activeView={activeView}
-        onChangeView={setActiveView}
+        onChangeView={(view) => {
+          if (view === 'superadmin') {
+            setIsAdminPreview(false);
+          }
+          setActiveView(view);
+        }}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         isOpenMobile={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      {/* 2. Área Principal de Trabajo (Canvas Despejado) */}
+      {/* 2. Área Principal de Trabajo */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* Banner Superior: Modo Vista Previa Administrador (Inspirado en PortalClientes) */}
+        {isAdminPreview && (
+          <div className="no-print bg-amber-50 border-b border-amber-200/90 px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs text-amber-900 sticky top-0 z-40 shadow-xs backdrop-blur-xs">
+            <div className="flex items-center gap-2 font-medium">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+              <span>
+                <strong>Modo Vista Previa Administrador</strong>
+              </span>
+              <span className="text-amber-700 hidden md:inline">
+                • Supervisando espacio y plan de: <strong>{activeTeam.name}</strong> ({activeTeam.ethnicity})
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {whatsappUrl && (
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold transition text-[11px]"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>WhatsApp Líder</span>
+                </a>
+              )}
+              <button
+                onClick={handleBackToAdmin}
+                className="px-3.5 py-1 rounded-xl bg-amber-200/90 hover:bg-amber-300 text-amber-950 font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Volver al Tablero Admin</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Barra Superior Minimalista de Usuario y Acceso */}
         <header className="no-print h-14 bg-white/70 backdrop-blur-xs border-b border-stone-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
@@ -109,9 +208,15 @@ export const App: React.FC = () => {
             <div className="hidden sm:flex items-center gap-2 text-xs text-stone-500">
               <span className="font-bold text-[#8B251E]">MISINCOL</span>
               <span>•</span>
-              <span className="text-stone-700 font-medium">
-                {activeView === 'superadmin' ? 'Tablero de Supervisión Nacional' : activeTeam.name}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: themeColor }}
+                />
+                <span className="text-stone-700 font-medium">
+                  {activeView === 'superadmin' ? 'Tablero de Supervisión Nacional' : activeTeam.name}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -119,7 +224,10 @@ export const App: React.FC = () => {
           <div className="flex items-center gap-3">
             {activeView !== 'superadmin' ? (
               <button
-                onClick={() => setActiveView('superadmin')}
+                onClick={() => {
+                  setIsAdminPreview(false);
+                  setActiveView('superadmin');
+                }}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-xs cursor-pointer"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
@@ -128,7 +236,8 @@ export const App: React.FC = () => {
             ) : (
               <button
                 onClick={() => setActiveView('plans')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#731E18] text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                style={{ backgroundColor: themeColor }}
               >
                 <ChevronRight className="w-3.5 h-3.5 rotate-180" />
                 <span>Volver a Plan PDM</span>
@@ -136,15 +245,18 @@ export const App: React.FC = () => {
             )}
 
             <div className="flex items-center gap-2 pl-2 border-l border-stone-200">
-              <div className="w-7 h-7 rounded-full bg-linear-to-br from-[#8B251E] to-[#E67324] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+              <div
+                className="w-7 h-7 rounded-full text-white flex items-center justify-center font-bold text-xs shadow-2xs"
+                style={{ backgroundColor: themeColor }}
+              >
                 <User className="w-3.5 h-3.5" />
               </div>
               <div className="hidden md:flex flex-col text-left text-xs">
                 <span className="font-bold text-stone-800 leading-none">
-                  {activeView === 'superadmin' ? 'Director Nacional' : session.userName}
+                  {activeView === 'superadmin' ? 'Director Nacional' : activeTeam.leader}
                 </span>
                 <span className="text-[10px] text-stone-400 mt-0.5">
-                  {activeView === 'superadmin' ? 'Super Administrador' : session.role}
+                  {activeView === 'superadmin' ? 'Super Administrador' : 'Líder Territorial'}
                 </span>
               </div>
             </div>
@@ -158,28 +270,90 @@ export const App: React.FC = () => {
             <SuperAdminView
               onInspectTeam={handleInspectTeamFromAdmin}
               onOpenReportModal={() => setIsReportModalOpen(true)}
+              dashboardHook={dashboardHook}
             />
           ) : activeView === 'plans' ? (
             /* Vista 2: Plan de Desarrollo Ministerial del Equipo Activo */
-            <PhaseView
-              plan={plan}
-              activeObjectiveNumber={activeObjectiveNumber}
-              onSelectObjective={setActiveObjectiveNumber}
-              updateActivity={updateActivity}
-              deleteActivity={deleteActivity}
-              addActivity={addActivity}
-              resetToDefaults={resetToDefaults}
-              metrics={metrics}
-              onToggleMobileMenu={() => setIsMobileSidebarOpen(true)}
-            />
+            <div className="space-y-4">
+              {/* Identidad del Equipo Activo con Color Temático */}
+              <div
+                className="p-4 rounded-2xl border bg-white shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                style={{ borderColor: `${themeColor}40` }}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-xl text-white font-black text-sm flex items-center justify-center shadow-xs"
+                    style={{ backgroundColor: themeColor }}
+                  >
+                    {activeTeam.ethnicity ? activeTeam.ethnicity.charAt(0).toUpperCase() : 'M'}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-[10px] font-black uppercase tracking-wider px-2 py-0.2 rounded-md text-white shadow-2xs"
+                        style={{ backgroundColor: themeColor }}
+                      >
+                        {activeTeam.ethnicity}
+                      </span>
+                      <span className="text-xs text-stone-500">{activeTeam.region}</span>
+                    </div>
+                    <h2 className="text-lg font-black text-stone-900 mt-0.5 font-['Outfit']">
+                      {activeTeam.name}
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  {whatsappUrl && (
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Contactar Líder</span>
+                    </a>
+                  )}
+                  <button
+                    onClick={() => setIsTeamModalOpen(true)}
+                    className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+                  >
+                    Cambiar Equipo
+                  </button>
+                </div>
+              </div>
+
+              <PhaseView
+                plan={plan}
+                activeObjectiveNumber={activeObjectiveNumber}
+                onSelectObjective={setActiveObjectiveNumber}
+                updateActivity={updateActivity}
+                deleteActivity={deleteActivity}
+                addActivity={addActivity}
+                resetToDefaults={resetToDefaults}
+                metrics={metrics}
+                onToggleMobileMenu={() => setIsMobileSidebarOpen(true)}
+              />
+            </div>
           ) : (
             /* Vista 3: Consolidado Quinquenal de las 5 Fases */
             <div className="space-y-6">
-              <div className="bg-linear-to-r from-[#8B251E] via-[#A63226] to-[#E67324] rounded-2xl p-6 sm:p-8 text-white shadow-lg shadow-[#8B251E]/15">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-200 bg-white/10 px-3 py-1 rounded-full">
-                  Supervisión Quinquenal de Misión
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2 font-['Outfit']">
+              <div
+                className="rounded-2xl p-6 sm:p-8 text-white shadow-lg transition-colors"
+                style={{
+                  background: `linear-gradient(135deg, ${themeColor}, #8B251E, #E67324)`,
+                }}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-200 bg-white/10 px-3 py-1 rounded-full">
+                    Supervisión Quinquenal de Misión
+                  </span>
+                  <span className="text-xs bg-white/20 text-white font-bold px-2.5 py-0.5 rounded-full">
+                    {activeTeam.ethnicity}
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black font-['Outfit']">
                   Consolidado Global de las 5 Fases Ministeriales
                 </h2>
                 <p className="text-stone-100/90 text-sm mt-1 max-w-2xl">
@@ -242,11 +416,14 @@ export const App: React.FC = () => {
                   return (
                     <div
                       key={p.phaseId}
-                      className="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:border-[#8B251E]/40 transition-all flex flex-col justify-between"
+                      className="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:border-stone-400/80 transition-all flex flex-col justify-between"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-bold text-[#8B251E] bg-[#8B251E]/10 px-2 py-0.5 rounded-full">
+                          <span
+                            className="text-xs font-bold px-2 py-0.5 rounded-full text-white shadow-2xs"
+                            style={{ backgroundColor: themeColor }}
+                          >
                             Fase #{idx + 1}
                           </span>
                           <span className="text-xs font-bold text-stone-400">
@@ -261,7 +438,7 @@ export const App: React.FC = () => {
                         <div className="mt-4 space-y-2">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-stone-500">Presupuesto:</span>
-                            <span className="font-bold text-[#8B251E]">
+                            <span className="font-bold" style={{ color: themeColor }}>
                               {formatCurrencyCOP(phaseBudget)}
                             </span>
                           </div>
@@ -273,8 +450,11 @@ export const App: React.FC = () => {
                           </div>
                           <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden mt-1">
                             <div
-                              className="bg-linear-to-r from-[#8B251E] to-[#E67324] h-full rounded-full"
-                              style={{ width: `${pct}%` }}
+                              className="h-full rounded-full transition-all"
+                              style={{
+                                width: `${pct}%`,
+                                backgroundColor: themeColor,
+                              }}
                             />
                           </div>
                         </div>
@@ -285,7 +465,7 @@ export const App: React.FC = () => {
                           handleSelectPhase(p.phaseId);
                           setActiveView('plans');
                         }}
-                        className="mt-5 w-full py-2.5 text-xs font-bold text-[#8B251E] hover:text-[#6E1A14] bg-[#8B251E]/5 hover:bg-[#8B251E]/10 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer"
+                        className="mt-5 w-full py-2.5 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200"
                       >
                         <span>Abrir Detalle de Fase</span>
                         <ChevronRight className="w-4 h-4" />
@@ -309,9 +489,11 @@ export const App: React.FC = () => {
       <TeamSelector
         isOpen={isTeamModalOpen}
         onClose={() => setIsTeamModalOpen(false)}
-        teams={teams}
+        teams={mappedTeams}
         activeTeamId={activeTeam.id}
-        onSelectTeam={switchTeam}
+        onSelectTeam={(selectedId) => {
+          setActiveTeamId(selectedId);
+        }}
       />
     </div>
   );

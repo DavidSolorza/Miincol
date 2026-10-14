@@ -29,6 +29,7 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
       <div className="space-y-3">
         {teams.map((t) => {
           const isSelected = t.id === activeTeamId;
+          const themeColor = t.themeColor || '#8B251E';
 
           return (
             <button
@@ -37,15 +38,22 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                 onSelectTeam(t.id);
                 onClose();
               }}
-              className={`w-full p-4 rounded-xl text-left border transition-all flex items-start justify-between gap-3 ${
+              style={{
+                borderColor: isSelected ? themeColor : undefined,
+                backgroundColor: isSelected ? `${themeColor}0D` : undefined,
+              }}
+              className={`w-full p-4 rounded-xl text-left border transition-all flex items-start justify-between gap-3 cursor-pointer ${
                 isSelected
-                  ? 'border-[#8B251E] bg-[#8B251E]/5 shadow-xs ring-1 ring-[#8B251E]'
-                  : 'border-stone-200 bg-white hover:border-[#E67324]/60 hover:bg-[#FAF7F2]'
+                  ? 'shadow-xs ring-1'
+                  : 'border-stone-200 bg-white hover:border-stone-400/60 hover:bg-[#FAF7F2]'
               }`}
             >
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2 py-0.5 rounded-md">
+                  <span
+                    className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md text-white shadow-2xs"
+                    style={{ backgroundColor: themeColor }}
+                  >
                     Etnia: {t.ethnicity}
                   </span>
                   <span className="text-xs text-stone-500 flex items-center gap-1">
@@ -53,14 +61,19 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
                     {t.region}
                   </span>
                 </div>
-                <h4 className="text-base font-bold text-stone-900 mt-1 font-['Outfit']">{t.name}</h4>
+                <h4 className="text-base font-bold text-stone-900 mt-1.5 font-['Outfit']">
+                  {t.name}
+                </h4>
                 <p className="text-xs text-stone-600 mt-0.5">
                   Líder: <strong>{t.leader}</strong> • {t.members.length} miembros en campo
                 </p>
               </div>
 
               {isSelected ? (
-                <div className="w-6 h-6 rounded-full bg-[#8B251E] text-white flex items-center justify-center shrink-0 mt-1">
+                <div
+                  className="w-6 h-6 rounded-full text-white flex items-center justify-center shrink-0 mt-1 shadow-xs"
+                  style={{ backgroundColor: themeColor }}
+                >
                   <Check className="w-4 h-4 stroke-[3]" />
                 </div>
               ) : (

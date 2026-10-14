@@ -1,33 +1,90 @@
 import { useState, useMemo, useEffect } from 'react';
 import type { PhasePlan, Activity, PhaseType, PlanMetrics } from '../domain/plan.types';
+import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
 
-const STORAGE_KEY = 'misincol_pdm_plans_v1';
+// Generador de plantillas PDM aisladas para nuevos equipos
+const createCustomPlanForTeam = (
+  teamId: string,
+  teamData?: Partial<TeamSupervisionSummary>
+): Record<string, PhasePlan> => {
+  const teamName = teamData?.name || `Misión ${teamId}`;
+  const teamLeader = teamData?.leader || 'Pastor Líder';
+  const teamMembers =
+    teamData?.members && teamData.members.length > 0
+      ? teamData.members
+      : [teamLeader, 'Obrero de campo'];
+  const ethnicity = teamData?.ethnicity || 'Indígena';
+  const region = teamData?.region || 'Territorio ancestral';
 
-export const usePlan = (defaultPhaseId: PhaseType = 'investigacion') => {
+  const base: Record<string, PhasePlan> = JSON.parse(JSON.stringify(INITIAL_PLANS_BY_PHASE));
+
+  Object.keys(base).forEach((key) => {
+    base[key].teamName = teamName;
+    base[key].teamLeader = teamLeader;
+    base[key].teamMembers = teamMembers;
+
+    // Adaptar textos del primer objetivo al pueblo indígena correspondiente
+    if (base[key].objectives && base[key].objectives[0]) {
+      base[key].objectives[0].description = `Diagnóstico situacional, inmersión y mapeo de comunidades en el pueblo ${ethnicity} en ${region}.`;
+    }
+  });
+
+  return base;
+};
+
+export const usePlan = (
+  defaultPhaseId: PhaseType = 'investigacion',
+  teamId: string = 'team-wayuu',
+  teamData?: Partial<TeamSupervisionSummary>
+) => {
   const [activePhaseId, setActivePhaseId] = useState<PhaseType>(defaultPhaseId);
+  const storageKey = `misincol_pdm_plans_${teamId}`;
 
-  // Carga inicial desde localStorage si existe, o del diccionario de fases
+  // Carga inicial desde localStorage por equipo si existe, o genera plantilla aislada
   const [allPlans, setAllPlans] = useState<Record<string, PhasePlan>>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
         return JSON.parse(saved);
       }
-    } catch {
-      // Fallback si hay error de parsing
+    } catch (e) {
+      console.warn('Error al cargar plan de localStorage para equipo:', teamId, e);
     }
-    return INITIAL_PLANS_BY_PHASE;
+
+    if (teamId === 'team-wayuu') {
+      return INITIAL_PLANS_BY_PHASE;
+    }
+    return createCustomPlanForTeam(teamId, teamData);
   });
 
-  // Guardar en localStorage cada vez que cambien los planes
+  // Re-sincronizar planes cuando cambie el teamId
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(allPlans));
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        setAllPlans(JSON.parse(saved));
+        return;
+      }
+    } catch {
+      // Ignorar fallback
+    }
+
+    if (teamId === 'team-wayuu') {
+      setAllPlans(INITIAL_PLANS_BY_PHASE);
+    } else {
+      setAllPlans(createCustomPlanForTeam(teamId, teamData));
+    }
+  }, [teamId, storageKey]);
+
+  // Guardar en localStorage cada vez que cambien los planes del equipo
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(allPlans));
     } catch (e) {
       console.warn('No se pudo guardar en almacenamiento local:', e);
     }
-  }, [allPlans]);
+  }, [allPlans, storageKey]);
 
   // Plan activo actual
   const plan: PhasePlan = useMemo(() => {
@@ -68,7 +125,10 @@ export const usePlan = (defaultPhaseId: PhaseType = 'investigacion') => {
   };
 
   // Agregar una nueva actividad dentro de un objetivo específico
-  const addActivity = (objectiveNumber: 1 | 2 | 3 | 4, newActivity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>) => {
+  const addActivity = (
+    objectiveNumber: 1 | 2 | 3 | 4,
+    newActivity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>
+  ) => {
     const unit = Number(newActivity.unitBudget) || 0;
     const times = Number(newActivity.timesPerYear) || 1;
     const createdActivity: Activity = {
@@ -130,8 +190,12 @@ export const usePlan = (defaultPhaseId: PhaseType = 'investigacion') => {
 
   // Resetear a los datos iniciales
   const resetToDefaults = () => {
-    setAllPlans(INITIAL_PLANS_BY_PHASE);
-    localStorage.removeItem(STORAGE_KEY);
+    if (teamId === 'team-wayuu') {
+      setAllPlans(INITIAL_PLANS_BY_PHASE);
+    } else {
+      setAllPlans(createCustomPlanForTeam(teamId, teamData));
+    }
+    localStorage.removeItem(storageKey);
   };
 
   // Métricas y KPIs de la Fase Actual

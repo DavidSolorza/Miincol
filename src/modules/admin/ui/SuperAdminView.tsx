@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAdminDashboard } from '../application/useAdminDashboard';
 import { TeamOverviewCard } from './TeamOverviewCard';
+import { TeamModal } from './TeamModal';
+import type { TeamSupervisionSummary, CreateTeamDto } from '../domain/admin.types';
 import { formatCurrencyCOP } from '../../../shared/utils/formatters';
 import {
   Coins,
@@ -11,14 +13,22 @@ import {
   Compass,
   FileDown,
   RotateCcw,
+  Plus,
 } from 'lucide-react';
 
 interface SuperAdminViewProps {
   onInspectTeam: (teamId: string) => void;
   onOpenReportModal?: () => void;
+  dashboardHook?: ReturnType<typeof useAdminDashboard>;
 }
 
-export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ onInspectTeam, onOpenReportModal }) => {
+export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
+  onInspectTeam,
+  onOpenReportModal,
+  dashboardHook,
+}) => {
+  // Permite inyectar hook desde el contenedor principal (App.tsx) para compartir estado de equipos
+  const defaultHook = useAdminDashboard();
   const {
     teams,
     allTeamsCount,
@@ -31,7 +41,33 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ onInspectTeam, o
     setStatusFilter,
     departmentFilter,
     setDepartmentFilter,
-  } = useAdminDashboard();
+    handleCreateTeam,
+    handleUpdateTeam,
+    handleDeleteTeam,
+    handlePhaseChange,
+  } = dashboardHook || defaultHook;
+
+  // Estado para Modal de Creación / Edición de Equipos (Estilo PortalClientes)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingTeam, setEditingTeam] = useState<TeamSupervisionSummary | null>(null);
+
+  const openCreateModal = () => {
+    setEditingTeam(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (team: TeamSupervisionSummary) => {
+    setEditingTeam(team);
+    setIsModalOpen(true);
+  };
+
+  const handleModalSubmit = async (dto: CreateTeamDto) => {
+    if (editingTeam) {
+      handleUpdateTeam(editingTeam.id, dto);
+    } else {
+      handleCreateTeam(dto);
+    }
+  };
 
   const handleResetFilters = () => {
     setSearchTerm('');
@@ -55,19 +91,27 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ onInspectTeam, o
             Tablero Central de Misiones Indígenas
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 mt-0.5 max-w-3xl leading-relaxed">
-            Consolidado estratégico de avance de los Planes de Desarrollo Ministerial (PDM), ejecución presupuestal y contingencias de campo en Colombia.
+            Consolidado estratégico de avance de los Planes de Desarrollo Ministerial (PDM), organización de equipos y contingencias de campo en Colombia.
           </p>
         </div>
 
-        {/* Acciones Generales */}
-        <div className="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+        {/* Acciones Generales: Crear Nuevo Equipo + Informe Nacional */}
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start md:self-center">
+          <button
+            onClick={openCreateModal}
+            className="bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>Nuevo Equipo / Misión</span>
+          </button>
+
           {onOpenReportModal && (
             <button
               onClick={onOpenReportModal}
-              className="bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer"
+              className="bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-2xs transition flex items-center gap-2 cursor-pointer"
             >
-              <FileDown className="w-4 h-4" />
-              <span>Informe Nacional Consolidado</span>
+              <FileDown className="w-4 h-4 text-stone-500" />
+              <span className="hidden sm:inline">Informe Consolidado</span>
             </button>
           )}
         </div>
@@ -227,10 +271,9 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ onInspectTeam, o
               className="w-full p-2 rounded-xl border border-stone-200 bg-white font-medium text-stone-700 cursor-pointer"
             >
               <option value="ALL">Todo el Territorio Nacional</option>
-              <option value="Caribe">Región Caribe (Guajira, Cesar)</option>
-              <option value="Andina">Región Andina (Cauca)</option>
-              <option value="Pacífico">Región Pacífico (Risaralda)</option>
-              <option value="Amazonía">Región Amazonía (Guaviare)</option>
+              <option value="Caribe">Región Caribe (Guajira, Cesar, Magdalena)</option>
+              <option value="Andina">Región Andina (Cauca, Risaralda)</option>
+              <option value="Amazonía">Región Amazonía (Guaviare, Amazonas)</option>
             </select>
           </div>
         </div>
@@ -238,12 +281,12 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ onInspectTeam, o
 
       {/* 4. Matriz de Tarjetas de Equipos en Terreno */}
       <div>
-        <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3 px-1">
           <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
             Mostrando {teams.length} de {allTeamsCount} misiones ministeriales
           </span>
           <span className="text-xs text-stone-400">
-            Haga clic en <strong>"Supervisar Plan"</strong> para ingresar al PDM del equipo
+            Haga clic en <strong>"Supervisar Plan"</strong> para ingresar al espacio operativo del equipo
           </span>
         </div>
 
@@ -256,23 +299,47 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({ onInspectTeam, o
               No se encontraron equipos con los filtros seleccionados
             </h3>
             <p className="text-xs text-stone-500 max-w-sm mt-1">
-              Pruebe cambiando los criterios de búsqueda o restableciendo los filtros de región y fase.
+              Pruebe cambiando los criterios de búsqueda o aprovisione una nueva misión ministerial.
             </p>
-            <button
-              onClick={handleResetFilters}
-              className="mt-4 px-4 py-2 rounded-xl bg-[#8B251E] text-white font-bold text-xs hover:bg-[#731E18] transition cursor-pointer"
-            >
-              Restablecer todos los filtros
-            </button>
+            <div className="flex items-center gap-3 mt-4">
+              <button
+                onClick={handleResetFilters}
+                className="px-4 py-2 rounded-xl bg-stone-100 text-stone-700 font-bold text-xs hover:bg-stone-200 transition cursor-pointer"
+              >
+                Limpiar filtros
+              </button>
+              <button
+                onClick={openCreateModal}
+                className="px-4 py-2 rounded-xl bg-[#8B251E] text-white font-bold text-xs hover:bg-[#731E18] transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Nuevo Equipo</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {teams.map((team) => (
-              <TeamOverviewCard key={team.id} team={team} onInspectTeam={onInspectTeam} />
+              <TeamOverviewCard
+                key={team.id}
+                team={team}
+                onInspectTeam={onInspectTeam}
+                onEditTeam={openEditModal}
+                onDeleteTeam={handleDeleteTeam}
+                onPhaseChange={handlePhaseChange}
+              />
             ))}
           </div>
         )}
       </div>
+
+      {/* Modal de Creación / Edición de Equipo (Estilo PortalClientes) */}
+      <TeamModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        initialData={editingTeam}
+      />
     </div>
   );
 };

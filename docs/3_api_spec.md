@@ -1,5 +1,5 @@
 # 📄 Especificación de Contrato de API RESTful
-**Proyecto:** Plan Ministerial Misincol (PDM)  
+**Proyecto:** Plan Ministerial Misincol (PDM) & Portal Territorial  
 **Base URL:** `/api/v1`  
 **Autor:** Agente 6 (Technical Writer & QA Specialist)  
 **Estado:** Inmaculado / Especificación Completa
@@ -7,158 +7,56 @@
 ---
 
 ## 1. Visión General
-Esta especificación define los contratos estrictos de la API RESTful para la gestión del Plan de Desarrollo Ministerial (PDM) de **MISINCOL**. En cumplimiento estricto con las normas de gobernanza:
-- Se utiliza el cliente HTTP nativo (`src/shared/api/httpClient.ts`) sin librerías comerciales.
-- Se definen exhaustivamente los códigos de estado `200/201`, `400`, `401/403`, `422` y `500`.
+Esta especificación define los contratos rigurosos de la API RESTful para la administración de equipos territoriales y planes ministeriales de **MISINCOL**. Consumo realizado mediante el cliente HTTP nativo (`src/shared/api/httpClient.ts`), cumpliendo con la prohibición estricta de SDKs comerciales empaquetados.
 
 ---
 
-## 2. Endpoints
+## 2. Endpoints de Equipos Ministeriales (`/api/v1/teams`)
 
-### 2.1. Obtener Plan por Fase
-- **Ruta:** `GET /api/v1/plans/:phaseId`
-- **Parámetros de Ruta:**
-  - `phaseId`: string (`investigacion` | `encarnacion` | `evangelizacion` | `entrenamiento` | `autocuidado`)
-
-#### Matriz de Respuestas
-- **`200 OK`**:
-```json
-{
-  "phaseId": "investigacion",
-  "phaseName": "Investigación y Diagnóstico Territorial",
-  "startDate": "2026-02-01",
-  "teamName": "Misión Wayuu - Alta Guajira",
-  "teamLeader": "Pastor David Morales",
-  "teamMembers": ["Misionero Juan Gómez", "Dra. Ruth Mendoza (Salud)", "Hno. Carlos Pushaina"],
-  "objectives": [
-    {
-      "number": 1,
-      "title": "Mapeo Demográfico y Social de Comunidades",
-      "description": "Levantamiento censal, mapeo de clanes y detección de necesidades primarias de agua y salud.",
-      "activities": [
-        {
-          "id": "act-101",
-          "stage": "Diagnóstico Comunitario",
-          "objectiveNumber": 1,
-          "description": "Visita exploratoria y diálogo con palabreros en 5 rancherías",
-          "currentSituation": "Acceso limitado a agua y falta de censos actualizados",
-          "mediumTermGoal": "Relación de confianza con líderes locales",
-          "longTermGoal": "Apertura comunitaria al evangelio y programas de desarrollo",
-          "responsible": "David Morales & Carlos Pushaina",
-          "frequency": "Mensual",
-          "timesPerYear": 12,
-          "startDate": "2026-02-15",
-          "endDate": "2026-12-15",
-          "totalWeeks": 44,
-          "remainingWeeks": 32,
-          "unitBudget": 350000.00,
-          "totalBudget": 4200000.00,
-          "state": "En Proceso",
-          "obstacles": "Transporte en trocha y temporadas de lluvia"
-        }
-      ]
-    }
-  ]
-}
-```
-
-- **`400 Bad Request`**:
-```json
-{
-  "error": "BAD_REQUEST",
-  "message": "El identificador de fase proporcionado 'fase_invalida' no corresponde a una fase ministerial reconocida.",
-  "timestamp": "2026-10-14T03:00:00Z"
-}
-```
-
-- **`401 Unauthorized`**:
-```json
-{
-  "error": "UNAUTHORIZED",
-  "message": "Token de sesión ausente o expirado. Debe iniciar sesión en el portal Misincol.",
-  "timestamp": "2026-10-14T03:00:00Z"
-}
-```
-
-- **`422 Unprocessable Entity`**:
-```json
-{
-  "error": "VALIDATION_FAILED",
-  "message": "Parámetro 'phaseId' no cumple el formato esperado.",
-  "details": [
-    { "field": "phaseId", "issue": "Valor esperado en el enum: ['investigacion', 'encarnacion', 'evangelizacion', 'entrenamiento', 'autocuidado']" }
-  ]
-}
-```
-
-- **`500 Internal Server Error`**:
-```json
-{
-  "error": "INTERNAL_SERVER_ERROR",
-  "message": "Error no controlado al consultar la base de datos de planes ministeriales.",
-  "timestamp": "2026-10-14T03:00:00Z"
-}
-```
-
----
-
-### 2.2. Actualizar Actividad (Inline Edit / Patch Rápido)
-- **Ruta:** `PATCH /api/v1/activities/:activityId`
-- **Headers:** `Content-Type: application/json`, `Authorization: Bearer <TOKEN>`
-- **Payload de Entrada (JSON):**
-```json
-{
-  "state": "Completado",
-  "unitBudget": 400000.00,
-  "timesPerYear": 12,
-  "obstacles": "Superados con apoyo de líderes comunitarios"
-}
-```
+### 2.1. Listar Equipos con Filtros y Métricas Nacionales
+- **Ruta:** `GET /api/v1/teams`
+- **Query Params (Opcionales):**
+  - `search`: string (búsqueda por nombre, líder, etnia, municipio)
+  - `phase`: enum (`investigacion`, `encarnacion`, `evangelizacion`, `entrenamiento`, `autocuidado`, `ALL`)
+  - `health`: enum (`Optimo`, `Atención`, `Crítico`, `ALL`)
+  - `region`: string
 
 #### Matriz de Respuestas
 - **`200 OK`**:
 ```json
 {
   "success": true,
-  "activity": {
-    "id": "act-101",
-    "state": "Completado",
-    "unitBudget": 400000.00,
-    "timesPerYear": 12,
-    "totalBudget": 4800000.00,
-    "obstacles": "Superados con apoyo de líderes comunitarios",
-    "updatedAt": "2026-10-14T03:05:00Z"
+  "data": [
+    {
+      "id": "team-wayuu",
+      "slug": "team-wayuu",
+      "name": "Misión Wayuu - Alta Guajira",
+      "ethnicity": "Wayuu",
+      "region": "Uribia, Manaure y Nazaret",
+      "department": "La Guajira (Caribe)",
+      "leader": "Pr. David Morales",
+      "leaderPhone": "+57 312 458 9201",
+      "membersCount": 4,
+      "currentPhaseId": "investigacion",
+      "currentPhaseName": "1. Investigación",
+      "progressPercentage": 45,
+      "totalBudget": 14900000,
+      "executedBudget": 6705000,
+      "themeColor": "#8B251E",
+      "healthStatus": "Atención",
+      "lastUpdate": "Hoy, 09:30 AM"
+    }
+  ],
+  "kpis": {
+    "totalTeams": 5,
+    "totalMissionaries": 17,
+    "totalNationalBudget": 83400000,
+    "totalExecutedBudget": 40006000,
+    "nationalAverageProgress": 48,
+    "activeCriticalAlerts": 3,
+    "totalActivities": 32,
+    "completedActivities": 14
   }
-}
-```
-
-- **`400 Bad Request`**:
-```json
-{
-  "error": "BUSINESS_RULE_VIOLATION",
-  "message": "No se puede marcar la actividad como 'Completada' si no posee fecha de finalización válida o si el presupuesto total es negativo.",
-  "timestamp": "2026-10-14T03:05:00Z"
-}
-```
-
-- **`404 Not Found`**:
-```json
-{
-  "error": "ACTIVITY_NOT_FOUND",
-  "message": "La actividad con ID 'act-999' no existe en el sistema.",
-  "timestamp": "2026-10-14T03:05:00Z"
-}
-```
-
-- **`422 Unprocessable Entity`**:
-```json
-{
-  "error": "SCHEMA_VALIDATION_ERROR",
-  "message": "Datos de entrada inválidos.",
-  "details": [
-    { "field": "unitBudget", "issue": "Debe ser un número mayor o igual a 0." },
-    { "field": "state", "issue": "Valores permitidos: ['Pendiente', 'En Proceso', 'Completado']" }
-  ]
 }
 ```
 
@@ -166,32 +64,31 @@ Esta especificación define los contratos estrictos de la API RESTful para la ge
 ```json
 {
   "error": "INTERNAL_SERVER_ERROR",
-  "message": "Fallo crítico al sincronizar la actividad en el almacenamiento persistente.",
-  "timestamp": "2026-10-14T03:05:00Z"
+  "message": "Fallo crítico al recuperar los equipos territoriales del servidor.",
+  "timestamp": "2026-10-14T03:00:00Z"
 }
 ```
 
 ---
 
-### 2.3. Crear Nueva Actividad en Objetivo
-- **Ruta:** `POST /api/v1/objectives/:objectiveNumber/activities`
+### 2.2. Crear Nuevo Equipo Territorial
+- **Ruta:** `POST /api/v1/teams`
+- **Headers:** `Content-Type: application/json`, `Authorization: Bearer <TOKEN>`
 - **Payload de Entrada (JSON):**
 ```json
 {
-  "stage": "Relacionamiento",
-  "description": "Taller de saneamiento básico y capacitación a promotores de salud",
-  "responsible": "Dra. Ruth Mendoza",
-  "frequency": "Bimensual",
-  "timesPerYear": 6,
-  "startDate": "2026-03-01",
-  "endDate": "2026-11-30",
-  "totalWeeks": 36,
-  "remainingWeeks": 28,
-  "unitBudget": 500000.00,
-  "currentSituation": "Alta incidencia de enfermedades transmitidas por agua",
-  "mediumTermGoal": "Capacitar a 15 promotores indígenas bilingües",
-  "longTermGoal": "Reducción del 50% de infecciones gastrointestinales",
-  "obstacles": "Dispersión geográfica de las comunidades"
+  "name": "Misión Misak - Silvia",
+  "ethnicity": "Misak (Guambiano)",
+  "region": "Resguardo Guambía, Silvia",
+  "department": "Cauca (Andina)",
+  "leader": "Pr. Taita Manuel Tunubalá",
+  "leaderPhone": "+57 315 889 0142",
+  "members": ["Manuel Tunubalá", "Mama Rosa Almendra", "Javier Morales"],
+  "currentPhaseId": "investigacion",
+  "totalBudget": 15000000,
+  "themeColor": "#2563EB",
+  "healthStatus": "Optimo",
+  "slug": "team-misak"
 }
 ```
 
@@ -200,22 +97,149 @@ Esta especificación define los contratos estrictos de la API RESTful para la ge
 ```json
 {
   "success": true,
-  "activity": {
-    "id": "c1f7b8b2-5f82-4fa8-a15e-3c22df674f1b",
-    "stage": "Relacionamiento",
-    "description": "Taller de saneamiento básico y capacitación a promotores de salud",
-    "responsible": "Dra. Ruth Mendoza",
-    "frequency": "Bimensual",
-    "timesPerYear": 6,
-    "startDate": "2026-03-01",
-    "endDate": "2026-11-30",
-    "totalWeeks": 36,
-    "remainingWeeks": 28,
-    "unitBudget": 500000.00,
-    "totalBudget": 3000000.00,
-    "state": "Pendiente",
-    "obstacles": "Dispersión geográfica de las comunidades",
-    "createdAt": "2026-10-14T03:07:00Z"
+  "message": "Equipo territorial creado exitosamente.",
+  "data": {
+    "id": "team-misak",
+    "slug": "team-misak",
+    "name": "Misión Misak - Silvia",
+    "ethnicity": "Misak (Guambiano)",
+    "region": "Resguardo Guambía, Silvia",
+    "department": "Cauca (Andina)",
+    "leader": "Pr. Taita Manuel Tunubalá",
+    "leaderPhone": "+57 315 889 0142",
+    "membersCount": 3,
+    "currentPhaseId": "investigacion",
+    "currentPhaseName": "1. Investigación",
+    "progressPercentage": 0,
+    "totalBudget": 15000000,
+    "executedBudget": 0,
+    "themeColor": "#2563EB",
+    "healthStatus": "Optimo",
+    "lastUpdate": "Justo ahora"
   }
+}
+```
+
+- **`400 Bad Request`**:
+```json
+{
+  "error": "MISSING_REQUIRED_FIELDS",
+  "message": "Los campos 'name', 'ethnicity', 'region' y 'leader' son estrictamente obligatorios.",
+  "timestamp": "2026-10-14T03:00:00Z"
+}
+```
+
+- **`409 Conflict`**:
+```json
+{
+  "error": "TEAM_ALREADY_EXISTS",
+  "message": "Ya existe un equipo registrado con el identificador o nombre 'Misión Misak - Silvia'.",
+  "timestamp": "2026-10-14T03:00:00Z"
+}
+```
+
+- **`422 Unprocessable Entity`**:
+```json
+{
+  "error": "SCHEMA_VALIDATION_ERROR",
+  "message": "Formato de color hexadecimal o teléfono inválido.",
+  "details": [
+    { "field": "themeColor", "issue": "Debe cumplir el formato hexadecimal '#RRGGBB'." },
+    { "field": "totalBudget", "issue": "El presupuesto debe ser un valor numérico no negativo." }
+  ]
+}
+```
+
+---
+
+### 2.3. Actualizar Equipo Territorial
+- **Ruta:** `PUT /api/v1/teams/:id`
+- **Payload de Entrada (JSON):**
+```json
+{
+  "name": "Misión Misak - Silvia y Piendamó",
+  "region": "Resguardos Guambía y Las Delicias",
+  "leader": "Pr. Taita Manuel Tunubalá",
+  "leaderPhone": "+57 315 889 0142",
+  "themeColor": "#1D4ED8",
+  "healthStatus": "Atención",
+  "totalBudget": 16500000
+}
+```
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "team-misak",
+    "name": "Misión Misak - Silvia y Piendamó",
+    "region": "Resguardos Guambía y Las Delicias",
+    "leader": "Pr. Taita Manuel Tunubalá",
+    "leaderPhone": "+57 315 889 0142",
+    "themeColor": "#1D4ED8",
+    "healthStatus": "Atención",
+    "totalBudget": 16500000,
+    "lastUpdate": "Justo ahora"
+  }
+}
+```
+
+- **`404 Not Found`**:
+```json
+{
+  "error": "TEAM_NOT_FOUND",
+  "message": "No se encontró el equipo con identificador 'team-misak'.",
+  "timestamp": "2026-10-14T03:00:00Z"
+}
+```
+
+---
+
+### 2.4. Cambio Rápido de Fase PDM
+- **Ruta:** `PATCH /api/v1/teams/:id/phase`
+- **Payload de Entrada (JSON):**
+```json
+{
+  "currentPhaseId": "encarnacion"
+}
+```
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "message": "Fase PDM actualizada con éxito.",
+  "data": {
+    "id": "team-wayuu",
+    "currentPhaseId": "encarnacion",
+    "currentPhaseName": "2. Encarnación",
+    "lastUpdate": "Justo ahora"
+  }
+}
+```
+
+---
+
+### 2.5. Eliminar Equipo Territorial
+- **Ruta:** `DELETE /api/v1/teams/:id`
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "message": "Equipo territorial 'team-misak' y sus planes asociados han sido eliminados correctamente."
+}
+```
+
+- **`404 Not Found`**:
+```json
+{
+  "error": "TEAM_NOT_FOUND",
+  "message": "El equipo especificado no existe o ya fue eliminado.",
+  "timestamp": "2026-10-14T03:00:00Z"
 }
 ```

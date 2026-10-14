@@ -4,6 +4,7 @@ export type TeamHealthStatus = 'Optimo' | 'Atención' | 'Crítico';
 
 export interface TeamSupervisionSummary {
   id: string;
+  slug?: string;
   name: string;
   ethnicity: string;
   region: string;
@@ -11,6 +12,7 @@ export interface TeamSupervisionSummary {
   leader: string;
   leaderPhone: string;
   membersCount: number;
+  members?: string[];
   currentPhaseId: PhaseType;
   currentPhaseName: string;
   progressPercentage: number;
@@ -20,6 +22,7 @@ export interface TeamSupervisionSummary {
   completedActivities: number;
   inProgressActivities: number;
   pendingActivities: number;
+  themeColor: string;
   activeInitiatives: {
     title: string;
     responsible: string;
@@ -32,6 +35,25 @@ export interface TeamSupervisionSummary {
   };
   healthStatus: TeamHealthStatus;
   lastUpdate: string;
+  accessPin?: string;
+}
+
+export interface CreateTeamDto {
+  name: string;
+  ethnicity: string;
+  region: string;
+  department: string;
+  leader: string;
+  leaderPhone: string;
+  members?: string[];
+  currentPhaseId: PhaseType;
+  totalBudget: number;
+  themeColor: string;
+  healthStatus: TeamHealthStatus;
+  slug?: string;
+  criticalAlertMessage?: string;
+  criticalAlertType?: 'Logística' | 'Salud' | 'Seguridad' | 'Institucional';
+  accessPin?: string;
 }
 
 export interface NationalKpis {

@@ -1,9 +1,18 @@
-import { useState, useMemo } from 'react';
-import type { TeamSupervisionSummary, NationalKpis } from '../domain/admin.types';
+import { useState, useMemo, useEffect } from 'react';
+import type {
+  TeamSupervisionSummary,
+  NationalKpis,
+  CreateTeamDto,
+  TeamHealthStatus,
+} from '../domain/admin.types';
+import type { PhaseType } from '../../plans/domain/plan.types';
 
-export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
+const STORAGE_KEY_TEAMS = 'misincol_teams_v2';
+
+export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
   {
     id: 'team-wayuu',
+    slug: 'team-wayuu',
     name: 'Misión Wayuu - Alta Guajira',
     ethnicity: 'Wayuu',
     region: 'Uribia, Manaure y Nazaret',
@@ -11,8 +20,9 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     leader: 'Pr. David Morales',
     leaderPhone: '+57 312 458 9201',
     membersCount: 4,
+    members: ['David Morales', 'Carlos Pushaina', 'Dra. Ruth Mendoza', 'Marcela Uriana'],
     currentPhaseId: 'investigacion',
-    currentPhaseName: '1. Investigación ',
+    currentPhaseName: '1. Investigación',
     progressPercentage: 45,
     totalBudget: 14900000,
     executedBudget: 6705000,
@@ -20,6 +30,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     completedActivities: 2,
     inProgressActivities: 3,
     pendingActivities: 1,
+    themeColor: '#8B251E', // Misincol Terracota
     activeInitiatives: [
       {
         title: 'Visita exploratoria y diálogo con palabreros en 5 rancherías',
@@ -47,6 +58,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
   },
   {
     id: 'team-nasa',
+    slug: 'team-nasa',
     name: 'Misión Nasa - Tierradentro',
     ethnicity: 'Nasa (Páez)',
     region: 'Belalcázar, Inzá y Mosoco',
@@ -54,8 +66,9 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     leader: 'Pr. Marcos Chocué',
     leaderPhone: '+57 320 812 4433',
     membersCount: 3,
+    members: ['Marcos Chocué', 'Aída Secue', 'Santiago Ramos'],
     currentPhaseId: 'encarnacion',
-    currentPhaseName: '2. Encarnación ',
+    currentPhaseName: '2. Encarnación',
     progressPercentage: 68,
     totalBudget: 18200000,
     executedBudget: 12376000,
@@ -63,6 +76,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     completedActivities: 5,
     inProgressActivities: 2,
     pendingActivities: 1,
+    themeColor: '#10B981', // Verde Selva Andina
     activeInitiatives: [
       {
         title: 'Participación en mingas comunitarias de cosecha de café',
@@ -90,6 +104,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
   },
   {
     id: 'team-embera',
+    slug: 'team-embera',
     name: 'Misión Emberá Chamí - Risaralda',
     ethnicity: 'Emberá',
     region: 'Resguardo Gitó Dokabú, Pueblo Rico',
@@ -97,8 +112,9 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     leader: 'Pr. Daniel Guasaruka',
     leaderPhone: '+57 314 670 1198',
     membersCount: 3,
+    members: ['Daniel Guasaruka', 'Claudia Nariquiamo', 'Esteban Forastero'],
     currentPhaseId: 'evangelizacion',
-    currentPhaseName: '3. Evangelización ',
+    currentPhaseName: '3. Evangelización',
     progressPercentage: 75,
     totalBudget: 16800000,
     executedBudget: 12600000,
@@ -106,6 +122,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     completedActivities: 5,
     inProgressActivities: 2,
     pendingActivities: 0,
+    themeColor: '#8B5CF6', // Violeta Montaña
     activeInitiatives: [
       {
         title: 'Círculos nocturnos de relatos orales bíblicos en Emberá',
@@ -128,6 +145,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
   },
   {
     id: 'team-arhuaco',
+    slug: 'team-arhuaco',
     name: 'Misión Iku - Sierra Nevada',
     ethnicity: 'Arhuaco (Iku)',
     region: 'Nabusímake y cuenca río San Sebastián',
@@ -135,8 +153,9 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     leader: 'Pr. Eliécer Torres',
     leaderPhone: '+57 311 905 3280',
     membersCount: 3,
+    members: ['Eliécer Torres', 'Misael Izquierdo', 'Lucía Villafaña'],
     currentPhaseId: 'investigacion',
-    currentPhaseName: '1. Investigación ',
+    currentPhaseName: '1. Investigación',
     progressPercentage: 33,
     totalBudget: 12500000,
     executedBudget: 4125000,
@@ -144,6 +163,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     completedActivities: 1,
     inProgressActivities: 3,
     pendingActivities: 1,
+    themeColor: '#D97706', // Oro Cálido Ancestral
     activeInitiatives: [
       {
         title: 'Diálogo con autoridades tradicionales y Mamos de la Sierra',
@@ -166,6 +186,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
   },
   {
     id: 'team-nukak',
+    slug: 'team-nukak',
     name: 'Misión Nukak Makú - Selva de Guaviare',
     ethnicity: 'Nukak',
     region: 'Charras, Caño Regente y El Retorno',
@@ -173,8 +194,9 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     leader: 'Pr. Samuel Caicedo',
     leaderPhone: '+57 318 722 0945',
     membersCount: 4,
+    members: ['Samuel Caicedo', 'Dra. Elena Cruz', 'Mateo Beltrán', 'Yamid Peñaloza'],
     currentPhaseId: 'encarnacion',
-    currentPhaseName: '2. Encarnación ',
+    currentPhaseName: '2. Encarnación',
     progressPercentage: 20,
     totalBudget: 21000000,
     executedBudget: 4200000,
@@ -182,6 +204,7 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
     completedActivities: 1,
     inProgressActivities: 2,
     pendingActivities: 3,
+    themeColor: '#0D9488', // Verde Agua Profunda
     activeInitiatives: [
       {
         title: 'Acompañamiento en brigadas de vacunación y bioseguridad',
@@ -204,30 +227,62 @@ export const NATIONAL_TEAMS_DATA: TeamSupervisionSummary[] = [
   },
 ];
 
+const PHASE_NAMES_MAP: Record<PhaseType, string> = {
+  investigacion: '1. Investigación',
+  encarnacion: '2. Encarnación',
+  evangelizacion: '3. Evangelización',
+  entrenamiento: '4. Entrenamiento',
+  autocuidado: '5. Autocuidado',
+};
+
 export const useAdminDashboard = () => {
+  // Carga reactiva de equipos desde localStorage
+  const [teams, setTeams] = useState<TeamSupervisionSummary[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_TEAMS);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('Error al cargar equipos de almacenamiento local:', e);
+    }
+    return INITIAL_NATIONAL_TEAMS;
+  });
+
+  // Guardar en localStorage cuando cambie el listado
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_TEAMS, JSON.stringify(teams));
+    } catch (e) {
+      console.warn('Error al persistir equipos en almacenamiento local:', e);
+    }
+  }, [teams]);
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [phaseFilter, setPhaseFilter] = useState<string>('ALL');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [departmentFilter, setDepartmentFilter] = useState<string>('ALL');
 
-  // Filtrado de equipos
+  // Filtrado reactivo de equipos
   const filteredTeams = useMemo(() => {
-    return NATIONAL_TEAMS_DATA.filter((team) => {
+    return teams.filter((team) => {
+      const search = searchTerm.toLowerCase();
       const matchSearch =
-        team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.leader.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.ethnicity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        team.department.toLowerCase().includes(searchTerm.toLowerCase());
+        team.name.toLowerCase().includes(search) ||
+        team.leader.toLowerCase().includes(search) ||
+        team.ethnicity.toLowerCase().includes(search) ||
+        team.region.toLowerCase().includes(search) ||
+        team.department.toLowerCase().includes(search);
 
       const matchPhase = phaseFilter === 'ALL' || team.currentPhaseId === phaseFilter;
       const matchStatus = statusFilter === 'ALL' || team.healthStatus === statusFilter;
       const matchDepartment =
-        departmentFilter === 'ALL' || team.department.toLowerCase().includes(departmentFilter.toLowerCase());
+        departmentFilter === 'ALL' ||
+        team.department.toLowerCase().includes(departmentFilter.toLowerCase());
 
       return matchSearch && matchPhase && matchStatus && matchDepartment;
     });
-  }, [searchTerm, phaseFilter, statusFilter, departmentFilter]);
+  }, [teams, searchTerm, phaseFilter, statusFilter, departmentFilter]);
 
   // Cálculo dinámico de KPIs a Nivel Nacional
   const nationalKpis: NationalKpis = useMemo(() => {
@@ -239,7 +294,7 @@ export const useAdminDashboard = () => {
     let activeCriticalAlerts = 0;
     let totalProgressSum = 0;
 
-    NATIONAL_TEAMS_DATA.forEach((team) => {
+    teams.forEach((team) => {
       totalMissionaries += team.membersCount;
       totalNationalBudget += team.totalBudget;
       totalExecutedBudget += team.executedBudget;
@@ -251,7 +306,7 @@ export const useAdminDashboard = () => {
       }
     });
 
-    const totalTeams = NATIONAL_TEAMS_DATA.length;
+    const totalTeams = teams.length;
     const nationalAverageProgress =
       totalTeams > 0 ? Math.round(totalProgressSum / totalTeams) : 0;
 
@@ -265,11 +320,118 @@ export const useAdminDashboard = () => {
       totalActivities,
       completedActivities,
     };
-  }, []);
+  }, [teams]);
+
+  // CRUD 1: Crear nuevo equipo / misión
+  const handleCreateTeam = (dto: CreateTeamDto) => {
+    const slug =
+      dto.slug?.trim() ||
+      'team-' +
+        dto.ethnicity
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '');
+
+    const members = dto.members && dto.members.length > 0 ? dto.members : [dto.leader];
+
+    const newTeam: TeamSupervisionSummary = {
+      id: slug,
+      slug,
+      name: dto.name,
+      ethnicity: dto.ethnicity,
+      region: dto.region,
+      department: dto.department,
+      leader: dto.leader,
+      leaderPhone: dto.leaderPhone,
+      membersCount: members.length,
+      members,
+      currentPhaseId: dto.currentPhaseId,
+      currentPhaseName: PHASE_NAMES_MAP[dto.currentPhaseId] || '1. Investigación',
+      progressPercentage: 0,
+      totalBudget: dto.totalBudget,
+      executedBudget: 0,
+      totalActivities: 4,
+      completedActivities: 0,
+      inProgressActivities: 1,
+      pendingActivities: 3,
+      themeColor: dto.themeColor || '#8B251E',
+      healthStatus: dto.healthStatus || 'Optimo',
+      lastUpdate: 'Justo ahora',
+      activeInitiatives: [
+        {
+          title: `Diagnóstico y acercamiento inicial con pueblo ${dto.ethnicity}`,
+          responsible: dto.leader,
+          state: 'En Proceso',
+        },
+        {
+          title: `Establecimiento de base operativa en ${dto.region}`,
+          responsible: dto.leader,
+          state: 'Pendiente',
+        },
+      ],
+      criticalAlert: dto.criticalAlertMessage
+        ? {
+            type: dto.criticalAlertType || 'Logística',
+            message: dto.criticalAlertMessage,
+            reportedAt: 'Reportada hoy',
+          }
+        : undefined,
+    };
+
+    setTeams((prev) => [newTeam, ...prev]);
+    return newTeam;
+  };
+
+  // CRUD 2: Actualizar equipo existente
+  const handleUpdateTeam = (teamId: string, updates: Partial<TeamSupervisionSummary>) => {
+    setTeams((prev) =>
+      prev.map((t) => {
+        if (t.id === teamId || t.slug === teamId) {
+          const merged = { ...t, ...updates, lastUpdate: 'Justo ahora' };
+          if (updates.currentPhaseId) {
+            merged.currentPhaseName =
+              PHASE_NAMES_MAP[updates.currentPhaseId] || merged.currentPhaseName;
+          }
+          if (updates.members) {
+            merged.membersCount = updates.members.length;
+          }
+          return merged;
+        }
+        return t;
+      })
+    );
+  };
+
+  // CRUD 3: Eliminar equipo
+  const handleDeleteTeam = (teamId: string) => {
+    setTeams((prev) => prev.filter((t) => t.id !== teamId && t.slug !== teamId));
+  };
+
+  // Cambio rápido de fase (inline selector)
+  const handlePhaseChange = (teamId: string, newPhaseId: PhaseType) => {
+    handleUpdateTeam(teamId, {
+      currentPhaseId: newPhaseId,
+      currentPhaseName: PHASE_NAMES_MAP[newPhaseId],
+    });
+  };
+
+  // Cambio rápido de salud operativa
+  const handleStatusChange = (teamId: string, newStatus: TeamHealthStatus) => {
+    handleUpdateTeam(teamId, { healthStatus: newStatus });
+  };
+
+  // Restablecer catálogo inicial
+  const resetToDefaults = () => {
+    setTeams(INITIAL_NATIONAL_TEAMS);
+    localStorage.removeItem(STORAGE_KEY_TEAMS);
+  };
 
   return {
     teams: filteredTeams,
-    allTeamsCount: NATIONAL_TEAMS_DATA.length,
+    allTeams: teams,
+    allTeamsCount: teams.length,
     nationalKpis,
     searchTerm,
     setSearchTerm,
@@ -279,5 +441,11 @@ export const useAdminDashboard = () => {
     setStatusFilter,
     departmentFilter,
     setDepartmentFilter,
+    handleCreateTeam,
+    handleUpdateTeam,
+    handleDeleteTeam,
+    handlePhaseChange,
+    handleStatusChange,
+    resetToDefaults,
   };
 };
