@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import type { PhasePlan, Activity, PlanMetrics } from '../domain/plan.types';
+import type { PhasePlan, Objective, Activity, PlanMetrics } from '../domain/plan.types';
 import { ObjectiveCard } from './ObjectiveCard';
 import { ActivityModal } from './ActivityModal';
+import { ObjectiveModal } from './ObjectiveModal';
 import {
   Menu,
   RotateCcw,
@@ -15,6 +16,9 @@ interface PhaseViewProps {
   updateActivity: (activityId: string, updatedFields: Partial<Activity>) => void;
   deleteActivity: (activityId: string) => void;
   addActivity: (objectiveNumber: 1 | 2 | 3 | 4, activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>) => void;
+  updateObjective?: (objectiveNumber: 1 | 2 | 3 | 4, updates: { title?: string; description?: string }) => void;
+  addObjective?: (newObj: { title: string; description: string }) => 1 | 2 | 3 | 4 | null;
+  deleteObjective?: (objectiveNumber: 1 | 2 | 3 | 4) => boolean;
   resetToDefaults: () => void;
   metrics: PlanMetrics;
   onToggleMobileMenu: () => void;
@@ -27,15 +31,57 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
   updateActivity,
   deleteActivity,
   addActivity,
+  updateObjective,
+  addObjective,
+  deleteObjective,
   resetToDefaults,
   onToggleMobileMenu,
 }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [modalDefaultObjective, setModalDefaultObjective] = useState<1 | 2 | 3 | 4>(1);
 
+  // Estados para el Modal de Crear / Editar Objetivo Estratégico
+  const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState<boolean>(false);
+  const [objectiveModalMode, setObjectiveModalMode] = useState<'create' | 'edit'>('create');
+  const [editingObjective, setEditingObjective] = useState<Objective | null>(null);
+
   const handleOpenAddModal = (objectiveNumber: 1 | 2 | 3 | 4) => {
     setModalDefaultObjective(objectiveNumber);
     setIsAddModalOpen(true);
+  };
+
+  const handleOpenCreateObjective = () => {
+    setObjectiveModalMode('create');
+    setEditingObjective(null);
+    setIsObjectiveModalOpen(true);
+  };
+
+  const handleOpenEditObjective = (obj: Objective) => {
+    setObjectiveModalMode('edit');
+    setEditingObjective(obj);
+    setIsObjectiveModalOpen(true);
+  };
+
+  const handleSaveObjective = (data: { title: string; description: string; number?: 1 | 2 | 3 | 4 }) => {
+    if (objectiveModalMode === 'create' && addObjective) {
+      const newNumber = addObjective({ title: data.title, description: data.description });
+      if (newNumber) {
+        onSelectObjective(newNumber);
+      }
+    } else if (objectiveModalMode === 'edit' && updateObjective && data.number) {
+      updateObjective(data.number, { title: data.title, description: data.description });
+    }
+  };
+
+  const handleDeleteObjective = (objNum: 1 | 2 | 3 | 4) => {
+    if (!deleteObjective) return;
+    const success = deleteObjective(objNum);
+    if (success) {
+      const remaining = plan.objectives.filter((o) => o.number !== objNum);
+      if (remaining.length > 0) {
+        onSelectObjective(remaining[0].number);
+      }
+    }
   };
 
   const activeObjective =
@@ -60,10 +106,10 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
             <div className="flex items-center gap-1.5 text-xs text-stone-400 font-medium">
               <span className="text-[#8B251E] font-bold">{plan.phaseName}</span>
               <span>/</span>
-              <span>Objetivo #{activeObjective.number}</span>
+              <span>Objetivo #{activeObjective?.number || 1}</span>
             </div>
             <h2 className="text-lg sm:text-xl font-black text-stone-900 font-['Outfit']">
-              {activeObjective.title}
+              {activeObjective?.title || 'Objetivo'}
             </h2>
           </div>
         </div>
@@ -82,17 +128,19 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
             <RotateCcw className="w-4 h-4" />
           </button>
 
-          <button
-            onClick={() => handleOpenAddModal(activeObjective.number)}
-            className="bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nueva Actividad</span>
-          </button>
+          {activeObjective && (
+            <button
+              onClick={() => handleOpenAddModal(activeObjective.number)}
+              className="bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nueva Actividad</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Pestañas de Objetivos Rápidas en Canvas (Segmented Switcher 1, 2, 3, 4) */}
+      {/* Pestañas de Objetivos Rápidas en Canvas (Segmented Switcher 1, 2, 3, 4 con botón de creación) */}
       <div className="flex items-center gap-1.5 bg-stone-200/50 p-1 rounded-xl overflow-x-auto no-scrollbar">
         {plan.objectives.map((obj) => {
           const isSelected = activeObjectiveNumber === obj.number;
@@ -126,15 +174,37 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
             </button>
           );
         })}
+
+        {/* Botón para crear nuevo objetivo (Habilitado sólo si hay menos de 4 objetivos) */}
+        {plan.objectives.length < 4 && addObjective ? (
+          <button
+            onClick={handleOpenCreateObjective}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#8B251E] hover:bg-white/80 border border-dashed border-[#8B251E]/40 transition whitespace-nowrap cursor-pointer shrink-0 shadow-2xs"
+            title="Crear nuevo objetivo estratégico (Máximo 4 por fase)"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Nuevo Objetivo</span>
+          </button>
+        ) : (
+          <span
+            className="text-[10px] font-bold text-stone-400 bg-stone-100/80 px-2.5 py-1.5 rounded-lg whitespace-nowrap shrink-0 border border-stone-200/50"
+            title="Límite alcanzado: Máximo 4 objetivos permitidos por fase"
+          >
+            (4/4 máx)
+          </span>
+        )}
       </div>
 
       {/* Tarjeta y Listado de Actividades del Objetivo Activo */}
-      <ObjectiveCard
-        objective={activeObjective}
-        onUpdateActivity={updateActivity}
-        onDeleteActivity={deleteActivity}
-        onOpenAddModal={handleOpenAddModal}
-      />
+      {activeObjective && (
+        <ObjectiveCard
+          objective={activeObjective}
+          onUpdateActivity={updateActivity}
+          onDeleteActivity={deleteActivity}
+          onOpenAddModal={handleOpenAddModal}
+          onEditObjective={handleOpenEditObjective}
+        />
+      )}
 
       {/* Modal para Agregar Nueva Actividad */}
       <ActivityModal
@@ -143,6 +213,20 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
         defaultObjectiveNumber={modalDefaultObjective}
         onSave={addActivity}
       />
+
+      {/* Modal para Crear / Editar Objetivo Estratégico */}
+      <ObjectiveModal
+        isOpen={isObjectiveModalOpen}
+        onClose={() => setIsObjectiveModalOpen(false)}
+        mode={objectiveModalMode}
+        objectiveNumber={editingObjective?.number}
+        initialTitle={editingObjective?.title || ''}
+        initialDescription={editingObjective?.description || ''}
+        totalObjectivesCount={plan.objectives.length}
+        onSave={handleSaveObjective}
+        onDelete={handleDeleteObjective}
+      />
     </div>
   );
 };
+

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import type { PhasePlan, Activity, PhaseType, PlanMetrics } from '../domain/plan.types';
+import type { PhasePlan, Objective, Activity, PhaseType, PlanMetrics } from '../domain/plan.types';
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
 
@@ -183,6 +183,100 @@ export const usePlan = (
     });
   };
 
+  // Actualizar título y/o descripción de un objetivo estratégico existente
+  const updateObjective = (
+    objectiveNumber: 1 | 2 | 3 | 4,
+    updates: { title?: string; description?: string }
+  ) => {
+    setAllPlans((prev) => {
+      const currentPlan = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
+      const updatedObjectives = currentPlan.objectives.map((obj) => {
+        if (obj.number === objectiveNumber) {
+          return {
+            ...obj,
+            title: updates.title !== undefined ? updates.title.trim() : obj.title,
+            description: updates.description !== undefined ? updates.description.trim() : obj.description,
+          };
+        }
+        return obj;
+      });
+
+      return {
+        ...prev,
+        [activePhaseId]: {
+          ...currentPlan,
+          objectives: updatedObjectives,
+        },
+      };
+    });
+  };
+
+  // Crear un nuevo objetivo estratégico (Cota Máxima: 4 objetivos por fase)
+  const addObjective = (newObj: { title: string; description: string }): 1 | 2 | 3 | 4 | null => {
+    const currentPlan = allPlans[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
+    if (currentPlan.objectives.length >= 4) {
+      console.warn('Límite alcanzado: Máximo 4 objetivos permitidos por fase ministerial.');
+      return null;
+    }
+
+    // Encontrar el primer número disponible entre 1, 2, 3, 4
+    const usedNumbers = new Set(currentPlan.objectives.map((o) => o.number));
+    const availableNumbers: (1 | 2 | 3 | 4)[] = [1, 2, 3, 4];
+    const nextNumber = availableNumbers.find((n) => !usedNumbers.has(n));
+
+    if (!nextNumber) {
+      return null;
+    }
+
+    const createdObjective: Objective = {
+      number: nextNumber,
+      title: newObj.title.trim() || `Objetivo #${nextNumber}`,
+      description: newObj.description.trim(),
+      activities: [],
+    };
+
+    setAllPlans((prev) => {
+      const planToUpdate = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
+      const mergedObjectives = [...planToUpdate.objectives, createdObjective].sort(
+        (a, b) => a.number - b.number
+      );
+
+      return {
+        ...prev,
+        [activePhaseId]: {
+          ...planToUpdate,
+          objectives: mergedObjectives,
+        },
+      };
+    });
+
+    return nextNumber;
+  };
+
+  // Eliminar un objetivo estratégico (Mínimo debe existir 1 por fase)
+  const deleteObjective = (objectiveNumber: 1 | 2 | 3 | 4): boolean => {
+    const currentPlan = allPlans[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
+    if (currentPlan.objectives.length <= 1) {
+      console.warn('Regla de negocio: Debe existir al menos 1 objetivo estratégico por fase.');
+      return false;
+    }
+
+    setAllPlans((prev) => {
+      const planToUpdate = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
+      const filtered = planToUpdate.objectives.filter((o) => o.number !== objectiveNumber);
+
+      return {
+        ...prev,
+        [activePhaseId]: {
+          ...planToUpdate,
+          objectives: filtered,
+        },
+      };
+    });
+
+    return true;
+  };
+
   // Cambiar de fase
   const switchPhase = (phaseId: PhaseType) => {
     setActivePhaseId(phaseId);
@@ -246,6 +340,9 @@ export const usePlan = (
     updateActivity,
     addActivity,
     deleteActivity,
+    updateObjective,
+    addObjective,
+    deleteObjective,
     resetToDefaults,
   };
 };

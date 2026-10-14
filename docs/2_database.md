@@ -187,3 +187,50 @@ CREATE INDEX IF NOT EXISTS idx_activities_state ON activities(state);
 | `access_pin` | `VARCHAR(255)` | `NULLABLE` | Clave o hash de acceso seguro para el equipo territorial. |
 | `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Estampa de tiempo de alta en el sistema. |
 | `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Estampa de tiempo de última actualización. |
+
+### 2.2. Entidad: `phase_plans` (Planes de Fase Ministerial)
+| Nombre de Columna | Tipo de Datos Exacto | Restricciones | Regla de Negocio / Descripción Detallada |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | `PRIMARY KEY, NOT NULL` | Identificador único del plan de fase. |
+| `team_id` | `UUID` | `FOREIGN KEY, NOT NULL, ON DELETE CASCADE` | Enlace al equipo misionero dueño de la fase. |
+| `phase_id` | `phase_type_enum` | `NOT NULL` | Identificador canónico de la fase ('investigacion', 'encarnacion', etc.). |
+| `phase_name` | `VARCHAR(120)` | `NOT NULL` | Título legible de la fase (ej. '1. Investigación'). |
+| `start_date` | `DATE` | `NOT NULL` | Fecha de inicio programada de la fase. |
+| `status` | `VARCHAR(30)` | `NOT NULL, DEFAULT 'En Curso'` | Estado de la fase ('En Curso', 'Completada', 'Pausada'). |
+| `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Creación del registro. |
+| `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Modificación del registro. |
+
+### 2.3. Entidad: `objectives` (Objetivos Estratégicos por Fase - Cota Máxima: 4)
+| Nombre de Columna | Tipo de Datos Exacto | Restricciones | Regla de Negocio / Descripción Detallada |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | `PRIMARY KEY, NOT NULL` | Identificador único del objetivo estratégico. |
+| `phase_plan_id` | `UUID` | `FOREIGN KEY, NOT NULL, ON DELETE CASCADE` | Fase ministerial contenedora. |
+| `objective_number` | `SMALLINT` | `NOT NULL, CHECK (objective_number BETWEEN 1 AND 4)` | **Regla Mandatoria:** Posición del objetivo (1, 2, 3 o 4). Máximo 4 objetivos permitidos por fase. |
+| `title` | `VARCHAR(255)` | `NOT NULL` | Título conciso del objetivo estratégico. |
+| `description` | `TEXT` | `NOT NULL` | Justificación, metas territoriales y descripción contextual. |
+| `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Creación del registro. |
+| `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Modificación del registro. |
+
+### 2.4. Entidad: `activities` (Iniciativas / Tareas del Objetivo)
+| Nombre de Columna | Tipo de Datos Exacto | Restricciones | Regla de Negocio / Descripción Detallada |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | `PRIMARY KEY, NOT NULL` | Identificador de la actividad. |
+| `objective_id` | `UUID` | `FOREIGN KEY, NOT NULL, ON DELETE CASCADE` | Objetivo al que pertenece la iniciativa. |
+| `stage` | `VARCHAR(100)` | `NOT NULL, DEFAULT 'General'` | Etapa o categoría técnica (ej. 'Investigación Social'). |
+| `description` | `TEXT` | `NOT NULL` | Descripción de la actividad planificada. |
+| `current_situation` | `TEXT` | `NOT NULL, DEFAULT ''` | Diagnóstico de situación actual. |
+| `medium_term_goal` | `TEXT` | `NOT NULL, DEFAULT ''` | Meta a mediano plazo (6-12 meses). |
+| `long_term_goal` | `TEXT` | `NOT NULL, DEFAULT ''` | Meta a largo plazo (24-60 meses). |
+| `responsible` | `VARCHAR(150)` | `NOT NULL` | Misionero u obrero responsable directo. |
+| `frequency` | `VARCHAR(80)` | `NOT NULL, DEFAULT 'Mensual'` | Frecuencia de ejecución. |
+| `times_per_year` | `INT` | `NOT NULL, DEFAULT 1, CHECK (>= 0)` | Repeticiones al año. |
+| `start_date` | `DATE` | `NOT NULL` | Fecha de inicio. |
+| `end_date` | `DATE` | `NOT NULL, CHECK (end_date >= start_date)` | Fecha límite. |
+| `total_weeks` | `INT` | `NOT NULL` | Semanas estimadas. |
+| `remaining_weeks` | `INT` | `NOT NULL` | Semanas restantes. |
+| `unit_budget` | `NUMERIC(14, 2)` | `NOT NULL, DEFAULT 0.00, CHECK (>= 0)` | Costo unitario por ejecución en COP. |
+| `total_budget` | `NUMERIC(14, 2)` | `NOT NULL, DEFAULT 0.00, CHECK (>= 0)` | Presupuesto total (`unit_budget * times_per_year`). |
+| `state` | `activity_state_enum`| `NOT NULL, DEFAULT 'Pendiente'` | Estado ('Pendiente', 'En Proceso', 'Completado'). |
+| `obstacles` | `TEXT` | `NOT NULL, DEFAULT ''` | Obstáculos o alertas de campo detectadas. |
+| `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Creación de registro. |
+| `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Modificación de registro. |

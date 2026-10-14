@@ -243,3 +243,92 @@ Esta especificación define los contratos rigurosos de la API RESTful para la ad
   "timestamp": "2026-10-14T03:00:00Z"
 }
 ```
+
+---
+
+## 3. Endpoints de Objetivos Estratégicos (`/api/v1/phases/:phaseId/objectives`)
+
+### 3.1. Crear Nuevo Objetivo Estratégico (Máximo 4 por Fase)
+- **Ruta:** `POST /api/v1/phases/:phaseId/objectives`
+- **Headers:** `Content-Type: application/json`, `Authorization: Bearer <TOKEN>`
+- **Payload de Entrada (JSON):**
+```json
+{
+  "title": "Soberanía Hídrica y Salud Preventiva en Rancherías",
+  "description": "Diagnóstico de pozos artesanales, instalación de filtros comunitarios y capacitación a promotoras indígenas."
+}
+```
+
+#### Matriz de Respuestas
+- **`201 Created`**:
+```json
+{
+  "success": true,
+  "message": "Objetivo estratégico creado exitosamente.",
+  "data": {
+    "number": 3,
+    "title": "Soberanía Hídrica y Salud Preventiva en Rancherías",
+    "description": "Diagnóstico de pozos artesanales, instalación de filtros comunitarios y capacitación a promotoras indígenas.",
+    "activities": []
+  }
+}
+```
+
+- **`400 Bad Request (Regla de Negocio: Máximo 4 Objetivos)`**:
+```json
+{
+  "error": "MAX_OBJECTIVES_REACHED",
+  "message": "No es posible crear más de 4 objetivos estratégicos por fase ministerial del PDM.",
+  "timestamp": "2026-10-14T03:00:00Z"
+}
+```
+
+- **`422 Unprocessable Entity`**:
+```json
+{
+  "error": "SCHEMA_VALIDATION_ERROR",
+  "message": "El título y la descripción del objetivo son campos requeridos.",
+  "details": [
+    { "field": "title", "issue": "No puede estar vacío." },
+    { "field": "description", "issue": "No puede estar vacío." }
+  ]
+}
+```
+
+---
+
+### 3.2. Actualizar Objetivo Estratégico Existente
+- **Ruta:** `PUT /api/v1/phases/:phaseId/objectives/:objectiveNumber`
+- **Parámetros de Ruta:**
+  - `phaseId`: string
+  - `objectiveNumber`: integer (1, 2, 3 o 4)
+- **Payload de Entrada (JSON):**
+```json
+{
+  "title": "Mapeo Demográfico y Social de Rancherías (Actualizado)",
+  "description": "Censo consolidado de 18 rancherías y diálogo con autoridades tradicionales."
+}
+```
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "message": "Objetivo estratégico actualizado correctamente.",
+  "data": {
+    "number": 1,
+    "title": "Mapeo Demográfico y Social de Rancherías (Actualizado)",
+    "description": "Censo consolidado de 18 rancherías y diálogo con autoridades tradicionales."
+  }
+}
+```
+
+- **`404 Not Found`**:
+```json
+{
+  "error": "OBJECTIVE_NOT_FOUND",
+  "message": "El objetivo número 1 no existe en la fase indicada.",
+  "timestamp": "2026-10-14T03:00:00Z"
+}
+```

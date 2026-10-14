@@ -96,6 +96,9 @@ export const App: React.FC = () => {
     updateActivity,
     addActivity,
     deleteActivity,
+    updateObjective,
+    addObjective,
+    deleteObjective,
     resetToDefaults,
   } = usePlan(activeTeamSummary?.currentPhaseId || 'investigacion', activeTeam.id, activeTeamSummary);
 
@@ -434,6 +437,9 @@ export const App: React.FC = () => {
                 updateActivity={updateActivity}
                 deleteActivity={deleteActivity}
                 addActivity={addActivity}
+                updateObjective={updateObjective}
+                addObjective={addObjective}
+                deleteObjective={deleteObjective}
                 resetToDefaults={resetToDefaults}
                 metrics={metrics}
                 onToggleMobileMenu={() => setIsMobileSidebarOpen(true)}

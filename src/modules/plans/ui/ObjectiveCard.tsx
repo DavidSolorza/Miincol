@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import type { Objective, Activity } from '../domain/plan.types';
 import { ActivityItem } from './ActivityItem';
 import { formatCurrencyCOP } from '../../../shared/utils/formatters';
-import { Plus, Search, Layers } from 'lucide-react';
+import { Plus, Search, Layers, Pencil } from 'lucide-react';
 
 interface ObjectiveCardProps {
   objective: Objective;
   onUpdateActivity: (activityId: string, updatedFields: Partial<Activity>) => void;
   onDeleteActivity: (activityId: string) => void;
   onOpenAddModal: (objectiveNumber: 1 | 2 | 3 | 4) => void;
+  onEditObjective?: (objective: Objective) => void;
 }
 
 export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
@@ -16,6 +17,7 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
   onUpdateActivity,
   onDeleteActivity,
   onOpenAddModal,
+  onEditObjective,
 }) => {
   const [filterState, setFilterState] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -47,6 +49,16 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
               <span className="text-xs text-stone-400">
                 {completedCount} de {objective.activities.length} completadas
               </span>
+              {onEditObjective && (
+                <button
+                  onClick={() => onEditObjective(objective)}
+                  className="ml-1 px-2 py-0.5 rounded-md text-[11px] font-semibold text-stone-500 hover:text-[#8B251E] hover:bg-[#8B251E]/10 transition flex items-center gap-1 cursor-pointer"
+                  title="Editar título y descripción del objetivo"
+                >
+                  <Pencil className="w-3 h-3" />
+                  <span>Editar Objetivo</span>
+                </button>
+              )}
             </div>
 
             <h2 className="text-lg sm:text-xl font-black text-stone-900 mt-1 font-['Outfit']">
