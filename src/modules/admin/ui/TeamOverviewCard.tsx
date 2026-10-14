@@ -254,30 +254,84 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = ({
         </div>
       </div>
 
-      {/* 3. Iniciativas en Curso */}
+      {/* 3. Iniciativas en Terreno Desglosadas por Objetivo Estratégico */}
       <div className="space-y-1.5">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
-          Iniciativas Clave en Terreno:
-        </span>
-        <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+            Iniciativas por Objetivo Estratégico:
+          </span>
+          <span className="text-[10px] text-stone-400 font-medium">
+            {team.activeInitiatives.length} iniciativas
+          </span>
+        </div>
+
+        {/* Resumen de Cobertura por Objetivo (1 al 4) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          {[1, 2, 3, 4].map((objNum) => {
+            const count = team.activeInitiatives.filter((act) => act.objectiveNumber === objNum).length;
+            return (
+              <span
+                key={objNum}
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 shrink-0 ${
+                  count > 0 ? 'bg-stone-100 text-stone-700 border border-stone-200/60' : 'bg-stone-50 text-stone-300'
+                }`}
+                title={`Objetivo #${objNum}: ${count} iniciativa(s) en curso`}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: count > 0 ? themeColor : '#CBD5E1' }}
+                />
+                <span>Obj #{objNum}: {count}</span>
+              </span>
+            );
+          })}
+        </div>
+
+        {/* Listado de Iniciativas con Badges de Objetivo y Etapa */}
+        <div className="space-y-1 mt-1">
           {team.activeInitiatives.map((act, i) => (
             <div
               key={i}
-              className="text-xs p-2 rounded-lg bg-stone-50 border border-stone-200/60 flex items-center justify-between gap-2"
+              className="text-xs p-2 rounded-xl bg-stone-50/80 hover:bg-stone-100/70 border border-stone-200/60 transition flex items-center justify-between gap-2"
             >
-              <div className="flex items-center gap-1.5 overflow-hidden">
-                <span
-                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    act.state === 'Completado'
-                      ? 'bg-emerald-500'
-                      : act.state === 'En Proceso'
-                      ? 'bg-[#E67324]'
-                      : 'bg-amber-400'
-                  }`}
-                />
-                <span className="truncate text-stone-700 text-[11px] font-medium">{act.title}</span>
+              <div className="flex items-center gap-2 overflow-hidden min-w-0">
+                {/* Badge de Objetivo */}
+                {act.objectiveNumber ? (
+                  <span
+                    className="px-1.5 py-0.5 rounded-md text-[10px] font-black shrink-0 shadow-2xs"
+                    style={{
+                      backgroundColor: `${themeColor}15`,
+                      color: themeColor,
+                    }}
+                  >
+                    Obj #{act.objectiveNumber}
+                  </span>
+                ) : null}
+
+                {/* Badge de Etapa */}
+                {act.stage && (
+                  <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-[9px] font-semibold bg-stone-200/60 text-stone-600 shrink-0 truncate max-w-[85px]">
+                    {act.stage}
+                  </span>
+                )}
+
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                      act.state === 'Completado'
+                        ? 'bg-emerald-500'
+                        : act.state === 'En Proceso'
+                        ? 'bg-[#E67324]'
+                        : 'bg-amber-400'
+                    }`}
+                  />
+                  <span className="truncate text-stone-800 text-[11px] font-medium" title={act.title}>
+                    {act.title}
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] font-semibold text-stone-400 shrink-0">
+
+              <span className="text-[10px] font-semibold text-stone-400 shrink-0 whitespace-nowrap">
                 {act.responsible.split('&')[0]?.trim()}
               </span>
             </div>

@@ -37,16 +37,22 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
         title: 'Visita exploratoria y diálogo con palabreros en 5 rancherías',
         responsible: 'David Morales & Carlos Pushaina',
         state: 'En Proceso',
+        objectiveNumber: 1,
+        stage: 'Diagnóstico Territorial',
       },
       {
         title: 'Sesiones de aprendizaje e inmersión en Wayuunaiki',
         responsible: 'Marcela Uriana',
         state: 'En Proceso',
+        objectiveNumber: 2,
+        stage: 'Estudio Lingüístico',
       },
       {
         title: 'Brigada de tamizaje nutricional y pozos de agua subterránea',
         responsible: 'Dra. Ruth Mendoza',
         state: 'Pendiente',
+        objectiveNumber: 1,
+        stage: 'Salud y Nutrición',
       },
     ],
     criticalAlert: {
@@ -84,16 +90,22 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
         title: 'Participación en mingas comunitarias de cosecha de café',
         responsible: 'Marcos Chocué',
         state: 'Completado',
+        objectiveNumber: 1,
+        stage: 'Inmersión Comunitaria',
       },
       {
         title: 'Capacitación en primeros auxilios a guardias indígenas',
         responsible: 'Aída Secue',
         state: 'En Proceso',
+        objectiveNumber: 2,
+        stage: 'Servicio Práctico',
       },
       {
         title: 'Círculo de oración y diálogo en lengua Nasa Yuwe',
         responsible: 'Santiago Ramos',
         state: 'En Proceso',
+        objectiveNumber: 3,
+        stage: 'Vínculos Afectivos',
       },
     ],
     criticalAlert: {
@@ -103,6 +115,66 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
     },
     healthStatus: 'Atención',
     lastUpdate: 'Ayer, 05:15 PM',
+  },
+  {
+    id: 'team-pastos',
+    slug: 'team-pastos',
+    name: 'Misión Pastos - Cumbal',
+    ethnicity: 'Pastos',
+    region: 'Cumbal, Chiles y Panán',
+    department: 'Nariño (Andina/Sur)',
+    leader: 'Pr. Hugo Solorza',
+    leaderPhone: '+57 315 889 4521',
+    membersCount: 2,
+    members: ['Hugo Solorza', 'Diana Viera'],
+    currentPhaseId: 'entrenamiento',
+    currentPhaseName: '4. Entrenamiento',
+    progressPercentage: 40,
+    totalBudget: 11210000,
+    executedBudget: 4200000,
+    totalActivities: 16,
+    completedActivities: 6,
+    inProgressActivities: 7,
+    pendingActivities: 3,
+    themeColor: '#2563EB', // Azul Andino Cumbal
+    accessPin: 'pastos2026',
+    activeInitiatives: [
+      {
+        title: 'Generar espacios para enseñanza bíblica y ejercicio de dones en comunidad',
+        responsible: 'Hugo Solorza',
+        state: 'En Proceso',
+        objectiveNumber: 1,
+        stage: 'Liderazgo',
+      },
+      {
+        title: 'Estudio bíblico familiar semanal dirigido por los padres de familia',
+        responsible: 'Diana Viera',
+        state: 'Pendiente',
+        objectiveNumber: 2,
+        stage: 'Liderazgo',
+      },
+      {
+        title: 'Fortalecer análisis bíblico y narrativa con grupo de 10 líderes',
+        responsible: 'Hugo Solorza',
+        state: 'En Proceso',
+        objectiveNumber: 3,
+        stage: 'Desarrollo Eclesial',
+      },
+      {
+        title: 'Plan de trabajo evangelístico para iniciar al menos 4 nuevos grupos',
+        responsible: 'Hugo Solorza',
+        state: 'Pendiente',
+        objectiveNumber: 4,
+        stage: 'Liderazgo',
+      },
+    ],
+    criticalAlert: {
+      type: 'Logística',
+      message: 'Recorridos en moto a veredas lejanas de Chiles y Panán afectados por clima frío y lluvias.',
+      reportedAt: 'Hoy, 07:30 AM',
+    },
+    healthStatus: 'Optimo',
+    lastUpdate: 'Hoy, 08:00 AM',
   },
   {
     id: 'team-embera',
@@ -131,16 +203,22 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
         title: 'Círculos nocturnos de relatos orales bíblicos en Emberá',
         responsible: 'Daniel Guasaruka',
         state: 'En Proceso',
+        objectiveNumber: 1,
+        stage: 'Evangelismo Oral',
       },
       {
         title: 'Composición de cánticos de alabanza con flautas y tambores nativos',
         responsible: 'Claudia Nariquiamo',
         state: 'Completado',
+        objectiveNumber: 2,
+        stage: 'Música Autóctona',
       },
       {
         title: 'Preparación de candidatos para primer bautismo comunitario',
         responsible: 'Esteban Forastero',
         state: 'En Proceso',
+        objectiveNumber: 3,
+        stage: 'Consolidación de Fe',
       },
     ],
     healthStatus: 'Optimo',
@@ -173,11 +251,15 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
         title: 'Diálogo con autoridades tradicionales y Mamos de la Sierra',
         responsible: 'Eliécer Torres',
         state: 'En Proceso',
+        objectiveNumber: 1,
+        stage: 'Diálogo Ancestral',
       },
       {
         title: 'Glosario de conceptos de espiritualidad en lengua Iku',
         responsible: 'Misael Izquierdo',
         state: 'En Proceso',
+        objectiveNumber: 2,
+        stage: 'Traducción Bíblica',
       },
     ],
     criticalAlert: {
@@ -215,11 +297,15 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
         title: 'Acompañamiento en brigadas de vacunación y bioseguridad',
         responsible: 'Samuel Caicedo & Dra. Elena Cruz',
         state: 'En Proceso',
+        objectiveNumber: 1,
+        stage: 'Salud Preventiva',
       },
       {
         title: 'Primeros registros de comunicación básica no invasiva',
         responsible: 'Mateo Beltrán',
         state: 'En Proceso',
+        objectiveNumber: 2,
+        stage: 'Contacto Inicial',
       },
     ],
     criticalAlert: {
@@ -241,12 +327,31 @@ const PHASE_NAMES_MAP: Record<PhaseType, string> = {
 };
 
 export const useAdminDashboard = () => {
-  // Carga reactiva de equipos desde localStorage
+  // Carga reactiva de equipos desde localStorage con enriquecimiento automático de objetivos
   const [teams, setTeams] = useState<TeamSupervisionSummary[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY_TEAMS);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed: TeamSupervisionSummary[] = JSON.parse(stored);
+        // Garantizar que team-pastos esté presente si no existía en el almacenamiento previo
+        const hasPastos = parsed.some((t) => t.id === 'team-pastos' || t.slug === 'team-pastos');
+        const listToEnrich = hasPastos
+          ? parsed
+          : [...parsed, INITIAL_NATIONAL_TEAMS.find((t) => t.id === 'team-pastos')!];
+
+        // Enriquecer iniciativas con número de objetivo si venían vacías
+        return listToEnrich.map((t) => {
+          const match = INITIAL_NATIONAL_TEAMS.find((m) => m.id === t.id);
+          if (match && match.activeInitiatives) {
+            const enriched = t.activeInitiatives.map((init, idx) => ({
+              ...init,
+              objectiveNumber: init.objectiveNumber || match.activeInitiatives[idx]?.objectiveNumber || (((idx % 4) + 1) as 1 | 2 | 3 | 4),
+              stage: init.stage || match.activeInitiatives[idx]?.stage || 'Liderazgo',
+            }));
+            return { ...t, activeInitiatives: enriched };
+          }
+          return t;
+        });
       }
     } catch (e) {
       console.warn('Error al cargar equipos de almacenamiento local:', e);

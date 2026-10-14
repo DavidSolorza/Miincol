@@ -30,6 +30,7 @@ El sistema implementa una arquitectura de autenticación y aislamiento estricto 
 | 🛡️ **Super Administrador** | `admin` | `210910624Dj` *(o `admin2026`)* | Nacional (Colombia) | Acceso total al panel administrativo, métricas nacionales, gestión de equipos y modo supervisión. |
 | 🌵 **Misión Wayuu** | `wayuu` *(o `team-wayuu`)* | `wayuu2026` | Wayuu (Alta Guajira) | Acceso restringido únicamente al PDM de Misión Wayuu (Líder: Pr. David Morales). |
 | 🏔️ **Misión Nasa** | `nasa` *(o `team-nasa`)* | `nasa2026` | Nasa Páez (Tierradentro, Cauca) | Acceso restringido únicamente al PDM de Misión Nasa (Líder: Pr. Marcos Chocué). |
+| 🌋 **Misión Pastos** | `pastos` *(o `team-pastos`)* | `pastos2026` | Pastos (Cumbal, Nariño) | Acceso al PDM oficial extraído de `PDM_2026_Pastos Vr1.xlsx` (Líder: Pr. Hugo Solorza). |
 | 🌿 **Misión Emberá Chamí** | `embera` *(o `team-embera`)* | `embera2026` | Emberá (Risaralda / Pueblo Rico) | Acceso restringido únicamente al PDM de Misión Emberá (Líder: Pr. Daniel Guasaruka). |
 | ⛰️ **Misión Iku (Arhuaco)** | `arhuaco` *(o `team-arhuaco`)* | `arhuaco2026` | Arhuaco (Sierra Nevada, Cesar) | Acceso restringido únicamente al PDM de Misión Iku (Líder: Pr. Eliécer Torres). |
 | 🌳 **Misión Nukak Makú** | `nukak` *(o `team-nukak`)* | `nukak2026` | Nukak (Selva de Guaviare) | Acceso restringido únicamente al PDM de Misión Nukak (Líder: Pr. Samuel Caicedo). |
@@ -43,6 +44,11 @@ Al igual que en `PortalClientes-`, el sistema admite parámetros seguros en la U
 - **Ingreso automático a Super Admin:**
   ```text
   http://localhost:5173/?slug=admin&pass=210910624Dj
+  ```
+
+- **Ingreso automático a Misión Pastos (Cumbal, Nariño):**
+  ```text
+  http://localhost:5173/?slug=pastos&pass=pastos2026
   ```
 
 - **Ingreso automático a Misión Wayuu:**

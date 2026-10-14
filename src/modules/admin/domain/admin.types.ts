@@ -2,6 +2,15 @@ import type { PhaseType } from '../../plans/domain/plan.types';
 
 export type TeamHealthStatus = 'Optimo' | 'Atención' | 'Crítico';
 
+export interface TeamInitiative {
+  title: string;
+  responsible: string;
+  state: 'Pendiente' | 'En Proceso' | 'Completado';
+  objectiveNumber?: 1 | 2 | 3 | 4;
+  objectiveTitle?: string;
+  stage?: string;
+}
+
 export interface TeamSupervisionSummary {
   id: string;
   slug?: string;
@@ -23,11 +32,7 @@ export interface TeamSupervisionSummary {
   inProgressActivities: number;
   pendingActivities: number;
   themeColor: string;
-  activeInitiatives: {
-    title: string;
-    responsible: string;
-    state: 'Pendiente' | 'En Proceso' | 'Completado';
-  }[];
+  activeInitiatives: TeamInitiative[];
   criticalAlert?: {
     type: 'Logística' | 'Salud' | 'Seguridad' | 'Institucional';
     message: string;

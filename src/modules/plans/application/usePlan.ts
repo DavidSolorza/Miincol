@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import type { PhasePlan, Objective, Activity, PhaseType, PlanMetrics } from '../domain/plan.types';
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
+import { PASTOS_PLANS_BY_PHASE } from './pastosPlanData';
 
 // Generador de plantillas PDM aisladas para nuevos equipos
 const createCustomPlanForTeam = (
@@ -55,6 +56,9 @@ export const usePlan = (
     if (teamId === 'team-wayuu') {
       return INITIAL_PLANS_BY_PHASE;
     }
+    if (teamId === 'team-pastos') {
+      return PASTOS_PLANS_BY_PHASE;
+    }
     return createCustomPlanForTeam(teamId, teamData);
   });
 
@@ -72,6 +76,8 @@ export const usePlan = (
 
     if (teamId === 'team-wayuu') {
       setAllPlans(INITIAL_PLANS_BY_PHASE);
+    } else if (teamId === 'team-pastos') {
+      setAllPlans(PASTOS_PLANS_BY_PHASE);
     } else {
       setAllPlans(createCustomPlanForTeam(teamId, teamData));
     }
@@ -286,6 +292,8 @@ export const usePlan = (
   const resetToDefaults = () => {
     if (teamId === 'team-wayuu') {
       setAllPlans(INITIAL_PLANS_BY_PHASE);
+    } else if (teamId === 'team-pastos') {
+      setAllPlans(PASTOS_PLANS_BY_PHASE);
     } else {
       setAllPlans(createCustomPlanForTeam(teamId, teamData));
     }
