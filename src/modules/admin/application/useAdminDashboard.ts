@@ -31,6 +31,7 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
     inProgressActivities: 3,
     pendingActivities: 1,
     themeColor: '#8B251E', // Misincol Terracota
+    accessPin: 'wayuu2026',
     activeInitiatives: [
       {
         title: 'Visita exploratoria y diálogo con palabreros en 5 rancherías',
@@ -77,6 +78,7 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
     inProgressActivities: 2,
     pendingActivities: 1,
     themeColor: '#10B981', // Verde Selva Andina
+    accessPin: 'nasa2026',
     activeInitiatives: [
       {
         title: 'Participación en mingas comunitarias de cosecha de café',
@@ -123,6 +125,7 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
     inProgressActivities: 2,
     pendingActivities: 0,
     themeColor: '#8B5CF6', // Violeta Montaña
+    accessPin: 'embera2026',
     activeInitiatives: [
       {
         title: 'Círculos nocturnos de relatos orales bíblicos en Emberá',
@@ -164,6 +167,7 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
     inProgressActivities: 3,
     pendingActivities: 1,
     themeColor: '#D97706', // Oro Cálido Ancestral
+    accessPin: 'arhuaco2026',
     activeInitiatives: [
       {
         title: 'Diálogo con autoridades tradicionales y Mamos de la Sierra',
@@ -205,6 +209,7 @@ export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
     inProgressActivities: 2,
     pendingActivities: 3,
     themeColor: '#0D9488', // Verde Agua Profunda
+    accessPin: 'nukak2026',
     activeInitiatives: [
       {
         title: 'Acompañamiento en brigadas de vacunación y bioseguridad',
@@ -357,6 +362,7 @@ export const useAdminDashboard = () => {
       inProgressActivities: 1,
       pendingActivities: 3,
       themeColor: dto.themeColor || '#8B251E',
+      accessPin: dto.accessPin?.trim() || `${slug.replace(/^team-/, '')}2026`,
       healthStatus: dto.healthStatus || 'Optimo',
       lastUpdate: 'Justo ahora',
       activeInitiatives: [

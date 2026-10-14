@@ -16,6 +16,7 @@ import {
   ChevronRight,
   X,
   ShieldCheck,
+  LogOut,
 } from 'lucide-react';
 
 interface PlanSidebarProps {
@@ -34,6 +35,8 @@ interface PlanSidebarProps {
   onToggleCollapse: () => void;
   isOpenMobile: boolean;
   onCloseMobile: () => void;
+  userRole?: 'admin' | 'team';
+  onLogout?: () => void;
 }
 
 const PHASES_CONFIG: { id: PhaseType; step: number; label: string; icon: React.ElementType }[] = [
@@ -60,8 +63,11 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
   onToggleCollapse,
   isOpenMobile,
   onCloseMobile,
+  userRole = 'admin',
+  onLogout,
 }) => {
   const currentPlan = allPlans[activePhaseId];
+  const isTeamRestricted = userRole === 'team';
 
   return (
     <>
@@ -113,19 +119,23 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
 
         {/* Cuerpo del Sidebar con Scroll */}
         <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4.5 no-scrollbar">
-          {/* 1. Selector de Equipo Misionero */}
+          {/* 1. Identidad de Equipo Territorial */}
           {!isCollapsed ? (
             <div
-              onClick={onOpenTeamModal}
-              className="p-2.5 rounded-xl bg-[#FAF7F2] hover:bg-[#F5EFE6] border border-stone-200/70 transition cursor-pointer group"
+              onClick={!isTeamRestricted ? onOpenTeamModal : undefined}
+              className={`p-2.5 rounded-xl bg-[#FAF7F2] border border-stone-200/70 transition ${
+                !isTeamRestricted ? 'hover:bg-[#F5EFE6] cursor-pointer group' : ''
+              }`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#8B251E]">
                   Misión en Campo
                 </span>
-                <span className="text-[10px] text-[#8B251E] font-semibold group-hover:underline">
-                  Cambiar
-                </span>
+                {!isTeamRestricted && (
+                  <span className="text-[10px] text-[#8B251E] font-semibold group-hover:underline">
+                    Cambiar
+                  </span>
+                )}
               </div>
               <h4 className="text-xs font-black text-stone-900 mt-0.5 truncate font-['Outfit']">
                 {activeTeam.name}
@@ -136,16 +146,18 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
               </p>
             </div>
           ) : (
-            <button
-              onClick={onOpenTeamModal}
-              className="w-10 h-10 rounded-xl bg-[#FAF7F2] hover:bg-[#F5EFE6] text-[#8B251E] flex items-center justify-center mx-auto transition cursor-pointer"
+            <div
+              onClick={!isTeamRestricted ? onOpenTeamModal : undefined}
+              className={`w-10 h-10 rounded-xl bg-[#FAF7F2] text-[#8B251E] flex items-center justify-center mx-auto transition ${
+                !isTeamRestricted ? 'hover:bg-[#F5EFE6] cursor-pointer' : ''
+              }`}
               title={`Equipo: ${activeTeam.name}`}
             >
               <MapPin className="w-4 h-4 text-[#E67324]" />
-            </button>
+            </div>
           )}
 
-          {/* 2. Navegación Principal (Super Admin / Plan / Consolidado) */}
+          {/* 2. Navegación Principal */}
           <div className="space-y-1">
             {!isCollapsed && (
               <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 px-2 block">
@@ -153,29 +165,31 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
               </span>
             )}
 
-            {/* Vista Super Admin */}
-            <button
-              onClick={() => {
-                onChangeView('superadmin');
-                if (isOpenMobile) onCloseMobile();
-              }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-                activeView === 'superadmin'
-                  ? 'bg-stone-900 text-white shadow-xs'
-                  : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900'
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title="Supervisión Nacional (Super Admin)"
-            >
-              <ShieldCheck className="w-4 h-4 shrink-0 text-[#E67324]" />
-              {!isCollapsed && (
-                <div className="flex items-center justify-between w-full">
-                  <span>Supervisión Nacional</span>
-                  <span className="text-[9px] bg-amber-400/20 text-amber-300 font-black px-1.5 py-0.2 rounded uppercase">
-                    Admin
-                  </span>
-                </div>
-              )}
-            </button>
+            {/* Vista Super Admin (Sólo visible para Administradores) */}
+            {!isTeamRestricted && (
+              <button
+                onClick={() => {
+                  onChangeView('superadmin');
+                  if (isOpenMobile) onCloseMobile();
+                }}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  activeView === 'superadmin'
+                    ? 'bg-stone-900 text-white shadow-xs'
+                    : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900'
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title="Supervisión Nacional (Super Admin)"
+              >
+                <ShieldCheck className="w-4 h-4 shrink-0 text-[#E67324]" />
+                {!isCollapsed && (
+                  <div className="flex items-center justify-between w-full">
+                    <span>Supervisión Nacional</span>
+                    <span className="text-[9px] bg-amber-400/20 text-amber-300 font-black px-1.5 py-0.2 rounded uppercase">
+                      Admin
+                    </span>
+                  </div>
+                )}
+              </button>
+            )}
 
             {/* Vista Plan de Desarrollo */}
             <button
@@ -224,7 +238,9 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
               const Icon = p.icon;
               const isPhaseActive = activePhaseId === p.id && activeView === 'plans';
               const phasePlan = allPlans[p.id];
-              const totalActs = phasePlan ? phasePlan.objectives.reduce((sum, o) => sum + o.activities.length, 0) : 0;
+              const totalActs = phasePlan
+                ? phasePlan.objectives.reduce((sum, o) => sum + o.activities.length, 0)
+                : 0;
               const completedActs = phasePlan
                 ? phasePlan.objectives.reduce(
                     (sum, o) => sum + o.activities.filter((a) => a.state === 'Completado').length,
@@ -333,8 +349,8 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
           )}
         </div>
 
-        {/* Parte Inferior: Botón Generar Informe */}
-        <div className="p-3 sm:p-4 border-t border-stone-100">
+        {/* Parte Inferior: Botón Generar Informe & Cerrar Sesión */}
+        <div className="p-3 sm:p-4 border-t border-stone-100 space-y-2">
           <button
             onClick={() => {
               onOpenReportModal();
@@ -348,6 +364,19 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
             <FileDown className="w-4 h-4 shrink-0" />
             {!isCollapsed && <span>Generar Informe PDM</span>}
           </button>
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className={`w-full py-2 rounded-xl text-stone-500 hover:text-rose-600 hover:bg-rose-50 border border-stone-200/80 transition flex items-center justify-center gap-2 text-xs font-semibold cursor-pointer ${
+                isCollapsed ? 'px-2' : 'px-4'
+              }`}
+              title="Cerrar Sesión"
+            >
+              <LogOut className="w-3.5 h-3.5 shrink-0" />
+              {!isCollapsed && <span>Cerrar Sesión</span>}
+            </button>
+          )}
         </div>
       </aside>
     </>

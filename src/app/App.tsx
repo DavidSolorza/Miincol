@@ -4,10 +4,12 @@ import { PhaseView } from '../modules/plans/ui/PhaseView';
 import { SuperAdminView } from '../modules/admin/ui/SuperAdminView';
 import { ReportModal } from '../modules/reports/ui/ReportModal';
 import { TeamSelector } from '../modules/auth/ui/TeamSelector';
+import { LoginView } from '../modules/auth/ui/LoginView';
 import { useAdminDashboard } from '../modules/admin/application/useAdminDashboard';
 import { usePlan } from '../modules/plans/application/usePlan';
 import { formatCurrencyCOP } from '../shared/utils/formatters';
 import type { MissionaryTeam } from '../modules/auth/domain/auth.types';
+import type { TeamSupervisionSummary } from '../modules/admin/domain/admin.types';
 import {
   Menu,
   ChevronRight,
@@ -15,15 +17,39 @@ import {
   User,
   ArrowLeft,
   MessageCircle,
+  LogOut,
 } from 'lucide-react';
+
+interface AuthSession {
+  role: 'admin' | 'team';
+  teamId?: string;
+  userName: string;
+}
+
+const STORAGE_KEY_AUTH = 'misincol_auth_session';
 
 export const App: React.FC = () => {
   // Hook central de administración con persistencia reactiva en localStorage
   const dashboardHook = useAdminDashboard();
   const { allTeams } = dashboardHook;
 
-  // Estado del equipo activo
-  const [activeTeamId, setActiveTeamId] = useState<string>('team-wayuu');
+  // Estado de Sesión (null = Pantalla de Login Principal)
+  const [session, setSession] = useState<AuthSession | null>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_AUTH);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Ignorar fallback
+    }
+    return null;
+  });
+
+  // Estado del equipo activo y modo vista previa
+  const [activeTeamId, setActiveTeamId] = useState<string>(() => {
+    return session?.teamId || 'team-wayuu';
+  });
   const [isAdminPreview, setIsAdminPreview] = useState<boolean>(false);
 
   // Mapear el catálogo dinámico de equipos
@@ -74,11 +100,59 @@ export const App: React.FC = () => {
   } = usePlan(activeTeamSummary?.currentPhaseId || 'investigacion', activeTeam.id, activeTeamSummary);
 
   const [activeObjectiveNumber, setActiveObjectiveNumber] = useState<number>(1);
-  const [activeView, setActiveView] = useState<'plans' | 'all-phases' | 'superadmin'>('plans');
+  const [activeView, setActiveView] = useState<'plans' | 'all-phases' | 'superadmin'>(() => {
+    return session?.role === 'admin' ? 'superadmin' : 'plans';
+  });
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState<boolean>(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+
+  // 1. Manejo de Inicio de Sesión como Super Admin
+  const handleAdminLogin = () => {
+    const newSession: AuthSession = {
+      role: 'admin',
+      userName: 'Director Nacional',
+    };
+    setSession(newSession);
+    try {
+      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession));
+    } catch {
+      // Ignorar fallback
+    }
+    setActiveView('superadmin');
+    setIsAdminPreview(false);
+  };
+
+  // 2. Manejo de Inicio de Sesión como Equipo Territorial
+  const handleTeamLogin = (team: TeamSupervisionSummary) => {
+    const newSession: AuthSession = {
+      role: 'team',
+      teamId: team.id,
+      userName: team.leader,
+    };
+    setSession(newSession);
+    try {
+      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession));
+    } catch {
+      // Ignorar fallback
+    }
+    setActiveTeamId(team.id);
+    setActiveView('plans');
+    setIsAdminPreview(false);
+    setActiveObjectiveNumber(1);
+  };
+
+  // 3. Manejo de Cierre de Sesión
+  const handleLogout = () => {
+    setSession(null);
+    setIsAdminPreview(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY_AUTH);
+    } catch {
+      // Ignorar fallback
+    }
+  };
 
   // Al cambiar de fase, reiniciar al objetivo #1
   const handleSelectPhase = (phaseId: typeof activePhaseId) => {
@@ -86,7 +160,7 @@ export const App: React.FC = () => {
     setActiveObjectiveNumber(1);
   };
 
-  // Función para que el Super Admin entre a supervisar un equipo específico (Modo Vista Previa como en PortalClientes)
+  // Función para que el Super Admin entre a supervisar un equipo específico (Modo Vista Previa)
   const handleInspectTeamFromAdmin = (teamId: string) => {
     setActiveTeamId(teamId);
     setIsAdminPreview(true);
@@ -123,6 +197,18 @@ export const App: React.FC = () => {
     );
   }, 0);
 
+  // Si no hay sesión iniciada, mostrar la pantalla de Login Principal
+  if (!session) {
+    return (
+      <LoginView
+        onAdminSuccess={handleAdminLogin}
+        onTeamSuccess={handleTeamLogin}
+        allTeams={allTeams}
+      />
+    );
+  }
+
+  const isSuperAdmin = session.role === 'admin';
   const themeColor = activeTeam.themeColor || '#8B251E';
   const cleanPhone = (activeTeam.leaderPhone || '').replace(/[^\d]/g, '');
   const whatsappUrl = cleanPhone
@@ -155,6 +241,8 @@ export const App: React.FC = () => {
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         isOpenMobile={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        userRole={session.role}
+        onLogout={handleLogout}
       />
 
       {/* 2. Área Principal de Trabajo */}
@@ -222,26 +310,30 @@ export const App: React.FC = () => {
 
           {/* Perfil de Usuario Sesión y Toggle Rápido a Super Admin */}
           <div className="flex items-center gap-3">
-            {activeView !== 'superadmin' ? (
-              <button
-                onClick={() => {
-                  setIsAdminPreview(false);
-                  setActiveView('superadmin');
-                }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-xs cursor-pointer"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
-                <span className="hidden sm:inline">Modo Super Admin</span>
-              </button>
-            ) : (
-              <button
-                onClick={() => setActiveView('plans')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white text-xs font-bold transition shadow-xs cursor-pointer"
-                style={{ backgroundColor: themeColor }}
-              >
-                <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                <span>Volver a Plan PDM</span>
-              </button>
+            {isSuperAdmin && (
+              <>
+                {activeView !== 'superadmin' ? (
+                  <button
+                    onClick={() => {
+                      setIsAdminPreview(false);
+                      setActiveView('superadmin');
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
+                    <span className="hidden sm:inline">Modo Super Admin</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setActiveView('plans')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white text-xs font-bold transition shadow-xs cursor-pointer"
+                    style={{ backgroundColor: themeColor }}
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+                    <span>Volver a Plan PDM</span>
+                  </button>
+                )}
+              </>
             )}
 
             <div className="flex items-center gap-2 pl-2 border-l border-stone-200">
@@ -253,19 +345,28 @@ export const App: React.FC = () => {
               </div>
               <div className="hidden md:flex flex-col text-left text-xs">
                 <span className="font-bold text-stone-800 leading-none">
-                  {activeView === 'superadmin' ? 'Director Nacional' : activeTeam.leader}
+                  {session.userName}
                 </span>
                 <span className="text-[10px] text-stone-400 mt-0.5">
-                  {activeView === 'superadmin' ? 'Super Administrador' : 'Líder Territorial'}
+                  {isSuperAdmin ? 'Super Administrador' : `Misión ${activeTeam.ethnicity}`}
                 </span>
               </div>
+
+              {/* Botón Salir / Cerrar Sesión */}
+              <button
+                onClick={handleLogout}
+                className="p-1.5 ml-1 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                title="Cerrar Sesión"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </header>
 
         {/* Contenido Dinámico Principal */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          {activeView === 'superadmin' ? (
+          {activeView === 'superadmin' && isSuperAdmin ? (
             /* Vista 1: Super Admin / Supervisión Nacional de Todos los Equipos */
             <SuperAdminView
               onInspectTeam={handleInspectTeamFromAdmin}
@@ -315,12 +416,14 @@ export const App: React.FC = () => {
                       <span>Contactar Líder</span>
                     </a>
                   )}
-                  <button
-                    onClick={() => setIsTeamModalOpen(true)}
-                    className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
-                  >
-                    Cambiar Equipo
-                  </button>
+                  {isSuperAdmin && (
+                    <button
+                      onClick={() => setIsTeamModalOpen(true)}
+                      className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+                    >
+                      Cambiar Equipo
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -486,15 +589,17 @@ export const App: React.FC = () => {
         plan={plan}
       />
 
-      <TeamSelector
-        isOpen={isTeamModalOpen}
-        onClose={() => setIsTeamModalOpen(false)}
-        teams={mappedTeams}
-        activeTeamId={activeTeam.id}
-        onSelectTeam={(selectedId) => {
-          setActiveTeamId(selectedId);
-        }}
-      />
+      {isSuperAdmin && (
+        <TeamSelector
+          isOpen={isTeamModalOpen}
+          onClose={() => setIsTeamModalOpen(false)}
+          teams={mappedTeams}
+          activeTeamId={activeTeam.id}
+          onSelectTeam={(selectedId) => {
+            setActiveTeamId(selectedId);
+          }}
+        />
+      )}
     </div>
   );
 };

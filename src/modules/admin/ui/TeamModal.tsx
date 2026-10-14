@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../../../shared/components/Modal';
 import type { TeamSupervisionSummary, CreateTeamDto, TeamHealthStatus } from '../domain/admin.types';
 import type { PhaseType } from '../../plans/domain/plan.types';
-import { Check, AlertCircle, Palette, Sparkles } from 'lucide-react';
+import { Check, AlertCircle, Palette, Sparkles, Key, Eye, EyeOff } from 'lucide-react';
 
 interface TeamModalProps {
   isOpen: boolean;
@@ -49,11 +49,13 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     themeColor: '#8B251E',
     healthStatus: 'Optimo',
     slug: '',
+    accessPin: '',
     criticalAlertMessage: '',
     criticalAlertType: 'Logística',
   });
 
   const [membersInput, setMembersInput] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,6 +74,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
         themeColor: initialData.themeColor || '#8B251E',
         healthStatus: initialData.healthStatus || 'Optimo',
         slug: initialData.slug || initialData.id || '',
+        accessPin: initialData.accessPin || '',
         criticalAlertMessage: initialData.criticalAlert?.message || '',
         criticalAlertType: initialData.criticalAlert?.type || 'Logística',
       });
@@ -94,11 +97,13 @@ export const TeamModal: React.FC<TeamModalProps> = ({
         themeColor: '#8B251E',
         healthStatus: 'Optimo',
         slug: '',
+        accessPin: '',
         criticalAlertMessage: '',
         criticalAlertType: 'Logística',
       });
       setMembersInput('');
     }
+    setShowPassword(false);
     setError(null);
   }, [initialData, isOpen]);
 
@@ -136,19 +141,21 @@ export const TeamModal: React.FC<TeamModalProps> = ({
         .filter((m) => m.length > 0);
 
       // Autogenerar slug si viene vacío
-      const generatedSlug =
-        formData.slug?.trim() ||
-        'team-' +
-          formData.ethnicity
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)/g, '');
+      const baseSlug =
+        formData.ethnicity
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, '') || 'equipo';
+
+      const generatedSlug = formData.slug?.trim() || `team-${baseSlug}`;
+      const defaultPin = formData.accessPin?.trim() || `${baseSlug}2026`;
 
       await onSubmit({
         ...formData,
         slug: generatedSlug,
+        accessPin: defaultPin,
         members: parsedMembers.length > 0 ? parsedMembers : [formData.leader],
       });
 
@@ -318,7 +325,34 @@ export const TeamModal: React.FC<TeamModalProps> = ({
           </div>
         </div>
 
-        {/* 3. Fase Ministerial, Presupuesto y Estado */}
+        {/* 3. Contraseña de Acceso para el Equipo */}
+        <div className="pt-2 border-t border-stone-100">
+          <label className="block text-xs font-bold text-stone-700 mb-1 flex items-center gap-1.5">
+            <Key className="w-3.5 h-3.5 text-stone-500" />
+            <span>Contraseña de Acceso para el Equipo Territorial</span>
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={formData.accessPin}
+              onChange={(e) => setFormData({ ...formData, accessPin: e.target.value })}
+              placeholder="ej. misak2026 (por defecto: [etnia]2026)"
+              className="w-full px-3.5 py-2 pr-10 rounded-xl text-xs border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#8B251E]/20 text-stone-900 font-mono transition"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2.5 top-2 p-1 text-stone-400 hover:text-stone-600 transition"
+            >
+              {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+            </button>
+          </div>
+          <p className="text-[11px] text-stone-400 mt-1">
+            Esta es la clave con la que el equipo ingresará al portal restringido de su misión.
+          </p>
+        </div>
+
+        {/* 4. Fase Ministerial, Presupuesto y Estado */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2 border-t border-stone-100">
           <div>
             <label className="block text-xs font-bold text-stone-700 mb-1">
@@ -373,7 +407,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
           </div>
         </div>
 
-        {/* 4. Selector de Color Temático Identitario */}
+        {/* 5. Selector de Color Temático Identitario */}
         <div className="pt-2 border-t border-stone-100">
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
@@ -417,7 +451,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
           </div>
         </div>
 
-        {/* 5. Alerta Territorial Opcional */}
+        {/* 6. Alerta Territorial Opcional */}
         <div className="pt-2 border-t border-stone-100 space-y-2">
           <label className="block text-xs font-bold text-stone-700">
             Alerta Territorial Opcional (Si existe contingencia activa en terreno)
