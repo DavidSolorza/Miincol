@@ -140,13 +140,20 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = ({
           </div>
         </div>
 
-        {/* Nombre del Equipo y Territorio */}
-        <h3 className="text-base font-black text-stone-900 mt-2 font-['Outfit'] leading-tight">
-          {team.name}
-        </h3>
-        <p className="text-[11px] text-stone-400 mt-0.5 truncate">
-          Territorio: {team.region}
-        </p>
+        {/* Nombre del Equipo y Territorio (Clic directo para supervisar) */}
+        <div
+          onClick={() => onInspectTeam(team.id)}
+          className="cursor-pointer group/title mt-2"
+          title={`Supervisar plan ministerial de ${team.name}`}
+        >
+          <h3 className="text-base font-black text-stone-900 font-['Outfit'] leading-tight group-hover/title:text-[#8B251E] transition-colors flex items-center justify-between">
+            <span>{team.name}</span>
+            <ArrowRight className="w-3.5 h-3.5 text-stone-300 group-hover/title:text-[#8B251E] group-hover/title:translate-x-0.5 transition-all" />
+          </h3>
+          <p className="text-[11px] text-stone-400 mt-0.5 truncate">
+            Territorio: {team.region}
+          </p>
+        </div>
 
         {/* Ficha de Liderazgo y Contacto con WhatsApp */}
         <div className="mt-2.5 pt-2 border-t border-stone-100 flex items-center justify-between gap-2 text-xs text-stone-600">

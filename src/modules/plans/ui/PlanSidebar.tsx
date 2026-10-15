@@ -9,7 +9,6 @@ import {
   Flame,
   GraduationCap,
   HeartHandshake,
-  MapPin,
   FileDown,
   ChevronLeft,
   ChevronRight,
@@ -26,7 +25,7 @@ interface PlanSidebarProps {
   onSelectObjective: (objNum: number) => void;
   metrics: PlanMetrics;
   activeTeam: MissionaryTeam;
-  onOpenTeamModal: () => void;
+  onOpenTeamModal?: () => void;
   onOpenReportModal: () => void;
   activeView: 'plans' | 'superadmin';
   onChangeView: (view: 'plans' | 'superadmin') => void;
@@ -54,7 +53,6 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
   onSelectObjective,
   metrics,
   activeTeam,
-  onOpenTeamModal,
   onOpenReportModal,
   activeView,
   onChangeView,
@@ -117,47 +115,9 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
         </div>
 
         {/* Cuerpo del Sidebar con Scroll */}
-        <div className="flex-1 overflow-y-auto p-2.5 sm:p-3 space-y-3.5 no-scrollbar">
-          {/* 1. Identidad de Equipo Territorial */}
-          {!isCollapsed ? (
-            <div
-              onClick={!isTeamRestricted ? onOpenTeamModal : undefined}
-              className={`p-2 rounded-lg bg-[#FAF7F2] border border-stone-200/70 transition ${
-                !isTeamRestricted ? 'hover:bg-[#F5EFE6] cursor-pointer group' : ''
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-[#8B251E]">
-                  Misión en Campo
-                </span>
-                {!isTeamRestricted && (
-                  <span className="text-[9px] text-[#8B251E] font-semibold group-hover:underline">
-                    Cambiar
-                  </span>
-                )}
-              </div>
-              <h4 className="text-xs font-black text-stone-900 mt-0.5 truncate font-['Outfit']">
-                {activeTeam.name}
-              </h4>
-              <p className="text-[10px] text-stone-400 flex items-center gap-1 mt-0.5 truncate">
-                <MapPin className="w-2.5 h-2.5 text-[#E67324] shrink-0" />
-                <span className="truncate">{activeTeam.region}</span>
-              </p>
-            </div>
-          ) : (
-            <div
-              onClick={!isTeamRestricted ? onOpenTeamModal : undefined}
-              className={`w-8 h-8 rounded-lg bg-[#FAF7F2] text-[#8B251E] flex items-center justify-center mx-auto transition ${
-                !isTeamRestricted ? 'hover:bg-[#F5EFE6] cursor-pointer' : ''
-              }`}
-              title={`Equipo: ${activeTeam.name}`}
-            >
-              <MapPin className="w-3.5 h-3.5 text-[#E67324]" />
-            </div>
-          )}
-
-          {/* 2. Navegación Principal */}
-          <div className="space-y-0.5">
+        <div className="flex-1 overflow-y-auto p-2.5 sm:p-3 space-y-3 no-scrollbar">
+          {/* Navegación Principal */}
+          <div className="space-y-1">
             {!isCollapsed && (
               <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 px-2 block mb-1">
                 Vistas
@@ -190,31 +150,60 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
               </button>
             )}
 
-            {/* Vista Plan de Desarrollo */}
-            <button
-              onClick={() => {
-                onChangeView('plans');
-                if (isOpenMobile) onCloseMobile();
-              }}
-              className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                activeView === 'plans'
-                  ? 'bg-[#8B251E] text-white shadow-2xs'
-                  : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title="Plan por Fases"
-            >
-              <Compass className="w-3.5 h-3.5 shrink-0" />
-              {!isCollapsed && <span>Plan de Desarrollo (PDM)</span>}
-            </button>
+            {/* Vista Plan de Desarrollo: visible para equipos territoriales o cuando el director esté inspeccionando un equipo */}
+            {(isTeamRestricted || activeView === 'plans') && (
+              <button
+                onClick={() => {
+                  onChangeView('plans');
+                  if (isOpenMobile) onCloseMobile();
+                }}
+                className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                  activeView === 'plans'
+                    ? 'bg-[#8B251E] text-white shadow-2xs'
+                    : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
+                } ${isCollapsed ? 'justify-center' : ''}`}
+                title="Plan por Fases"
+              >
+                <Compass className="w-3.5 h-3.5 shrink-0" />
+                {!isCollapsed && (
+                  <div className="flex flex-col text-left truncate">
+                    <span>Plan de Desarrollo (PDM)</span>
+                    {!isTeamRestricted && (
+                      <span className="text-[9px] text-amber-100 font-semibold truncate">
+                        {activeTeam.name}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </button>
+            )}
+
+            {/* Mensaje informativo para el Director en Supervisión Nacional */}
+            {activeView === 'superadmin' && !isCollapsed && (
+              <div className="mt-3 p-3 rounded-xl bg-stone-50 border border-stone-200/70 text-xs space-y-1">
+                <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block">
+                  Tablero Nacional
+                </span>
+                <p className="text-[11px] text-stone-500 leading-snug">
+                  Haga clic en cualquier equipo ministerial en el panel para supervisar sus etapas y objetivos.
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* 3. Fases Ministeriales (1 al 5) */}
-          <div className="space-y-0.5 pt-1">
-            {!isCollapsed && (
-              <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 px-2 block mb-1">
-                Fases PDM
-              </span>
-            )}
+          {/* Fases Ministeriales (1 al 5) - Solo visibles cuando el director ingresa a un equipo o en vista de planes */}
+          {activeView === 'plans' && (
+            <div className="space-y-0.5 pt-1">
+              {!isCollapsed && (
+                <div className="px-2 mb-1 flex items-center justify-between">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 block">
+                    Fases PDM
+                  </span>
+                  <span className="text-[9px] font-bold text-[#8B251E] truncate max-w-[120px]">
+                    {activeTeam.ethnicity}
+                  </span>
+                </div>
+              )}
 
             {PHASES_CONFIG.map((p) => {
               const Icon = p.icon;
@@ -307,6 +296,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
               );
             })}
           </div>
+        )}
 
           {/* 4. Mini Resumen Presupuestal */}
           {!isCollapsed && activeView === 'plans' && (
@@ -333,19 +323,21 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
 
         {/* Parte Inferior: Botón Generar Informe & Cerrar Sesión */}
         <div className="p-2.5 sm:p-3 border-t border-stone-100 space-y-1.5">
-          <button
-            onClick={() => {
-              onOpenReportModal();
-              if (isOpenMobile) onCloseMobile();
-            }}
-            className={`w-full py-2 rounded-lg bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer ${
-              isCollapsed ? 'px-1.5' : 'px-3'
-            }`}
-            title="Generar Informe Ejecutivo PDM"
-          >
-            <FileDown className="w-3.5 h-3.5 shrink-0" />
-            {!isCollapsed && <span>Informe PDM</span>}
-          </button>
+          {(activeView === 'plans' || isTeamRestricted) && (
+            <button
+              onClick={() => {
+                onOpenReportModal();
+                if (isOpenMobile) onCloseMobile();
+              }}
+              className={`w-full py-2 rounded-lg bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer ${
+                isCollapsed ? 'px-1.5' : 'px-3'
+              }`}
+              title="Generar Informe Ejecutivo PDM"
+            >
+              <FileDown className="w-3.5 h-3.5 shrink-0" />
+              {!isCollapsed && <span>Informe PDM</span>}
+            </button>
+          )}
 
           {onLogout && (
             <button
