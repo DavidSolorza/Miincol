@@ -7,7 +7,7 @@ export const LoginSupportFooter: React.FC = () => {
   )}`;
 
   return (
-    <div className="pt-4 mt-4 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
+    <div className="pt-2.5 mt-2.5 sm:pt-3 sm:mt-3 border-t border-stone-100 flex items-center justify-between text-[11px] sm:text-xs text-stone-500">
       <span>¿Dificultades de acceso?</span>
       <a
         href={whatsappUrl}

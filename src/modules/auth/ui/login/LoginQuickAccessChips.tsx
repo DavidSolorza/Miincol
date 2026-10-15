@@ -18,22 +18,22 @@ const PREDEFINED_CHIPS = [
 
 export const LoginQuickAccessChips: React.FC<Props> = ({ selectedQuickChip, onFillCredentials }) => {
   return (
-    <div className="space-y-1.5 pt-1">
-      <div className="relative my-3 pt-2">
+    <div className="space-y-1 pt-0.5">
+      <div className="relative my-1.5 pt-1">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-stone-200/80" />
         </div>
-        <div className="relative flex justify-center text-[10px] uppercase tracking-wider text-stone-400 font-bold bg-white px-3">
+        <div className="relative flex justify-center text-[10px] uppercase tracking-wider text-stone-400 font-bold bg-white px-2">
           Credenciales Predefinidas
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 text-stone-500 text-[11px] font-semibold">
-        <KeyRound className="w-3.5 h-3.5 text-[#E67324]" />
+      <div className="flex items-center gap-1.5 text-stone-500 text-[10px] sm:text-[11px] font-semibold">
+        <KeyRound className="w-3 h-3 text-[#E67324]" />
         <span>Haz clic en una credencial para autocompletar:</span>
       </div>
 
-      <div className="flex flex-wrap gap-1.5 pt-0.5">
+      <div className="flex flex-wrap gap-1 pt-0.5">
         {PREDEFINED_CHIPS.map((chip) => {
           const isSelected = selectedQuickChip === chip.key || selectedQuickChip === `team-${chip.key}`;
           return (
@@ -41,7 +41,7 @@ export const LoginQuickAccessChips: React.FC<Props> = ({ selectedQuickChip, onFi
               key={chip.key}
               type="button"
               onClick={() => onFillCredentials(chip.type, chip.user, chip.pass, chip.key)}
-              className={`px-2.5 py-1.5 rounded-lg font-mono text-[11px] font-bold transition cursor-pointer flex items-center gap-1 border ${
+              className={`px-2 py-1 rounded-lg font-mono text-[10px] sm:text-[11px] font-bold transition-fluid cursor-pointer flex items-center gap-1 border active:scale-95 ${
                 isSelected
                   ? 'bg-stone-900 text-white border-stone-900 shadow-xs'
                   : 'bg-stone-100 text-stone-800 hover:bg-stone-200 border-stone-200'

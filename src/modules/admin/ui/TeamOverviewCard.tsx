@@ -63,4 +63,5 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
       />
     </div>
   );
-};
+});
+

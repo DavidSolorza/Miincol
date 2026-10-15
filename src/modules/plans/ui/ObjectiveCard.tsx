@@ -66,4 +66,5 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = React.memo(({
       />
     </div>
   );
-};
+});
+
