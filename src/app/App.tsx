@@ -4,6 +4,7 @@ import { PhaseView } from '../modules/plans/ui/PhaseView';
 import { SuperAdminView } from '../modules/admin/ui/SuperAdminView';
 import { ReportModal } from '../modules/reports/ui/ReportModal';
 import { TeamSelector } from '../modules/auth/ui/TeamSelector';
+import { TeamSelectDropdown } from '../modules/auth/ui/TeamSelectDropdown';
 import { LoginView } from '../modules/auth/ui/LoginView';
 import { useAdminDashboard } from '../modules/admin/application/useAdminDashboard';
 import { usePlan } from '../modules/plans/application/usePlan';
@@ -275,29 +276,16 @@ export const App: React.FC = () => {
               <div className="flex items-center gap-2 text-xs text-stone-500">
                 <span className="font-black text-[#8B251E] tracking-wider">MISINCOL</span>
                 <span>•</span>
-                {/* Selector de Equipo Rápido (1 clic para cambiar de equipo) */}
+                {/* Selector de Equipo Rápido Estilizado */}
                 {isSuperAdmin && activeView === 'plans' ? (
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: themeColor }}
-                    />
-                    <select
-                      value={activeTeamId}
-                      onChange={(e) => {
-                        setActiveTeamId(e.target.value);
-                        setActiveObjectiveNumber(1);
-                      }}
-                      className="font-bold text-xs text-stone-800 bg-transparent border-none cursor-pointer focus:outline-hidden hover:text-[#8B251E] transition"
-                      title="Cambiar de misión territorial en 1 clic"
-                    >
-                      {allTeams.map((t) => (
-                        <option key={t.id} value={t.id}>
-                          {t.ethnicity}: {t.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <TeamSelectDropdown
+                    teams={mappedTeams}
+                    activeTeamId={activeTeamId}
+                    onSelectTeam={(teamId) => {
+                      setActiveTeamId(teamId);
+                      setActiveObjectiveNumber(1);
+                    }}
+                  />
                 ) : (
                   <div className="flex items-center gap-1.5">
                     <span

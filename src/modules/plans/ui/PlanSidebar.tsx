@@ -79,16 +79,16 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
       {/* Contenedor del Panel Lateral */}
       <aside
         className={`fixed lg:sticky top-0 left-0 h-screen z-50 bg-white border-r border-stone-200/90 shadow-sm transition-all duration-300 flex flex-col justify-between select-none ${
-          isCollapsed ? 'lg:w-20' : 'lg:w-72 xl:w-80'
+          isCollapsed ? 'lg:w-16' : 'lg:w-52 xl:w-56'
         } ${
-          isOpenMobile ? 'translate-x-0 w-80' : '-translate-x-full lg:translate-x-0'
+          isOpenMobile ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Parte Superior: Marca Misincol y Botón Colapsar */}
-        <div className="p-3 sm:p-3.5 border-b border-stone-100 flex items-center justify-between">
+        <div className="p-2 sm:p-2.5 border-b border-stone-100 flex items-center justify-between">
           {!isCollapsed ? (
             <div className="flex flex-col">
-              <MisincolLogo size="sm" />
+              <MisincolLogo size="sm" showSubtitle={false} />
             </div>
           ) : (
             <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#8B251E] to-[#E67324] text-white flex items-center justify-center font-black text-xs mx-auto shadow-2xs">
@@ -115,7 +115,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
         </div>
 
         {/* Cuerpo del Sidebar con Scroll */}
-        <div className="flex-1 overflow-y-auto p-2.5 sm:p-3 space-y-3 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-2 sm:p-2.5 space-y-2.5 no-scrollbar">
           {/* Navegación Principal */}
           <div className="space-y-1">
             {!isCollapsed && (
@@ -226,16 +226,16 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
                       onSelectPhase(p.id);
                       if (activeView !== 'plans') onChangeView('plans');
                     }}
-                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                    className={`w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       isPhaseActive
                         ? 'bg-[#8B251E]/10 text-[#8B251E] font-bold'
                         : 'text-stone-700 hover:bg-stone-50 hover:text-stone-900'
                     } ${isCollapsed ? 'justify-center' : ''}`}
                     title={`Fase ${p.step}: ${p.label}`}
                   >
-                    <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="flex items-center gap-1.5 overflow-hidden">
                       <div
-                        className={`w-5 h-5 rounded-md flex items-center justify-center text-xs shrink-0 ${
+                        className={`w-4.5 h-4.5 rounded-md flex items-center justify-center text-xs shrink-0 ${
                           isPhaseActive
                             ? 'bg-[#8B251E] text-white'
                             : 'bg-stone-100 text-stone-500'
@@ -259,7 +259,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
 
                   {/* Sub-lista de Objetivos de la fase activa (#1 al #4) en panel lateral */}
                   {isPhaseActive && !isCollapsed && currentPlan && (
-                    <div className="pl-4 pr-1 py-0.5 space-y-0.5 border-l border-[#8B251E]/20 ml-4 my-0.5">
+                    <div className="pl-2 pr-0.5 py-0.5 space-y-0.5 border-l border-[#8B251E]/20 ml-2 my-0.5">
                       {currentPlan.objectives.map((obj) => {
                         const isObjActive = activeObjectiveNumber === obj.number;
                         const objCompleted = obj.activities.filter((a) => a.state === 'Completado').length;
@@ -271,7 +271,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
                               onSelectObjective(obj.number);
                               if (isOpenMobile) onCloseMobile();
                             }}
-                            className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[11px] transition cursor-pointer text-left ${
+                            className={`w-full flex items-center justify-between px-1.5 py-0.5 rounded-md text-[10px] transition cursor-pointer text-left ${
                               isObjActive
                                 ? 'bg-stone-900 text-white font-bold shadow-2xs'
                                 : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
@@ -300,7 +300,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
 
           {/* 4. Mini Resumen Presupuestal */}
           {!isCollapsed && activeView === 'plans' && (
-            <div className="p-2.5 rounded-lg bg-[#FAF7F2] border border-stone-200/60 text-xs space-y-1.5">
+            <div className="p-2 rounded-lg bg-[#FAF7F2] border border-stone-200/60 text-xs space-y-1">
               <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-wider text-stone-400">
                 <span>Avance de Fase</span>
                 <span className="text-[#8B251E] font-black">{metrics.progressPercentage}%</span>
@@ -311,7 +311,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
                   style={{ width: `${Math.min(100, metrics.progressPercentage)}%` }}
                 />
               </div>
-              <div className="flex items-center justify-between pt-0.5 text-[10px]">
+              <div className="flex items-center justify-between pt-0.5 text-[9px]">
                 <span className="text-stone-400 font-medium">Presupuesto:</span>
                 <span className="font-black text-stone-900 font-['Outfit']">
                   {formatCurrencyCOP(metrics.totalBudget)}
@@ -322,15 +322,15 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
         </div>
 
         {/* Parte Inferior: Botón Generar Informe & Cerrar Sesión */}
-        <div className="p-2.5 sm:p-3 border-t border-stone-100 space-y-1.5">
+        <div className="p-2 border-t border-stone-100 space-y-1">
           {(activeView === 'plans' || isTeamRestricted) && (
             <button
               onClick={() => {
                 onOpenReportModal();
                 if (isOpenMobile) onCloseMobile();
               }}
-              className={`w-full py-2 rounded-lg bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer ${
-                isCollapsed ? 'px-1.5' : 'px-3'
+              className={`w-full py-1.5 rounded-lg bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer ${
+                isCollapsed ? 'px-1' : 'px-2'
               }`}
               title="Generar Informe Ejecutivo PDM"
             >
@@ -343,7 +343,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
             <button
               onClick={onLogout}
               className={`w-full py-1.5 rounded-lg text-stone-500 hover:text-rose-600 hover:bg-rose-50 border border-stone-200/80 transition flex items-center justify-center gap-1.5 text-xs font-semibold cursor-pointer ${
-                isCollapsed ? 'px-1.5' : 'px-3'
+                isCollapsed ? 'px-1' : 'px-2'
               }`}
               title="Cerrar Sesión"
             >
