@@ -15,11 +15,7 @@ interface LoginViewProps {
   allTeams: TeamSupervisionSummary[];
 }
 
-export const LoginView: React.FC<LoginViewProps> = ({
-  onAdminSuccess,
-  onTeamSuccess,
-  allTeams,
-}) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onAdminSuccess, onTeamSuccess, allTeams }) => {
   const form = useLoginForm({ allTeams, onAdminSuccess, onTeamSuccess });
 
   const handleSelectTab = (tab: 'admin' | 'team') => {
@@ -79,16 +75,11 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
             <LoginFormFields
               activeTab={form.activeTab}
-              identifier={form.identifier}
-              setIdentifier={form.setIdentifier}
-              password={form.password}
-              setPassword={form.setPassword}
-              showPassword={form.showPassword}
-              setShowPassword={form.setShowPassword}
-              loading={form.loading}
-              allTeams={allTeams}
-              onTeamSelect={handleTeamSelect}
-              onSubmit={form.handleSubmit}
+              identifier={form.identifier} setIdentifier={form.setIdentifier}
+              password={form.password} setPassword={form.setPassword}
+              showPassword={form.showPassword} setShowPassword={setShowPassword => form.setShowPassword(setShowPassword)}
+              loading={form.loading} allTeams={allTeams}
+              onTeamSelect={handleTeamSelect} onSubmit={form.handleSubmit}
             />
 
             <LoginQuickAccessChips
