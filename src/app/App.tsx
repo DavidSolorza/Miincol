@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { PlanSidebar } from '../modules/plans/ui/PlanSidebar';
+import { MisincolLogo } from '../shared/components/MisincolLogo';
 import { PhaseView } from '../modules/plans/ui/PhaseView';
 import { SuperAdminView } from '../modules/admin/ui/SuperAdminView';
 import { ReportModal } from '../modules/reports/ui/ReportModal';
@@ -12,7 +13,6 @@ import type { MissionaryTeam } from '../modules/auth/domain/auth.types';
 import type { TeamSupervisionSummary } from '../modules/admin/domain/admin.types';
 import {
   Menu,
-  ChevronRight,
   ShieldCheck,
   User,
   ArrowLeft,
@@ -188,6 +188,7 @@ export const App: React.FC = () => {
   }
 
   const isSuperAdmin = session.role === 'admin';
+  const shouldShowSidebar = !isSuperAdmin || activeView === 'plans';
   const themeColor = activeTeam.themeColor || '#8B251E';
   const cleanPhone = (activeTeam.leaderPhone || '').replace(/[^\d]/g, '');
   const whatsappUrl = cleanPhone
@@ -198,31 +199,33 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex font-['Plus_Jakarta_Sans'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E]">
-      {/* 1. Panel Lateral Optimizado (Sidebar) */}
-      <PlanSidebar
-        allPlans={allPlans}
-        activePhaseId={activePhaseId}
-        onSelectPhase={handleSelectPhase}
-        activeObjectiveNumber={activeObjectiveNumber}
-        onSelectObjective={setActiveObjectiveNumber}
-        metrics={metrics}
-        activeTeam={activeTeam}
-        onOpenTeamModal={() => setIsTeamModalOpen(true)}
-        onOpenReportModal={() => setIsReportModalOpen(true)}
-        activeView={activeView}
-        onChangeView={(view) => {
-          if (view === 'superadmin') {
-            setIsAdminPreview(false);
-          }
-          setActiveView(view);
-        }}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        isOpenMobile={isMobileSidebarOpen}
-        onCloseMobile={() => setIsMobileSidebarOpen(false)}
-        userRole={session.role}
-        onLogout={handleLogout}
-      />
+      {/* 1. Panel Lateral Optimizado (Sidebar) - Solo se muestra cuando se está dentro de un equipo */}
+      {shouldShowSidebar && (
+        <PlanSidebar
+          allPlans={allPlans}
+          activePhaseId={activePhaseId}
+          onSelectPhase={handleSelectPhase}
+          activeObjectiveNumber={activeObjectiveNumber}
+          onSelectObjective={setActiveObjectiveNumber}
+          metrics={metrics}
+          activeTeam={activeTeam}
+          onOpenTeamModal={() => setIsTeamModalOpen(true)}
+          onOpenReportModal={() => setIsReportModalOpen(true)}
+          activeView={activeView}
+          onChangeView={(view) => {
+            if (view === 'superadmin') {
+              setIsAdminPreview(false);
+            }
+            setActiveView(view);
+          }}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          isOpenMobile={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          userRole={session.role}
+          onLogout={handleLogout}
+        />
+      )}
 
       {/* 2. Área Principal de Trabajo */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
@@ -266,66 +269,67 @@ export const App: React.FC = () => {
           {/* Barra Superior Minimalista de Usuario y Acceso */}
           <header className="no-print h-12 bg-white/90 backdrop-blur-xs border-b border-stone-200/80 px-4 sm:px-6 flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setIsMobileSidebarOpen(true)}
-                className="lg:hidden p-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-100 transition cursor-pointer"
-              >
-                <Menu className="w-4 h-4" />
-              </button>
+              {shouldShowSidebar ? (
+                <>
+                  <button
+                    onClick={() => setIsMobileSidebarOpen(true)}
+                    className="lg:hidden p-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-100 transition cursor-pointer"
+                  >
+                    <Menu className="w-4 h-4" />
+                  </button>
 
-              <div className="flex items-center gap-2 text-xs text-stone-500">
-                <span className="font-black text-[#8B251E] tracking-wider">MISINCOL</span>
-                <span>•</span>
-                {/* Selector de Equipo Rápido Estilizado */}
-                {isSuperAdmin && activeView === 'plans' ? (
-                  <TeamSelectDropdown
-                    teams={mappedTeams}
-                    activeTeamId={activeTeamId}
-                    onSelectTeam={(teamId) => {
-                      setActiveTeamId(teamId);
-                      setActiveObjectiveNumber(1);
-                    }}
-                  />
-                ) : (
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: themeColor }}
-                    />
-                    <span className="text-stone-700 font-semibold truncate max-w-[200px] sm:max-w-none">
-                      {activeView === 'superadmin' ? 'Supervisión Nacional' : activeTeam.name}
-                    </span>
+                  <div className="flex items-center gap-2 text-xs text-stone-500">
+                    <span className="font-black text-[#8B251E] tracking-wider">MISINCOL</span>
+                    <span>•</span>
+                    {/* Selector de Equipo Rápido Estilizado */}
+                    {isSuperAdmin && activeView === 'plans' ? (
+                      <TeamSelectDropdown
+                        teams={mappedTeams}
+                        activeTeamId={activeTeamId}
+                        onSelectTeam={(teamId) => {
+                          setActiveTeamId(teamId);
+                          setActiveObjectiveNumber(1);
+                        }}
+                      />
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: themeColor }}
+                        />
+                        <span className="text-stone-700 font-semibold truncate max-w-[200px] sm:max-w-none">
+                          {activeTeam.name}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-2.5">
+                  <MisincolLogo size="sm" showSubtitle={false} className="shrink-0" />
+                  <span className="text-stone-300 font-light">•</span>
+                  <div className="flex items-center gap-1.5 text-xs text-stone-700 font-bold">
+                    <ShieldCheck className="w-4 h-4 text-[#E67324]" />
+                    <span>Supervisión Nacional</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Perfil de Usuario Sesión y Toggle Rápido a Super Admin */}
             <div className="flex items-center gap-2.5">
-              {isSuperAdmin && (
-                <>
-                  {activeView !== 'superadmin' ? (
-                    <button
-                      onClick={() => {
-                        setIsAdminPreview(false);
-                        setActiveView('superadmin');
-                      }}
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-2xs cursor-pointer"
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
-                      <span className="hidden sm:inline">Super Admin</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setActiveView('plans')}
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-white text-xs font-bold transition shadow-2xs cursor-pointer"
-                      style={{ backgroundColor: themeColor }}
-                    >
-                      <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                      <span>Ver Plan PDM</span>
-                    </button>
-                  )}
-                </>
+              {isSuperAdmin && activeView !== 'superadmin' && (
+                <button
+                  onClick={() => {
+                    setIsAdminPreview(false);
+                    setActiveView('superadmin');
+                  }}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-2xs cursor-pointer"
+                  title="Volver al panel general de supervisión"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
+                  <span className="hidden sm:inline">Super Admin</span>
+                </button>
               )}
 
               <div className="flex items-center gap-2 pl-2 border-l border-stone-200">
