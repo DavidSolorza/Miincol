@@ -37,66 +37,58 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
   });
 
   return (
-    <div className="bg-white/90 backdrop-blur-xs rounded-2xl border border-stone-200/80 shadow-xs overflow-hidden">
+    <div className="bg-white rounded-xl border border-stone-200/80 shadow-2xs overflow-hidden">
       {/* Cabecera Despejada del Objetivo */}
-      <div className="p-5 sm:p-6 border-b border-stone-100">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+      <div className="p-3.5 sm:p-4.5 border-b border-stone-100">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#8B251E] bg-[#8B251E]/10 px-2 py-0.5 rounded-md">
+              <span className="text-[10px] font-bold text-[#8B251E] bg-[#8B251E]/10 px-2 py-0.5 rounded-md">
                 Objetivo #{objective.number}
               </span>
-              <span className="text-xs text-stone-400">
-                {completedCount} de {objective.activities.length} completadas
+              <span className="text-[11px] text-stone-400">
+                {completedCount} de {objective.activities.length} listas
               </span>
               {onEditObjective && (
                 <button
                   onClick={() => onEditObjective(objective)}
-                  className="ml-1 px-2 py-0.5 rounded-md text-[11px] font-semibold text-stone-500 hover:text-[#8B251E] hover:bg-[#8B251E]/10 transition flex items-center gap-1 cursor-pointer"
-                  title="Editar título y descripción del objetivo"
+                  className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-semibold text-stone-400 hover:text-[#8B251E] hover:bg-[#8B251E]/10 transition flex items-center gap-1 cursor-pointer"
+                  title="Editar objetivo"
                 >
-                  <Pencil className="w-3 h-3" />
-                  <span>Editar Objetivo</span>
+                  <Pencil className="w-2.5 h-2.5" />
+                  <span>Editar</span>
                 </button>
               )}
             </div>
 
-            <h2 className="text-lg sm:text-xl font-black text-stone-900 mt-1 font-['Outfit']">
+            <h2 className="text-base sm:text-lg font-black text-stone-900 mt-1 font-['Outfit']">
               {objective.title}
             </h2>
-            <p className="text-xs sm:text-sm text-stone-500 mt-0.5 leading-relaxed max-w-3xl">
+            <p className="text-xs text-stone-500 mt-0.5 leading-relaxed max-w-2xl">
               {objective.description}
             </p>
           </div>
 
-          {/* Subtotal del Objetivo y Botón de Acción */}
-          <div className="flex items-center gap-3 shrink-0 self-start md:self-center">
+          {/* Subtotal del Objetivo */}
+          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-center">
             <div className="text-right">
-              <span className="text-[10px] uppercase font-bold text-stone-400 block tracking-wider">
+              <span className="text-[9px] uppercase font-bold text-stone-400 block tracking-wider leading-none">
                 Presupuesto Objetivo
               </span>
-              <span className="text-sm sm:text-base font-black text-[#8B251E] font-['Outfit']">
+              <span className="text-sm sm:text-base font-black text-[#8B251E] font-['Outfit'] mt-0.5 block">
                 {formatCurrencyCOP(totalObjectiveBudget)}
               </span>
             </div>
-
-            <button
-              onClick={() => onOpenAddModal(objective.number)}
-              className="bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Nueva Actividad</span>
-            </button>
           </div>
         </div>
 
-        {/* Barra de Filtros y Búsqueda Despejada */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-4 pt-3.5 border-t border-stone-100">
+        {/* Barra de Filtros y Búsqueda en 1 Sola Línea */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 mt-3 pt-3 border-t border-stone-100">
           {/* Tabs mínimos de estado */}
           <div className="flex items-center gap-1 text-xs font-semibold overflow-x-auto no-scrollbar">
             <button
               onClick={() => setFilterState('ALL')}
-              className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] transition whitespace-nowrap cursor-pointer ${
                 filterState === 'ALL'
                   ? 'bg-stone-900 text-white font-bold shadow-2xs'
                   : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100'
@@ -106,7 +98,7 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
             </button>
             <button
               onClick={() => setFilterState('Pendiente')}
-              className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] transition whitespace-nowrap cursor-pointer ${
                 filterState === 'Pendiente'
                   ? 'bg-amber-100 text-amber-900 font-bold'
                   : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100'
@@ -116,7 +108,7 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
             </button>
             <button
               onClick={() => setFilterState('En Proceso')}
-              className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] transition whitespace-nowrap cursor-pointer ${
                 filterState === 'En Proceso'
                   ? 'bg-orange-100 text-[#8B251E] font-bold'
                   : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100'
@@ -126,7 +118,7 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
             </button>
             <button
               onClick={() => setFilterState('Completado')}
-              className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] transition whitespace-nowrap cursor-pointer ${
                 filterState === 'Completado'
                   ? 'bg-emerald-100 text-emerald-900 font-bold'
                   : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100'
@@ -137,14 +129,14 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = ({
           </div>
 
           {/* Campo de búsqueda ligero */}
-          <div className="relative w-full sm:w-60">
-            <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full sm:w-52">
+            <Search className="w-3 h-3 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar iniciativa..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 bg-stone-50/60 placeholder:text-stone-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#8B251E]/20 transition"
+              className="w-full pl-7 pr-3 py-1 text-xs rounded-lg border border-stone-200 bg-stone-50/60 placeholder:text-stone-400 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-[#8B251E] transition"
             />
           </div>
         </div>

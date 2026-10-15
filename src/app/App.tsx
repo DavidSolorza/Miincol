@@ -250,107 +250,133 @@ export const App: React.FC = () => {
 
       {/* 2. Área Principal de Trabajo */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-        {/* Banner Superior: Modo Vista Previa Administrador (Inspirado en PortalClientes) */}
-        {isAdminPreview && (
-          <div className="no-print bg-amber-50 border-b border-amber-200/90 px-4 sm:px-6 py-2.5 flex items-center justify-between text-xs text-amber-900 sticky top-0 z-40 shadow-xs backdrop-blur-xs">
-            <div className="flex items-center gap-2 font-medium">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-              <span>
-                <strong>Modo Vista Previa Administrador</strong>
-              </span>
-              <span className="text-amber-700 hidden md:inline">
-                • Supervisando espacio y plan de: <strong>{activeTeam.name}</strong> ({activeTeam.ethnicity})
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {whatsappUrl && (
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold transition text-[11px]"
-                >
-                  <MessageCircle className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>WhatsApp Líder</span>
-                </a>
-              )}
-              <button
-                onClick={handleBackToAdmin}
-                className="px-3.5 py-1 rounded-xl bg-amber-200/90 hover:bg-amber-300 text-amber-950 font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Volver al Tablero Admin</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Barra Superior Minimalista de Usuario y Acceso */}
-        <header className="no-print h-14 bg-white/70 backdrop-blur-xs border-b border-stone-200/80 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsMobileSidebarOpen(true)}
-              className="lg:hidden p-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-100 transition cursor-pointer"
-            >
-              <Menu className="w-4 h-4" />
-            </button>
-
-            <div className="hidden sm:flex items-center gap-2 text-xs text-stone-500">
-              <span className="font-bold text-[#8B251E]">MISINCOL</span>
-              <span>•</span>
-              <div className="flex items-center gap-1.5">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: themeColor }}
-                />
-                <span className="text-stone-700 font-medium">
-                  {activeView === 'superadmin' ? 'Tablero de Supervisión Nacional' : activeTeam.name}
+        <div className="sticky top-0 z-30">
+          {/* Banner Superior: Modo Vista Previa Administrador (Inspirado en PortalClientes) */}
+          {isAdminPreview && (
+            <div className="no-print bg-amber-50/95 border-b border-amber-200 px-4 sm:px-6 py-1.5 flex items-center justify-between text-xs text-amber-900 shadow-2xs">
+              <div className="flex items-center gap-2 font-medium">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                <span>
+                  <strong>Modo Vista Previa</strong>
+                </span>
+                <span className="text-amber-700 hidden md:inline">
+                  • Supervisando: <strong>{activeTeam.name}</strong> ({activeTeam.ethnicity})
                 </span>
               </div>
-            </div>
-          </div>
 
-          {/* Perfil de Usuario Sesión y Toggle Rápido a Super Admin */}
-          <div className="flex items-center gap-3">
-            {isSuperAdmin && (
-              <>
-                {activeView !== 'superadmin' ? (
-                  <button
-                    onClick={() => {
-                      setIsAdminPreview(false);
-                      setActiveView('superadmin');
-                    }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-xs cursor-pointer"
+              <div className="flex items-center gap-2">
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold transition text-[11px]"
                   >
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
-                    <span className="hidden sm:inline">Modo Super Admin</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setActiveView('plans')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white text-xs font-bold transition shadow-xs cursor-pointer"
-                    style={{ backgroundColor: themeColor }}
-                  >
-                    <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                    <span>Volver a Plan PDM</span>
-                  </button>
+                    <MessageCircle className="w-3 h-3 text-emerald-700" />
+                    <span>WhatsApp</span>
+                  </a>
                 )}
-              </>
-            )}
-
-            <div className="flex items-center gap-2 pl-2 border-l border-stone-200">
-              <div
-                className="w-7 h-7 rounded-full text-white flex items-center justify-center font-bold text-xs shadow-2xs"
-                style={{ backgroundColor: themeColor }}
-              >
-                <User className="w-3.5 h-3.5" />
+                <button
+                  onClick={handleBackToAdmin}
+                  className="px-2.5 py-0.5 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold transition flex items-center gap-1 cursor-pointer text-xs"
+                >
+                  <ArrowLeft className="w-3 h-3" />
+                  <span>Volver a Supervisión</span>
+                </button>
               </div>
+            </div>
+          )}
+
+          {/* Barra Superior Minimalista de Usuario y Acceso */}
+          <header className="no-print h-12 bg-white/90 backdrop-blur-xs border-b border-stone-200/80 px-4 sm:px-6 flex items-center justify-between shadow-2xs">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileSidebarOpen(true)}
+                className="lg:hidden p-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-100 transition cursor-pointer"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-2 text-xs text-stone-500">
+                <span className="font-black text-[#8B251E] tracking-wider">MISINCOL</span>
+                <span>•</span>
+                {/* Selector de Equipo Rápido (1 clic para cambiar de equipo) */}
+                {isSuperAdmin && activeView === 'plans' ? (
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ backgroundColor: themeColor }}
+                    />
+                    <select
+                      value={activeTeamId}
+                      onChange={(e) => {
+                        setActiveTeamId(e.target.value);
+                        setActiveObjectiveNumber(1);
+                      }}
+                      className="font-bold text-xs text-stone-800 bg-transparent border-none cursor-pointer focus:outline-hidden hover:text-[#8B251E] transition"
+                      title="Cambiar de misión territorial en 1 clic"
+                    >
+                      {allTeams.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.ethnicity}: {t.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: themeColor }}
+                    />
+                    <span className="text-stone-700 font-semibold truncate max-w-[200px] sm:max-w-none">
+                      {activeView === 'superadmin' ? 'Supervisión Nacional' : activeTeam.name}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Perfil de Usuario Sesión y Toggle Rápido a Super Admin */}
+            <div className="flex items-center gap-2.5">
+              {isSuperAdmin && (
+                <>
+                  {activeView !== 'superadmin' ? (
+                    <button
+                      onClick={() => {
+                        setIsAdminPreview(false);
+                        setActiveView('superadmin');
+                      }}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-2xs cursor-pointer"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#E67324]" />
+                      <span className="hidden sm:inline">Super Admin</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setActiveView('plans')}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-white text-xs font-bold transition shadow-2xs cursor-pointer"
+                      style={{ backgroundColor: themeColor }}
+                    >
+                      <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+                      <span>Ver Plan PDM</span>
+                    </button>
+                  )}
+                </>
+              )}
+
+              <div className="flex items-center gap-2 pl-2 border-l border-stone-200">
+                <div
+                  className="w-6 h-6 rounded-full text-white flex items-center justify-center font-bold text-[10px] shadow-2xs shrink-0"
+                  style={{ backgroundColor: themeColor }}
+                >
+                  <User className="w-3 h-3" />
+                </div>
               <div className="hidden md:flex flex-col text-left text-xs">
                 <span className="font-bold text-stone-800 leading-none">
                   {session.userName}
                 </span>
-                <span className="text-[10px] text-stone-400 mt-0.5">
+                <span className="text-[9px] text-stone-400 mt-0.5">
                   {isSuperAdmin ? 'Super Administrador' : `Misión ${activeTeam.ethnicity}`}
                 </span>
               </div>
@@ -358,17 +384,18 @@ export const App: React.FC = () => {
               {/* Botón Salir / Cerrar Sesión */}
               <button
                 onClick={handleLogout}
-                className="p-1.5 ml-1 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                className="p-1 ml-0.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
                 title="Cerrar Sesión"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         </header>
+        </div>
 
         {/* Contenido Dinámico Principal */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-5 lg:p-6 max-w-7xl w-full mx-auto">
           {activeView === 'superadmin' && isSuperAdmin ? (
             /* Vista 1: Super Admin / Supervisión Nacional de Todos los Equipos */
             <SuperAdminView
@@ -378,53 +405,40 @@ export const App: React.FC = () => {
             />
           ) : activeView === 'plans' ? (
             /* Vista 2: Plan de Desarrollo Ministerial del Equipo Activo */
-            <div className="space-y-4">
-              {/* Identidad del Equipo Activo con Color Temático */}
-              <div
-                className="p-4 rounded-2xl border bg-white shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-                style={{ borderColor: `${themeColor}40` }}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-10 h-10 rounded-xl text-white font-black text-sm flex items-center justify-center shadow-xs"
+            <div className="space-y-3">
+              {/* Barra de Identidad del Equipo Activo Compacta */}
+              <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md text-white shadow-2xs"
                     style={{ backgroundColor: themeColor }}
                   >
-                    {activeTeam.ethnicity ? activeTeam.ethnicity.charAt(0).toUpperCase() : 'M'}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="text-[10px] font-black uppercase tracking-wider px-2 py-0.2 rounded-md text-white shadow-2xs"
-                        style={{ backgroundColor: themeColor }}
-                      >
-                        {activeTeam.ethnicity}
-                      </span>
-                      <span className="text-xs text-stone-500">{activeTeam.region}</span>
-                    </div>
-                    <h2 className="text-lg font-black text-stone-900 mt-0.5 font-['Outfit']">
-                      {activeTeam.name}
-                    </h2>
-                  </div>
+                    {activeTeam.ethnicity}
+                  </span>
+                  <span className="font-black text-stone-900 text-base font-['Outfit']">
+                    {activeTeam.name}
+                  </span>
+                  <span className="text-stone-400 hidden sm:inline">• {activeTeam.region}</span>
                 </div>
 
-                <div className="flex items-center gap-2 self-start sm:self-auto">
+                <div className="flex items-center gap-2">
                   {whatsappUrl && (
                     <a
                       href={whatsappUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition"
                     >
-                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <MessageCircle className="w-3 h-3 text-emerald-600" />
                       <span>Contactar Líder</span>
                     </a>
                   )}
                   {isSuperAdmin && (
                     <button
                       onClick={() => setIsTeamModalOpen(true)}
-                      className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition cursor-pointer"
                     >
-                      Cambiar Equipo
+                      Editar Equipo
                     </button>
                   )}
                 </div>
