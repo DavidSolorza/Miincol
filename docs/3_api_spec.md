@@ -332,3 +332,73 @@ Esta especificación define los contratos rigurosos de la API RESTful para la ad
   "timestamp": "2026-10-14T03:00:00Z"
 }
 ```
+
+---
+
+## 4. Endpoints de Autenticación y Verificación de Credenciales (`/api/v1/auth`)
+
+### 4.1. Iniciar Sesión (Equipos Territoriales o Super Administrador)
+- **Ruta:** `POST /api/v1/auth/login`
+- **Headers:** `Content-Type: application/json`
+- **Payload de Entrada (JSON) - Caso Administrador:**
+```json
+{
+  "identifier": "admin",
+  "password": "••••••••••••",
+  "role": "admin"
+}
+```
+
+- **Payload de Entrada (JSON) - Caso Equipo Territorial:**
+```json
+{
+  "identifier": "team-wayuu",
+  "password": "••••••••",
+  "role": "team"
+}
+```
+
+#### Matriz Estricta de Respuestas y Errores
+- **`200 OK` (Autenticación Exitosa Administrador):**
+```json
+{
+  "success": true,
+  "role": "admin",
+  "userName": "Super Administrador",
+  "token": "simulated_secure_jwt_adm_2026",
+  "message": "Acceso concedido al Tablero de Supervisión Nacional."
+}
+```
+
+- **`200 OK` (Autenticación Exitosa Misión Territorial):**
+```json
+{
+  "success": true,
+  "role": "team",
+  "teamId": "team-wayuu",
+  "userName": "Pr. David Morales",
+  "token": "simulated_secure_jwt_team_wayuu_2026",
+  "message": "Acceso concedido al PDM de Misión Wayuu."
+}
+```
+
+- **`400 Bad Request` (Credenciales Inválidas o Equipo no Encontrado):**
+```json
+{
+  "error": "INVALID_CREDENTIALS",
+  "message": "Contraseña de acceso incorrecta para el usuario o equipo indicado.",
+  "timestamp": "2026-10-15T14:00:00Z"
+}
+```
+
+- **`422 Unprocessable Entity` (Validación de Campos Requeridos):**
+```json
+{
+  "error": "VALIDATION_FAILED",
+  "message": "Los campos 'identifier' y 'password' son obligatorios para autenticar.",
+  "details": [
+    { "field": "password", "issue": "La contraseña no puede estar vacía." }
+  ]
+}
+```
+

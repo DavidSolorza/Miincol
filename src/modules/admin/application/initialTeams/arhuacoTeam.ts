@@ -1,0 +1,48 @@
+import type { TeamSupervisionSummary } from '../../domain/admin.types';
+
+export const arhuacoTeam: TeamSupervisionSummary = {
+  id: 'team-arhuaco',
+  slug: 'team-arhuaco',
+  name: 'Misión Iku - Sierra Nevada',
+  ethnicity: 'Arhuaco (Iku)',
+  region: 'Nabusímake y cuenca río San Sebastián',
+  department: 'Cesar / Magdalena (Caribe)',
+  leader: 'Pr. Eliécer Torres',
+  leaderPhone: '+57 311 905 3280',
+  membersCount: 3,
+  members: ['Eliécer Torres', 'Misael Izquierdo', 'Lucía Villafaña'],
+  currentPhaseId: 'investigacion',
+  currentPhaseName: '1. Investigación',
+  progressPercentage: 33,
+  totalBudget: 12500000,
+  executedBudget: 4125000,
+  totalActivities: 5,
+  completedActivities: 1,
+  inProgressActivities: 3,
+  pendingActivities: 1,
+  themeColor: '#D97706',
+  accessPin: 'arhuaco2026',
+  activeInitiatives: [
+    {
+      title: 'Diálogo con autoridades tradicionales y Mamos de la Sierra',
+      responsible: 'Eliécer Torres',
+      state: 'En Proceso',
+      objectiveNumber: 1,
+      stage: 'Diálogo Ancestral',
+    },
+    {
+      title: 'Glosario de conceptos de espiritualidad en lengua Iku',
+      responsible: 'Misael Izquierdo',
+      state: 'En Proceso',
+      objectiveNumber: 2,
+      stage: 'Traducción Bíblica',
+    },
+  ],
+  criticalAlert: {
+    type: 'Institucional',
+    message: 'Pendiente asamblea general de cabildo gobernador para aval de permanencia médica.',
+    reportedAt: 'Hace 3 días',
+  },
+  healthStatus: 'Atención',
+  lastUpdate: 'Hace 2 días',
+};
