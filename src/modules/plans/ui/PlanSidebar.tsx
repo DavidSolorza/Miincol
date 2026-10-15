@@ -21,8 +21,8 @@ interface PlanSidebarProps {
   allPlans: Record<string, PhasePlan>;
   activePhaseId: PhaseType;
   onSelectPhase: (phaseId: PhaseType) => void;
-  activeObjectiveNumber: number;
-  onSelectObjective: (objNum: number) => void;
+  activeObjectiveNumber?: number;
+  onSelectObjective?: (objNum: number) => void;
   metrics: PlanMetrics;
   activeTeam: MissionaryTeam;
   onOpenTeamModal?: () => void;
@@ -49,8 +49,6 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
   allPlans,
   activePhaseId,
   onSelectPhase,
-  activeObjectiveNumber,
-  onSelectObjective,
   metrics,
   activeTeam,
   onOpenReportModal,
@@ -63,7 +61,6 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
   userRole = 'admin',
   onLogout,
 }) => {
-  const currentPlan = allPlans[activePhaseId];
   const isTeamRestricted = userRole === 'team';
 
   return (
@@ -256,42 +253,6 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
                       </span>
                     )}
                   </button>
-
-                  {/* Sub-lista de Objetivos de la fase activa (#1 al #4) en panel lateral */}
-                  {isPhaseActive && !isCollapsed && currentPlan && (
-                    <div className="pl-2 pr-0.5 py-0.5 space-y-0.5 border-l border-[#8B251E]/20 ml-2 my-0.5">
-                      {currentPlan.objectives.map((obj) => {
-                        const isObjActive = activeObjectiveNumber === obj.number;
-                        const objCompleted = obj.activities.filter((a) => a.state === 'Completado').length;
-
-                        return (
-                          <button
-                            key={obj.number}
-                            onClick={() => {
-                              onSelectObjective(obj.number);
-                              if (isOpenMobile) onCloseMobile();
-                            }}
-                            className={`w-full flex items-center justify-between px-1.5 py-0.5 rounded-md text-[10px] transition cursor-pointer text-left ${
-                              isObjActive
-                                ? 'bg-stone-900 text-white font-bold shadow-2xs'
-                                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-                            }`}
-                          >
-                            <span className="truncate text-[10px]">
-                              Obj #{obj.number}: {obj.title}
-                            </span>
-                            <span
-                              className={`text-[8px] font-bold px-1 py-0.2 rounded ml-1 shrink-0 ${
-                                isObjActive ? 'bg-white/20 text-white' : 'text-stone-400'
-                              }`}
-                            >
-                              {objCompleted}/{obj.activities.length}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
                 </div>
               );
             })}
