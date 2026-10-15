@@ -1,0 +1,48 @@
+import type { TeamSupervisionSummary } from '../../domain/admin.types';
+
+export const nukakTeam: TeamSupervisionSummary = {
+  id: 'team-nukak',
+  slug: 'team-nukak',
+  name: 'Misión Nukak Makú - Selva de Guaviare',
+  ethnicity: 'Nukak',
+  region: 'Charras, Caño Regente y El Retorno',
+  department: 'Guaviare (Amazonía)',
+  leader: 'Pr. Samuel Caicedo',
+  leaderPhone: '+57 318 722 0945',
+  membersCount: 4,
+  members: ['Samuel Caicedo', 'Dra. Elena Cruz', 'Mateo Beltrán', 'Yamid Peñaloza'],
+  currentPhaseId: 'encarnacion',
+  currentPhaseName: '2. Encarnación',
+  progressPercentage: 20,
+  totalBudget: 21000000,
+  executedBudget: 4200000,
+  totalActivities: 6,
+  completedActivities: 1,
+  inProgressActivities: 2,
+  pendingActivities: 3,
+  themeColor: '#0D9488',
+  accessPin: 'nukak2026',
+  activeInitiatives: [
+    {
+      title: 'Acompañamiento en brigadas de vacunación y bioseguridad',
+      responsible: 'Samuel Caicedo & Dra. Elena Cruz',
+      state: 'En Proceso',
+      objectiveNumber: 1,
+      stage: 'Salud Preventiva',
+    },
+    {
+      title: 'Primeros registros de comunicación básica no invasiva',
+      responsible: 'Mateo Beltrán',
+      state: 'En Proceso',
+      objectiveNumber: 2,
+      stage: 'Contacto Inicial',
+    },
+  ],
+  criticalAlert: {
+    type: 'Seguridad',
+    message: 'Alta vulnerabilidad inmunológica y presencia de actores irregulares en ríos aledaños.',
+    reportedAt: 'Urgente - Ayer',
+  },
+  healthStatus: 'Crítico',
+  lastUpdate: 'Hoy, 07:15 AM',
+};

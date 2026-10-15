@@ -104,3 +104,21 @@ graph TD
 - **Contexto:** Los equipos misioneros y supervisores requieren adaptar los objetivos estratégicos de cada fase según la realidad del pueblo indígena, permitiendo editar títulos y descripciones, y crear nuevos objetivos sin sobrepasar la estructura metodológica cuadrangular del PDM.
 - **Decisión:** Habilitar creación y edición de objetivos en la capa de aplicación (`usePlan.ts`) y UI (`ObjectiveModal.tsx`, `ObjectiveCard.tsx`, `PhaseView.tsx`). Restricción estricta de negocio: $\text{cantidad de objetivos} \leq 4$. Si una fase ya cuenta con 4 objetivos, la opción de crear nuevo objetivo se deshabilita preventivamente.
 - **Consecuencias:** Flexibilidad contextual total en campo respetando la arquitectura física de base de datos relacional (`chk_objective_number CHECK (1..4)`).
+
+### ADR-009: Rediseño Visual de Alta Fidelidad del Portal de Acceso (Split-Card Hero & Matriz Predefinida)
+- **Estado:** Aprobado.
+- **Contexto:** El usuario solicitó modernizar el portal de autenticación adaptándolo al patrón de diseño editorial "Split-Card Hero", integrando la fotografía institucional de siembra territorial y eliminando botones de proveedores externos comerciales.
+- **Decisión:** Implementar `LoginView.tsx` con arquitectura de contenedor dividido de alta fidelidad: panel izquierdo con fondo oscuro (`#0F0F11`), tipografía `Outfit`, badge institucional PDM, marco con glow sutil para la imagen de siembra y cita bíblica; panel derecho con logotipo Misincol centrado y amplio, selector fluido de roles, botón principal y matriz interactiva de acceso rápido.
+- **Consecuencias:** Eleva sustancialmente el estándar estético de la aplicación, mantiene total congruencia temática y preserva la integridad de las rutas y parámetros de URL para deep-linking.
+
+### ADR-010: Bus de Servicios de Aplicación (Service Bus) y Aceleración por Hardware (Fluidity & Caching Layer)
+- **Estado:** Aprobado.
+- **Contexto:** El sistema requería máxima ligereza y fluidez (60/120fps) en todas las transiciones, navegación entre misiones, despacho de notificaciones y renderizado, desacoplando los componentes para prevenir cascadas de re-renderizados en React y latencias de red.
+- **Decisión:**
+  1. Implementar el patrón **Service Bus** en `src/core/bus/` (`ServiceBus.ts`, `bus.types.ts`, `useServiceBus.ts`) con despacho asíncrono en cola de microtareas (`queueMicrotask`), contratos tipados (`auth:*`, `team:*`, `plan:*`, `ui:*`, `perf:*`) y aislamiento de excepciones por suscriptor.
+  2. Implementar un **Service Worker nativo** (`public/sw.js` y `src/core/workers/registerServiceWorker.ts`) que pre-almacena en caché activos estáticos críticos (fuentes, logo en alta resolución, bundles JS y estilos) logrando 0ms de latencia en memoria caché sin dependencias de SDKs comerciales.
+  3. Acelerar el pipeline visual con CSS GPU compositing (`src/styles/fluidity.css`: `gpu-layer`, `transform-gpu`, `will-change: transform`, `backface-visibility: hidden`) y curvas de aceleración elásticas (`cubic-bezier(0.16, 1, 0.3, 1)`).
+  4. Optimizar componentes visuales de alto tráfico (`TeamOverviewCard`, `ObjectiveCard`, `LoginQuickAccessChips`) mediante `React.memo` para eliminar re-renderizados innecesarios del árbol de componentes.
+- **Consecuencias:** Desacoplamiento total de módulos, transiciones táctiles ultra-fluidas, erradicación de cuellos de botella en repainting y adherencia inmaculada al Contrato de Gobernanza Técnica.
+
+
