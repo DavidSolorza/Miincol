@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../../../shared/components/Modal';
-import type { TeamSupervisionSummary, CreateTeamDto, TeamHealthStatus } from '../domain/admin.types';
-import type { PhaseType } from '../../plans/domain/plan.types';
+import type { TeamSupervisionSummary, CreateTeamDto } from '../domain/admin.types';
 import { Check, AlertCircle, Palette, Sparkles, Key, Eye, EyeOff } from 'lucide-react';
 
 interface TeamModalProps {
@@ -20,14 +19,6 @@ const COLOR_PRESETS = [
   '#D97706', // Oro Cálido
   '#0D9488', // Verde Azulado
   '#E11D48', // Carmesí Fuego
-];
-
-const PHASES: { id: PhaseType; name: string }[] = [
-  { id: 'investigacion', name: '1. Investigación y Diagnóstico' },
-  { id: 'encarnacion', name: '2. Encarnación e Inmersión' },
-  { id: 'evangelizacion', name: '3. Evangelización Contextualizada' },
-  { id: 'entrenamiento', name: '4. Entrenamiento y Discipulado' },
-  { id: 'autocuidado', name: '5. Autocuidado y Sostenibilidad' },
 ];
 
 export const TeamModal: React.FC<TeamModalProps> = ({
@@ -176,7 +167,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={initialData ? 'Configuración de Misión Territorial' : 'Aprovisionar Nuevo Equipo / Misión'}
-      subtitle="Organice las variables de campo, líder asignado, presupuesto y color identitario del equipo"
+      subtitle="Organice las variables de campo, líder asignado, credenciales de acceso y color identitario"
       maxWidth="2xl"
     >
       {error && (
@@ -352,62 +343,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
           </p>
         </div>
 
-        {/* 4. Fase Ministerial, Presupuesto y Estado */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2 border-t border-stone-100">
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">
-              Fase Actual PDM
-            </label>
-            <select
-              value={formData.currentPhaseId}
-              onChange={(e) =>
-                setFormData({ ...formData, currentPhaseId: e.target.value as PhaseType })
-              }
-              className="w-full px-3 py-2 rounded-xl text-xs border border-stone-200 bg-stone-50 focus:bg-white text-stone-800 font-medium cursor-pointer"
-            >
-              {PHASES.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">
-              Presupuesto Fase (COP)
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="500000"
-              value={formData.totalBudget}
-              onChange={(e) =>
-                setFormData({ ...formData, totalBudget: Number(e.target.value) || 0 })
-              }
-              className="w-full px-3.5 py-2 rounded-xl text-xs border border-stone-200 bg-stone-50 focus:bg-white text-stone-900 font-mono transition"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-stone-700 mb-1">
-              Estado de Salud Operativa
-            </label>
-            <select
-              value={formData.healthStatus}
-              onChange={(e) =>
-                setFormData({ ...formData, healthStatus: e.target.value as TeamHealthStatus })
-              }
-              className="w-full px-3 py-2 rounded-xl text-xs border border-stone-200 bg-stone-50 focus:bg-white text-stone-800 font-medium cursor-pointer"
-            >
-              <option value="Optimo">Operación Estable (Óptimo)</option>
-              <option value="Atención">Requiere Atención</option>
-              <option value="Crítico">Alerta Crítica</option>
-            </select>
-          </div>
-        </div>
-
-        {/* 5. Selector de Color Temático Identitario */}
+        {/* 4. Selector de Color Temático Identitario */}
         <div className="pt-2 border-t border-stone-100">
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-bold text-stone-700 flex items-center gap-1.5">
@@ -448,39 +384,6 @@ export const TeamModal: React.FC<TeamModalProps> = ({
               />
               <span className="text-[10px] text-stone-400">Personalizado</span>
             </div>
-          </div>
-        </div>
-
-        {/* 6. Alerta Territorial Opcional */}
-        <div className="pt-2 border-t border-stone-100 space-y-2">
-          <label className="block text-xs font-bold text-stone-700">
-            Alerta Territorial Opcional (Si existe contingencia activa en terreno)
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <select
-              value={formData.criticalAlertType}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  criticalAlertType: e.target.value as CreateTeamDto['criticalAlertType'],
-                })
-              }
-              className="p-2 rounded-xl text-xs border border-stone-200 bg-stone-50 text-stone-800"
-            >
-              <option value="Salud">Salud Comunitaria</option>
-              <option value="Logística">Logística / Vías</option>
-              <option value="Seguridad">Seguridad Territorial</option>
-              <option value="Institucional">Aval Institucional / Cabildo</option>
-            </select>
-            <input
-              type="text"
-              value={formData.criticalAlertMessage}
-              onChange={(e) =>
-                setFormData({ ...formData, criticalAlertMessage: e.target.value })
-              }
-              placeholder="Describa brevemente la contingencia..."
-              className="sm:col-span-2 px-3 py-2 rounded-xl text-xs border border-stone-200 bg-stone-50 placeholder:text-stone-400"
-            />
           </div>
         </div>
 
