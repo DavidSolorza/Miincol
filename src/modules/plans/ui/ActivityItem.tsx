@@ -59,18 +59,18 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200/90 hover:border-stone-300 hover:shadow-xs transition-all duration-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-stone-200/80 hover:border-stone-300 hover:shadow-2xs transition-all duration-200 overflow-hidden">
       {/* Cabecera y Contenido Principal de la Actividad */}
-      <div className="p-4 sm:p-5 space-y-3">
-        {/* Fila 1: Tags Superiores (Etapa, Frecuencia, Presupuesto y Estado) */}
-        <div className="flex flex-wrap items-center justify-between gap-2.5">
-          <div className="flex items-center gap-2 flex-wrap">
+      <div className="p-3.5 sm:p-4 space-y-2.5">
+        {/* Fila 1: Tags Superiores (Estado, Etapa, Frecuencia y Presupuesto) */}
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {/* Estado interactivo con select limpio */}
             <div className="relative">
               <select
                 value={activity.state}
                 onChange={(e) => onUpdate(activity.id, { state: e.target.value as ActivityState })}
-                className={`text-xs font-bold py-1 pl-3 pr-6 rounded-full border transition cursor-pointer appearance-none ${
+                className={`text-[11px] font-bold py-0.5 pl-2.5 pr-5 rounded-full border transition cursor-pointer appearance-none ${
                   stateStyles[activity.state].selectBg
                 }`}
               >
@@ -78,26 +78,26 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
                 <option value="En Proceso">🔄 En Proceso</option>
                 <option value="Completado">✅ Completado</option>
               </select>
-              <ChevronDown className="w-3 h-3 text-stone-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <ChevronDown className="w-2.5 h-2.5 text-stone-400 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
 
             {/* Etapa */}
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-stone-600 bg-stone-100 px-2.5 py-0.5 rounded-full">
-              <Layers className="w-3 h-3 text-[#E67324]" />
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-full">
+              <Layers className="w-2.5 h-2.5 text-[#E67324]" />
               {activity.stage || 'General'}
             </span>
 
             {/* Frecuencia */}
-            <span className="text-[11px] font-medium text-stone-500">
+            <span className="text-[10px] font-medium text-stone-400">
               • {activity.frequency}
             </span>
           </div>
 
           {/* Presupuesto Total Anual y Acciones Rápidas */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {isEditingBudget ? (
               <div
-                className="flex items-center gap-1.5 bg-[#FAF7F2] p-1 rounded-xl border border-stone-200"
+                className="flex items-center gap-1 bg-[#FAF7F2] p-1 rounded-lg border border-stone-200"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-center gap-1 text-xs">
@@ -106,7 +106,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
                     type="number"
                     value={unitBudgetInput}
                     onChange={(e) => setUnitBudgetInput(Number(e.target.value))}
-                    className="w-20 p-1 text-xs border rounded bg-white text-stone-800 font-semibold"
+                    className="w-16 p-0.5 text-xs border rounded bg-white text-stone-800 font-semibold"
                     title="Valor unitario"
                   />
                   <span className="text-[10px] text-stone-400">×</span>
@@ -114,26 +114,26 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
                     type="number"
                     value={timesPerYearInput}
                     onChange={(e) => setTimesPerYearInput(Number(e.target.value))}
-                    className="w-10 p-1 text-xs border rounded bg-white text-stone-800 font-semibold"
+                    className="w-8 p-0.5 text-xs border rounded bg-white text-stone-800 font-semibold"
                     min="1"
                     title="Veces al año"
                   />
                 </div>
                 <button
                   onClick={handleSaveBudget}
-                  className="p-1 rounded-md bg-[#8B251E] text-white hover:bg-[#731E18] text-xs transition cursor-pointer"
+                  className="p-1 rounded bg-[#8B251E] text-white hover:bg-[#731E18] text-xs transition cursor-pointer"
                   title="Guardar"
                 >
-                  <Check className="w-3.5 h-3.5" />
+                  <Check className="w-3 h-3" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center gap-1.5">
                 <div className="text-right">
-                  <span className="text-sm sm:text-base font-black text-[#8B251E] font-['Outfit'] block leading-none">
+                  <span className="text-sm font-black text-[#8B251E] font-['Outfit'] block leading-none">
                     {formatCurrencyCOP(activity.totalBudget)}
                   </span>
-                  <span className="text-[10px] text-stone-400 font-medium">
+                  <span className="text-[9px] text-stone-400 font-medium">
                     ({formatCurrencyCOP(activity.unitBudget)} × {activity.timesPerYear}/año)
                   </span>
                 </div>
@@ -157,44 +157,44 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
                   onDelete(activity.id);
                 }
               }}
-              className="p-1.5 rounded-lg text-stone-300 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+              className="p-1 rounded-md text-stone-300 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
               title="Eliminar actividad"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
         {/* Fila 2: Título Principal de la Acción */}
-        <h3 className="text-sm sm:text-base font-bold text-stone-900 leading-snug font-['Outfit'] pt-0.5">
+        <h3 className="text-xs sm:text-sm font-bold text-stone-900 leading-snug font-['Outfit']">
           {activity.description}
         </h3>
 
         {/* Fila 3: Metadatos Despejados (Responsable, Fechas y Botón de Detalle) */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-stone-100 text-xs text-stone-500">
-          <div className="flex items-center gap-4 flex-wrap">
-            <span className="flex items-center gap-1.5 font-medium text-stone-700">
-              <User className="w-3.5 h-3.5 text-[#8B251E]" />
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-stone-100 text-[11px] text-stone-500">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="flex items-center gap-1 font-medium text-stone-700">
+              <User className="w-3 h-3 text-[#8B251E]" />
               {activity.responsible || 'Sin responsable asignado'}
             </span>
 
-            <span className="flex items-center gap-1.5 text-stone-500">
-              <Calendar className="w-3.5 h-3.5 text-stone-400" />
+            <span className="flex items-center gap-1 text-stone-400">
+              <Calendar className="w-3 h-3 text-stone-400" />
               {formatDate(activity.startDate)} ➔ {formatDate(activity.endDate)}
             </span>
 
             <span className="text-stone-400">
-              {activity.remainingWeeks} semanas rest.
+              • {activity.remainingWeeks} sem. rest.
             </span>
           </div>
 
           {/* Toggle de detalles con texto amigable */}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1 text-xs font-semibold text-stone-600 hover:text-[#8B251E] transition py-1 cursor-pointer"
+            className="flex items-center gap-1 text-[11px] font-semibold text-stone-600 hover:text-[#8B251E] transition cursor-pointer"
           >
-            <span>{isExpanded ? 'Ocultar diagnóstico' : 'Ver metas y diagnóstico'}</span>
-            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            <span>{isExpanded ? 'Ocultar diagnóstico' : 'Diagnóstico y metas'}</span>
+            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </button>
         </div>
       </div>
