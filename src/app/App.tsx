@@ -7,7 +7,6 @@ import { TeamSelector } from '../modules/auth/ui/TeamSelector';
 import { LoginView } from '../modules/auth/ui/LoginView';
 import { useAdminDashboard } from '../modules/admin/application/useAdminDashboard';
 import { usePlan } from '../modules/plans/application/usePlan';
-import { formatCurrencyCOP } from '../shared/utils/formatters';
 import type { MissionaryTeam } from '../modules/auth/domain/auth.types';
 import type { TeamSupervisionSummary } from '../modules/admin/domain/admin.types';
 import {
@@ -103,7 +102,7 @@ export const App: React.FC = () => {
   } = usePlan(activeTeamSummary?.currentPhaseId || 'investigacion', activeTeam.id, activeTeamSummary);
 
   const [activeObjectiveNumber, setActiveObjectiveNumber] = useState<number>(1);
-  const [activeView, setActiveView] = useState<'plans' | 'all-phases' | 'superadmin'>(() => {
+  const [activeView, setActiveView] = useState<'plans' | 'superadmin'>(() => {
     return session?.role === 'admin' ? 'superadmin' : 'plans';
   });
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
@@ -175,30 +174,6 @@ export const App: React.FC = () => {
     setIsAdminPreview(false);
     setActiveView('superadmin');
   };
-
-  // Totales de todas las 5 fases combinadas para la vista resumen
-  const grandTotalBudget = Object.values(allPlans).reduce((acc, p) => {
-    return (
-      acc +
-      p.objectives.reduce((objAcc, o) => {
-        return objAcc + o.activities.reduce((actAcc, a) => actAcc + (a.totalBudget || 0), 0);
-      }, 0)
-    );
-  }, 0);
-
-  const grandTotalActivities = Object.values(allPlans).reduce((acc, p) => {
-    return acc + p.objectives.reduce((objAcc, o) => objAcc + o.activities.length, 0);
-  }, 0);
-
-  const grandTotalCompleted = Object.values(allPlans).reduce((acc, p) => {
-    return (
-      acc +
-      p.objectives.reduce(
-        (objAcc, o) => objAcc + o.activities.filter((a) => a.state === 'Completado').length,
-        0
-      )
-    );
-  }, 0);
 
   // Si no hay sesión iniciada, mostrar la pantalla de Login Principal
   if (!session) {
@@ -403,7 +378,7 @@ export const App: React.FC = () => {
               onOpenReportModal={() => setIsReportModalOpen(true)}
               dashboardHook={dashboardHook}
             />
-          ) : activeView === 'plans' ? (
+          ) : (
             /* Vista 2: Plan de Desarrollo Ministerial del Equipo Activo */
             <div className="space-y-3">
               {/* Barra de Identidad del Equipo Activo Compacta */}
@@ -458,145 +433,6 @@ export const App: React.FC = () => {
                 metrics={metrics}
                 onToggleMobileMenu={() => setIsMobileSidebarOpen(true)}
               />
-            </div>
-          ) : (
-            /* Vista 3: Consolidado Quinquenal de las 5 Fases */
-            <div className="space-y-6">
-              <div
-                className="rounded-2xl p-6 sm:p-8 text-white shadow-lg transition-colors"
-                style={{
-                  background: `linear-gradient(135deg, ${themeColor}, #8B251E, #E67324)`,
-                }}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-amber-200 bg-white/10 px-3 py-1 rounded-full">
-                    Supervisión Quinquenal de Misión
-                  </span>
-                  <span className="text-xs bg-white/20 text-white font-bold px-2.5 py-0.5 rounded-full">
-                    {activeTeam.ethnicity}
-                  </span>
-                </div>
-                <h2 className="text-2xl sm:text-3xl font-black font-['Outfit']">
-                  Consolidado Global de las 5 Fases Ministeriales
-                </h2>
-                <p className="text-stone-100/90 text-sm mt-1 max-w-2xl">
-                  Seguimiento de las etapas de Investigación, Encarnación, Evangelización, Entrenamiento y Autocuidado para {activeTeam.name}.
-                </p>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/20">
-                  <div>
-                    <span className="text-xs text-amber-100 uppercase tracking-wider block font-semibold">
-                      Presupuesto Total
-                    </span>
-                    <span className="text-xl sm:text-2xl font-black font-['Outfit']">
-                      {formatCurrencyCOP(grandTotalBudget)}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-amber-100 uppercase tracking-wider block font-semibold">
-                      Total Actividades
-                    </span>
-                    <span className="text-xl sm:text-2xl font-black font-['Outfit']">
-                      {grandTotalActivities} Iniciativas
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-amber-100 uppercase tracking-wider block font-semibold">
-                      Completadas
-                    </span>
-                    <span className="text-xl sm:text-2xl font-black font-['Outfit']">
-                      {grandTotalCompleted} listas
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-xs text-amber-100 uppercase tracking-wider block font-semibold">
-                      Avance PDM
-                    </span>
-                    <span className="text-xl sm:text-2xl font-black font-['Outfit']">
-                      {grandTotalActivities > 0
-                        ? Math.round((grandTotalCompleted / grandTotalActivities) * 100)
-                        : 0}
-                      %
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tarjetas de Fases */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {Object.values(allPlans).map((p, idx) => {
-                  const phaseBudget = p.objectives.reduce(
-                    (sum, o) => sum + o.activities.reduce((actSum, a) => actSum + (a.totalBudget || 0), 0),
-                    0
-                  );
-                  const totalActs = p.objectives.reduce((sum, o) => sum + o.activities.length, 0);
-                  const completedActs = p.objectives.reduce(
-                    (sum, o) => sum + o.activities.filter((a) => a.state === 'Completado').length,
-                    0
-                  );
-                  const pct = totalActs > 0 ? Math.round((completedActs / totalActs) * 100) : 0;
-
-                  return (
-                    <div
-                      key={p.phaseId}
-                      className="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:border-stone-400/80 transition-all flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span
-                            className="text-xs font-bold px-2 py-0.5 rounded-full text-white shadow-2xs"
-                            style={{ backgroundColor: themeColor }}
-                          >
-                            Fase #{idx + 1}
-                          </span>
-                          <span className="text-xs font-bold text-stone-400">
-                            Inicio: {p.startDate}
-                          </span>
-                        </div>
-
-                        <h3 className="text-base font-bold text-stone-900 font-['Outfit']">
-                          {p.phaseName}
-                        </h3>
-
-                        <div className="mt-4 space-y-2">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-stone-500">Presupuesto:</span>
-                            <span className="font-bold" style={{ color: themeColor }}>
-                              {formatCurrencyCOP(phaseBudget)}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-stone-500">Actividades:</span>
-                            <span className="font-semibold text-stone-700">
-                              {completedActs} / {totalActs} listas
-                            </span>
-                          </div>
-                          <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden mt-1">
-                            <div
-                              className="h-full rounded-full transition-all"
-                              style={{
-                                width: `${pct}%`,
-                                backgroundColor: themeColor,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          handleSelectPhase(p.phaseId);
-                          setActiveView('plans');
-                        }}
-                        className="mt-5 w-full py-2.5 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer bg-stone-50 hover:bg-stone-100 text-stone-800 border border-stone-200"
-                      >
-                        <span>Abrir Detalle de Fase</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           )}
         </main>

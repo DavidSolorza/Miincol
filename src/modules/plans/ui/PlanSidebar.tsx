@@ -11,7 +11,6 @@ import {
   HeartHandshake,
   MapPin,
   FileDown,
-  Layers,
   ChevronLeft,
   ChevronRight,
   X,
@@ -29,8 +28,8 @@ interface PlanSidebarProps {
   activeTeam: MissionaryTeam;
   onOpenTeamModal: () => void;
   onOpenReportModal: () => void;
-  activeView: 'plans' | 'all-phases' | 'superadmin';
-  onChangeView: (view: 'plans' | 'all-phases' | 'superadmin') => void;
+  activeView: 'plans' | 'superadmin';
+  onChangeView: (view: 'plans' | 'superadmin') => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   isOpenMobile: boolean;
@@ -206,23 +205,6 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
             >
               <Compass className="w-3.5 h-3.5 shrink-0" />
               {!isCollapsed && <span>Plan de Desarrollo (PDM)</span>}
-            </button>
-
-            {/* Vista Consolidado 5 Fases */}
-            <button
-              onClick={() => {
-                onChangeView('all-phases');
-                if (isOpenMobile) onCloseMobile();
-              }}
-              className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                activeView === 'all-phases'
-                  ? 'bg-[#8B251E] text-white shadow-2xs'
-                  : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title="Consolidado 5 Fases"
-            >
-              <Layers className="w-3.5 h-3.5 shrink-0" />
-              {!isCollapsed && <span>Consolidado Quinquenal</span>}
             </button>
           </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export type AppRoute = 'plans' | 'all-phases' | 'reports';
+export type AppRoute = 'plans' | 'reports';
 
 interface RouterContextType {
   currentRoute: AppRoute;
