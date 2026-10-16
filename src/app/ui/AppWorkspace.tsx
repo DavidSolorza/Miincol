@@ -9,20 +9,9 @@ import { useAppWorkspaceBus } from './useAppWorkspaceBus';
 import { usePlan } from '../../modules/plans/application/usePlan';
 
 export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
-  session,
-  activeTeam,
-  activeTeamSummary,
-  mappedTeams,
-  activeTeamId,
-  setActiveTeamId,
-  isAdminPreview,
-  setIsAdminPreview,
-  activeView,
-  setActiveView,
-  handleLogout,
-  handleBackToAdmin,
-  handleInspectTeamFromAdmin,
-  dashboardHook,
+  session, activeTeam, activeTeamSummary, mappedTeams, activeTeamId, setActiveTeamId,
+  isAdminPreview, setIsAdminPreview, activeView, setActiveView, handleLogout,
+  handleBackToAdmin, handleInspectTeamFromAdmin, dashboardHook,
 }) => {
   const ui = useWorkspaceUiState(activeTeam);
   const planHook = usePlan(activeTeamSummary?.currentPhaseId || 'investigacion', activeTeam.id, activeTeamSummary);
@@ -33,19 +22,13 @@ export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex font-['Plus_Jakarta_Sans'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E]">
       <AppSidebarSection
-        shouldShowSidebar={shouldShowSidebar}
-        planHook={planHook}
-        activeTeam={activeTeam}
-        activeView={activeView}
-        setActiveView={setActiveView}
-        setIsAdminPreview={setIsAdminPreview}
-        isSidebarCollapsed={ui.isSidebarCollapsed}
-        setIsSidebarCollapsed={ui.setIsSidebarCollapsed}
-        isMobileSidebarOpen={ui.isMobileSidebarOpen}
-        setIsMobileSidebarOpen={ui.setIsMobileSidebarOpen}
-        userRole={session.role}
-        handleLogout={handleLogout}
+        shouldShowSidebar={shouldShowSidebar} planHook={planHook} activeTeam={activeTeam}
+        activeView={activeView} setActiveView={setActiveView} setIsAdminPreview={setIsAdminPreview}
+        isSidebarCollapsed={ui.isSidebarCollapsed} setIsSidebarCollapsed={ui.setIsSidebarCollapsed}
+        isMobileSidebarOpen={ui.isMobileSidebarOpen} setIsMobileSidebarOpen={ui.setIsMobileSidebarOpen}
+        userRole={session.role} handleLogout={handleLogout}
         onOpenReportModal={() => ui.setIsReportModalOpen(true)}
+        onOpenNotesModal={() => ui.setIsNotesModalOpen(true)}
         onPhaseChange={() => ui.setActiveObjectiveNumber(1)}
       />
 
@@ -88,11 +71,16 @@ export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
       <AppGlobalModals
         isReportModalOpen={ui.isReportModalOpen}
         onCloseReportModal={() => ui.setIsReportModalOpen(false)}
+        isNotesModalOpen={ui.isNotesModalOpen}
+        onCloseNotesModal={() => ui.setIsNotesModalOpen(false)}
+        activeTeam={activeTeam}
         plan={planHook.plan}
         isSuperAdmin={isSuperAdmin}
         isTeamModalOpen={ui.isTeamModalOpen}
         onCloseTeamModal={() => ui.setIsTeamModalOpen(false)}
-        mappedTeams={mappedTeams} activeTeamId={activeTeam.id} onSelectTeam={setActiveTeamId}
+        mappedTeams={mappedTeams}
+        activeTeamId={activeTeam.id}
+        onSelectTeam={setActiveTeamId}
       />
     </div>
   );

@@ -43,6 +43,12 @@ graph TD
             PlanDomain["plan.types.ts"]
         end
 
+        subgraph NotesSlice ["Módulo: notes/ (Vertical Slice)"]
+            NotesModalUI["TeamNotesModal (Bloc de Notas & Ideas)"]
+            NotesApp["useTeamNotes (Persistencia & Filtros por TeamId)"]
+            NotesDomain["notes.types.ts"]
+        end
+
         subgraph AuthSlice ["Módulo: auth/ (Vertical Slice)"]
             TeamSelectorUI["TeamSelector (Selector Territorial)"]
             AuthApp["useAuth (Sesión & Equipo Activo)"]
@@ -63,6 +69,10 @@ graph TD
     PhaseUI --> PlanApp
     PlanApp --> PlanDomain
     PlanApp --> NativeHttp
+
+    SidebarUI -- "Notas & Agenda" --> NotesModalUI
+    NotesModalUI --> NotesApp
+    NotesApp --> NotesDomain
 
     TeamCardUI -- "Cambio Rápido de Fase" --> AdminApp
     AuthApp --> AdminApp
@@ -120,5 +130,15 @@ graph TD
   3. Acelerar el pipeline visual con CSS GPU compositing (`src/styles/fluidity.css`: `gpu-layer`, `transform-gpu`, `will-change: transform`, `backface-visibility: hidden`) y curvas de aceleración elásticas (`cubic-bezier(0.16, 1, 0.3, 1)`).
   4. Optimizar componentes visuales de alto tráfico (`TeamOverviewCard`, `ObjectiveCard`, `LoginQuickAccessChips`) mediante `React.memo` para eliminar re-renderizados innecesarios del árbol de componentes.
 - **Consecuencias:** Desacoplamiento total de módulos, transiciones táctiles ultra-fluidas, erradicación de cuellos de botella en repainting y adherencia inmaculada al Contrato de Gobernanza Técnica.
+
+### ADR-011: Módulo Desacoplado de Notas y Agenda Territorial para Equipos Misioneros
+- **Estado:** Aprobado.
+- **Contexto:** Los pastores líderes y supervisores en campo requieren un espacio ágil para anotar ideas espontáneas, peticiones de oración, borradores de iniciativas y recordatorios sobre actividades sin alterar formalmente la matriz de objetivos hasta que se consoliden.
+- **Decisión:**
+  1. Implementar una nueva vertical slice en `src/modules/notes/` (`domain/`, `application/`, `ui/`) aislada e independiente.
+  2. Persistir notas de manera segmentada por `teamId` (`misincol_team_notes_[teamId]`), con categorización (`idea`, `actividad`, `oracion`, `urgente`, `general`), pines prioritarios y marcas temporales.
+  3. Integrar un acceso directo en el sidebar del equipo (`SidebarFooterActions.tsx`) con el botón "Notas & Agenda", abriendo el modal `TeamNotesModal.tsx` con soporte para creación rápida, edición, borrado y filtrado.
+- **Consecuencias:** Mayor productividad en terreno, registro continuo de insights misionales y cero acoplamiento con la estructura troncal del PDM.
+
 
 

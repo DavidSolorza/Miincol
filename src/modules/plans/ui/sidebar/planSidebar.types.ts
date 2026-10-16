@@ -11,6 +11,7 @@ export interface PlanSidebarProps {
   activeTeam: MissionaryTeam;
   onOpenTeamModal?: () => void;
   onOpenReportModal: () => void;
+  onOpenNotesModal?: () => void;
   activeView: 'plans' | 'superadmin';
   onChangeView: (view: 'plans' | 'superadmin') => void;
   isCollapsed: boolean;

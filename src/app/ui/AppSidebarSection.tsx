@@ -17,6 +17,7 @@ interface Props {
   userRole: 'admin' | 'team';
   handleLogout: () => void;
   onOpenReportModal: () => void;
+  onOpenNotesModal?: () => void;
   onPhaseChange: () => void;
 }
 
@@ -34,6 +35,7 @@ export const AppSidebarSection: React.FC<Props> = ({
   userRole,
   handleLogout,
   onOpenReportModal,
+  onOpenNotesModal,
   onPhaseChange,
 }) => {
   if (!shouldShowSidebar) return null;
@@ -49,6 +51,7 @@ export const AppSidebarSection: React.FC<Props> = ({
       metrics={planHook.metrics}
       activeTeam={activeTeam}
       onOpenReportModal={onOpenReportModal}
+      onOpenNotesModal={onOpenNotesModal}
       activeView={activeView}
       onChangeView={(view) => {
         if (view === 'superadmin') setIsAdminPreview(false);

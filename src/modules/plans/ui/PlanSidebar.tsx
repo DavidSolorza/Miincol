@@ -13,6 +13,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
   metrics,
   activeTeam,
   onOpenReportModal,
+  onOpenNotesModal,
   activeView,
   onChangeView,
   isCollapsed,
@@ -79,6 +80,7 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
           isOpenMobile={isOpenMobile}
           onCloseMobile={onCloseMobile}
           onOpenReportModal={onOpenReportModal}
+          onOpenNotesModal={onOpenNotesModal}
           onLogout={onLogout}
         />
       </aside>

@@ -402,3 +402,77 @@ Esta especificación define los contratos rigurosos de la API RESTful para la ad
 }
 ```
 
+---
+
+## 5. Endpoints de Notas y Agenda Territorial (`/api/v1/teams/:teamId/notes`)
+
+### 5.1. Listar Notas y Peticiones del Equipo
+- **Ruta:** `GET /api/v1/teams/:teamId/notes`
+- **Headers:** `Authorization: Bearer <TOKEN>`
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "teamId": "team-wayuu",
+      "title": "Visita Pastoral a la Ranchería Nazareth",
+      "content": "Llevar filtros de agua, revisar avance del curso bíblico bilingüe y coordinar reunión con el palabrero.",
+      "category": "actividad",
+      "isPinned": true,
+      "author": "Pr. David Morales",
+      "createdAt": "2026-10-15T10:00:00Z",
+      "updatedAt": "2026-10-15T10:00:00Z"
+    }
+  ]
+}
+```
+
+### 5.2. Crear Nueva Nota / Idea
+- **Ruta:** `POST /api/v1/teams/:teamId/notes`
+- **Headers:** `Content-Type: application/json`, `Authorization: Bearer <TOKEN>`
+- **Payload de Entrada (JSON):**
+```json
+{
+  "title": "Taller de Liderazgo Juvenil",
+  "content": "Conectar con maestros de la escuela rural para planificar jornada de capacitación.",
+  "category": "idea",
+  "isPinned": false,
+  "author": "Misionero de Campo"
+}
+```
+
+#### Matriz de Respuestas
+- **`201 Created`**:
+```json
+{
+  "success": true,
+  "data": {
+    "id": "771e8400-e29b-41d4-a716-446655440099",
+    "teamId": "team-wayuu",
+    "title": "Taller de Liderazgo Juvenil",
+    "content": "Conectar con maestros de la escuela rural para planificar jornada de capacitación.",
+    "category": "idea",
+    "isPinned": false,
+    "author": "Misionero de Campo",
+    "createdAt": "2026-10-15T12:00:00Z",
+    "updatedAt": "2026-10-15T12:00:00Z"
+  }
+}
+```
+- **`422 Unprocessable Entity`**:
+```json
+{
+  "error": "VALIDATION_FAILED",
+  "message": "El título y el contenido son obligatorios para guardar la nota."
+}
+```
+
+### 5.3. Eliminar Nota Territorial
+- **Ruta:** `DELETE /api/v1/teams/:teamId/notes/:id`
+- **`200 OK`**: `{ "success": true, "message": "Nota eliminada correctamente." }`
+
+

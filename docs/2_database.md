@@ -234,3 +234,36 @@ CREATE INDEX IF NOT EXISTS idx_activities_state ON activities(state);
 | `obstacles` | `TEXT` | `NOT NULL, DEFAULT ''` | Obstáculos o alertas de campo detectadas. |
 | `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Creación de registro. |
 | `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Modificación de registro. |
+
+### 2.5. Entidad: `team_notes` (Notas, Ideas y Agenda Territorial)
+```sql
+CREATE TYPE note_category_enum AS ENUM ('idea', 'actividad', 'oracion', 'urgente', 'general');
+
+CREATE TABLE team_notes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    category note_category_enum NOT NULL DEFAULT 'general',
+    is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
+    author VARCHAR(150) NOT NULL DEFAULT 'Líder de Misión',
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_team_notes_team_id ON team_notes(team_id);
+CREATE INDEX idx_team_notes_pinned ON team_notes(team_id, is_pinned DESC, created_at DESC);
+```
+
+| Nombre de Columna | Tipo de Datos Exacto | Restricciones | Regla de Negocio / Descripción Detallada |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | `PRIMARY KEY, NOT NULL` | Identificador único de la nota. |
+| `team_id` | `UUID` | `FOREIGN KEY, NOT NULL, ON DELETE CASCADE` | Misión territorial propietaria de la nota. |
+| `title` | `VARCHAR(200)` | `NOT NULL` | Asunto o título breve de la nota o idea. |
+| `content` | `TEXT` | `NOT NULL` | Cuerpo descriptivo con ideas, peticiones o recordatorios. |
+| `category` | `note_category_enum` | `NOT NULL, DEFAULT 'general'` | Tipo ('idea', 'actividad', 'oracion', 'urgente', 'general'). |
+| `is_pinned` | `BOOLEAN` | `NOT NULL, DEFAULT FALSE` | Flag de fijación prioritaria en la parte superior. |
+| `author` | `VARCHAR(150)` | `NOT NULL, DEFAULT 'Líder de Misión'` | Nombre del autor de la nota. |
+| `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Fecha y hora de creación. |
+| `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Fecha y hora de última modificación. |
+

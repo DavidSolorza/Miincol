@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileDown, LogOut } from 'lucide-react';
+import { FileDown, LogOut, NotebookPen } from 'lucide-react';
 
 interface Props {
   activeView: 'plans' | 'superadmin';
@@ -8,6 +8,7 @@ interface Props {
   isOpenMobile: boolean;
   onCloseMobile: () => void;
   onOpenReportModal: () => void;
+  onOpenNotesModal?: () => void;
   onLogout?: () => void;
 }
 
@@ -18,9 +19,26 @@ export const SidebarFooterActions: React.FC<Props> = ({
   isOpenMobile,
   onCloseMobile,
   onOpenReportModal,
+  onOpenNotesModal,
   onLogout,
 }) => (
-  <div className="p-2 border-t border-stone-100 space-y-1">
+  <div className="p-2 border-t border-stone-100 space-y-1.5">
+    {(activeView === 'plans' || isTeamRestricted) && onOpenNotesModal && (
+      <button
+        onClick={() => {
+          onOpenNotesModal();
+          if (isOpenMobile) onCloseMobile();
+        }}
+        className={`w-full py-1.5 rounded-lg bg-amber-50/90 hover:bg-amber-100 text-amber-950 border border-amber-300/70 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-98 ${
+          isCollapsed ? 'px-1' : 'px-2'
+        }`}
+        title="Notas & Agenda Territorial (Ideas, Actividades y Oración)"
+      >
+        <NotebookPen className="w-3.5 h-3.5 shrink-0 text-[#E67324]" />
+        {!isCollapsed && <span>Notas & Agenda</span>}
+      </button>
+    )}
+
     {(activeView === 'plans' || isTeamRestricted) && (
       <button
         onClick={() => {

@@ -4,6 +4,7 @@ import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
 export const useWorkspaceUiState = (activeTeam: MissionaryTeam) => {
   const [activeObjectiveNumber, setActiveObjectiveNumber] = useState(1);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -20,6 +21,8 @@ export const useWorkspaceUiState = (activeTeam: MissionaryTeam) => {
     setActiveObjectiveNumber,
     isReportModalOpen,
     setIsReportModalOpen,
+    isNotesModalOpen,
+    setIsNotesModalOpen,
     isTeamModalOpen,
     setIsTeamModalOpen,
     isSidebarCollapsed,
