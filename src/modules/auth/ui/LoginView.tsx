@@ -50,19 +50,16 @@ export const LoginView: React.FC<LoginViewProps> = ({ onAdminSuccess, onTeamSucc
   }, []);
 
   return (
-    <div className="fixed inset-0 h-screen w-screen bg-[#F6F4EF] flex items-center justify-center p-2 sm:p-4 lg:p-6 overflow-hidden selection:bg-[#E67324]/20 selection:text-[#8B251E]">
+    <div className="min-h-screen bg-[#F6F4EF] flex items-center justify-center p-3 sm:p-5 lg:p-8 relative overflow-x-hidden selection:bg-[#E67324]/20 selection:text-[#8B251E]">
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#8B251E]/10 rounded-full blur-[100px] pointer-events-none gpu-layer transform-gpu" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#E67324]/12 rounded-full blur-[100px] pointer-events-none gpu-layer transform-gpu" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none gpu-layer transform-gpu" />
 
-      <div
-        className="w-full max-w-4xl lg:max-w-5xl bg-white rounded-[24px] sm:rounded-[32px] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] border border-stone-200/80 p-2.5 sm:p-3.5 lg:p-4.5 flex flex-col md:flex-row gap-4 lg:gap-6 items-stretch relative z-10"
-        style={{ zoom: 0.8 }}
-      >
+      <div className="w-full max-w-5xl bg-white rounded-[28px] sm:rounded-[36px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] border border-stone-200/80 p-3 sm:p-4 lg:p-5 flex flex-col md:flex-row gap-5 lg:gap-8 items-stretch relative z-10">
         <LoginHeroCard />
 
-        <div className="flex-1 p-2 sm:p-3.5 lg:p-5 flex flex-col justify-between">
-          <div className="space-y-3 sm:space-y-3.5">
+        <div className="flex-1 p-3 sm:p-5 lg:p-7 flex flex-col justify-between">
+          <div className="space-y-5">
             <LoginCardHeader />
             <LoginRoleTabs activeTab={form.activeTab} onSelectTab={handleSelectTab} />
 
