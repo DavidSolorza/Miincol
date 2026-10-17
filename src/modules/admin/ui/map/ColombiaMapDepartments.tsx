@@ -34,14 +34,16 @@ export const ColombiaMapDepartments: React.FC<Props> = ({
         const themeColor = matchingTeam?.themeColor || '#E67324';
 
         const fillStyle = isHovered
-          ? 'rgba(230, 115, 36, 0.26)'
+          ? 'rgba(230, 115, 36, 0.28)'
           : hasActiveMission
-          ? `${themeColor}22`
-          : 'rgba(255, 255, 255, 0.45)';
+          ? `${themeColor}2c`
+          : 'rgba(248, 245, 238, 0.88)';
 
-        const strokeStyle = hasActiveMission
-          ? `${themeColor}99`
-          : 'rgba(168, 162, 158, 0.38)';
+        const strokeStyle = isHovered
+          ? '#E67324'
+          : hasActiveMission
+          ? `${themeColor}`
+          : 'rgba(168, 155, 142, 0.52)';
 
         return (
           <path
@@ -49,7 +51,7 @@ export const ColombiaMapDepartments: React.FC<Props> = ({
             d={dept.d}
             fill={fillStyle}
             stroke={strokeStyle}
-            strokeWidth={hasActiveMission || isHovered ? 1.1 : 0.75}
+            strokeWidth={hasActiveMission || isHovered ? 1.3 : 0.8}
             strokeLinejoin="round"
             className="transition-colors duration-200 cursor-pointer hover:opacity-90"
             onMouseEnter={() => onHoverDept?.(dept.name)}

@@ -3,6 +3,7 @@ import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { ColombiaMapFilters } from './ColombiaMapFilters';
 import { ColombiaMapSvg } from './ColombiaMapSvg';
 import { ColombiaMapTooltip } from './ColombiaMapTooltip';
+import { ColombiaDeptBadge } from './ColombiaDeptBadge';
 
 interface Props {
   teams: TeamSupervisionSummary[];
@@ -12,16 +13,14 @@ interface Props {
 }
 
 export const ColombiaMapCard: React.FC<Props> = ({
-  teams,
-  onInspectTeam,
-  selectedTeamId,
-  onSelectTeamId,
+  teams, onInspectTeam, selectedTeamId, onSelectTeamId,
 }) => {
   const [selectedDept, setSelectedDept] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [selectedPhase, setSelectedPhase] = useState('ALL');
   const [selectedEthnicity, setSelectedEthnicity] = useState('ALL');
   const [hoveredTeam, setHoveredTeam] = useState<TeamSupervisionSummary | null>(null);
+  const [hoveredDept, setHoveredDept] = useState<string | null>(null);
 
   const departments = useMemo(() => {
     return Array.from(new Set(teams.map((t) => t.department.split(' ')[0]))).filter(Boolean);
@@ -37,28 +36,36 @@ export const ColombiaMapCard: React.FC<Props> = ({
     });
   }, [teams, selectedDept, selectedStatus, selectedPhase, selectedEthnicity]);
 
-  const activeTeam = useMemo(() => {
-    return teams.find((t) => t.id === selectedTeamId) || hoveredTeam;
-  }, [teams, selectedTeamId, hoveredTeam]);
+  const activeTeam = useMemo(() => teams.find((t) => t.id === selectedTeamId) || hoveredTeam, [teams, selectedTeamId, hoveredTeam]);
+
+  const hoveredDeptTeam = useMemo(() => {
+    if (!hoveredDept) return null;
+    return teams.find((t) =>
+      t.department.toLowerCase().includes(hoveredDept.toLowerCase()) ||
+      hoveredDept.toLowerCase().includes(t.department.split(' ')[0].toLowerCase())
+    ) || null;
+  }, [teams, hoveredDept]);
 
   return (
     <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-0 relative overflow-hidden group">
       <ColombiaMapFilters
-        selectedDept={selectedDept}
-        onSelectDept={setSelectedDept}
-        selectedStatus={selectedStatus}
-        onSelectStatus={setSelectedStatus}
-        selectedPhase={selectedPhase}
-        onSelectPhase={setSelectedPhase}
-        selectedEthnicity={selectedEthnicity}
-        onSelectEthnicity={setSelectedEthnicity}
+        selectedDept={selectedDept} onSelectDept={setSelectedDept}
+        selectedStatus={selectedStatus} onSelectStatus={setSelectedStatus}
+        selectedPhase={selectedPhase} onSelectPhase={setSelectedPhase}
+        selectedEthnicity={selectedEthnicity} onSelectEthnicity={setSelectedEthnicity}
         departments={departments}
       />
 
       <div
-        className="flex-1 min-h-0 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30"
+        className="flex-1 min-h-0 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-white"
         style={{ perspective: '1200px' }}
       >
+        <ColombiaDeptBadge
+          deptName={hoveredDept}
+          activeTeamName={hoveredDeptTeam?.name || null}
+          themeColor={hoveredDeptTeam?.themeColor || null}
+        />
+
         <div
           className="w-full h-full max-w-[640px] max-h-[760px] aspect-[520/660] flex items-center justify-center transition-transform duration-500 ease-out"
           style={{
@@ -72,6 +79,7 @@ export const ColombiaMapCard: React.FC<Props> = ({
             hoveredTeamId={hoveredTeam?.id || null}
             onSelectTeam={(t) => onSelectTeamId(t ? t.id : null)}
             onHoverTeam={setHoveredTeam}
+            onHoverDept={setHoveredDept}
           />
         </div>
 
