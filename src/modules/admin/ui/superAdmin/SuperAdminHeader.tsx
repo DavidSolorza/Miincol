@@ -38,7 +38,7 @@ export const SuperAdminHeader: React.FC<Props> = ({ onOpenCreate, onOpenReport }
           className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#731E18] text-white text-xs font-bold transition shadow-xs cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span>+ Nuevo Equipo / Misión</span>
+          <span>Nuevo Equipo / Misión</span>
         </button>
       </div>
     </div>
