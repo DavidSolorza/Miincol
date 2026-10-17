@@ -42,8 +42,8 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
   };
 
   return (
-    <div className="w-full space-y-3 pt-0.5">
-      <div className="flex items-center justify-between gap-3">
+    <div className="w-full h-full flex-1 min-h-0 flex flex-col space-y-2.5 pt-0.5">
+      <div className="flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-lg font-['Outfit']">
             Dirección Nacional Misincol
@@ -71,11 +71,11 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-stretch gap-4 xl:gap-5 lg:h-[calc(100vh-175px)] lg:min-h-[600px]">
-        <div className="w-full lg:w-1/2 flex flex-col space-y-3 h-full">
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row items-stretch gap-4 xl:gap-5">
+        <div className="w-full lg:w-1/2 flex flex-col space-y-2.5 h-full min-h-0">
           <SuperAdminKpisGrid kpis={nationalKpis} />
           <SuperAdminFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <div className="flex-1 min-h-0 overflow-y-auto pr-1 pb-2 custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1 pb-1 custom-scrollbar">
             <SuperAdminTeamsGrid
               teams={teams} selectedTeamId={selectedTeamId} onSelectTeamId={setSelectedTeamId}
               onInspectTeam={onInspectTeam} onEditTeam={openEditModal}
@@ -84,7 +84,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
           </div>
         </div>
 
-        <div className="w-full lg:w-1/2 flex flex-col h-full">
+        <div className="w-full lg:w-1/2 flex flex-col h-full min-h-0">
           <ColombiaMapCard
             teams={teams} selectedTeamId={selectedTeamId}
             onSelectTeamId={setSelectedTeamId} onInspectTeam={onInspectTeam}

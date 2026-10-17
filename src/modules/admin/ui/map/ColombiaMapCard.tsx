@@ -42,7 +42,7 @@ export const ColombiaMapCard: React.FC<Props> = ({
   }, [teams, selectedTeamId, hoveredTeam]);
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-[580px] relative overflow-hidden group">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-0 relative overflow-hidden group">
       <ColombiaMapFilters
         selectedDept={selectedDept}
         onSelectDept={setSelectedDept}
@@ -56,7 +56,7 @@ export const ColombiaMapCard: React.FC<Props> = ({
       />
 
       <div
-        className="flex-1 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30"
+        className="flex-1 min-h-0 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30"
         style={{ perspective: '1200px' }}
       >
         <div
@@ -80,18 +80,6 @@ export const ColombiaMapCard: React.FC<Props> = ({
           onClose={() => { onSelectTeamId(null); setHoveredTeam(null); }}
           onInspect={onInspectTeam}
         />
-      </div>
-
-      <div className="px-3.5 py-2 border-t border-stone-100 bg-white/90 flex items-center justify-between text-[11px] text-stone-500">
-        <span className="font-semibold">{filteredTeams.length} misiones georreferenciadas</span>
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-[#8B251E]" /> Misión Activa
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-[#E11D48]" /> Alerta Crítica
-          </span>
-        </div>
       </div>
     </div>
   );

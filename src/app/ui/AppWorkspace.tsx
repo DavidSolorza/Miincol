@@ -20,7 +20,7 @@ export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
   const shouldShowSidebar = !isSuperAdmin || activeView === 'plans';
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] flex font-['Plus_Jakarta_Sans'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E]">
+    <div className={`min-h-screen ${activeView === 'superadmin' ? 'lg:h-screen lg:overflow-hidden' : ''} bg-[#FAF7F2] flex font-['Plus_Jakarta_Sans'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E]`}>
       <AppSidebarSection
         shouldShowSidebar={shouldShowSidebar} planHook={planHook} activeTeam={activeTeam}
         activeView={activeView} setActiveView={setActiveView} setIsAdminPreview={setIsAdminPreview}
@@ -32,7 +32,7 @@ export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
         onPhaseChange={() => ui.setActiveObjectiveNumber(1)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <div className={`flex-1 flex flex-col min-w-0 ${activeView === 'superadmin' ? 'h-full lg:h-screen lg:overflow-hidden' : 'min-h-screen'}`}>
         <AppHeaderSection
           isAdminPreview={isAdminPreview}
           activeTeam={activeTeam}
