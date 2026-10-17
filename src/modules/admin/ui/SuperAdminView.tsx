@@ -54,8 +54,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
         <div className="flex items-center gap-2">
           {onOpenReportModal && (
             <button
-              type="button"
-              onClick={onOpenReportModal}
+              type="button" onClick={onOpenReportModal}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold transition shadow-2xs cursor-pointer"
             >
               <FileDown className="w-3.5 h-3.5 text-[#E67324]" />
@@ -63,8 +62,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
             </button>
           )}
           <button
-            type="button"
-            onClick={openCreateModal}
+            type="button" onClick={openCreateModal}
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#731E18] text-white text-xs font-bold transition shadow-xs cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />

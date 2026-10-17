@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
-import { COLOMBIA_MAINLAND_PATH, COLOMBIA_REGIONS, COLOMBIA_RIVERS } from './colombiaPaths';
+import { COLOMBIA_RIVERS } from './colombiaPaths';
 import { ColombiaHeatGlows } from './ColombiaHeatGlows';
 import { ColombiaMapMarkers } from './ColombiaMapMarkers';
+import { ColombiaMapDepartments } from './ColombiaMapDepartments';
 
 interface Props {
   teams: TeamSupervisionSummary[];
@@ -19,11 +20,13 @@ export const ColombiaMapSvg: React.FC<Props> = ({
   onSelectTeam,
   onHoverTeam,
 }) => {
+  const [hoveredDeptName, setHoveredDeptName] = useState<string | null>(null);
+
   return (
     <svg
       viewBox="0 0 520 660"
       className="w-full h-full select-none"
-      style={{ filter: 'drop-shadow(0px 8px 24px rgba(0,0,0,0.06))' }}
+      style={{ filter: 'drop-shadow(0px 10px 26px rgba(0,0,0,0.07))' }}
       onClick={() => onSelectTeam(null as any)}
     >
       <defs>
@@ -31,52 +34,31 @@ export const ColombiaMapSvg: React.FC<Props> = ({
           <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#F1F5F9" strokeWidth="0.8" />
         </pattern>
         <filter id="map-shadow" x="-5%" y="-5%" width="110%" height="110%">
-          <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.08" />
+          <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.06" />
         </filter>
       </defs>
 
       <rect width="100%" height="100%" fill="url(#grid-pattern)" rx="16" />
 
-      {/* Sombra base del país */}
-      <path d={COLOMBIA_MAINLAND_PATH} fill="#CBD5E1" opacity="0.25" transform="translate(4, 6)" />
-
-      {/* Regiones naturales */}
+      {/* 33 Departamentos Oficiales Integrados desde co.json */}
       <g filter="url(#map-shadow)">
-        {COLOMBIA_REGIONS.map((region) => (
-          <path
-            key={region.id}
-            d={region.path}
-            fill={region.fill}
-            stroke={region.stroke}
-            strokeWidth="1.2"
-            className="transition-colors hover:brightness-95"
-          >
-            <title>{region.name}</title>
-          </path>
-        ))}
+        <ColombiaMapDepartments
+          teams={teams}
+          onHoverDept={setHoveredDeptName}
+        />
       </g>
 
-      {/* Contorno nacional */}
-      <path
-        d={COLOMBIA_MAINLAND_PATH}
-        fill="none"
-        stroke="#94A3B8"
-        strokeWidth="1.5"
-        strokeDasharray="4 2"
-        className="opacity-70"
-      />
-
-      {/* Ríos principales */}
-      <g stroke="#93C5FD" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.65">
+      {/* Red hídrica principal de referencia */}
+      <g stroke="#93C5FD" strokeWidth="1" strokeLinecap="round" fill="none" opacity="0.55">
         {COLOMBIA_RIVERS.map((river, idx) => (
           <path key={`river-${idx}`} d={river} />
         ))}
       </g>
 
-      {/* Halos de calor de actividad */}
+      {/* Halos térmicos de actividad */}
       <ColombiaHeatGlows teams={teams} />
 
-      {/* Marcadores de equipos */}
+      {/* Marcadores georreferenciados de misiones */}
       <ColombiaMapMarkers
         teams={teams}
         selectedTeamId={selectedTeamId}
@@ -84,6 +66,17 @@ export const ColombiaMapSvg: React.FC<Props> = ({
         onSelectTeam={onSelectTeam}
         onHoverTeam={onHoverTeam}
       />
+
+      {/* Indicador sutil de departamento activo al pasar el cursor */}
+      {hoveredDeptName && (
+        <text
+          x="20"
+          y="35"
+          className="text-[11px] font-bold fill-stone-500 font-['Outfit'] select-none pointer-events-none"
+        >
+          {hoveredDeptName.toUpperCase()}
+        </text>
+      )}
     </svg>
   );
 };

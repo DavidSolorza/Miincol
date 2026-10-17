@@ -55,8 +55,17 @@ export const ColombiaMapCard: React.FC<Props> = ({
         departments={departments}
       />
 
-      <div className="flex-1 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30">
-        <div className="w-full h-full max-w-[640px] max-h-[760px] aspect-[520/660] flex items-center justify-center">
+      <div
+        className="flex-1 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30"
+        style={{ perspective: '1200px' }}
+      >
+        <div
+          className="w-full h-full max-w-[640px] max-h-[760px] aspect-[520/660] flex items-center justify-center transition-transform duration-500 ease-out"
+          style={{
+            transform: 'rotateX(7deg) rotateY(-2deg)',
+            transformStyle: 'preserve-3d',
+          }}
+        >
           <ColombiaMapSvg
             teams={filteredTeams}
             selectedTeamId={selectedTeamId}
