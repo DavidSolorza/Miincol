@@ -104,28 +104,6 @@ export const ColombiaMapDepartments: React.FC<Props> = ({
                 {hasActiveMission ? ` • Misión Activa: ${matchingTeam?.name} (${matchingTeam?.ethnicity})` : ''}
               </title>
             </path>
-
-            {/* Etiqueta visible del departamento para misiones activas o seleccionadas */}
-            {(hasActiveMission || isExplicitlySelected) && deptInfo && (
-              <g
-                className="pointer-events-none select-none transition-opacity duration-300"
-                transform={`translate(${deptInfo.center.x}, ${deptInfo.center.y - 14})`}
-              >
-                <text
-                  textAnchor="middle"
-                  className="text-[9px] font-black tracking-wider uppercase font-['Outfit']"
-                  style={{
-                    fill: isExplicitlySelected ? '#751E18' : '#44403C',
-                    paintOrder: 'stroke',
-                    stroke: '#FFFFFF',
-                    strokeWidth: 3.5,
-                    strokeLinejoin: 'round',
-                  }}
-                >
-                  {dept.name}
-                </text>
-              </g>
-            )}
           </g>
         );
       })}
