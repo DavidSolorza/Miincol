@@ -267,3 +267,44 @@ CREATE INDEX idx_team_notes_pinned ON team_notes(team_id, is_pinned DESC, create
 | `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Fecha y hora de creación. |
 | `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Fecha y hora de última modificación. |
 
+### 2.6. Entidad: `team_audit_logs` (Telemetría, Auditoría y Monitoreo Territorial)
+```sql
+CREATE TYPE audit_action_enum AS ENUM (
+    'login', 
+    'activity_add', 
+    'activity_update', 
+    'activity_delete', 
+    'objective_update', 
+    'objective_add', 
+    'note_add', 
+    'note_delete', 
+    'report_generate'
+);
+
+CREATE TABLE team_audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    user_name VARCHAR(150) NOT NULL,
+    action_type audit_action_enum NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    detail TEXT NOT NULL,
+    phase_id phase_type_enum,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_team_audit_team_time ON team_audit_logs(team_id, created_at DESC);
+CREATE INDEX idx_team_audit_action ON team_audit_logs(team_id, action_type);
+```
+
+| Nombre de Columna | Tipo de Datos Exacto | Restricciones | Regla de Negocio / Descripción Detallada |
+| :--- | :--- | :--- | :--- |
+| `id` | `UUID` | `PRIMARY KEY, NOT NULL` | Identificador único del evento de auditoría. |
+| `team_id` | `UUID` | `FOREIGN KEY, NOT NULL, ON DELETE CASCADE` | Misión territorial donde se originó la acción. |
+| `user_name` | `VARCHAR(150)` | `NOT NULL` | Nombre del líder o misionero que ejecutó la acción. |
+| `action_type` | `audit_action_enum` | `NOT NULL` | Tipo de evento ('login', 'activity_add', 'activity_update', etc.). |
+| `title` | `VARCHAR(200)` | `NOT NULL` | Resumen breve legible (ej: "Modificación de actividad"). |
+| `detail` | `TEXT` | `NOT NULL` | Detalle específico (ej: "Actualizó presupuesto a $1.200.000 COP"). |
+| `phase_id` | `phase_type_enum` | `NULL` | Fase del PDM asociada cuando aplica. |
+| `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL, DEFAULT NOW()` | Marca temporal exacta del evento para supervisión. |
+
+

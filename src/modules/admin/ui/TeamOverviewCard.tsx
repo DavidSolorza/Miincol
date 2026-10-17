@@ -4,6 +4,9 @@ import type { PhaseType } from '../../plans/domain/plan.types';
 import { TeamCardHeader } from './teamCard/TeamCardHeader';
 import { TeamCardMetrics } from './teamCard/TeamCardMetrics';
 import { TeamCardActions } from './teamCard/TeamCardActions';
+import { useTeamAudit } from '../../audit/application/useTeamAudit';
+import { TeamCardTelemetry } from '../../audit/ui/TeamCardTelemetry';
+import { TeamAuditModal } from '../../audit/ui/TeamAuditModal';
 
 interface TeamOverviewCardProps {
   team: TeamSupervisionSummary;
@@ -24,6 +27,8 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
   const [selectedPhaseId, setSelectedPhaseId] = useState<PhaseType>(
     team.currentPhaseId || 'investigacion'
   );
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const { telemetry } = useTeamAudit(team.id, team.leader);
 
   useEffect(() => {
     if (team.currentPhaseId && team.currentPhaseId !== selectedPhaseId) {
@@ -56,10 +61,22 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
         onPhaseSelect={handlePhaseSelect}
         themeColor={themeColor}
       />
+      <TeamCardTelemetry
+        telemetry={telemetry}
+        onOpenAuditModal={() => setIsAuditModalOpen(true)}
+      />
       <TeamCardActions
         team={team}
         onInspect={() => onInspectTeam(team.id)}
         whatsappUrl={whatsappUrl}
+      />
+      <TeamAuditModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+        teamId={team.id}
+        teamName={team.name}
+        leaderName={team.leader}
+        themeColor={themeColor}
       />
     </div>
   );

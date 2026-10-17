@@ -20,6 +20,14 @@ export interface AppEventMap {
   };
   'ui:view_change': { view: 'dashboard' | 'phases' | 'supervision' | 'team-space' | 'reports' };
   'perf:sync': { timestamp: number };
+  'audit:log': {
+    teamId: string;
+    userName: string;
+    actionType: string;
+    title: string;
+    detail: string;
+    phaseId?: string;
+  };
 }
 
 export type EventTopic = keyof AppEventMap;

@@ -475,4 +475,88 @@ Esta especificación define los contratos rigurosos de la API RESTful para la ad
 - **Ruta:** `DELETE /api/v1/teams/:teamId/notes/:id`
 - **`200 OK`**: `{ "success": true, "message": "Nota eliminada correctamente." }`
 
+---
+
+## 6. Endpoints de Auditoría, Telemetría y Monitoreo Territorial (`/api/v1/teams/:teamId/audit-logs`)
+
+### 6.1. Consultar Bitácora de Auditoría y Telemetría del Equipo
+- **Ruta:** `GET /api/v1/teams/:teamId/audit-logs`
+- **Query Params (Opcionales):**
+  - `limit`: number (por defecto `20`, máximo `100`)
+  - `action`: enum (`login`, `activity_add`, `activity_update`, `activity_delete`, `objective_update`, `note_add`, `report_generate`)
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "telemetry": {
+    "teamId": "team-wayuu",
+    "lastLoginAt": "2026-10-16T14:32:00Z",
+    "lastLoginFormatted": "Hoy, 02:32 PM",
+    "lastActionTitle": "Modificó 2 actividades en Investigación",
+    "lastActionAt": "Hace 20 min",
+    "totalActionsCount": 18
+  },
+  "data": [
+    {
+      "id": "9a12c400-e29b-41d4-a716-446655440111",
+      "teamId": "team-wayuu",
+      "userName": "Pr. David Morales",
+      "actionType": "activity_update",
+      "title": "Actualización de actividad PDM",
+      "detail": "Modificó estado a 'En Proceso' en 'Mapeo de clanes y rancherías'",
+      "phaseId": "investigacion",
+      "timestamp": "2026-10-16T14:45:00Z"
+    },
+    {
+      "id": "8b11b300-e29b-41d4-a716-446655440110",
+      "teamId": "team-wayuu",
+      "userName": "Pr. David Morales",
+      "actionType": "login",
+      "title": "Ingreso al Portal Ministerial",
+      "detail": "Sesión iniciada desde equipo de campo",
+      "timestamp": "2026-10-16T14:32:00Z"
+    }
+  ]
+}
+```
+- **`404 Not Found`**:
+```json
+{
+  "error": "TEAM_NOT_FOUND",
+  "message": "No se encontró el equipo territorial solicitado.",
+  "timestamp": "2026-10-16T15:00:00Z"
+}
+```
+
+### 6.2. Registrar Evento de Auditoría o Telemetría
+- **Ruta:** `POST /api/v1/teams/:teamId/audit-logs`
+- **Headers:** `Content-Type: application/json`
+- **Payload de Entrada (JSON):**
+```json
+{
+  "userName": "Pr. David Morales",
+  "actionType": "note_add",
+  "title": "Registro de Nota en Agenda",
+  "detail": "Agregó petición de oración por pozo de agua",
+  "phaseId": "investigacion"
+}
+```
+- **`201 Created`**:
+```json
+{
+  "success": true,
+  "message": "Evento de auditoría registrado exitosamente."
+}
+```
+- **`422 Unprocessable Entity`**:
+```json
+{
+  "error": "VALIDATION_FAILED",
+  "message": "Los campos 'userName', 'actionType' y 'title' son requeridos."
+}
+```
+
+
 

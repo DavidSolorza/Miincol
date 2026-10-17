@@ -49,6 +49,12 @@ graph TD
             NotesDomain["notes.types.ts"]
         end
 
+        subgraph AuditSlice ["Módulo: audit/ & telemetry/ (Vertical Slice)"]
+            AuditUI["TeamCardTelemetry & TeamAuditModal"]
+            AuditApp["useTeamAudit & auditStorage (Monitoreo & Logs)"]
+            AuditDomain["audit.types.ts"]
+        end
+
         subgraph AuthSlice ["Módulo: auth/ (Vertical Slice)"]
             TeamSelectorUI["TeamSelector (Selector Territorial)"]
             AuthApp["useAuth (Sesión & Equipo Activo)"]
@@ -60,6 +66,10 @@ graph TD
     AdminDashUI --> AdminApp
     AdminApp --> TeamDomain
     AdminApp --> NativeHttp
+
+    TeamCardUI --> AuditUI
+    AuditUI --> AuditApp
+    AuditApp --> AuditDomain
 
     AdminDashUI -- "Supervisar Plan" --> PreviewBanner
     PreviewBanner --> PhaseUI
@@ -139,6 +149,23 @@ graph TD
   2. Persistir notas de manera segmentada por `teamId` (`misincol_team_notes_[teamId]`), con categorización (`idea`, `actividad`, `oracion`, `urgente`, `general`), pines prioritarios y marcas temporales.
   3. Integrar un acceso directo en el sidebar del equipo (`SidebarFooterActions.tsx`) con el botón "Notas & Agenda", abriendo el modal `TeamNotesModal.tsx` con soporte para creación rápida, edición, borrado y filtrado.
 - **Consecuencias:** Mayor productividad en terreno, registro continuo de insights misionales y cero acoplamiento con la estructura troncal del PDM.
+
+### ADR-012: Sistema de Telemetría y Monitoreo de Auditoría Territorial para Supervisión Nacional
+- **Estado:** Aprobado.
+- **Contexto:** La Dirección Nacional requería monitorear de forma regulada y transparente la actividad de cada equipo misionero en terreno (hora del último ingreso de las personas del equipo, qué modificaciones realizaron dentro del PDM, actividades agregadas, objetivos ajustados o notas creadas), optimizando los canales de comunicación entre el liderazgo nacional y los líderes de campo.
+- **Decisión:**
+  1. Diseñar el módulo `src/modules/audit/` estructurado en subcapas (`domain/`, `application/`, `ui/`) con persistencia segmentada `misincol_audit_logs_[teamId]`.
+  2. Conectar el ciclo de eventos del sistema mediante `serviceBus.publish('audit:log', ...)` para registrar automáticamente:
+     - Ingreso de sesión de usuarios de equipo (`login` con hora exacta y líder autenticado).
+     - Modificaciones, adiciones o eliminaciones de actividades y presupuestos en el PDM.
+     - Cambios en objetivos estratégicos.
+     - Registro de notas y peticiones en la agenda territorial.
+  3. Proyectar en cada tarjeta de misión (`TeamOverviewCard.tsx`) el componente `TeamCardTelemetry.tsx` con:
+     - Timestamp de último ingreso con indicador de recencia (punto verde activo si ocurrió en las últimas 24 horas).
+     - Resumen conciso de la última acción ejecutada.
+     - Botón de inspección rápida "Ver bitácora" para abrir el modal `TeamAuditModal.tsx` con la cronología completa de actividades del equipo.
+- **Consecuencias:** Supervisión regulada, transparencia total en la rendición de cuentas, comunicación oportuna del liderazgo nacional con los líderes de misión y estricto cumplimiento del Contrato de Gobernanza Técnica.
+
 
 
 

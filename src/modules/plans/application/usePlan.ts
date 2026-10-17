@@ -7,6 +7,8 @@ import { applyUpdateActivity, applyAddActivity, applyDeleteActivity } from './pl
 import { applyUpdateObjective, applyAddObjective, applyDeleteObjective } from './planObjectiveActions';
 import { usePlanStorage } from './usePlanStorage';
 
+import { logPlanAudit, logActivityUpdateAudit } from './planAuditHelper';
+
 export const usePlan = (
   defaultPhaseId: PhaseType = 'investigacion',
   teamId: string = 'team-wayuu',
@@ -14,6 +16,7 @@ export const usePlan = (
 ) => {
   const [activePhaseId, setActivePhaseId] = useState<PhaseType>(defaultPhaseId);
   const { allPlans, setAllPlans, resetToDefaults } = usePlanStorage(teamId, teamData);
+  const leader = teamData?.leader || 'Líder';
 
   const plan: PhasePlan = useMemo(
     () => allPlans[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId],
@@ -21,37 +24,35 @@ export const usePlan = (
   );
 
   const updateActivity = (activityId: string, updatedFields: Partial<Activity>) => {
-    setAllPlans((prev) => {
-      const cur = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
-      return { ...prev, [activePhaseId]: applyUpdateActivity(cur, activityId, updatedFields) };
-    });
+    setAllPlans((prev) => ({
+      ...prev,
+      [activePhaseId]: applyUpdateActivity(prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId], activityId, updatedFields),
+    }));
+    logActivityUpdateAudit(teamId, leader, updatedFields, activePhaseId);
   };
 
-  const addActivity = (
-    objNum: 1 | 2 | 3 | 4,
-    newAct: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>
-  ) => {
-    setAllPlans((prev) => {
-      const cur = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
-      return { ...prev, [activePhaseId]: applyAddActivity(cur, objNum, newAct) };
-    });
+  const addActivity = (objNum: 1 | 2 | 3 | 4, newAct: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>) => {
+    setAllPlans((prev) => ({
+      ...prev,
+      [activePhaseId]: applyAddActivity(prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId], objNum, newAct),
+    }));
+    logPlanAudit(teamId, leader, 'activity_add', 'Agregó nueva actividad', newAct.description.slice(0, 40), activePhaseId);
   };
 
   const deleteActivity = (activityId: string) => {
-    setAllPlans((prev) => {
-      const cur = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
-      return { ...prev, [activePhaseId]: applyDeleteActivity(cur, activityId) };
-    });
+    setAllPlans((prev) => ({
+      ...prev,
+      [activePhaseId]: applyDeleteActivity(prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId], activityId),
+    }));
+    logPlanAudit(teamId, leader, 'activity_delete', 'Eliminó actividad', `Actividad eliminada de fase ${activePhaseId}`, activePhaseId);
   };
 
-  const updateObjective = (
-    objNum: 1 | 2 | 3 | 4,
-    updates: { title?: string; description?: string }
-  ) => {
-    setAllPlans((prev) => {
-      const cur = prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId];
-      return { ...prev, [activePhaseId]: applyUpdateObjective(cur, objNum, updates) };
-    });
+  const updateObjective = (objNum: 1 | 2 | 3 | 4, updates: { title?: string; description?: string }) => {
+    setAllPlans((prev) => ({
+      ...prev,
+      [activePhaseId]: applyUpdateObjective(prev[activePhaseId] || INITIAL_PLANS_BY_PHASE[activePhaseId], objNum, updates),
+    }));
+    logPlanAudit(teamId, leader, 'objective_update', 'Modificó objetivo PDM', updates.title || `Objetivo ${objNum}`, activePhaseId);
   };
 
   const addObjective = (newObj: { title: string; description: string }): 1 | 2 | 3 | 4 | null => {
@@ -59,6 +60,7 @@ export const usePlan = (
     const result = applyAddObjective(cur, newObj);
     if (!result) return null;
     setAllPlans((prev) => ({ ...prev, [activePhaseId]: result.updatedPlan }));
+    logPlanAudit(teamId, leader, 'objective_add', 'Agregó objetivo PDM', newObj.title, activePhaseId);
     return result.nextNumber;
   };
 

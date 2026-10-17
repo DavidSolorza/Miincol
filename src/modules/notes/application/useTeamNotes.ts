@@ -3,6 +3,8 @@ import type { TeamNote, NoteCategory } from '../domain/notes.types';
 import { getInitialTeamNotes } from './initialTeamNotes';
 import { serviceBus } from '../../../core/bus';
 
+import { appendAuditLog } from '../../audit/application/auditStorage';
+
 export const useTeamNotes = (teamId: string, teamName: string, leader: string) => {
   const storageKey = `misincol_team_notes_${teamId}`;
 
@@ -30,26 +32,25 @@ export const useTeamNotes = (teamId: string, teamName: string, leader: string) =
 
   const saveNotes = useCallback((updated: TeamNote[]) => {
     setNotes(updated);
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(updated));
-    } catch (err) {
-      console.error('Error guardando notas:', err);
-    }
+    try { localStorage.setItem(storageKey, JSON.stringify(updated)); } catch (err) { console.error('Error guardando notas:', err); }
   }, [storageKey]);
 
   const addNote = useCallback((title: string, content: string, category: NoteCategory, isPinned = false) => {
+    const author = leader || 'Misionero';
     const newNote: TeamNote = {
       id: `note-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      teamId,
-      title: title.trim(),
-      content: content.trim(),
-      category,
-      isPinned,
-      author: leader || 'Misionero',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      teamId, title: title.trim(), content: content.trim(), category, isPinned,
+      author, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     };
     saveNotes([newNote, ...notes]);
+    appendAuditLog(teamId, {
+      teamId, userName: author, actionType: 'note_add',
+      title: 'Nota en agenda territorial', detail: `Agregó: "${title.trim().slice(0, 30)}" (${category})`,
+    }, author);
+    serviceBus.publish('audit:log', {
+      teamId, userName: author, actionType: 'note_add',
+      title: 'Nota en agenda territorial', detail: `Agregó: "${title.trim().slice(0, 30)}" (${category})`,
+    });
     serviceBus.publish('ui:toast', { message: 'Nota agregada a la agenda territorial', type: 'success' });
   }, [teamId, leader, notes, saveNotes]);
 
