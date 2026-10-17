@@ -3,6 +3,7 @@ import { Menu, ShieldCheck } from 'lucide-react';
 import { MisincolLogo } from '../../shared/components/MisincolLogo';
 import { TeamSelectDropdown } from '../../modules/auth/ui/TeamSelectDropdown';
 import { AppHeaderUserProfile } from './AppHeaderUserProfile';
+import { NetworkStatusBadge } from '../../shared/components/NetworkStatusBadge';
 import type { AppHeaderProps } from './appHeader.types';
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -62,6 +63,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     </div>
 
     <div className="flex items-center gap-2.5">
+      <NetworkStatusBadge />
       {isSuperAdmin && activeView !== 'superadmin' && (
         <button
           onClick={onGoToSuperAdmin}

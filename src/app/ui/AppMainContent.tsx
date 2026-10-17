@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
-import { SuperAdminView } from '../../modules/admin/ui/SuperAdminView';
+import { SuperAdminSkeleton } from '../../modules/admin/ui/SuperAdminSkeleton';
 import { PhaseView } from '../../modules/plans/ui/PhaseView';
 import { TeamIdentityBar } from './TeamIdentityBar';
 import type { usePlan } from '../../modules/plans/application/usePlan';
 import type { useAdminDashboard } from '../../modules/admin/application/useAdminDashboard';
+
+const SuperAdminView = lazy(() =>
+  import('../../modules/admin/ui/SuperAdminView').then((m) => ({ default: m.SuperAdminView }))
+);
 
 interface Props {
   activeView: 'plans' | 'superadmin';
@@ -39,11 +43,13 @@ export const AppMainContent: React.FC<Props> = ({
 }) => (
   <main className={`flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ${activeView === 'superadmin' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-7xl py-3.5 sm:py-4'}`}>
     {activeView === 'superadmin' && isSuperAdmin ? (
-      <SuperAdminView
-        onInspectTeam={onInspectTeam}
-        onOpenReportModal={onOpenReportModal}
-        dashboardHook={dashboardHook}
-      />
+      <Suspense fallback={<SuperAdminSkeleton />}>
+        <SuperAdminView
+          onInspectTeam={onInspectTeam}
+          onOpenReportModal={onOpenReportModal}
+          dashboardHook={dashboardHook}
+        />
+      </Suspense>
     ) : (
       <div className="space-y-3">
         <TeamIdentityBar

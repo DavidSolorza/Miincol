@@ -28,6 +28,8 @@ export interface AppEventMap {
     detail: string;
     phaseId?: string;
   };
+  'network:status': { isOnline: boolean; effectiveType?: string };
+  'sync:status': { isSyncing: boolean; message?: string };
 }
 
 export type EventTopic = keyof AppEventMap;

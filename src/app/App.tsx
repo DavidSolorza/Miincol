@@ -1,10 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, lazy, Suspense } from 'react';
 import { ToastProvider } from '../shared/components/Toast';
-import { LoginView } from '../modules/auth/ui/LoginView';
 import { useAdminDashboard } from '../modules/admin/application/useAdminDashboard';
 import { useAppSession } from './auth/useAppSession';
 import { AppWorkspace } from './ui/AppWorkspace';
 import type { MissionaryTeam } from '../modules/auth/domain/auth.types';
+
+const LoginView = lazy(() =>
+  import('../modules/auth/ui/LoginView').then((m) => ({ default: m.LoginView }))
+);
 
 const AppContent: React.FC = () => {
   const dashboardHook = useAdminDashboard();
@@ -45,11 +48,13 @@ const AppContent: React.FC = () => {
 
   if (!sessionHook.session) {
     return (
-      <LoginView
-        onAdminSuccess={sessionHook.handleAdminLogin}
-        onTeamSuccess={sessionHook.handleTeamLogin}
-        allTeams={allTeams}
-      />
+      <Suspense fallback={<div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center font-['Outfit'] text-stone-400 font-bold">Cargando Misincol...</div>}>
+        <LoginView
+          onAdminSuccess={sessionHook.handleAdminLogin}
+          onTeamSuccess={sessionHook.handleTeamLogin}
+          allTeams={allTeams}
+        />
+      </Suspense>
     );
   }
 
