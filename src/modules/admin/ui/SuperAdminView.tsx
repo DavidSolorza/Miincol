@@ -7,7 +7,6 @@ import { SuperAdminKpisGrid } from './superAdmin/SuperAdminKpisGrid';
 import { SuperAdminFilters } from './superAdmin/SuperAdminFilters';
 import { SuperAdminTeamsGrid } from './superAdmin/SuperAdminTeamsGrid';
 import { ColombiaMapCard } from './map/ColombiaMapCard';
-import { AdminSlimNav } from './nav/AdminSlimNav';
 import { Plus, FileDown } from 'lucide-react';
 
 interface SuperAdminViewProps {
@@ -28,7 +27,6 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<TeamSupervisionSummary | null>(null);
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState('dashboard');
 
   const openCreateModal = () => { setEditingTeam(null); setIsModalOpen(true); };
   const openEditModal = (t: TeamSupervisionSummary) => { setEditingTeam(t); setIsModalOpen(true); };
@@ -44,61 +42,53 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
   };
 
   return (
-    <div className="flex items-start gap-3 sm:gap-4 xl:gap-5">
-      <AdminSlimNav
-        activeSection={activeSection}
-        onSelectSection={(sec) => { setActiveSection(sec); if (sec === 'teams' && teams[0]) onInspectTeam(teams[0].id); }}
-        onOpenReport={onOpenReportModal}
-      />
-
-      <div className="flex-1 min-w-0 space-y-3.5">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-lg font-['Outfit']">
-              Dirección Nacional Misincol
-            </span>
-            <span className="text-xs text-stone-400 font-medium hidden sm:inline">• Supervisión Estratégica PDM</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {onOpenReportModal && (
-              <button
-                type="button"
-                onClick={onOpenReportModal}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold transition shadow-2xs cursor-pointer"
-              >
-                <FileDown className="w-3.5 h-3.5 text-[#E67324]" />
-                <span className="hidden sm:inline">Informe Consolidado</span>
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={openCreateModal}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#731E18] text-white text-xs font-bold transition shadow-xs cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ Nueva Misión</span>
-            </button>
-          </div>
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-lg font-['Outfit']">
+            Dirección Nacional Misincol
+          </span>
+          <span className="text-xs text-stone-400 font-medium hidden sm:inline">• Supervisión Estratégica PDM</span>
         </div>
 
-        <div className="flex flex-col lg:flex-row items-start gap-4 xl:gap-5">
-          <div className="w-full lg:w-[58%] xl:w-[59%] space-y-3.5">
-            <SuperAdminKpisGrid kpis={nationalKpis} />
-            <SuperAdminFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-            <SuperAdminTeamsGrid
-              teams={teams} selectedTeamId={selectedTeamId} onSelectTeamId={setSelectedTeamId}
-              onInspectTeam={onInspectTeam} onEditTeam={openEditModal}
-              onDeleteTeam={handleDeleteTeam} onPhaseChange={handlePhaseChange}
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          {onOpenReportModal && (
+            <button
+              type="button"
+              onClick={onOpenReportModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold transition shadow-2xs cursor-pointer"
+            >
+              <FileDown className="w-3.5 h-3.5 text-[#E67324]" />
+              <span className="hidden sm:inline">Informe Consolidado</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#731E18] text-white text-xs font-bold transition shadow-xs cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>+ Nueva Misión</span>
+          </button>
+        </div>
+      </div>
 
-          <div className="w-full lg:w-[42%] xl:w-[41%] lg:sticky lg:top-4 self-stretch lg:self-start">
-            <ColombiaMapCard
-              teams={teams} selectedTeamId={selectedTeamId}
-              onSelectTeamId={setSelectedTeamId} onInspectTeam={onInspectTeam}
-            />
-          </div>
+      <div className="flex flex-col lg:flex-row items-start gap-4 xl:gap-5">
+        <div className="w-full lg:w-[58%] xl:w-[59%] space-y-3.5">
+          <SuperAdminKpisGrid kpis={nationalKpis} />
+          <SuperAdminFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <SuperAdminTeamsGrid
+            teams={teams} selectedTeamId={selectedTeamId} onSelectTeamId={setSelectedTeamId}
+            onInspectTeam={onInspectTeam} onEditTeam={openEditModal}
+            onDeleteTeam={handleDeleteTeam} onPhaseChange={handlePhaseChange}
+          />
+        </div>
+
+        <div className="w-full lg:w-[42%] xl:w-[41%] lg:sticky lg:top-4 self-stretch lg:self-start">
+          <ColombiaMapCard
+            teams={teams} selectedTeamId={selectedTeamId}
+            onSelectTeamId={setSelectedTeamId} onInspectTeam={onInspectTeam}
+          />
         </div>
       </div>
 

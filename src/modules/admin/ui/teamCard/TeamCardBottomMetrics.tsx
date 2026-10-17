@@ -1,7 +1,7 @@
 import React from 'react';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
-import { AlertTriangle, ShieldCheck } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface Props {
   team: TeamSupervisionSummary;
@@ -49,17 +49,13 @@ export const TeamCardBottomMetrics: React.FC<Props> = ({
         <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
           Critical Alerts
         </div>
-        <div className="mt-0.5 flex items-center gap-1">
+        <div className="mt-0.5 flex items-center">
           {team.criticalAlert ? (
-            <div className="inline-flex items-center gap-1 text-rose-600 font-black text-xs" title={team.criticalAlert.message}>
-              <AlertTriangle className="w-3.5 h-3.5 fill-rose-50 text-rose-600 shrink-0" />
-              <span>1</span>
+            <div className="inline-flex items-center text-rose-600" title={team.criticalAlert.message}>
+              <AlertTriangle className="w-4 h-4 fill-rose-500 text-rose-500 shrink-0" />
             </div>
           ) : (
-            <div className="inline-flex items-center gap-1 text-emerald-600 font-semibold text-xs">
-              <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-              <span>0</span>
-            </div>
+            <span className="text-stone-300 font-bold text-xs">—</span>
           )}
         </div>
       </div>
