@@ -1,6 +1,6 @@
 import React from 'react';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
-import { projectCoordsToSvg } from './colombiaProjection';
+import { resolveTeamLocation } from './colombiaLocations';
 
 interface Props {
   teams: TeamSupervisionSummary[];
@@ -8,15 +8,16 @@ interface Props {
 
 export const ColombiaHeatGlows: React.FC<Props> = ({ teams }) => {
   return (
-    <g className="heat-glows pointer-events-none opacity-60 mix-blend-multiply">
+    <g className="heat-glows pointer-events-none opacity-50 mix-blend-multiply">
       <defs>
         {teams.map((team) => {
-          const color = team.themeColor || '#8B251E';
+          const loc = resolveTeamLocation(team);
+          const color = team.themeColor || loc.accentColor || '#8B251E';
           return (
             <radialGradient key={`grad-${team.id}`} id={`glow-${team.id}`} cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor={color} stopOpacity="0.55" />
-              <stop offset="40%" stopColor={color} stopOpacity="0.25" />
-              <stop offset="70%" stopColor={color} stopOpacity="0.08" />
+              <stop offset="45%" stopColor={color} stopOpacity="0.22" />
+              <stop offset="75%" stopColor={color} stopOpacity="0.06" />
               <stop offset="100%" stopColor={color} stopOpacity="0" />
             </radialGradient>
           );
@@ -24,9 +25,8 @@ export const ColombiaHeatGlows: React.FC<Props> = ({ teams }) => {
       </defs>
 
       {teams.map((team) => {
-        if (!team.coordinates) return null;
-        const { x, y } = projectCoordsToSvg(team.coordinates.lat, team.coordinates.lng);
-        const radius = team.healthStatus === 'Crítico' ? 70 : team.healthStatus === 'Atención' ? 55 : 45;
+        const { x, y } = resolveTeamLocation(team);
+        const radius = team.healthStatus === 'Crítico' ? 65 : team.healthStatus === 'Atención' ? 50 : 40;
 
         return (
           <circle

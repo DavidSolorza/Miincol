@@ -1,6 +1,7 @@
 import React from 'react';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import departmentsData from './data/colombiaDepartments.json';
+import { resolveTeamLocation, COLOMBIA_DEPARTMENTS, normalizeText } from './colombiaLocations';
 
 interface DepartmentPath {
   id: string;
@@ -10,58 +11,122 @@ interface DepartmentPath {
 
 interface Props {
   teams: TeamSupervisionSummary[];
+  selectedTeamId?: string | null;
   hoveredDeptId?: string | null;
-  onHoverDept?: (name: string | null) => void;
+  selectedDeptName?: string | null;
+  onSelectDept?: (deptName: string) => void;
+  onHoverDept?: (deptName: string | null) => void;
+  onSelectTeam?: (team: TeamSupervisionSummary) => void;
 }
 
 const DEPARTMENTS = departmentsData as DepartmentPath[];
 
 export const ColombiaMapDepartments: React.FC<Props> = ({
   teams,
-  hoveredDeptId,
+  selectedTeamId,
+  selectedDeptName,
+  onSelectDept,
   onHoverDept,
+  onSelectTeam,
 }) => {
+  // Pre-calculate team mappings for all departments
+  const teamsByDept = React.useMemo(() => {
+    const map = new Map<string, TeamSupervisionSummary>();
+    teams.forEach((t) => {
+      const loc = resolveTeamLocation(t);
+      const normDept = normalizeText(loc.departmentName);
+      if (!map.has(normDept)) {
+        map.set(normDept, t);
+      }
+    });
+    return map;
+  }, [teams]);
+
+  const activeSelectedTeam = teams.find((t) => t.id === selectedTeamId);
+  const selectedDeptFromTeam = activeSelectedTeam ? resolveTeamLocation(activeSelectedTeam).departmentName : null;
+
   return (
     <g className="transition-all duration-300">
       {DEPARTMENTS.map((dept) => {
-        const matchingTeam = teams.find((t) =>
-          t.department.toLowerCase().includes(dept.name.toLowerCase()) ||
-          dept.name.toLowerCase().includes(t.department.split(' ')[0].toLowerCase())
-        );
-
+        const normDeptName = normalizeText(dept.name);
+        const matchingTeam = teamsByDept.get(normDeptName);
         const hasActiveMission = Boolean(matchingTeam);
-        const isHovered = hoveredDeptId === dept.id;
-        const themeColor = matchingTeam?.themeColor || '#E67324';
+        const deptInfo = COLOMBIA_DEPARTMENTS.find((d) => d.id === dept.id);
 
-        const fillStyle = isHovered
-          ? 'rgba(230, 115, 36, 0.28)'
-          : hasActiveMission
-          ? `${themeColor}2c`
-          : 'rgba(248, 245, 238, 0.88)';
+        const isExplicitlySelected =
+          (selectedDeptName && selectedDeptName !== 'ALL' && normalizeText(selectedDeptName) === normDeptName) ||
+          (selectedDeptFromTeam && normalizeText(selectedDeptFromTeam) === normDeptName);
 
-        const strokeStyle = isHovered
-          ? '#E67324'
-          : hasActiveMission
-          ? `${themeColor}`
-          : 'rgba(168, 155, 142, 0.52)';
+        const themeColor = matchingTeam?.themeColor || deptInfo?.accentColor || '#8B251E';
+
+        // Estilos de relleno y borde diferenciados por departamento
+        let fillStyle = '#FAF8F4';
+        let strokeStyle = '#D1CBC3';
+        let strokeWidth = 0.9;
+        let filterStyle = undefined;
+
+        if (isExplicitlySelected) {
+          // Subrayado / Realce máximo del departamento seleccionado
+          fillStyle = `${themeColor}40`;
+          strokeStyle = themeColor;
+          strokeWidth = 3.2;
+          filterStyle = 'url(#active-dept-glow)';
+        } else if (hasActiveMission) {
+          // Departamento con misión activa
+          fillStyle = `${themeColor}22`;
+          strokeStyle = themeColor;
+          strokeWidth = 1.8;
+        }
 
         return (
-          <path
-            key={dept.id}
-            d={dept.d}
-            fill={fillStyle}
-            stroke={strokeStyle}
-            strokeWidth={hasActiveMission || isHovered ? 1.3 : 0.8}
-            strokeLinejoin="round"
-            className="transition-colors duration-200 cursor-pointer hover:opacity-90"
-            onMouseEnter={() => onHoverDept?.(dept.name)}
-            onMouseLeave={() => onHoverDept?.(null)}
-          >
-            <title>
-              {dept.name}
-              {hasActiveMission ? ` • Misión activa: ${matchingTeam?.name}` : ''}
-            </title>
-          </path>
+          <g key={dept.id} className="dept-group group">
+            <path
+              d={dept.d}
+              fill={fillStyle}
+              stroke={strokeStyle}
+              strokeWidth={strokeWidth}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              filter={filterStyle}
+              className="transition-all duration-200 cursor-pointer hover:fill-[#FED7AA]/60 hover:stroke-[#E67324] hover:stroke-[2.2px]"
+              onMouseEnter={() => onHoverDept?.(dept.name)}
+              onMouseLeave={() => onHoverDept?.(null)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectDept?.(dept.name);
+                if (matchingTeam && onSelectTeam) {
+                  onSelectTeam(matchingTeam);
+                }
+              }}
+            >
+              <title>
+                {dept.name}
+                {hasActiveMission ? ` • Misión Activa: ${matchingTeam?.name} (${matchingTeam?.ethnicity})` : ''}
+              </title>
+            </path>
+
+            {/* Etiqueta visible del departamento para misiones activas o seleccionadas */}
+            {(hasActiveMission || isExplicitlySelected) && deptInfo && (
+              <g
+                className="pointer-events-none select-none transition-opacity duration-300"
+                transform={`translate(${deptInfo.center.x}, ${deptInfo.center.y - 14})`}
+              >
+                <text
+                  textAnchor="middle"
+                  className="text-[9px] font-black tracking-wider uppercase font-['Outfit']"
+                  style={{
+                    fill: isExplicitlySelected ? '#751E18' : '#44403C',
+                    paintOrder: 'stroke',
+                    stroke: '#FFFFFF',
+                    strokeWidth: 3.5,
+                    strokeLinejoin: 'round',
+                  }}
+                >
+                  {dept.name}
+                </text>
+              </g>
+            )}
+          </g>
         );
       })}
     </g>
