@@ -36,7 +36,7 @@ export const PhaseObjectiveCardsGrid: React.FC<Props> = ({
           <Plus className="w-4 h-4" />
         </div>
         <div>
-          <span className="text-xs font-bold text-stone-600 group-hover:text-[#8B251E] block">+ Nuevo Objetivo</span>
+          <span className="text-xs font-bold text-stone-600 group-hover:text-[#8B251E] block">Nuevo Objetivo</span>
           <span className="text-[10px] text-stone-400">({objectives.length}/4 registrados)</span>
         </div>
       </button>
