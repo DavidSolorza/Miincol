@@ -34,7 +34,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
   const handleModalSubmit = async (dto: CreateTeamDto) => {
     if (editingTeam) {
       handleUpdateTeam(editingTeam.id, dto);
-      toast.success(`Misión "${dto.name}" actualizada`, 'Supervisión Nacional');
+      toast.success(`Misión "${dto.name}" actualizada`, 'Supervisión');
     } else {
       handleCreateTeam(dto);
       toast.success(`Misión "${dto.name}" creada`, 'Nueva Misión');
@@ -42,7 +42,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
   };
 
   return (
-    <div className="w-full space-y-4 pt-1">
+    <div className="w-full space-y-3 pt-0.5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-lg font-['Outfit']">
@@ -73,11 +73,11 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row items-start gap-4 xl:gap-5">
-        <div className="w-full lg:w-[56%] xl:w-[55%] space-y-3.5">
+      <div className="flex flex-col lg:flex-row items-stretch gap-4 xl:gap-5 lg:h-[calc(100vh-175px)] lg:min-h-[600px]">
+        <div className="w-full lg:w-1/2 flex flex-col space-y-3 h-full">
           <SuperAdminKpisGrid kpis={nationalKpis} />
           <SuperAdminFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <div className="max-h-[calc(100vh-270px)] overflow-y-auto pr-1 pb-3 custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1 pb-2 custom-scrollbar">
             <SuperAdminTeamsGrid
               teams={teams} selectedTeamId={selectedTeamId} onSelectTeamId={setSelectedTeamId}
               onInspectTeam={onInspectTeam} onEditTeam={openEditModal}
@@ -86,7 +86,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
           </div>
         </div>
 
-        <div className="w-full lg:w-[44%] xl:w-[45%] lg:sticky lg:top-[76px] self-start">
+        <div className="w-full lg:w-1/2 flex flex-col h-full">
           <ColombiaMapCard
             teams={teams} selectedTeamId={selectedTeamId}
             onSelectTeamId={setSelectedTeamId} onInspectTeam={onInspectTeam}

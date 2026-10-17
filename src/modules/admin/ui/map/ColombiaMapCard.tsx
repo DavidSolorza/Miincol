@@ -42,7 +42,7 @@ export const ColombiaMapCard: React.FC<Props> = ({
   }, [teams, selectedTeamId, hoveredTeam]);
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-[660px] xl:min-h-[750px] relative overflow-hidden group">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-[580px] relative overflow-hidden group">
       <ColombiaMapFilters
         selectedDept={selectedDept}
         onSelectDept={setSelectedDept}
