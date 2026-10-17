@@ -1,13 +1,11 @@
 import React from 'react';
-import type { MissionaryTeam } from '../../../auth/domain/auth.types';
-import { ShieldCheck, Compass } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 interface Props {
   isCollapsed: boolean;
   isTeamRestricted: boolean;
   activeView: 'plans' | 'superadmin';
   onChangeView: (view: 'plans' | 'superadmin') => void;
-  activeTeam: MissionaryTeam;
   isOpenMobile: boolean;
   onCloseMobile: () => void;
 }
@@ -17,7 +15,6 @@ export const SidebarViewsNav: React.FC<Props> = ({
   isTeamRestricted,
   activeView,
   onChangeView,
-  activeTeam,
   isOpenMobile,
   onCloseMobile,
 }) => (
@@ -34,18 +31,18 @@ export const SidebarViewsNav: React.FC<Props> = ({
           onChangeView('superadmin');
           if (isOpenMobile) onCloseMobile();
         }}
-        className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+        className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-2xl text-xs font-bold transition cursor-pointer ${
           activeView === 'superadmin'
-            ? 'bg-stone-900 text-white shadow-2xs'
-            : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900'
-        } ${isCollapsed ? 'justify-center' : ''}`}
+            ? 'bg-white text-[#8B251E] shadow-md font-black'
+            : 'text-white/85 hover:text-white hover:bg-white/12 font-semibold'
+        } ${isCollapsed ? 'justify-center p-2' : ''}`}
         title="Supervisión Nacional (Super Admin)"
       >
-        <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-[#E67324]" />
+        <ShieldCheck className={`w-4 h-4 shrink-0 ${activeView === 'superadmin' ? 'text-[#8B251E]' : 'text-amber-300'}`} />
         {!isCollapsed && (
           <div className="flex items-center justify-between w-full">
             <span>Supervisión Nacional</span>
-            <span className="text-[8px] bg-amber-400/20 text-amber-300 font-black px-1 py-0.2 rounded uppercase">
+            <span className="text-[9px] bg-amber-400/30 text-amber-200 font-black px-1.5 py-0.5 rounded-full uppercase">
               Admin
             </span>
           </div>
@@ -53,38 +50,13 @@ export const SidebarViewsNav: React.FC<Props> = ({
       </button>
     )}
 
-    {(isTeamRestricted || activeView === 'plans') && (
-      <button
-        onClick={() => {
-          onChangeView('plans');
-          if (isOpenMobile) onCloseMobile();
-        }}
-        className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-          activeView === 'plans'
-            ? 'bg-[#8B251E] text-white shadow-2xs'
-            : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
-        } ${isCollapsed ? 'justify-center' : ''}`}
-        title="Plan por Fases"
-      >
-        <Compass className="w-3.5 h-3.5 shrink-0" />
-        {!isCollapsed && (
-          <div className="flex flex-col text-left truncate">
-            <span>Plan de Desarrollo (PDM)</span>
-            {!isTeamRestricted && (
-              <span className="text-[9px] text-amber-100 font-semibold truncate">{activeTeam.name}</span>
-            )}
-          </div>
-        )}
-      </button>
-    )}
-
     {activeView === 'superadmin' && !isCollapsed && (
-      <div className="mt-3 p-3 rounded-xl bg-stone-50 border border-stone-200/70 text-xs space-y-1">
-        <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block">
-          Tablero Nacional
+      <div className="mt-2 p-2.5 rounded-2xl bg-black/15 border border-white/10 text-xs space-y-1">
+        <span className="text-[10px] font-black text-white/80 uppercase tracking-wider block font-['Outfit']">
+          Supervisión Activa
         </span>
-        <p className="text-[11px] text-stone-500 leading-snug">
-          Haga clic en cualquier equipo ministerial en el panel para supervisar sus etapas y objetivos.
+        <p className="text-[11px] text-white/70 leading-snug">
+          Selecciona una misión en el mapa para auditar sus objetivos y avances.
         </p>
       </div>
     )}

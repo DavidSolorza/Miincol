@@ -1,5 +1,4 @@
-import React from 'react';
-import { FileDown, LogOut, NotebookPen } from 'lucide-react';
+import { FileDown, NotebookPen } from 'lucide-react';
 
 interface Props {
   activeView: 'plans' | 'superadmin';
@@ -20,21 +19,26 @@ export const SidebarFooterActions: React.FC<Props> = ({
   onCloseMobile,
   onOpenReportModal,
   onOpenNotesModal,
-  onLogout,
 }) => (
-  <div className="p-2 border-t border-stone-100 space-y-1.5">
+  <div className="space-y-1 pt-1.5 border-t border-white/10">
+    {!isCollapsed && (
+      <span className="text-[10px] font-black uppercase tracking-wider text-white/60 px-2 block mb-1 font-['Outfit']">
+        Herramientas
+      </span>
+    )}
+
     {(activeView === 'plans' || isTeamRestricted) && onOpenNotesModal && (
       <button
         onClick={() => {
           onOpenNotesModal();
           if (isOpenMobile) onCloseMobile();
         }}
-        className={`w-full py-1.5 rounded-lg bg-amber-50/90 hover:bg-amber-100 text-amber-950 border border-amber-300/70 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer active:scale-98 ${
-          isCollapsed ? 'px-1' : 'px-2'
+        className={`w-full py-2 rounded-2xl bg-white/12 hover:bg-white/20 text-white border border-white/15 font-bold text-xs transition flex items-center gap-2 shadow-xs cursor-pointer ${
+          isCollapsed ? 'justify-center px-1' : 'px-2.5'
         }`}
-        title="Notas & Agenda Territorial (Ideas, Actividades y Oración)"
+        title="Notas & Agenda Territorial"
       >
-        <NotebookPen className="w-3.5 h-3.5 shrink-0 text-[#E67324]" />
+        <NotebookPen className="w-4 h-4 shrink-0 text-amber-300" />
         {!isCollapsed && <span>Notas & Agenda</span>}
       </button>
     )}
@@ -45,26 +49,13 @@ export const SidebarFooterActions: React.FC<Props> = ({
           onOpenReportModal();
           if (isOpenMobile) onCloseMobile();
         }}
-        className={`w-full py-1.5 rounded-lg bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer ${
-          isCollapsed ? 'px-1' : 'px-2'
+        className={`w-full py-2 rounded-2xl bg-white/12 hover:bg-white/20 text-white border border-white/15 font-bold text-xs transition flex items-center gap-2 shadow-xs cursor-pointer ${
+          isCollapsed ? 'justify-center px-1' : 'px-2.5'
         }`}
         title="Generar Informe Ejecutivo PDM"
       >
-        <FileDown className="w-3.5 h-3.5 shrink-0" />
+        <FileDown className="w-4 h-4 shrink-0 text-white" />
         {!isCollapsed && <span>Informe PDM</span>}
-      </button>
-    )}
-
-    {onLogout && (
-      <button
-        onClick={onLogout}
-        className={`w-full py-1.5 rounded-lg text-stone-500 hover:text-rose-600 hover:bg-rose-50 border border-stone-200/80 transition flex items-center justify-center gap-1.5 text-xs font-semibold cursor-pointer ${
-          isCollapsed ? 'px-1' : 'px-2'
-        }`}
-        title="Cerrar Sesión"
-      >
-        <LogOut className="w-3 h-3 shrink-0" />
-        {!isCollapsed && <span>Cerrar Sesión</span>}
       </button>
     )}
   </div>
