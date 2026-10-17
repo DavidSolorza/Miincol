@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { PhasePlan, Objective } from '../../domain/plan.types';
+import type { PhasePlan, Objective, Activity } from '../../domain/plan.types';
 
 interface Props {
   plan: PhasePlan;
@@ -18,13 +18,30 @@ export const usePhaseModals = ({
 }: Props) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [modalDefaultObjective, setModalDefaultObjective] = useState<1 | 2 | 3 | 4>(1);
+  const [activityModalMode, setActivityModalMode] = useState<'create' | 'edit'>('create');
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+
   const [isObjectiveModalOpen, setIsObjectiveModalOpen] = useState(false);
   const [objectiveModalMode, setObjectiveModalMode] = useState<'create' | 'edit'>('create');
   const [editingObjective, setEditingObjective] = useState<Objective | null>(null);
 
   const handleOpenAddModal = (num: 1 | 2 | 3 | 4) => {
+    setActivityModalMode('create');
+    setEditingActivity(null);
     setModalDefaultObjective(num);
     setIsAddModalOpen(true);
+  };
+
+  const handleOpenEditActivity = (activity: Activity) => {
+    setActivityModalMode('edit');
+    setEditingActivity(activity);
+    setModalDefaultObjective(activity.objectiveNumber);
+    setIsAddModalOpen(true);
+  };
+
+  const handleCloseActivityModal = () => {
+    setIsAddModalOpen(false);
+    setEditingActivity(null);
   };
 
   const handleOpenCreateObjective = () => {
@@ -60,7 +77,11 @@ export const usePhaseModals = ({
     isAddModalOpen,
     setIsAddModalOpen,
     modalDefaultObjective,
+    activityModalMode,
+    editingActivity,
     handleOpenAddModal,
+    handleOpenEditActivity,
+    handleCloseActivityModal,
     isObjectiveModalOpen,
     setIsObjectiveModalOpen,
     objectiveModalMode,

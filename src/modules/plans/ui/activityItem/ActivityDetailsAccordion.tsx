@@ -1,12 +1,13 @@
 import React from 'react';
 import type { Activity } from '../../domain/plan.types';
-import { FileText, Target, AlertTriangle } from 'lucide-react';
+import { FileText, Target, AlertTriangle, Edit3 } from 'lucide-react';
 
 interface Props {
   activity: Activity;
+  onEdit?: () => void;
 }
 
-export const ActivityDetailsAccordion: React.FC<Props> = ({ activity }) => (
+export const ActivityDetailsAccordion: React.FC<Props> = ({ activity, onEdit }) => (
   <div className="px-5 py-4 bg-[#FAF7F2]/80 border-t border-stone-200/60 text-xs text-stone-700 space-y-3 animate-fadeIn">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       <div className="bg-white p-3.5 rounded-xl border border-stone-200/70 shadow-2xs">
@@ -49,6 +50,18 @@ export const ActivityDetailsAccordion: React.FC<Props> = ({ activity }) => (
           </span>
           <p className="text-amber-950 mt-0.5 leading-relaxed">{activity.obstacles}</p>
         </div>
+      </div>
+    )}
+
+    {onEdit && (
+      <div className="flex justify-end pt-1">
+        <button
+          onClick={onEdit}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 font-bold text-xs border border-stone-200/80 shadow-2xs transition cursor-pointer"
+        >
+          <Edit3 className="w-3.5 h-3.5 text-[#8B251E]" />
+          <span>Editar Toda la Actividad</span>
+        </button>
       </div>
     )}
   </div>

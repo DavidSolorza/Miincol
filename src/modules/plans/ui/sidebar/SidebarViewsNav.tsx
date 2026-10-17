@@ -20,7 +20,7 @@ export const SidebarViewsNav: React.FC<Props> = ({
 }) => (
   <div className="space-y-1">
     {!isCollapsed && (
-      <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 px-2 block mb-1">
+      <span className="text-[10px] font-black uppercase tracking-wider text-stone-950 px-2 block mb-1 font-['Outfit']">
         Vistas
       </span>
     )}

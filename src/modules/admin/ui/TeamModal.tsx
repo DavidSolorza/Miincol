@@ -61,17 +61,31 @@ export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose, onSubmit,
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? `Editar Misión: ${initialData.name}` : 'Registrar Nueva Misión Territorial'} maxWidth="2xl">
-      <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh] overflow-y-auto px-1 py-1">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? `Editar Misión: ${initialData.name}` : 'Registrar Nueva Misión Territorial'}
+      subtitle={
+        initialData
+          ? 'Actualice la información territorial, liderazgo pastoral y configuración de acceso'
+          : 'Complete el formulario para desplegar una nueva misión indígena en el territorio nacional'
+      }
+      maxWidth="2xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh] overflow-y-auto px-1 py-1 custom-scrollbar">
         <TeamGeneralFields formData={formData} onChange={handleChange} />
         <TeamLeaderFields formData={formData} membersInput={membersInput} setMembersInput={setMembersInput} onChange={handleChange} />
         <TeamSettingsFields formData={formData} showPassword={showPassword} setShowPassword={setShowPassword} onChange={handleChange} />
 
         <div className="pt-4 border-t border-stone-100 flex items-center justify-end gap-2.5">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition cursor-pointer">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 border border-stone-200/80 transition cursor-pointer">
             Cancelar
           </button>
-          <button type="submit" disabled={saving} className="px-5 py-2 rounded-xl text-xs font-bold bg-[#8B251E] hover:bg-[#731E18] text-white shadow-xs transition cursor-pointer disabled:opacity-50">
+          <button
+            type="submit"
+            disabled={saving}
+            className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] hover:to-[#D05E12] text-white shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 transition cursor-pointer disabled:opacity-50 font-['Outfit']"
+          >
             {saving ? 'Guardando...' : initialData ? 'Guardar Cambios' : 'Crear Misión'}
           </button>
         </div>

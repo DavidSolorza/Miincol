@@ -10,6 +10,7 @@ interface ObjectiveCardProps {
   onDeleteActivity: (activityId: string) => void;
   onOpenAddModal: (objectiveNumber: 1 | 2 | 3 | 4) => void;
   onEditObjective?: (objective: Objective) => void;
+  onEditActivity?: (activity: Activity) => void;
 }
 
 export const ObjectiveCard: React.FC<ObjectiveCardProps> = React.memo(({
@@ -18,6 +19,7 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = React.memo(({
   onDeleteActivity,
   onOpenAddModal,
   onEditObjective,
+  onEditActivity,
 }) => {
   const [filterState, setFilterState] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -37,8 +39,8 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = React.memo(({
   });
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200/80 shadow-2xs overflow-hidden">
-      <div className="p-3.5 sm:p-4.5 border-b border-stone-100">
+    <div className="bg-white rounded-2xl border border-stone-200/80 shadow-xs overflow-hidden">
+      <div className="p-4 sm:p-5 border-b border-stone-100">
         <ObjectiveCardHeader
           objective={objective}
           completedCount={completedCount}
@@ -63,6 +65,7 @@ export const ObjectiveCard: React.FC<ObjectiveCardProps> = React.memo(({
         onUpdateActivity={onUpdateActivity}
         onDeleteActivity={onDeleteActivity}
         onOpenAddModal={onOpenAddModal}
+        onEditActivity={onEditActivity}
       />
     </div>
   );

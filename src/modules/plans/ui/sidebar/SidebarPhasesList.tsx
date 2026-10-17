@@ -33,10 +33,10 @@ export const SidebarPhasesList: React.FC<Props> = ({
   <div className="space-y-1 pt-1">
     {!isCollapsed && (
       <div className="px-2 mb-1.5 flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-wider text-white/60 block font-['Outfit']">
+        <span className="text-[10px] font-black uppercase tracking-wider text-stone-950 block font-['Outfit']">
           Fases PDM
         </span>
-        <span className="text-[10px] font-bold text-amber-300 truncate max-w-[120px]">
+        <span className="text-[10px] font-black text-stone-950 truncate max-w-[120px] font-['Outfit']">
           {activeTeam.ethnicity}
         </span>
       </div>

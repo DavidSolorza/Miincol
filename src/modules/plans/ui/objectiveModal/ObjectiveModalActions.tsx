@@ -63,13 +63,13 @@ export const ObjectiveModalActions: React.FC<Props> = ({
       <button
         type="button"
         onClick={onClose}
-        className="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 hover:bg-stone-100 font-bold transition cursor-pointer"
+        className="px-4 py-2 rounded-xl border border-stone-200/80 text-stone-600 hover:bg-stone-100 font-bold text-xs transition cursor-pointer"
       >
         Cancelar
       </button>
       <button
         type="submit"
-        className="px-5 py-2 rounded-xl bg-[#8B251E] hover:bg-[#731E18] text-white font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+        className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] hover:to-[#D05E12] text-white font-bold text-xs transition flex items-center gap-2 shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 active:scale-95 cursor-pointer font-['Outfit']"
       >
         {isEdit ? <Pencil className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
         <span>{isEdit ? 'Guardar Cambios' : 'Crear Objetivo'}</span>

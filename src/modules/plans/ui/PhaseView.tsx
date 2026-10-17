@@ -32,8 +32,8 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
     plan.objectives.find((obj) => obj.number === activeObjectiveNumber) || plan.objectives[0];
 
   return (
-    <div className="w-full space-y-3 sm:space-y-4">
-      <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-stone-200/90 shadow-2xs space-y-3">
+    <div className="w-full space-y-3.5 sm:space-y-4">
+      <div className="bg-white/95 p-4 sm:p-5 rounded-2xl border border-stone-200/80 shadow-xs space-y-4">
         <PhaseHeaderBar
           phaseName={plan.phaseName}
           objectivesCount={plan.objectives.length}
@@ -60,14 +60,18 @@ export const PhaseView: React.FC<PhaseViewProps> = ({
           onDeleteActivity={deleteActivity}
           onOpenAddModal={modals.handleOpenAddModal}
           onEditObjective={modals.handleOpenEditObjective}
+          onEditActivity={modals.handleOpenEditActivity}
         />
       )}
 
       <ActivityModal
         isOpen={modals.isAddModalOpen}
-        onClose={() => modals.setIsAddModalOpen(false)}
+        onClose={modals.handleCloseActivityModal}
+        mode={modals.activityModalMode}
+        activityToEdit={modals.editingActivity}
         defaultObjectiveNumber={modals.modalDefaultObjective}
         onSave={addActivity}
+        onUpdate={updateActivity}
       />
 
       <ObjectiveModal

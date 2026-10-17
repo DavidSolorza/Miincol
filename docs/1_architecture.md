@@ -167,13 +167,12 @@ graph TD
 ### ADR-013: Tablero Nacional Cartográfico con Mapa Interactivo de Colombia y Layout Split-Screen
 - **Estado:** Aprobado.
 - **Contexto:** La Dirección Nacional requería una reestructuración de la vista de supervisión basada en un layout "Split-Screen" ejecutivo de alta fidelidad: una barra lateral esbelta con accesos rápidos, KPIs superiores, barra de búsqueda con filtros, un grid de tarjetas de equipos territoriales en la sección izquierda (55%) y un mapa interactivo de Colombia detallado en la sección derecha (45%) con geolocalización precisa de cada misión, zonas de calor biogeográficas y selección bidireccional.
+### ADR-014: Edición Integral de Actividades / Sub-Objetivos mediante Modal Jerárquico Multicampo
+- **Estado:** Aprobado.
+- **Contexto:** En la experiencia de usuario previa, la tarjeta de actividad (`ActivityItem`) únicamente permitía una edición rápida inline de presupuesto (`unitBudget` y `timesPerYear`). Los líderes misioneros y la Dirección Nacional requerían la capacidad de editar la totalidad de los atributos de una iniciativa (descripción comunitaria, objetivo destino, etapa/eje operativo, estado de avance, líder responsable, periodicidad, presupuesto unitario y total recalculado, rango de fechas con cálculo de semanas, situación diagnóstica, metas a mediano y largo plazo, y contingencias territoriales).
 - **Decisión:**
-  1. Diseñar el mapa de Colombia en componentes vectoriales SVG nativos de alta fidelidad (`src/modules/admin/ui/map/`), respetando la prohibición estricta de SDKs comerciales privativos (cero Mapbox/Google Maps privativo).
-  2. Implementar georreferenciación de coordenadas reales (`latitude`, `longitude`) para los territorios indígenas (Wayuu en Alta Guajira, Arhuaco en Sierra Nevada, Embera en Chocó, Nasa en Tierradentro, Pastos en Nariño y Nukak en Guaviare).
-  3. Integrar halos de calor y radares de actividad en las regiones con misiones activas, marcadores pulsantes con colores identitarios del equipo y popover interactivo con datos del líder y acceso directo al plan.
-  4. Organizar la vista del SuperAdmin en un layout dividido responsivo con barra lateral slim flotante de navegación ejecutiva.
-- **Consecuencias:** Visibilidad geoespacial inmediata del despliegue misionero en Colombia, experiencia de usuario premium alineada con el mockup editorial y cero deuda técnica.
-
-
-
-
+  1. Extender `useActivityModalForm` y `ActivityModal` para operar en modalidad dual (`create` | `edit`) con precarga y sincronización reactiva de todos los campos del modelo de dominio `Activity`.
+  2. Implementar selector de estado explícito (`Pendiente`, `En Proceso`, `Completado`) integrado en `ActivityBasicFields`.
+  3. Conectar el disparador de edición (icono lápiz en `ActivityBudgetQuickEdit` y botón en acordeón de diagnóstico) directamente a `onEditActivity(activity)`, abriendo el modal con los valores existentes.
+  4. Garantizar que `applyUpdateActivity` en la capa de aplicación maneje la reubicación automática de actividades entre objetivos si `objectiveNumber` cambia, y recalcule automáticamente `totalBudget` (`unitBudget * timesPerYear`) y el conteo de semanas (`totalWeeks`, `remainingWeeks`).
+- **Consecuencias:** Coherencia de diseño de 3 secciones numeradas, edición total sin limitaciones y fidelidad estricta al Contrato de Gobernanza Técnica.

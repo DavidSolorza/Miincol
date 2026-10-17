@@ -28,14 +28,14 @@ export const PhaseHeaderBar: React.FC<Props> = ({
     <div className="flex items-center gap-2.5">
       <button
         onClick={onToggleMobileMenu}
-        className="lg:hidden p-1.5 rounded-lg border border-stone-200 text-stone-600 hover:bg-stone-100 transition cursor-pointer"
+        className="lg:hidden p-2 rounded-xl border border-stone-200 text-stone-600 hover:bg-stone-100 transition cursor-pointer"
         title="Abrir menú lateral"
       >
         <Menu className="w-4 h-4" />
       </button>
 
-      <div className="flex items-center gap-2">
-        <span className="text-[11px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-lg">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[11px] font-black uppercase tracking-wider text-[#8B251E] bg-gradient-to-r from-[#8B251E]/10 to-[#E67324]/10 px-3 py-1.5 rounded-xl border border-[#8B251E]/15 font-['Outfit'] shadow-2xs">
           {phaseName}
         </span>
         <span className="text-xs font-semibold text-stone-400 hidden sm:inline">
@@ -51,7 +51,7 @@ export const PhaseHeaderBar: React.FC<Props> = ({
             onResetToDefaults();
           }
         }}
-        className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition cursor-pointer"
+        className="w-8 h-8 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 border border-transparent hover:border-stone-200 flex items-center justify-center transition cursor-pointer"
         title="Restablecer datos originales"
       >
         <RotateCcw className="w-3.5 h-3.5" />
@@ -60,7 +60,7 @@ export const PhaseHeaderBar: React.FC<Props> = ({
       {!hasMaxObjectives && onOpenCreateObjective && (
         <button
           onClick={onOpenCreateObjective}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#8B251E] bg-[#8B251E]/10 hover:bg-[#8B251E]/20 transition cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#8B251E] bg-[#8B251E]/10 hover:bg-[#8B251E]/15 border border-[#8B251E]/20 transition-all cursor-pointer active:scale-95 shadow-2xs"
           title="Crear nuevo objetivo (Máx 4)"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -71,9 +71,9 @@ export const PhaseHeaderBar: React.FC<Props> = ({
       {hasActiveObjective && (
         <button
           onClick={() => onOpenAddModal(activeObjectiveNumber)}
-          className="bg-[#8B251E] hover:bg-[#731E18] text-white font-bold text-xs px-3.5 py-1.5 rounded-lg shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+          className="bg-gradient-to-r from-[#8B251E] to-[#A83229] hover:from-[#751E18] hover:to-[#8B251E] text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer font-['Outfit']"
         >
-          <Plus className="w-3.5 h-3.5" />
+          <Plus className="w-4 h-4" />
           <span>Nueva Actividad</span>
         </button>
       )}

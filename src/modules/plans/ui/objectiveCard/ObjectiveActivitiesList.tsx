@@ -9,6 +9,7 @@ interface Props {
   onUpdateActivity: (activityId: string, updatedFields: Partial<Activity>) => void;
   onDeleteActivity: (activityId: string) => void;
   onOpenAddModal: (objectiveNumber: 1 | 2 | 3 | 4) => void;
+  onEditActivity?: (activity: Activity) => void;
 }
 
 export const ObjectiveActivitiesList: React.FC<Props> = ({
@@ -17,6 +18,7 @@ export const ObjectiveActivitiesList: React.FC<Props> = ({
   onUpdateActivity,
   onDeleteActivity,
   onOpenAddModal,
+  onEditActivity,
 }) => {
   return (
     <div className="p-5 sm:p-6 space-y-3 bg-[#FAF7F2]/40 min-h-[160px]">
@@ -43,6 +45,7 @@ export const ObjectiveActivitiesList: React.FC<Props> = ({
             activity={act}
             onUpdate={onUpdateActivity}
             onDelete={onDeleteActivity}
+            onEdit={onEditActivity}
           />
         ))
       )}

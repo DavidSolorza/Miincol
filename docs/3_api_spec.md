@@ -559,5 +559,83 @@ Esta especificación define los contratos rigurosos de la API RESTful para la ad
 }
 ```
 
+---
+
+## 7. Endpoints de Actividades / Iniciativas del PDM (`/api/v1/teams/:teamId/phases/:phaseId/activities`)
+
+### 7.1. Actualización Integral de una Actividad / Sub-Objetivo
+- **Ruta:** `PUT /api/v1/teams/:teamId/phases/:phaseId/activities/:activityId`
+- **Headers:** `Content-Type: application/json`
+- **Payload de Entrada (JSON):**
+```json
+{
+  "objectiveNumber": 1,
+  "stage": "Diagnóstico Territorial",
+  "state": "En Proceso",
+  "description": "Visita exploratoria y diálogo con autoridades tradicionales (palabreros) en 5 rancherías",
+  "responsible": "Pr. David Morales & Carlos Pushaina",
+  "frequency": "Mensual",
+  "timesPerYear": 12,
+  "unitBudget": 350000,
+  "startDate": "2026-02-15",
+  "endDate": "2026-12-15",
+  "currentSituation": "Falta de censos actualizados y dispersión geográfica severa.",
+  "mediumTermGoal": "Relación de confianza sólida con líderes locales y permisos comunitarios.",
+  "longTermGoal": "Establecimiento de una congregación autóctona autosostenible.",
+  "obstacles": "Acceso limitado en temporada de lluvias y dialectos locales con variaciones."
+}
+```
+
+#### Matriz de Respuestas
+- **`200 OK`**:
+```json
+{
+  "success": true,
+  "message": "Actividad actualizada correctamente con todos los campos.",
+  "data": {
+    "id": "act-1792241029",
+    "objectiveNumber": 1,
+    "stage": "Diagnóstico Territorial",
+    "state": "En Proceso",
+    "description": "Visita exploratoria y diálogo con autoridades tradicionales (palabreros) en 5 rancherías",
+    "responsible": "Pr. David Morales & Carlos Pushaina",
+    "frequency": "Mensual",
+    "timesPerYear": 12,
+    "unitBudget": 350000,
+    "totalBudget": 4200000,
+    "startDate": "2026-02-15",
+    "endDate": "2026-12-15",
+    "totalWeeks": 43,
+    "remainingWeeks": 8,
+    "currentSituation": "Falta de censos actualizados y dispersión geográfica severa.",
+    "mediumTermGoal": "Relación de confianza sólida con líderes locales y permisos comunitarios.",
+    "longTermGoal": "Establecimiento de una congregación autóctona autosostenible.",
+    "obstacles": "Acceso limitado en temporada de lluvias y dialectos locales con variaciones."
+  }
+}
+```
+- **`400 Bad Request`**:
+```json
+{
+  "error": "INVALID_ACTIVITY_DATA",
+  "message": "La fecha de inicio no puede ser posterior a la fecha de finalización."
+}
+```
+- **`404 Not Found`**:
+```json
+{
+  "error": "ACTIVITY_NOT_FOUND",
+  "message": "No se encontró la actividad solicitada en el plan ministerial."
+}
+```
+- **`422 Unprocessable Entity`**:
+```json
+{
+  "error": "VALIDATION_FAILED",
+  "message": "Los campos 'description' y 'responsible' son mandatorios y no pueden estar vacíos."
+}
+```
+
+
 
 

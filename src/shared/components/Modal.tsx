@@ -44,31 +44,33 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/50 backdrop-blur-xs animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-stone-900/40 backdrop-blur-sm animate-fadeIn">
       {/* Backdrop click */}
       <div className="fixed inset-0" onClick={onClose} />
 
       <div
-        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden z-10 flex flex-col max-h-[90vh]`}
+        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-white rounded-3xl shadow-[0_24px_50px_-12px_rgba(28,25,23,0.2)] border border-stone-200/90 overflow-hidden z-10 flex flex-col max-h-[92vh]`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Cabecera Misincol */}
-        <div className="flex items-start justify-between px-6 py-4.5 border-b border-stone-100 bg-linear-to-r from-[#FAF7F2] to-white">
+        {/* Cabecera Acentuada Misincol */}
+        <div className="h-1 w-full bg-gradient-to-r from-[#8B251E] via-[#E67324] to-[#8B251E]" />
+
+        <div className="flex items-start justify-between px-6 sm:px-7 py-4.5 sm:py-5 border-b border-stone-100 bg-gradient-to-b from-[#FFFDF9] via-[#FAF7F2]/60 to-white gap-3">
           <div>
-            <h3 className="text-lg font-bold text-stone-900 font-['Outfit']">{title}</h3>
-            {subtitle && <p className="text-xs text-stone-500 mt-0.5">{subtitle}</p>}
+            <h3 className="text-lg sm:text-xl font-black text-stone-900 font-['Outfit'] tracking-tight">{title}</h3>
+            {subtitle && <p className="text-xs text-stone-500 mt-1 leading-relaxed max-w-xl">{subtitle}</p>}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition"
+            className="w-8 h-8 rounded-xl bg-stone-100/80 hover:bg-stone-200/80 text-stone-400 hover:text-stone-700 flex items-center justify-center transition cursor-pointer shrink-0 mt-0.5"
             aria-label="Cerrar modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Contenido con scroll */}
-        <div className="p-6 overflow-y-auto space-y-4">{children}</div>
+        <div className="p-5 sm:p-7 overflow-y-auto space-y-4 custom-scrollbar">{children}</div>
       </div>
     </div>
   );

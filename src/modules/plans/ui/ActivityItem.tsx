@@ -10,12 +10,14 @@ interface ActivityItemProps {
   activity: Activity;
   onUpdate: (activityId: string, updatedFields: Partial<Activity>) => void;
   onDelete: (activityId: string) => void;
+  onEdit?: (activity: Activity) => void;
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({
   activity,
   onUpdate,
   onDelete,
+  onEdit,
 }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isEditingBudget, setIsEditingBudget] = useState<boolean>(false);
@@ -32,9 +34,9 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200/80 hover:border-stone-300 hover:shadow-2xs transition-all duration-200 overflow-hidden">
-      <div className="p-3.5 sm:p-4 space-y-2.5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="bg-white rounded-2xl border border-stone-200/70 hover:border-stone-300 hover:shadow-xs transition-all duration-200 overflow-hidden">
+      <div className="p-4 sm:p-4.5 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2.5">
           <ActivityHeaderTags
             state={activity.state}
             stage={activity.stage}
@@ -53,29 +55,32 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
             setTimesPerYearInput={setTimesPerYearInput}
             onSaveBudget={handleSaveBudget}
             onDelete={() => onDelete(activity.id)}
+            onEdit={onEdit ? () => onEdit(activity) : undefined}
           />
         </div>
 
-        <h3 className="text-xs sm:text-sm font-bold text-stone-900 leading-snug font-['Outfit']">
+        <h3 className="text-xs sm:text-sm font-extrabold text-stone-900 leading-snug font-['Outfit'] tracking-tight">
           {activity.description}
         </h3>
 
-        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-stone-100 text-[11px] text-stone-500">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="flex items-center gap-1 font-medium text-stone-700">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-stone-100 text-[11px] text-stone-500">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 font-bold text-stone-700 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200/60 shadow-2xs">
               <User className="w-3 h-3 text-[#8B251E]" />
               {activity.responsible || 'Sin responsable asignado'}
             </span>
-            <span className="flex items-center gap-1 text-stone-400">
+            <span className="inline-flex items-center gap-1.5 text-stone-500 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200/60">
               <Calendar className="w-3 h-3 text-stone-400" />
               {formatDate(activity.startDate)} ➔ {formatDate(activity.endDate)}
             </span>
-            <span className="text-stone-400">• {activity.remainingWeeks} sem. rest.</span>
+            <span className="inline-flex items-center text-[10px] font-black text-[#8B251E] bg-[#8B251E]/10 px-2 py-0.5 rounded-lg border border-[#8B251E]/15">
+              {activity.remainingWeeks} sem. rest.
+            </span>
           </div>
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1 text-[11px] font-semibold text-stone-600 hover:text-[#8B251E] transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-600 hover:text-stone-900 font-bold text-[11px] transition cursor-pointer border border-stone-200/60 shadow-2xs"
           >
             <span>{isExpanded ? 'Ocultar diagnóstico' : 'Diagnóstico y metas'}</span>
             {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -83,7 +88,12 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
         </div>
       </div>
 
-      {isExpanded && <ActivityDetailsAccordion activity={activity} />}
+      {isExpanded && (
+        <ActivityDetailsAccordion
+          activity={activity}
+          onEdit={onEdit ? () => onEdit(activity) : undefined}
+        />
+      )}
     </div>
   );
 };
