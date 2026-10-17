@@ -21,6 +21,7 @@ export const emberaTeam: TeamSupervisionSummary = {
   inProgressActivities: 2,
   pendingActivities: 0,
   themeColor: '#8B5CF6',
+  coordinates: { lat: 5.69, lng: -76.65 },
   accessPin: 'embera2026',
   activeInitiatives: [
     {

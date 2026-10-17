@@ -44,6 +44,7 @@ Esta especificación define los contratos rigurosos de la API RESTful para la ad
       "executedBudget": 6705000,
       "themeColor": "#8B251E",
       "healthStatus": "Atención",
+      "coordinates": { "lat": 11.95, "lng": -71.85 },
       "lastUpdate": "Hoy, 09:30 AM"
     }
   ],

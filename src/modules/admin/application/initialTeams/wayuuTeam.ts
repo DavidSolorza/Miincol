@@ -21,6 +21,7 @@ export const wayuuTeam: TeamSupervisionSummary = {
   inProgressActivities: 3,
   pendingActivities: 1,
   themeColor: '#8B251E',
+  coordinates: { lat: 11.95, lng: -71.85 },
   accessPin: 'wayuu2026',
   activeInitiatives: [
     {

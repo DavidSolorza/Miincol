@@ -164,7 +164,15 @@ graph TD
      - Timestamp de último ingreso con indicador de recencia (punto verde activo si ocurrió en las últimas 24 horas).
      - Resumen conciso de la última acción ejecutada.
      - Botón de inspección rápida "Ver bitácora" para abrir el modal `TeamAuditModal.tsx` con la cronología completa de actividades del equipo.
-- **Consecuencias:** Supervisión regulada, transparencia total en la rendición de cuentas, comunicación oportuna del liderazgo nacional con los líderes de misión y estricto cumplimiento del Contrato de Gobernanza Técnica.
+### ADR-013: Tablero Nacional Cartográfico con Mapa Interactivo de Colombia y Layout Split-Screen
+- **Estado:** Aprobado.
+- **Contexto:** La Dirección Nacional requería una reestructuración de la vista de supervisión basada en un layout "Split-Screen" ejecutivo de alta fidelidad: una barra lateral esbelta con accesos rápidos, KPIs superiores, barra de búsqueda con filtros, un grid de tarjetas de equipos territoriales en la sección izquierda (55%) y un mapa interactivo de Colombia detallado en la sección derecha (45%) con geolocalización precisa de cada misión, zonas de calor biogeográficas y selección bidireccional.
+- **Decisión:**
+  1. Diseñar el mapa de Colombia en componentes vectoriales SVG nativos de alta fidelidad (`src/modules/admin/ui/map/`), respetando la prohibición estricta de SDKs comerciales privativos (cero Mapbox/Google Maps privativo).
+  2. Implementar georreferenciación de coordenadas reales (`latitude`, `longitude`) para los territorios indígenas (Wayuu en Alta Guajira, Arhuaco en Sierra Nevada, Embera en Chocó, Nasa en Tierradentro, Pastos en Nariño y Nukak en Guaviare).
+  3. Integrar halos de calor y radares de actividad en las regiones con misiones activas, marcadores pulsantes con colores identitarios del equipo y popover interactivo con datos del líder y acceso directo al plan.
+  4. Organizar la vista del SuperAdmin en un layout dividido responsivo con barra lateral slim flotante de navegación ejecutiva.
+- **Consecuencias:** Visibilidad geoespacial inmediata del despliegue misionero en Colombia, experiencia de usuario premium alineada con el mockup editorial y cero deuda técnica.
 
 
 

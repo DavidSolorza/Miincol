@@ -21,6 +21,7 @@ export const pastosTeam: TeamSupervisionSummary = {
   inProgressActivities: 7,
   pendingActivities: 3,
   themeColor: '#2563EB',
+  coordinates: { lat: 0.91, lng: -77.79 },
   accessPin: 'pastos2026',
   activeInitiatives: [
     {

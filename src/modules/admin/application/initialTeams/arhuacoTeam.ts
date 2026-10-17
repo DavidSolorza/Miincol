@@ -21,6 +21,7 @@ export const arhuacoTeam: TeamSupervisionSummary = {
   inProgressActivities: 3,
   pendingActivities: 1,
   themeColor: '#D97706',
+  coordinates: { lat: 10.65, lng: -73.65 },
   accessPin: 'arhuaco2026',
   activeInitiatives: [
     {

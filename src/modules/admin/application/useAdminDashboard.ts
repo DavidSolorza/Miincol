@@ -17,7 +17,10 @@ export const useAdminDashboard = () => {
         const parsed: TeamSupervisionSummary[] = JSON.parse(stored);
         const hasPastos = parsed.some((t) => t.id === 'team-pastos' || t.slug === 'team-pastos');
         const list = hasPastos ? parsed : [...parsed, INITIAL_NATIONAL_TEAMS.find((t) => t.id === 'team-pastos')!];
-        return list.map((t) => ({ ...t, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) }));
+        return list.map((t) => {
+          const init = INITIAL_NATIONAL_TEAMS.find((it) => it.id === t.id || it.slug === t.slug);
+          return { ...t, coordinates: t.coordinates || init?.coordinates, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) };
+        });
       }
     } catch (e) {
       console.warn('Error al cargar equipos:', e);

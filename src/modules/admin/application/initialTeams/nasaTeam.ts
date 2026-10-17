@@ -21,6 +21,7 @@ export const nasaTeam: TeamSupervisionSummary = {
   inProgressActivities: 2,
   pendingActivities: 1,
   themeColor: '#10B981',
+  coordinates: { lat: 2.75, lng: -76.15 },
   accessPin: 'nasa2026',
   activeInitiatives: [
     {

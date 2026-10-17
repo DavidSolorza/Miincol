@@ -51,6 +51,8 @@ CREATE TABLE teams (
     executed_budget NUMERIC(14, 2) DEFAULT 0.00 NOT NULL,
     theme_color VARCHAR(20) DEFAULT '#8B251E' NOT NULL,
     health_status health_status_enum DEFAULT 'Optimo' NOT NULL,
+    latitude NUMERIC(9, 6),
+    longitude NUMERIC(9, 6),
     access_pin VARCHAR(255),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,

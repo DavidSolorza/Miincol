@@ -39,6 +39,7 @@ export interface TeamSupervisionSummary {
     reportedAt: string;
   };
   healthStatus: TeamHealthStatus;
+  coordinates?: { lat: number; lng: number };
   lastUpdate: string;
   accessPin?: string;
 }
@@ -58,6 +59,7 @@ export interface CreateTeamDto {
   slug?: string;
   criticalAlertMessage?: string;
   criticalAlertType?: 'Logística' | 'Salud' | 'Seguridad' | 'Institucional';
+  coordinates?: { lat: number; lng: number };
   accessPin?: string;
 }
 

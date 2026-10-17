@@ -21,6 +21,7 @@ export const nukakTeam: TeamSupervisionSummary = {
   inProgressActivities: 2,
   pendingActivities: 3,
   themeColor: '#0D9488',
+  coordinates: { lat: 2.57, lng: -72.64 },
   accessPin: 'nukak2026',
   activeInitiatives: [
     {

@@ -15,6 +15,8 @@ interface TeamOverviewCardProps {
   onDeleteTeam?: (teamId: string) => void;
   onPhaseChange?: (teamId: string, phase: PhaseType) => void;
   onStatusChange?: (teamId: string, status: TeamHealthStatus) => void;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
 export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
@@ -23,6 +25,8 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
   onEditTeam,
   onDeleteTeam,
   onPhaseChange,
+  isSelected,
+  onSelect,
 }) => {
   const [selectedPhaseId, setSelectedPhaseId] = useState<PhaseType>(
     team.currentPhaseId || 'investigacion'
@@ -48,7 +52,14 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
   )}`;
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200/80 hover:border-stone-400/80 hover:shadow-md transition-all duration-200 p-4 sm:p-4.5 flex flex-col justify-between space-y-3 relative overflow-hidden group">
+    <div
+      onClick={onSelect}
+      className={`bg-white rounded-2xl border transition-all duration-200 p-3.5 sm:p-4 flex flex-col justify-between space-y-2.5 relative overflow-hidden group ${
+        isSelected
+          ? 'border-[#E67324] ring-2 ring-[#E67324]/30 shadow-md'
+          : 'border-stone-200/80 hover:border-stone-400/80 hover:shadow-md'
+      }`}
+    >
       <TeamCardHeader
         team={team}
         themeColor={themeColor}
