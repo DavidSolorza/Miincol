@@ -59,23 +59,23 @@ export const TeamCardHeader: React.FC<Props> = ({ team, themeColor, onEdit, onIn
         </div>
       </div>
 
-      <h3 className="font-extrabold text-[15px] text-stone-900 font-['Outfit'] truncate group-hover:text-[#8B251E] transition">
+      <h3 className="font-extrabold text-base sm:text-[17px] text-stone-900 font-['Outfit'] truncate group-hover:text-[#8B251E] transition">
         {team.name}
       </h3>
 
-      <div className="flex items-center justify-between text-[11px] text-stone-500 gap-2">
-        <span className="flex items-center gap-1 truncate">
-          <MapPin className="w-3 h-3 text-[#E67324] shrink-0" />
+      <div className="flex items-center justify-between text-xs text-stone-500 gap-2">
+        <span className="flex items-center gap-1.5 truncate">
+          <MapPin className="w-3.5 h-3.5 text-[#E67324] shrink-0" />
           <span className="truncate">{team.region}</span>
         </span>
-        <span className="flex items-center gap-1 shrink-0">
-          <Users className="w-3 h-3 text-stone-400" />
+        <span className="flex items-center gap-1.5 shrink-0">
+          <Users className="w-3.5 h-3.5 text-stone-400" />
           <span>{team.membersCount} obreros</span>
         </span>
       </div>
 
-      <div className="flex items-center gap-1 text-[11px] text-stone-600 font-medium truncate">
-        <User className="w-3 h-3 text-stone-400 shrink-0" />
+      <div className="flex items-center gap-1.5 text-xs text-stone-600 font-medium truncate">
+        <User className="w-3.5 h-3.5 text-stone-400 shrink-0" />
         <span className="text-stone-400">Líder:</span>
         <span className="font-bold text-stone-800 truncate">{team.leader}</span>
       </div>

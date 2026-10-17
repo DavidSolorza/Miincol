@@ -42,7 +42,7 @@ export const ColombiaMapCard: React.FC<Props> = ({
   }, [teams, selectedTeamId, hoveredTeam]);
 
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-[540px] xl:min-h-[640px] relative overflow-hidden group">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 shadow-sm flex flex-col h-full min-h-[660px] xl:min-h-[750px] relative overflow-hidden group">
       <ColombiaMapFilters
         selectedDept={selectedDept}
         onSelectDept={setSelectedDept}
@@ -55,8 +55,8 @@ export const ColombiaMapCard: React.FC<Props> = ({
         departments={departments}
       />
 
-      <div className="flex-1 relative flex items-center justify-center p-3 sm:p-5 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30">
-        <div className="w-full h-full max-w-[520px] max-h-[660px] aspect-[520/660]">
+      <div className="flex-1 relative flex items-center justify-center p-2 sm:p-3 overflow-hidden bg-gradient-to-b from-stone-50/40 to-stone-100/30">
+        <div className="w-full h-full max-w-[640px] max-h-[760px] aspect-[520/660] flex items-center justify-center">
           <ColombiaMapSvg
             teams={filteredTeams}
             selectedTeamId={selectedTeamId}

@@ -33,7 +33,7 @@ export const TeamOverviewCard: React.FC<TeamOverviewCardProps> = React.memo(({
     <div
       onClick={onSelect}
       style={{ borderTopColor: themeColor, borderTopWidth: '3.5px' }}
-      className={`bg-white rounded-2xl border-x border-b transition-all duration-200 p-4 flex flex-col justify-between space-y-3 relative overflow-hidden group cursor-pointer ${
+      className={`bg-white rounded-2xl border-x border-b transition-all duration-200 p-5 flex flex-col justify-between space-y-3.5 relative overflow-hidden group cursor-pointer ${
         isSelected
           ? 'border-[#E67324] ring-2 ring-[#E67324]/30 shadow-md'
           : 'border-stone-200/90 hover:border-stone-300 hover:shadow-md'

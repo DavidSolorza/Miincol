@@ -37,7 +37,7 @@ export const AppMainContent: React.FC<Props> = ({
   onOpenTeamModal,
   onToggleMobileMenu,
 }) => (
-  <main className={`flex-1 p-3 sm:p-5 lg:p-6 w-full mx-auto ${activeView === 'superadmin' ? 'max-w-[1680px]' : 'max-w-7xl'}`}>
+  <main className={`flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 w-full mx-auto ${activeView === 'superadmin' ? 'max-w-[1780px]' : 'max-w-7xl'}`}>
     {activeView === 'superadmin' && isSuperAdmin ? (
       <SuperAdminView
         onInspectTeam={onInspectTeam}

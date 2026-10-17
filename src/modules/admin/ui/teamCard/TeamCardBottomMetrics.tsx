@@ -26,33 +26,33 @@ export const TeamCardBottomMetrics: React.FC<Props> = ({
   const displayTime = lastLoginTime ? lastLoginTime.replace('Hoy, ', '') : (team.lastUpdate || '09:00');
 
   return (
-    <div className="grid grid-cols-3 gap-1.5 pt-2 mt-1 border-t border-stone-100/90 text-left">
+    <div className="grid grid-cols-3 gap-2 pt-2.5 mt-1 border-t border-stone-100 text-left">
       <div className="min-w-0">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+        <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400">
           Budget
         </div>
-        <div className="font-extrabold text-stone-900 text-xs sm:text-[13px] font-mono truncate mt-0.5" title={formatCurrencyCOP(targetBudget)}>
+        <div className="font-black text-stone-900 text-sm sm:text-base font-mono truncate mt-0.5" title={formatCurrencyCOP(targetBudget)}>
           {formattedBudget}
         </div>
       </div>
 
       <div className="min-w-0" onClick={onOpenAudit} title="Ver bitácora de actividad">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+        <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400">
           Last Access
         </div>
-        <div className="font-bold text-stone-800 text-xs sm:text-[13px] truncate mt-0.5 hover:text-[#E67324] cursor-pointer transition">
+        <div className="font-bold text-stone-800 text-xs sm:text-sm truncate mt-0.5 hover:text-[#E67324] cursor-pointer transition">
           {displayTime}
         </div>
       </div>
 
       <div className="min-w-0 flex flex-col items-start">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+        <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400">
           Critical Alerts
         </div>
         <div className="mt-0.5 flex items-center">
           {team.criticalAlert ? (
             <div className="inline-flex items-center text-rose-600" title={team.criticalAlert.message}>
-              <AlertTriangle className="w-4 h-4 fill-rose-500 text-rose-500 shrink-0" />
+              <AlertTriangle className="w-4.5 h-4.5 fill-rose-500 text-rose-500 shrink-0" />
             </div>
           ) : (
             <span className="text-stone-300 font-bold text-xs">—</span>

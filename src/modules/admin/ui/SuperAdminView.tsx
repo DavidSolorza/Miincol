@@ -42,7 +42,7 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
   };
 
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-4 pt-1">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-lg font-['Outfit']">
@@ -74,17 +74,19 @@ export const SuperAdminView: React.FC<SuperAdminViewProps> = ({
       </div>
 
       <div className="flex flex-col lg:flex-row items-start gap-4 xl:gap-5">
-        <div className="w-full lg:w-[58%] xl:w-[59%] space-y-3.5">
+        <div className="w-full lg:w-[56%] xl:w-[55%] space-y-3.5">
           <SuperAdminKpisGrid kpis={nationalKpis} />
           <SuperAdminFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <SuperAdminTeamsGrid
-            teams={teams} selectedTeamId={selectedTeamId} onSelectTeamId={setSelectedTeamId}
-            onInspectTeam={onInspectTeam} onEditTeam={openEditModal}
-            onDeleteTeam={handleDeleteTeam} onPhaseChange={handlePhaseChange}
-          />
+          <div className="max-h-[calc(100vh-270px)] overflow-y-auto pr-1 pb-3 custom-scrollbar">
+            <SuperAdminTeamsGrid
+              teams={teams} selectedTeamId={selectedTeamId} onSelectTeamId={setSelectedTeamId}
+              onInspectTeam={onInspectTeam} onEditTeam={openEditModal}
+              onDeleteTeam={handleDeleteTeam} onPhaseChange={handlePhaseChange}
+            />
+          </div>
         </div>
 
-        <div className="w-full lg:w-[42%] xl:w-[41%] lg:sticky lg:top-4 self-stretch lg:self-start">
+        <div className="w-full lg:w-[44%] xl:w-[45%] lg:sticky lg:top-[76px] self-start">
           <ColombiaMapCard
             teams={teams} selectedTeamId={selectedTeamId}
             onSelectTeamId={setSelectedTeamId} onInspectTeam={onInspectTeam}
