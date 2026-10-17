@@ -20,7 +20,7 @@ export const SidebarSegmentedControl: React.FC<Props> = ({
         <button
           onClick={onOpenNotesModal}
           title="Abrir Notas & Agenda"
-          className="w-8 h-5 rounded-full bg-white/20 hover:bg-white/30 p-0.5 flex items-center transition cursor-pointer"
+          className="w-8 h-5 rounded-full bg-black/15 hover:bg-black/25 p-0.5 flex items-center transition cursor-pointer"
         >
           <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
         </button>
@@ -30,13 +30,13 @@ export const SidebarSegmentedControl: React.FC<Props> = ({
 
   return (
     <div className="px-2 sm:px-2.5 py-1">
-      <div className="bg-black/15 p-1 rounded-2xl flex items-center gap-1 border border-white/10">
+      <div className="bg-black/10 p-1 rounded-2xl flex items-center gap-1 border border-white/20 shadow-xs backdrop-blur-xs">
         <button
           onClick={() => onChangeView('plans')}
           className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
             activeView === 'plans'
               ? 'bg-white text-[#8B251E] shadow-sm'
-              : 'text-white/80 hover:text-white hover:bg-white/10'
+              : 'text-stone-800 hover:text-stone-950 hover:bg-white/40'
           }`}
         >
           <BookOpen className="w-3 h-3 shrink-0" />
@@ -45,10 +45,10 @@ export const SidebarSegmentedControl: React.FC<Props> = ({
 
         <button
           onClick={onOpenNotesModal}
-          className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[11px] font-black text-white/80 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-[11px] font-black text-stone-800 hover:text-stone-950 hover:bg-white/40 transition-all cursor-pointer"
           title="Abrir Notas, Agenda y Oración"
         >
-          <NotebookPen className="w-3 h-3 shrink-0 text-amber-300" />
+          <NotebookPen className="w-3 h-3 shrink-0 text-[#C45500]" />
           <span>AGENDA</span>
         </button>
       </div>

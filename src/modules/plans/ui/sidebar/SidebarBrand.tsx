@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, X, Layers } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface Props {
   isCollapsed: boolean;
@@ -12,44 +12,49 @@ export const SidebarBrand: React.FC<Props> = ({
   onToggleCollapse,
   onCloseMobile,
 }) => (
-  <div className="p-3 pb-2 flex flex-col gap-2.5 border-b border-white/10">
-    {/* macOS-style window dots */}
-    <div className={`flex items-center gap-1.5 ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-      <div className="flex items-center gap-1.5">
-        <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444] shadow-xs" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] shadow-xs" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shadow-xs" />
-      </div>
-
-      <button
-        onClick={onCloseMobile}
-        className="p-1 rounded-lg text-white/70 hover:text-white hover:bg-white/10 lg:hidden cursor-pointer"
-      >
-        <X className="w-4 h-4" />
-      </button>
-
-      <button
-        onClick={onToggleCollapse}
-        className="hidden lg:flex p-1 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition cursor-pointer"
-        title={isCollapsed ? 'Expandir panel' : 'Colapsar panel'}
-      >
-        {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
-      </button>
-    </div>
-
-    {/* Brand title */}
-    <div className={`flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-      <div className="w-7 h-7 rounded-xl bg-white/20 border border-white/25 flex items-center justify-center text-white shrink-0 shadow-xs">
-        <Layers className="w-4 h-4 text-white" />
-      </div>
-      {!isCollapsed && (
-        <div className="flex items-baseline gap-1.5 min-w-0">
-          <span className="font-black text-sm text-white tracking-wider font-['Outfit'] truncate">
-            MISINCOL
+  <div className="p-2.5 sm:p-3 pb-2 flex flex-col gap-1.5 border-b border-black/5">
+    {isCollapsed ? (
+      <div className="flex flex-col items-center gap-2 py-0.5">
+        <button
+          onClick={onToggleCollapse}
+          className="hidden lg:flex p-1.5 rounded-xl text-stone-700 hover:text-stone-900 bg-white/70 hover:bg-white border border-stone-200/60 transition cursor-pointer shadow-xs"
+          title="Expandir panel"
+        >
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+        <div className="w-8 h-8 rounded-xl bg-white/90 border border-stone-200/80 shadow-xs flex items-center justify-center select-none" title="MISINCOL">
+          <span className="font-['Outfit'] font-black text-sm text-[#8B251E] leading-none">
+            M<span className="text-[#EA7C25]">.</span>
           </span>
-          <span className="text-[10px] font-bold text-white/60">v1.0</span>
         </div>
-      )}
-    </div>
+      </div>
+    ) : (
+      <div className="flex items-center justify-between gap-1.5 min-w-0">
+        <div className="flex items-center min-w-0 py-0.5">
+          <img
+            src="/img/misincol.png"
+            alt="MISINCOL"
+            className="h-8 sm:h-8.5 w-auto max-w-[145px] object-contain drop-shadow-xs"
+          />
+        </div>
+
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            onClick={onCloseMobile}
+            className="p-1.5 rounded-xl text-stone-700 hover:text-stone-900 bg-white/70 hover:bg-white border border-stone-200/60 lg:hidden cursor-pointer shadow-xs"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+
+          <button
+            onClick={onToggleCollapse}
+            className="hidden lg:flex p-1.5 rounded-xl text-stone-700 hover:text-stone-900 bg-white/70 hover:bg-white border border-stone-200/60 transition cursor-pointer shadow-xs"
+            title="Colapsar panel"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+    )}
   </div>
 );

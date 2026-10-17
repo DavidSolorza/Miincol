@@ -27,8 +27,8 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
           isCollapsed ? 'lg:w-18' : 'lg:w-56 xl:w-60'
         } ${isOpenMobile ? 'translate-x-0 w-68 h-full rounded-r-[26px]' : '-translate-x-full lg:translate-x-0'}`}
         style={{
-          background: 'linear-gradient(185deg, #B83A2D 0%, #9E2B21 35%, #8B251E 70%, #721C16 100%)',
-          boxShadow: '0 20px 35px -5px rgba(139, 37, 30, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12) inset',
+          background: 'linear-gradient(185deg, #FFF9F5 0%, #FCE8DC 8%, #F2BCA9 14%, #D95441 22%, #B83A2D 38%, #9E2B21 62%, #7A1F18 82%, #5C1510 100%)',
+          boxShadow: '0 20px 35px -5px rgba(139, 37, 30, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.25) inset',
         }}
       >
         <SidebarBrand isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} onCloseMobile={onCloseMobile} />
