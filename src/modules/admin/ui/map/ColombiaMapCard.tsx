@@ -19,6 +19,8 @@ export const ColombiaMapCard: React.FC<Props> = ({
 }) => {
   const [selectedDept, setSelectedDept] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
+  const [selectedPhase, setSelectedPhase] = useState('ALL');
+  const [selectedEthnicity, setSelectedEthnicity] = useState('ALL');
   const [hoveredTeam, setHoveredTeam] = useState<TeamSupervisionSummary | null>(null);
 
   const departments = useMemo(() => {
@@ -29,9 +31,11 @@ export const ColombiaMapCard: React.FC<Props> = ({
     return teams.filter((t) => {
       const matchDept = selectedDept === 'ALL' || t.department.includes(selectedDept);
       const matchStatus = selectedStatus === 'ALL' || t.healthStatus === selectedStatus;
-      return matchDept && matchStatus;
+      const matchPhase = selectedPhase === 'ALL' || t.currentPhaseId === selectedPhase;
+      const matchEth = selectedEthnicity === 'ALL' || t.ethnicity.toLowerCase().includes(selectedEthnicity.toLowerCase());
+      return matchDept && matchStatus && matchPhase && matchEth;
     });
-  }, [teams, selectedDept, selectedStatus]);
+  }, [teams, selectedDept, selectedStatus, selectedPhase, selectedEthnicity]);
 
   const activeTeam = useMemo(() => {
     return teams.find((t) => t.id === selectedTeamId) || hoveredTeam;
@@ -44,6 +48,10 @@ export const ColombiaMapCard: React.FC<Props> = ({
         onSelectDept={setSelectedDept}
         selectedStatus={selectedStatus}
         onSelectStatus={setSelectedStatus}
+        selectedPhase={selectedPhase}
+        onSelectPhase={setSelectedPhase}
+        selectedEthnicity={selectedEthnicity}
+        onSelectEthnicity={setSelectedEthnicity}
         departments={departments}
       />
 
