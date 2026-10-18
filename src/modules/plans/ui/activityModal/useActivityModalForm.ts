@@ -32,6 +32,7 @@ export const useActivityModalForm = ({
   const [startDate, setStartDate] = useState('2026-03-01');
   const [endDate, setEndDate] = useState('2026-11-30');
   const [currentSituation, setCurrentSituation] = useState('');
+  const [shortTermGoal, setShortTermGoal] = useState('');
   const [mediumTermGoal, setMediumTermGoal] = useState('');
   const [longTermGoal, setLongTermGoal] = useState('');
   const [obstacles, setObstacles] = useState('');
@@ -50,6 +51,7 @@ export const useActivityModalForm = ({
       setStartDate(activityToEdit.startDate || '2026-03-01');
       setEndDate(activityToEdit.endDate || '2026-11-30');
       setCurrentSituation(activityToEdit.currentSituation || '');
+      setShortTermGoal(activityToEdit.shortTermGoal || '');
       setMediumTermGoal(activityToEdit.mediumTermGoal || '');
       setLongTermGoal(activityToEdit.longTermGoal || '');
       setObstacles(activityToEdit.obstacles || '');
@@ -65,11 +67,13 @@ export const useActivityModalForm = ({
       setStartDate('2026-03-01');
       setEndDate('2026-11-30');
       setCurrentSituation('');
+      setShortTermGoal('');
       setMediumTermGoal('');
       setLongTermGoal('');
       setObstacles('');
     }
   }, [mode, activityToEdit, defaultObjectiveNumber]);
+
 
   const calculatedTotal = (unitBudget || 0) * (timesPerYear || 0);
   const { totalWeeks, remainingWeeks } = calculateWeeks(startDate, endDate);
@@ -96,6 +100,7 @@ export const useActivityModalForm = ({
         totalWeeks,
         remainingWeeks,
         currentSituation,
+        shortTermGoal,
         mediumTermGoal,
         longTermGoal,
         obstacles,
@@ -120,6 +125,7 @@ export const useActivityModalForm = ({
         remainingWeeks,
         state,
         currentSituation,
+        shortTermGoal,
         mediumTermGoal,
         longTermGoal,
         obstacles,
@@ -129,6 +135,7 @@ export const useActivityModalForm = ({
       onClose();
       setDescription('');
       setCurrentSituation('');
+      setShortTermGoal('');
       setMediumTermGoal('');
       setLongTermGoal('');
       setObstacles('');
@@ -158,6 +165,8 @@ export const useActivityModalForm = ({
     setEndDate,
     currentSituation,
     setCurrentSituation,
+    shortTermGoal,
+    setShortTermGoal,
     mediumTermGoal,
     setMediumTermGoal,
     longTermGoal,
@@ -168,3 +177,4 @@ export const useActivityModalForm = ({
     handleSubmit,
   };
 };
+

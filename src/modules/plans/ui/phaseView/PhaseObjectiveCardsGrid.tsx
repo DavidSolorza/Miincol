@@ -16,7 +16,7 @@ export const PhaseObjectiveCardsGrid: React.FC<Props> = ({
   onSelectObjective,
   onOpenCreateObjective,
 }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 items-stretch">
     {objectives.map((obj) => (
       <PhaseObjectiveCardItem
         key={obj.number}
@@ -30,9 +30,9 @@ export const PhaseObjectiveCardsGrid: React.FC<Props> = ({
       <button
         type="button"
         onClick={onOpenCreateObjective}
-        className="p-3 sm:p-3.5 rounded-xl border-2 border-dashed border-stone-200 hover:border-[#8B251E]/40 hover:bg-[#8B251E]/5 transition flex flex-col items-center justify-center text-center gap-2 cursor-pointer group min-h-[110px]"
+        className="p-3.5 sm:p-4 rounded-2xl border-2 border-dashed border-stone-200 hover:border-[#8B251E]/40 hover:bg-[#8B251E]/5 transition flex flex-col items-center justify-center text-center gap-2 cursor-pointer group min-h-[148px] h-full w-full"
       >
-        <div className="w-7 h-7 rounded-full bg-stone-100 group-hover:bg-[#8B251E]/10 text-stone-500 group-hover:text-[#8B251E] flex items-center justify-center transition">
+        <div className="w-8 h-8 rounded-full bg-stone-100 group-hover:bg-[#8B251E]/10 text-stone-500 group-hover:text-[#8B251E] flex items-center justify-center transition">
           <Plus className="w-4 h-4" />
         </div>
         <div>
@@ -42,4 +42,5 @@ export const PhaseObjectiveCardsGrid: React.FC<Props> = ({
       </button>
     )}
   </div>
+
 );

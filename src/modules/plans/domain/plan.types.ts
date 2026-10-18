@@ -14,6 +14,7 @@ export interface Activity {
   objectiveNumber: 1 | 2 | 3 | 4;
   description: string;
   currentSituation: string;
+  shortTermGoal?: string;
   mediumTermGoal: string;
   longTermGoal: string;
   responsible: string;

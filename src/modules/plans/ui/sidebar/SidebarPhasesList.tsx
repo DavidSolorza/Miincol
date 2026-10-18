@@ -33,10 +33,10 @@ export const SidebarPhasesList: React.FC<Props> = ({
   <div className="space-y-1 pt-1">
     {!isCollapsed && (
       <div className="px-2 mb-1.5 flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-wider text-stone-950 block font-['Outfit']">
-          Fases PDM
+        <span className="text-[10px] font-black uppercase tracking-wider text-stone-600 block font-['Outfit']">
+          Pilares PDM
         </span>
-        <span className="text-[10px] font-black text-stone-950 truncate max-w-[120px] font-['Outfit']">
+        <span className="text-[10px] font-black text-[#8B251E] bg-[#8B251E]/10 border border-[#8B251E]/15 px-2 py-0.5 rounded-md truncate max-w-[120px] font-['Outfit']">
           {activeTeam.ethnicity}
         </span>
       </div>
@@ -58,17 +58,17 @@ export const SidebarPhasesList: React.FC<Props> = ({
             onSelectPhase(p.id);
             if (activeView !== 'plans') onChangeView('plans');
           }}
-          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-2xl transition cursor-pointer ${
+          className={`w-full flex items-center justify-between px-2.5 py-2 rounded-2xl transition cursor-pointer group ${
             isPhaseActive
-              ? 'bg-white text-[#8B251E] font-black shadow-md'
-              : 'text-white/85 hover:text-white hover:bg-white/12 font-medium'
+              ? 'bg-white text-[#8B251E] font-black shadow-sm border border-stone-200/80 ring-2 ring-[#E67324]/20'
+              : 'text-[#261B18] hover:text-stone-950 hover:bg-stone-200/60 font-bold'
           } ${isCollapsed ? 'justify-center p-2' : ''}`}
-          title={`Fase ${p.step}: ${p.label}`}
+          title={`Pilar ${p.step}: ${p.label}`}
         >
           <div className="flex items-center gap-2 overflow-hidden">
-            <Icon className={`w-4 h-4 shrink-0 ${isPhaseActive ? 'text-[#8B251E]' : 'text-white'}`} />
+            <Icon className={`w-4 h-4 shrink-0 transition ${isPhaseActive ? 'text-[#8B251E]' : 'text-stone-600 group-hover:text-[#8B251E]'}`} />
             {!isCollapsed && (
-              <span className="truncate font-['Outfit'] text-xs font-bold">
+              <span className="truncate font-['Outfit'] text-xs">
                 {p.step}. {p.label}
               </span>
             )}
@@ -76,10 +76,10 @@ export const SidebarPhasesList: React.FC<Props> = ({
 
           {!isCollapsed && (
             <span
-              className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${
+              className={`text-[10px] font-black px-1.5 py-0.5 rounded-full transition ${
                 isPhaseActive
                   ? 'bg-[#10B981] text-white shadow-2xs'
-                  : 'bg-white/20 text-white'
+                  : 'bg-stone-200/90 text-stone-700 border border-stone-300/60 group-hover:bg-stone-300/80 group-hover:text-stone-900'
               }`}
             >
               {completedActs > 0 ? `${completedActs}/${totalActs}` : totalActs}
@@ -89,4 +89,5 @@ export const SidebarPhasesList: React.FC<Props> = ({
       );
     })}
   </div>
+
 );

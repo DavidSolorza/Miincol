@@ -20,9 +20,9 @@ export const SidebarFooterActions: React.FC<Props> = ({
   onOpenReportModal,
   onOpenNotesModal,
 }) => (
-  <div className="space-y-1 pt-1.5 border-t border-white/10">
+  <div className="space-y-1 pt-1.5 border-t border-stone-200/80">
     {!isCollapsed && (
-      <span className="text-[10px] font-black uppercase tracking-wider text-white/60 px-2 block mb-1 font-['Outfit']">
+      <span className="text-[10px] font-black uppercase tracking-wider text-stone-600 px-2 block mb-1 font-['Outfit']">
         Herramientas
       </span>
     )}
@@ -33,12 +33,12 @@ export const SidebarFooterActions: React.FC<Props> = ({
           onOpenNotesModal();
           if (isOpenMobile) onCloseMobile();
         }}
-        className={`w-full py-2 rounded-2xl bg-white/12 hover:bg-white/20 text-white border border-white/15 font-bold text-xs transition flex items-center gap-2 shadow-xs cursor-pointer ${
+        className={`w-full py-2 rounded-2xl bg-white/85 hover:bg-white text-[#261B18] hover:text-stone-950 border border-stone-200/80 font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs cursor-pointer ${
           isCollapsed ? 'justify-center px-1' : 'px-2.5'
         }`}
         title="Notas & Agenda Territorial"
       >
-        <NotebookPen className="w-4 h-4 shrink-0 text-amber-300" />
+        <NotebookPen className="w-4 h-4 shrink-0 text-[#C45500]" />
         {!isCollapsed && <span>Notas & Agenda</span>}
       </button>
     )}
@@ -49,14 +49,15 @@ export const SidebarFooterActions: React.FC<Props> = ({
           onOpenReportModal();
           if (isOpenMobile) onCloseMobile();
         }}
-        className={`w-full py-2 rounded-2xl bg-white/12 hover:bg-white/20 text-white border border-white/15 font-bold text-xs transition flex items-center gap-2 shadow-xs cursor-pointer ${
+        className={`w-full py-2 rounded-2xl bg-white/85 hover:bg-white text-[#261B18] hover:text-stone-950 border border-stone-200/80 font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs cursor-pointer ${
           isCollapsed ? 'justify-center px-1' : 'px-2.5'
         }`}
         title="Generar Informe Ejecutivo PDM"
       >
-        <FileDown className="w-4 h-4 shrink-0 text-white" />
+        <FileDown className="w-4 h-4 shrink-0 text-[#8B251E]" />
         {!isCollapsed && <span>Informe PDM</span>}
       </button>
     )}
   </div>
+
 );

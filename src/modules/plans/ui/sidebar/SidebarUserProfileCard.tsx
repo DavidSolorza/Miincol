@@ -21,7 +21,7 @@ export const SidebarUserProfileCard: React.FC<Props> = ({
         <button
           onClick={onLogout}
           title={`${activeTeam.leader} • Click para cerrar sesión`}
-          className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white font-black text-xs flex items-center justify-center transition shadow-xs cursor-pointer active:scale-95"
+          className="w-9 h-9 rounded-full bg-white hover:bg-stone-100 border border-stone-200/80 text-[#8B251E] font-black text-xs flex items-center justify-center transition shadow-2xs cursor-pointer active:scale-95"
         >
           {leaderInitial}
         </button>
@@ -31,16 +31,16 @@ export const SidebarUserProfileCard: React.FC<Props> = ({
 
   return (
     <div className="p-2 sm:p-2.5">
-      <div className="bg-white/12 hover:bg-white/16 backdrop-blur-md border border-white/15 p-2 rounded-2xl flex items-center justify-between text-white transition shadow-xs group">
+      <div className="bg-white/90 hover:bg-white border border-stone-200/90 p-2 rounded-2xl flex items-center justify-between text-stone-900 transition shadow-2xs group">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <div className="w-8 h-8 rounded-full bg-white text-[#8B251E] font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8B251E] to-[#E67324] text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
             {leaderInitial}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-black truncate leading-tight font-['Outfit']">
+            <p className="text-xs font-black truncate leading-tight font-['Outfit'] text-stone-900">
               {activeTeam.leader}
             </p>
-            <p className="text-[10px] text-white/70 truncate leading-tight mt-0.5">
+            <p className="text-[10px] text-stone-500 truncate leading-tight mt-0.5">
               {activeTeam.ethnicity || activeTeam.name}
             </p>
           </div>
@@ -50,7 +50,7 @@ export const SidebarUserProfileCard: React.FC<Props> = ({
           <button
             onClick={onLogout}
             title="Cerrar sesión"
-            className="text-white/70 hover:text-white hover:bg-white/20 p-1.5 rounded-xl transition cursor-pointer shrink-0"
+            className="text-stone-400 hover:text-[#8B251E] hover:bg-stone-100 p-1.5 rounded-xl transition cursor-pointer shrink-0"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>
@@ -58,4 +58,5 @@ export const SidebarUserProfileCard: React.FC<Props> = ({
       </div>
     </div>
   );
+
 };

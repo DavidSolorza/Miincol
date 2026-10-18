@@ -5,8 +5,8 @@ import { ActivityScheduleFields } from './ActivityScheduleFields';
 interface Props {
   objectiveNumber: 1 | 2 | 3 | 4;
   setObjectiveNumber: (n: 1 | 2 | 3 | 4) => void;
-  stage: string;
-  setStage: (s: string) => void;
+  stage?: string;
+  setStage?: (s: string) => void;
   state: ActivityState;
   setState: (s: ActivityState) => void;
   description: string;
@@ -22,8 +22,6 @@ interface Props {
 export const ActivityBasicFields: React.FC<Props> = ({
   objectiveNumber,
   setObjectiveNumber,
-  stage,
-  setStage,
   state,
   setState,
   description,
@@ -45,9 +43,9 @@ export const ActivityBasicFields: React.FC<Props> = ({
       </h4>
     </div>
 
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <div>
-        <label className="font-bold text-stone-700 block mb-1 text-[11px]">Objetivo Destino</label>
+        <label className="font-bold text-stone-700 block mb-1 text-[11px]">Objetivo</label>
         <select
           value={objectiveNumber}
           onChange={(e) => setObjectiveNumber(Number(e.target.value) as 1 | 2 | 3 | 4)}
@@ -58,18 +56,6 @@ export const ActivityBasicFields: React.FC<Props> = ({
           <option value={3}>Obj #3 (Alianzas y Redes)</option>
           <option value={4}>Obj #4 (Planificación)</option>
         </select>
-      </div>
-
-      <div>
-        <label className="font-bold text-stone-700 block mb-1 text-[11px]">Etapa / Eje Operativo</label>
-        <input
-          type="text"
-          value={stage}
-          onChange={(e) => setStage(e.target.value)}
-          placeholder="Ej. Diagnóstico Comunitario..."
-          className="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs font-medium text-stone-800"
-          required
-        />
       </div>
 
       <div>
@@ -85,6 +71,7 @@ export const ActivityBasicFields: React.FC<Props> = ({
         </select>
       </div>
     </div>
+
 
     <div>
       <label className="font-bold text-stone-700 block mb-1 text-[11px]">Descripción de la Actividad</label>

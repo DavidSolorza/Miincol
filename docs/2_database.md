@@ -128,6 +128,7 @@ CREATE TABLE activities (
     stage VARCHAR(100) DEFAULT 'General' NOT NULL,
     description TEXT NOT NULL,
     current_situation TEXT DEFAULT '' NOT NULL,
+    short_term_goal TEXT DEFAULT '' NOT NULL,
     medium_term_goal TEXT DEFAULT '' NOT NULL,
     long_term_goal TEXT DEFAULT '' NOT NULL,
     responsible VARCHAR(150) NOT NULL,
@@ -221,6 +222,7 @@ CREATE INDEX IF NOT EXISTS idx_activities_state ON activities(state);
 | `stage` | `VARCHAR(100)` | `NOT NULL, DEFAULT 'General'` | Etapa o categoría técnica (ej. 'Investigación Social'). |
 | `description` | `TEXT` | `NOT NULL` | Descripción de la actividad planificada. |
 | `current_situation` | `TEXT` | `NOT NULL, DEFAULT ''` | Diagnóstico de situación actual. |
+| `short_term_goal` | `TEXT` | `NOT NULL, DEFAULT ''` | Meta a corto plazo (3-6 meses). |
 | `medium_term_goal` | `TEXT` | `NOT NULL, DEFAULT ''` | Meta a mediano plazo (6-12 meses). |
 | `long_term_goal` | `TEXT` | `NOT NULL, DEFAULT ''` | Meta a largo plazo (24-60 meses). |
 | `responsible` | `VARCHAR(150)` | `NOT NULL` | Misionero u obrero responsable directo. |

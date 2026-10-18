@@ -19,7 +19,7 @@ export const ActivityScheduleFields: React.FC<Props> = ({
 }) => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
     <div>
-      <label className="font-bold text-stone-700 block mb-1 text-[11px]">Responsable Principal</label>
+      <label className="font-bold text-stone-700 block mb-1 text-[11px]">Responsable</label>
       <input
         type="text"
         value={responsible}
@@ -31,7 +31,8 @@ export const ActivityScheduleFields: React.FC<Props> = ({
     </div>
 
     <div>
-      <label className="font-bold text-stone-700 block mb-1 text-[11px]">Frecuencia</label>
+      <label className="font-bold text-stone-700 block mb-1 text-[11px]">Frecuencia de la Actividad</label>
+
       <select
         value={frequency}
         onChange={(e) => setFrequency(e.target.value)}

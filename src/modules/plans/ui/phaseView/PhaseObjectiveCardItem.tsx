@@ -21,7 +21,7 @@ export const PhaseObjectiveCardItem: React.FC<Props> = ({
     <button
       type="button"
       onClick={onSelect}
-      className={`group relative text-left p-3.5 sm:p-4 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+      className={`group relative text-left p-3.5 sm:p-4 rounded-2xl transition-all duration-200 cursor-pointer flex flex-col justify-between w-full h-full min-h-[148px] ${
         isSelected
           ? 'bg-gradient-to-b from-white via-[#FFFDF9] to-[#FAF7F2] border-2 border-[#E67324]/70 shadow-[0_8px_24px_-4px_rgba(230,115,36,0.15)] ring-4 ring-[#E67324]/10'
           : 'bg-white/70 hover:bg-white border border-stone-200/70 hover:border-stone-300 hover:shadow-2xs'
@@ -66,7 +66,7 @@ export const PhaseObjectiveCardItem: React.FC<Props> = ({
         </div>
 
         <h4
-          className={`font-['Outfit'] font-bold text-xs sm:text-[13px] leading-snug line-clamp-2 min-h-[2.3rem] transition ${
+          className={`font-['Outfit'] font-bold text-xs sm:text-[13px] leading-snug line-clamp-2 min-h-[2.6rem] transition ${
             isSelected ? 'text-stone-900 font-extrabold' : 'text-stone-700 group-hover:text-stone-900'
           }`}
           title={obj.title}
@@ -74,6 +74,7 @@ export const PhaseObjectiveCardItem: React.FC<Props> = ({
           {obj.title}
         </h4>
       </div>
+
 
       <div className="mt-3 pt-2.5 border-t border-stone-100/90 space-y-1.5">
         <div className="w-full bg-stone-100 h-2 rounded-full overflow-hidden p-0.5">

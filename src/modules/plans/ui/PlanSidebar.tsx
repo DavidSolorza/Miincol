@@ -23,12 +23,11 @@ export const PlanSidebar: React.FC<PlanSidebarProps> = ({
       )}
 
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-50 transition-all duration-300 flex flex-col justify-between select-none shadow-2xl lg:my-2.5 lg:ml-2.5 lg:h-[calc(100vh-20px)] rounded-[26px] overflow-hidden ${
+        className={`fixed lg:sticky top-0 left-0 z-50 transition-all duration-300 flex flex-col justify-between select-none lg:my-2.5 lg:ml-2.5 lg:h-[calc(100vh-20px)] rounded-[26px] overflow-hidden border border-stone-200/90 shadow-[0_12px_36px_-6px_rgba(40,20,15,0.08)] ${
           isCollapsed ? 'lg:w-18' : 'lg:w-56 xl:w-60'
         } ${isOpenMobile ? 'translate-x-0 w-68 h-full rounded-r-[26px]' : '-translate-x-full lg:translate-x-0'}`}
         style={{
-          background: 'linear-gradient(185deg, #FFF9F5 0%, #FCE8DC 8%, #F2BCA9 14%, #D95441 22%, #B83A2D 38%, #9E2B21 62%, #7A1F18 82%, #5C1510 100%)',
-          boxShadow: '0 20px 35px -5px rgba(139, 37, 30, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.25) inset',
+          background: 'linear-gradient(185deg, #FFFFFF 0%, #FFFDF9 25%, #FAF5EE 60%, #F5ECE0 100%)',
         }}
       >
         <SidebarBrand isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} onCloseMobile={onCloseMobile} />

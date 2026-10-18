@@ -80,6 +80,8 @@ export const ActivityModal: React.FC<ActivityModalProps> = ({
         <ActivityGoalsFields
           currentSituation={form.currentSituation}
           setCurrentSituation={form.setCurrentSituation}
+          shortTermGoal={form.shortTermGoal}
+          setShortTermGoal={form.setShortTermGoal}
           mediumTermGoal={form.mediumTermGoal}
           setMediumTermGoal={form.setMediumTermGoal}
           longTermGoal={form.longTermGoal}
@@ -87,6 +89,7 @@ export const ActivityModal: React.FC<ActivityModalProps> = ({
           obstacles={form.obstacles}
           setObstacles={form.setObstacles}
         />
+
 
         <div className="sticky bottom-0 bg-white/95 backdrop-blur-xs flex items-center justify-end gap-2.5 pt-3 pb-1 border-t border-stone-200/60 z-10">
           <button

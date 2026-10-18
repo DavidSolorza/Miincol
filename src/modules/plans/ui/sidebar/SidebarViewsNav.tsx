@@ -20,7 +20,7 @@ export const SidebarViewsNav: React.FC<Props> = ({
 }) => (
   <div className="space-y-1">
     {!isCollapsed && (
-      <span className="text-[10px] font-black uppercase tracking-wider text-stone-950 px-2 block mb-1 font-['Outfit']">
+      <span className="text-[10px] font-black uppercase tracking-wider text-stone-600 px-2 block mb-1 font-['Outfit']">
         Vistas
       </span>
     )}
@@ -33,16 +33,16 @@ export const SidebarViewsNav: React.FC<Props> = ({
         }}
         className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-2xl text-xs font-bold transition cursor-pointer ${
           activeView === 'superadmin'
-            ? 'bg-white text-[#8B251E] shadow-md font-black'
-            : 'text-white/85 hover:text-white hover:bg-white/12 font-semibold'
+            ? 'bg-white text-[#8B251E] shadow-sm font-black border border-stone-200/80'
+            : 'text-stone-800 hover:text-stone-950 hover:bg-stone-200/60 font-semibold'
         } ${isCollapsed ? 'justify-center p-2' : ''}`}
         title="Supervisión Nacional (Super Admin)"
       >
-        <ShieldCheck className={`w-4 h-4 shrink-0 ${activeView === 'superadmin' ? 'text-[#8B251E]' : 'text-amber-300'}`} />
+        <ShieldCheck className={`w-4 h-4 shrink-0 ${activeView === 'superadmin' ? 'text-[#8B251E]' : 'text-amber-700'}`} />
         {!isCollapsed && (
           <div className="flex items-center justify-between w-full">
             <span>Supervisión Nacional</span>
-            <span className="text-[9px] bg-amber-400/30 text-amber-200 font-black px-1.5 py-0.5 rounded-full uppercase">
+            <span className="text-[9px] bg-amber-500/15 text-amber-900 border border-amber-500/30 font-black px-1.5 py-0.5 rounded-full uppercase">
               Admin
             </span>
           </div>
@@ -51,14 +51,15 @@ export const SidebarViewsNav: React.FC<Props> = ({
     )}
 
     {activeView === 'superadmin' && !isCollapsed && (
-      <div className="mt-2 p-2.5 rounded-2xl bg-black/15 border border-white/10 text-xs space-y-1">
-        <span className="text-[10px] font-black text-white/80 uppercase tracking-wider block font-['Outfit']">
+      <div className="mt-2 p-2.5 rounded-2xl bg-white/90 border border-stone-200/80 text-xs space-y-1 shadow-2xs">
+        <span className="text-[10px] font-black text-stone-800 uppercase tracking-wider block font-['Outfit']">
           Supervisión Activa
         </span>
-        <p className="text-[11px] text-white/70 leading-snug">
+        <p className="text-[11px] text-stone-600 leading-snug">
           Selecciona una misión en el mapa para auditar sus objetivos y avances.
         </p>
       </div>
     )}
   </div>
+
 );
