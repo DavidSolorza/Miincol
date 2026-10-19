@@ -6,7 +6,7 @@ import { AppMainContent } from './AppMainContent';
 import { AppGlobalModals } from './AppGlobalModals';
 import { useWorkspaceUiState } from './useWorkspaceUiState';
 import { useAppWorkspaceBus } from './useAppWorkspaceBus';
-import { usePlan } from '../../modules/plans/application/usePlan';
+import { usePlan } from '../../features/plans/application/usePlan';
 
 export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
   session, activeTeam, activeTeamSummary, mappedTeams, activeTeamId, setActiveTeamId,
@@ -30,6 +30,7 @@ export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
         onOpenReportModal={() => ui.setIsReportModalOpen(true)}
         onOpenNotesModal={() => ui.setIsNotesModalOpen(true)}
         onPhaseChange={() => ui.setActiveObjectiveNumber(1)}
+        whatsappUrl={ui.whatsappUrl}
       />
 
       <div className={`flex-1 flex flex-col min-w-0 ${activeView === 'superadmin' ? 'h-full lg:h-screen lg:overflow-hidden' : 'min-h-screen'}`}>
@@ -43,19 +44,18 @@ export const AppWorkspace: React.FC<AppWorkspaceProps> = ({
           activeView={activeView}
           mappedTeams={mappedTeams}
           activeTeamId={activeTeamId}
-          themeColor={activeTeam.themeColor || '#8B251E'}
           session={session}
           onOpenMobileSidebar={() => ui.setIsMobileSidebarOpen(true)}
           onSelectTeam={(teamId) => { setActiveTeamId(teamId); ui.setActiveObjectiveNumber(1); }}
           onGoToSuperAdmin={() => { setIsAdminPreview(false); setActiveView('superadmin'); }}
           onLogout={handleLogout}
+          onOpenReportModal={() => ui.setIsReportModalOpen(true)}
         />
 
         <AppMainContent
           activeView={activeView}
           isSuperAdmin={isSuperAdmin}
           activeTeam={activeTeam}
-          themeColor={activeTeam.themeColor || '#8B251E'}
           whatsappUrl={ui.whatsappUrl}
           activeObjectiveNumber={ui.activeObjectiveNumber}
           setActiveObjectiveNumber={ui.setActiveObjectiveNumber}

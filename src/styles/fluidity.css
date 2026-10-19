@@ -59,6 +59,30 @@
   border-radius: 9999px;
 }
 
+.sidebar-scroll-smooth {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.sidebar-scroll-smooth::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll-smooth::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll-smooth::-webkit-scrollbar-thumb {
+  background: rgba(230, 115, 36, 0.18);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.sidebar-scroll-smooth:hover::-webkit-scrollbar-thumb {
+  background: rgba(230, 115, 36, 0.38);
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(230, 115, 36, 0.55) 0%, rgba(230, 115, 36, 0.32) 40%, rgba(230, 115, 36, 0.12) 75%, rgba(230, 115, 36, 0) 100%);
 }

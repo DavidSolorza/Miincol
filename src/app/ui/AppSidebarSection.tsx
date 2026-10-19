@@ -1,7 +1,7 @@
 import React from 'react';
-import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
-import type { usePlan } from '../../modules/plans/application/usePlan';
-import { PlanSidebar } from '../../modules/plans/ui/PlanSidebar';
+import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
+import type { usePlan } from '../../features/plans/application/usePlan';
+import { PlanSidebar } from '../../features/plans/infrastructure/PlanSidebar';
 
 interface Props {
   shouldShowSidebar: boolean;
@@ -19,6 +19,7 @@ interface Props {
   onOpenReportModal: () => void;
   onOpenNotesModal?: () => void;
   onPhaseChange: () => void;
+  whatsappUrl?: string | null;
 }
 
 export const AppSidebarSection: React.FC<Props> = ({
@@ -37,6 +38,7 @@ export const AppSidebarSection: React.FC<Props> = ({
   onOpenReportModal,
   onOpenNotesModal,
   onPhaseChange,
+  whatsappUrl,
 }) => {
   if (!shouldShowSidebar) return null;
 
@@ -63,6 +65,7 @@ export const AppSidebarSection: React.FC<Props> = ({
       onCloseMobile={() => setIsMobileSidebarOpen(false)}
       userRole={userRole}
       onLogout={handleLogout}
+      whatsappUrl={whatsappUrl}
     />
   );
 };

@@ -1,13 +1,15 @@
-import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
+import React, { createContext, useContext, useCallback, useMemo, useEffect } from 'react';
+import hotToast, { Toaster } from 'react-hot-toast';
 import { serviceBus } from '../../core/bus';
-import {
-  type ToastType,
-  type ToastItem,
-  type ToastContextValue,
+import type {
+  ToastType,
+  ToastItem,
+  ToastContextValue,
+  ToastConfirmOptions,
 } from './toast/toast.types';
-import { ToastItemView } from './toast/ToastItemView';
+import { ToastConfirmItemView } from './toast/ToastConfirmItemView';
 
-export type { ToastType, ToastItem, ToastContextValue };
+export type { ToastType, ToastItem, ToastContextValue, ToastConfirmOptions };
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
@@ -24,27 +26,46 @@ interface ToastProviderProps {
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
-
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    hotToast.dismiss(id);
   }, []);
 
   const showToast = useCallback(
     (message: string, type: ToastType = 'info', title?: string, duration: number = 3800) => {
-      const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-      const newToast: ToastItem = { id, type, title, message, duration };
+      const text = title ? `${title}: ${message}` : message;
+      const opts = { duration };
 
-      setToasts((prev) => [...prev.slice(-3), newToast]);
-
-      if (duration > 0) {
-        setTimeout(() => {
-          removeToast(id);
-        }, duration);
+      switch (type) {
+        case 'success':
+          return hotToast.success(text, opts);
+        case 'error':
+          return hotToast.error(text, opts);
+        case 'warning':
+          return hotToast(text, { ...opts, icon: '⚠️' });
+        case 'info':
+        default:
+          return hotToast(text, { ...opts, icon: 'ℹ️' });
       }
     },
-    [removeToast]
+    []
   );
+
+  const confirmAction = useCallback((options: ToastConfirmOptions) => {
+    const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    hotToast.custom(
+      (t) => (
+        <ToastConfirmItemView
+          confirmItem={{ ...options, id }}
+          onDismiss={() => hotToast.dismiss(t.id)}
+        />
+      ),
+      {
+        id,
+        duration: options.duration || 10000,
+        position: 'top-center',
+      }
+    );
+  }, []);
 
   useEffect(() => {
     const sub = serviceBus.subscribe('ui:toast', (payload) => {
@@ -68,16 +89,43 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   );
 
   return (
-    <ToastContext.Provider value={{ showToast, toast, removeToast }}>
+    <ToastContext.Provider value={{ showToast, confirmAction, toast, removeToast }}>
       {children}
-      <div
-        aria-live="polite"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9999] flex flex-col gap-2.5 max-w-sm w-full px-3 sm:px-0 pointer-events-none select-none"
-      >
-        {toasts.map((item) => (
-          <ToastItemView key={item.id} item={item} onRemove={removeToast} />
-        ))}
-      </div>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerStyle={{
+          top: 24,
+        }}
+        toastOptions={{
+          duration: 3800,
+          style: {
+            background: '#FFFDF9',
+            color: '#1C1917',
+            border: '1px solid #EBDDCF',
+            boxShadow: '0 10px 30px -5px rgba(139, 37, 30, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
+            borderRadius: '16px',
+            padding: '10px 16px',
+            fontFamily: "'Outfit', system-ui, sans-serif",
+            fontSize: '13px',
+            fontWeight: '600',
+            letterSpacing: '-0.01em',
+          },
+          success: {
+            iconTheme: {
+              primary: '#16A34A',
+              secondary: '#FFFFFF',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#DC2626',
+              secondary: '#FFFFFF',
+            },
+          },
+        }}
+      />
     </ToastContext.Provider>
   );
 };

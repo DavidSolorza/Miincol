@@ -1,7 +1,7 @@
-import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
-import type { TeamSupervisionSummary } from '../../modules/admin/domain/admin.types';
+import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
+import type { TeamSupervisionSummary } from '../../features/admin/domain/admin.types';
 import type { AuthSession } from '../auth/appSession.types';
-import type { useAdminDashboard } from '../../modules/admin/application/useAdminDashboard';
+import type { useAdminDashboard } from '../../features/admin/application/useAdminDashboard';
 
 export interface AppWorkspaceProps {
   session: AuthSession;

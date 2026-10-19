@@ -1,9 +1,9 @@
 import React from 'react';
-import type { PhasePlan } from '../../modules/plans/domain/plan.types';
-import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
-import { ReportModal } from '../../modules/reports/ui/ReportModal';
-import { TeamNotesModal } from '../../modules/notes/ui/TeamNotesModal';
-import { TeamSelector } from '../../modules/auth/ui/TeamSelector';
+import type { PhasePlan } from '../../features/plans/domain/plan.types';
+import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
+import { ReportModal } from '../../features/reports/infrastructure/ReportModal';
+import { TeamNotesModal } from '../../features/notes/infrastructure/TeamNotesModal';
+import { TeamSelector } from '../../features/auth/infrastructure/TeamSelector';
 import { useToast } from '../../shared/components/Toast';
 
 interface Props {

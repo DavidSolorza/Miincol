@@ -1,12 +1,12 @@
 import React, { useMemo, lazy, Suspense } from 'react';
 import { ToastProvider } from '../shared/components/Toast';
-import { useAdminDashboard } from '../modules/admin/application/useAdminDashboard';
+import { useAdminDashboard } from '../features/admin/application/useAdminDashboard';
 import { useAppSession } from './auth/useAppSession';
 import { AppWorkspace } from './ui/AppWorkspace';
-import type { MissionaryTeam } from '../modules/auth/domain/auth.types';
+import type { MissionaryTeam } from '../features/auth/domain/auth.types';
 
 const LoginView = lazy(() =>
-  import('../modules/auth/ui/LoginView').then((m) => ({ default: m.LoginView }))
+  import('../features/auth/infrastructure/LoginView').then((m) => ({ default: m.LoginView }))
 );
 
 const AppContent: React.FC = () => {

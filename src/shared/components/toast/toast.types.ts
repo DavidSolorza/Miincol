@@ -10,8 +10,24 @@ export interface ToastItem {
   duration?: number;
 }
 
+export interface ToastConfirmOptions {
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  type?: 'warning' | 'danger' | 'info';
+  duration?: number;
+  onConfirm: () => void;
+  onCancel?: () => void;
+}
+
+export interface ActiveConfirmToast extends ToastConfirmOptions {
+  id: string;
+}
+
 export interface ToastContextValue {
   showToast: (message: string, type?: ToastType, title?: string, duration?: number) => void;
+  confirmAction: (options: ToastConfirmOptions) => void;
   toast: {
     success: (message: string, title?: string, duration?: number) => void;
     error: (message: string, title?: string, duration?: number) => void;

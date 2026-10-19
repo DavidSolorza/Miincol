@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, MessageCircle } from 'lucide-react';
-import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
+import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 
 interface Props {
   activeTeam: MissionaryTeam;

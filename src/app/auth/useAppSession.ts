@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import type { TeamSupervisionSummary } from '../../modules/admin/domain/admin.types';
+import type { TeamSupervisionSummary } from '../../features/admin/domain/admin.types';
 import { type AuthSession, STORAGE_KEY_AUTH } from './appSession.types';
 import { useToast } from '../../shared/components/Toast';
 
 import { serviceBus } from '../../core/bus';
-import { appendAuditLog } from '../../modules/audit/application/auditStorage';
+import { appendAuditLog } from '../../features/audit/application/auditStorage';
 
 export const useAppSession = (allTeams: TeamSupervisionSummary[]) => {
   const { toast } = useToast();

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
+import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 
 export const useWorkspaceUiState = (activeTeam: MissionaryTeam) => {
   const [activeObjectiveNumber, setActiveObjectiveNumber] = useState(1);

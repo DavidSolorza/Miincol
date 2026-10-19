@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu } from 'lucide-react';
-import type { MissionaryTeam } from '../../modules/auth/domain/auth.types';
+import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { AuthSession } from '../auth/appSession.types';
 import { AdminPreviewBanner } from './AdminPreviewBanner';
 import { AppHeader } from './AppHeader';
@@ -15,12 +15,12 @@ interface Props {
   activeView: 'plans' | 'superadmin';
   mappedTeams: MissionaryTeam[];
   activeTeamId: string;
-  themeColor: string;
   session: AuthSession;
   onOpenMobileSidebar: () => void;
   onSelectTeam: (teamId: string) => void;
   onGoToSuperAdmin: () => void;
   onLogout: () => void;
+  onOpenReportModal?: () => void;
 }
 
 export const AppHeaderSection: React.FC<Props> = ({
@@ -33,12 +33,12 @@ export const AppHeaderSection: React.FC<Props> = ({
   activeView,
   mappedTeams,
   activeTeamId,
-  themeColor,
   session,
   onOpenMobileSidebar,
   onSelectTeam,
   onGoToSuperAdmin,
   onLogout,
+  onOpenReportModal,
 }) => (
   <div className="sticky top-0 z-30">
     {isAdminPreview && (
@@ -67,12 +67,12 @@ export const AppHeaderSection: React.FC<Props> = ({
         mappedTeams={mappedTeams}
         activeTeamId={activeTeamId}
         activeTeam={activeTeam}
-        themeColor={themeColor}
         session={session}
         onOpenMobileSidebar={onOpenMobileSidebar}
         onSelectTeam={onSelectTeam}
         onGoToSuperAdmin={onGoToSuperAdmin}
         onLogout={onLogout}
+        onOpenReportModal={onOpenReportModal}
       />
     )}
   </div>
