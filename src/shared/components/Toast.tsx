@@ -31,7 +31,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   }, []);
 
   const showToast = useCallback(
-    (message: string, type: ToastType = 'info', title?: string, duration: number = 3800) => {
+    (message: string, type: ToastType = 'info', title?: string, duration: number = 1600) => {
       const text = title ? `${title}: ${message}` : message;
       const opts = { duration };
 
@@ -99,7 +99,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
           top: 24,
         }}
         toastOptions={{
-          duration: 3800,
+          duration: 1600,
           style: {
             background: '#FFFDF9',
             color: '#1C1917',
