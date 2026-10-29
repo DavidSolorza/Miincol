@@ -2,6 +2,8 @@
  * Dominio de Autenticación y Equipos de Misión
  */
 
+export type UserRole = 'admin' | 'team';
+
 export interface MissionaryTeam {
   id: string;
   name: string;
