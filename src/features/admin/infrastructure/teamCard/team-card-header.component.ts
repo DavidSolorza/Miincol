@@ -1,3 +1,4 @@
+// Encabezado de la tarjeta de equipo: insignia de etnia, estado de salud, botones de acción y líder
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
@@ -69,11 +70,12 @@ import type { IconName } from '../../../../shared/components/icon/icon.types';
   `,
 })
 export class TeamCardHeaderComponent {
-  @Input({ required: true }) team!: TeamSupervisionSummary;
-  @Input() themeColor = '#8B251E';
-  @Output() edit = new EventEmitter<void>();
-  @Output() inspect = new EventEmitter<void>();
+  @Input({ required: true }) team!: TeamSupervisionSummary; // Resumen del equipo misionero
+  @Input() themeColor = '#8B251E'; // Color identitario de la misión
+  @Output() edit = new EventEmitter<void>(); // Emite al pulsar el botón de editar misión
+  @Output() inspect = new EventEmitter<void>(); // Emite al pulsar el botón de supervisar plan
 
+  // Resuelve los estilos, ícono y etiqueta según el estado de salud del equipo
   get badgeConfig(): { bg: string; dot: string; icon: IconName; label: string } {
     const map: Record<string, { bg: string; dot: string; icon: IconName; label: string }> = {
       Optimo: { bg: 'bg-emerald-50 text-emerald-800 border-emerald-200', dot: 'bg-emerald-500', icon: 'shield-check', label: 'Operación Estable' },

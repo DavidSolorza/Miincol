@@ -15,7 +15,7 @@ export {
   MUNICIPALITY_LOCATIONS,
 };
 
-export const normalizeText = (text?: string): string => {
+export const normalizeText = (text?: string): string => { // Normaliza texto a minúsculas sin tildes para búsquedas flexibles
   if (!text) return '';
   return text
     .toLowerCase()
@@ -24,7 +24,7 @@ export const normalizeText = (text?: string): string => {
     .trim();
 };
 
-export const findDepartmentByName = (deptNameOrQuery?: string): DepartmentInfo | null => {
+export const findDepartmentByName = (deptNameOrQuery?: string): DepartmentInfo | null => { // Busca un departamento por coincidencia parcial o exacta de nombre
   if (!deptNameOrQuery) return null;
   const q = normalizeText(deptNameOrQuery);
 
@@ -36,7 +36,7 @@ export const findDepartmentByName = (deptNameOrQuery?: string): DepartmentInfo |
   );
 };
 
-export interface ResolvedLocation {
+export interface ResolvedLocation { // Coordenadas SVG y metadatos territoriales resueltos para un equipo
   x: number;
   y: number;
   departmentId: string;
@@ -45,7 +45,7 @@ export interface ResolvedLocation {
   accentColor: string;
 }
 
-export const resolveTeamLocation = (team: {
+export const resolveTeamLocation = (team: { // Resuelve la posición (x, y) y departamento de un equipo por municipio, región o etnia
   id?: string;
   region?: string;
   department?: string;

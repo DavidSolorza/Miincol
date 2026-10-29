@@ -5,6 +5,7 @@ import { PHASE_NAMES_MAP, getPlansForTeam, createCustomPlanForTeam } from './tea
 
 export { PHASE_NAMES_MAP, getPlansForTeam, createCustomPlanForTeam };
 
+// Estructura de métricas e iniciativas activas de un equipo en una fase determinada
 export interface TeamPhaseMetrics {
   currentPhaseId: PhaseType;
   currentPhaseName: string;
@@ -24,6 +25,7 @@ export interface TeamPhaseMetrics {
   }>;
 }
 
+// Calcula las métricas consolidadas y el listado de iniciativas de un equipo y fase
 export const getTeamPhaseMetrics = (
   teamId: string,
   phaseId: PhaseType,

@@ -78,8 +78,9 @@ import type { Activity } from '../../domain/plan.types';
     </div>
   `,
 })
+// Panel desplegable que muestra el diagnóstico territorial, metas por plazo y obstáculos de una actividad
 export class ActivityDetailsAccordionComponent {
-  readonly activity = input.required<Activity>();
-  readonly edited = output<void>();
+  readonly activity = input.required<Activity>(); // Actividad cuyos detalles y metas se visualizan
+  readonly edited = output<void>(); // Emite para abrir el modal de edición completa de la actividad
 }
 

@@ -1,3 +1,4 @@
+// Insignia flotante superior en el mapa que muestra el departamento activo y la misión asociada
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
@@ -41,8 +42,8 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class ColombiaDeptBadgeComponent {
-  @Input() deptName: string | null = null;
-  @Input() activeTeamName: string | null = null;
-  @Input() themeColor: string | null = null;
+  @Input() deptName: string | null = null; // Nombre del departamento seleccionado o en hover
+  @Input() activeTeamName: string | null = null; // Nombre de la misión activa en ese departamento
+  @Input() themeColor: string | null = null; // Color identitario de la misión activa
 }
 

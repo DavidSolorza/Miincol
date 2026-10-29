@@ -1,6 +1,7 @@
+// Contratos y tipos de dominio para supervisión nacional, misiones territoriales y KPIs
 import type { PhaseType } from '../../plans/domain/plan.types';
 
-export type TeamHealthStatus = 'Optimo' | 'Atención' | 'Crítico';
+export type TeamHealthStatus = 'Optimo' | 'Atención' | 'Crítico'; // Estado de salud operativa del equipo
 
 export interface TeamInitiative {
   title: string;
@@ -11,7 +12,7 @@ export interface TeamInitiative {
   stage?: string;
 }
 
-export interface TeamSupervisionSummary {
+export interface TeamSupervisionSummary { // Resumen consolidado de supervisión por equipo misionero
   id: string;
   slug?: string;
   name: string;
@@ -44,7 +45,7 @@ export interface TeamSupervisionSummary {
   accessPin?: string;
 }
 
-export interface CreateTeamDto {
+export interface CreateTeamDto { // DTO para registrar o actualizar una misión territorial
   name: string;
   ethnicity: string;
   region: string;
@@ -63,7 +64,7 @@ export interface CreateTeamDto {
   accessPin?: string;
 }
 
-export interface NationalKpis {
+export interface NationalKpis { // Indicadores clave de desempeño (KPIs) consolidados a nivel nacional
   totalTeams: number;
   totalMissionaries: number;
   totalNationalBudget: number;

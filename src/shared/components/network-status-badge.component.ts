@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { NetworkBusService } from '../../core/bus/network-bus.service';
 import { AppIconComponent } from './icon/app-icon.component';
 
+// Indicador visual de conectividad en la barra superior (En línea / Modo Local Offline)
 @Component({
   selector: 'app-network-status-badge',
   standalone: true,
@@ -29,6 +30,7 @@ import { AppIconComponent } from './icon/app-icon.component';
   `,
 })
 export class NetworkStatusBadgeComponent {
+  // Servicio de monitoreo de estado de red
   readonly network = inject(NetworkBusService);
 }
 

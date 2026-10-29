@@ -1,5 +1,6 @@
 import type { PhasePlan } from '../../domain/plan.types';
 
+// Configuración inicial del plan y objetivos para la fase de Encarnación y Convivencia Comunitaria
 export const encarnacionPhase: PhasePlan = {
   phaseId: 'encarnacion',
   phaseName: 'Encarnación y Convivencia Comunitaria',

@@ -81,18 +81,20 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
     </div>
   `,
 })
+// Tarjeta individual de una actividad con edición rápida de estado, presupuesto y acordeón de diagnóstico
 export class ActivityItemComponent {
-  readonly activity = input.required<Activity>();
-  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
-  readonly deleted = output<string>();
-  readonly edited = output<Activity>();
+  readonly activity = input.required<Activity>(); // Datos completos de la actividad a mostrar
+  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actualizaciones parciales de la actividad
+  readonly deleted = output<string>(); // Emite el ID de la actividad cuando se confirma su eliminación
+  readonly edited = output<Activity>(); // Solicita abrir el modal de edición completa para esta actividad
 
-  readonly isExpanded = signal(false);
-  readonly isEditingBudget = signal(false);
-  readonly unitBudgetInput = signal(0);
-  readonly timesPerYearInput = signal(1);
+  readonly isExpanded = signal(false); // Controla si el acordeón de diagnóstico y metas está desplegado
+  readonly isEditingBudget = signal(false); // Indica si el modo de edición rápida de presupuesto está activo
+  readonly unitBudgetInput = signal(0); // Valor temporal del presupuesto unitario durante la edición rápida
+  readonly timesPerYearInput = signal(1); // Valor temporal de las repeticiones anuales durante la edición rápida
 
   constructor() {
+    // Sincroniza los inputs locales de presupuesto cuando cambia la actividad recibida
     effect(() => {
       const act = this.activity();
       this.unitBudgetInput.set(act.unitBudget);
@@ -100,14 +102,17 @@ export class ActivityItemComponent {
     });
   }
 
+  // Formatea una fecha ISO a formato legible en español
   fmtDate(d: string): string {
     return formatDate(d);
   }
 
+  // Emite la actualización inmediata cuando el usuario cambia el estado de la actividad
   onStateChange(state: ActivityState): void {
     this.updated.emit({ activityId: this.activity().id, updatedFields: { state } });
   }
 
+  // Guarda los cambios de presupuesto unitario y frecuencia anual desde la edición rápida
   handleSaveBudget(): void {
     this.updated.emit({
       activityId: this.activity().id,

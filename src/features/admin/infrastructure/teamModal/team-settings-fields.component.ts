@@ -1,7 +1,9 @@
+// Campos de parámetros operativos de la misión (Fase PDM, presupuesto anual, color y PIN de acceso)
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { CreateTeamDto } from '../../domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
+// Paleta de colores predefinidos para identificar la tarjeta y marcador del equipo
 const COLOR_PRESETS = [
   '#8B251E', '#E67324', '#10B981', '#2563EB', '#8B5CF6', '#D97706', '#0D9488', '#E11D48',
 ];
@@ -91,11 +93,11 @@ const COLOR_PRESETS = [
   `,
 })
 export class TeamSettingsFieldsComponent {
-  @Input({ required: true }) formData!: CreateTeamDto;
-  @Input() showPassword = false;
-  @Output() showPasswordChange = new EventEmitter<boolean>();
-  @Output() updateChange = new EventEmitter<Partial<CreateTeamDto>>();
+  @Input({ required: true }) formData!: CreateTeamDto; // Datos actuales del formulario de misión
+  @Input() showPassword = false; // Indica si el PIN de acceso se muestra en texto claro
+  @Output() showPasswordChange = new EventEmitter<boolean>(); // Alterna visibilidad del PIN
+  @Output() updateChange = new EventEmitter<Partial<CreateTeamDto>>(); // Emite cambios de configuración
 
-  readonly presets = COLOR_PRESETS;
+  readonly presets = COLOR_PRESETS; // Colores seleccionables en la interfaz
 }
 

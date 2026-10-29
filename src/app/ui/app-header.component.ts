@@ -7,6 +7,7 @@ import { AppHeaderUserProfileComponent } from './app-header-user-profile.compone
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { AuthSession } from '../auth/appSession.types';
 
+// Barra superior principal: muestra logo/selector de misión, acciones rápidas de Super Admin, red y perfil
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -109,6 +110,7 @@ import type { AuthSession } from '../auth/appSession.types';
   `,
 })
 export class AppHeaderComponent {
+  // Entradas reactivas del estado de navegación y equipo seleccionado
   readonly shouldShowSidebar = input.required<boolean>();
   readonly isSuperAdmin = input.required<boolean>();
   readonly activeView = input.required<'plans' | 'superadmin'>();
@@ -117,12 +119,14 @@ export class AppHeaderComponent {
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly session = input.required<AuthSession>();
 
+  // Eventos emitidos hacia el workspace contenedor
   readonly openMobileSidebar = output<void>();
   readonly selectTeam = output<string>();
   readonly goToSuperAdmin = output<void>();
   readonly logout = output<void>();
   readonly openReportModal = output<void>();
 
+  // Dispara el evento global para abrir el modal de creación de nueva misión
   dispatchOpenCreateTeam(): void {
     window.dispatchEvent(new CustomEvent('misincol:open-create-team'));
   }

@@ -1,9 +1,11 @@
 import type { TeamAuditLog } from '../domain/audit.types';
 
+// Funciones auxiliares para generar marcas de tiempo relativas hacia atrás
 const subMinutes = (mins: number) => new Date(Date.now() - mins * 60 * 1000).toISOString();
 const subHours = (hrs: number) => new Date(Date.now() - hrs * 3600 * 1000).toISOString();
 const subDays = (days: number) => new Date(Date.now() - days * 24 * 3600 * 1000).toISOString();
 
+// Registros iniciales de auditoría preconfigurados por equipo territorial
 export const INITIAL_AUDIT_LOGS_BY_TEAM: Record<string, TeamAuditLog[]> = {
   'team-wayuu': [
     {
@@ -74,6 +76,7 @@ export const INITIAL_AUDIT_LOGS_BY_TEAM: Record<string, TeamAuditLog[]> = {
   ],
 };
 
+// Retorna la bitácora inicial de un equipo o crea un evento de ingreso por defecto
 export const getInitialAuditLogs = (teamId: string, leaderName = 'Líder de Misión'): TeamAuditLog[] => {
   return INITIAL_AUDIT_LOGS_BY_TEAM[teamId] || [
     {

@@ -2,6 +2,7 @@ import type { PhasePlan } from '../../domain/plan.types';
 import { investigacionObj1And2 } from './investigacionObj1And2';
 import { investigacionObj3And4 } from './investigacionObj3And4';
 
+// Configuración inicial del plan para la fase de Investigación y Diagnóstico Territorial
 export const investigacionPhase: PhasePlan = {
   phaseId: 'investigacion',
   phaseName: 'Investigación y Diagnóstico Territorial',

@@ -3,6 +3,7 @@ import { INITIAL_PLANS_BY_PHASE } from '../mockPlanData';
 import { pastosObj1And2 } from './pastosObj1And2';
 import { pastosObj3And4 } from './pastosObj3And4';
 
+// Diccionario de planes por fase personalizados para la Misión Pastos en Cumbal
 export const PASTOS_PLANS_BY_PHASE: Record<string, PhasePlan> = {
   investigacion: {
     ...INITIAL_PLANS_BY_PHASE.investigacion,

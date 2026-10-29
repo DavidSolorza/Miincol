@@ -1,5 +1,6 @@
 import type { Objective } from '../../domain/plan.types';
 
+// Datos iniciales de los objetivos 3 y 4 para la fase de Entrenamiento de la Misión Pastos
 export const pastosObj3And4: Objective[] = [
   {
     number: 3,

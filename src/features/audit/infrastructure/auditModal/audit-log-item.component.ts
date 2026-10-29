@@ -4,6 +4,7 @@ import { formatTimeHour } from '../../application/auditStorage';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import type { IconName } from '../../../../shared/components/icon/icon.types';
 
+// Configuración visual de etiquetas, iconos y colores para cada tipo de acción de auditoría
 const ACTION_CONFIG: Record<string, { label: string; icon: IconName; bg: string }> = {
   login: { label: 'Ingreso', icon: 'log-in', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   activity_update: { label: 'Actividad Editada', icon: 'edit-3', bg: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -45,13 +46,17 @@ const ACTION_CONFIG: Record<string, { label: string; icon: IconName; bg: string 
     </div>
   `,
 })
+// Ítem visual que muestra un registro individual dentro de la bitácora de auditoría
 export class AuditLogItemComponent {
+  // Registro de auditoría a mostrar en la tarjeta
   @Input({ required: true }) log!: TeamAuditLog;
 
+  // Obtiene la configuración de estilo e ícono según el tipo de acción
   get config() {
     return ACTION_CONFIG[this.log.actionType] || ACTION_CONFIG['login'];
   }
 
+  // Retorna la fecha y hora formateada del evento de auditoría
   get formattedTime(): string {
     return formatTimeHour(this.log.timestamp);
   }

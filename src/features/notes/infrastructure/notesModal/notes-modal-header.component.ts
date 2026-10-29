@@ -39,7 +39,9 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
     </div>
   `,
 })
+// Cabecera del modal de notas con contador total de apuntes y botón de cierre
 export class NotesModalHeaderComponent {
+  // Entradas con el equipo activo y el total de notas; salida para cerrar el modal
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly totalNotes = input.required<number>();
   readonly closed = output<void>();

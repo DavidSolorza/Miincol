@@ -55,10 +55,13 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
     </div>
   `,
 })
+// Tabla de balance general por objetivos estratégicos y presupuesto anual consolidado
 export class ReportObjectivesTableComponent {
+  // Entradas con el resumen de objetivos estratégicos y el presupuesto total de la fase
   readonly objectivesSummary = input.required<ReportObjectiveSummary[]>();
   readonly totalBudget = input.required<number>();
 
+  // Formatea el presupuesto en pesos colombianos (COP)
   formatCurrency(val: number): string {
     return formatCurrencyCOP(val);
   }

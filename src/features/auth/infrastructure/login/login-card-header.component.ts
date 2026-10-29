@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
+// Encabezado del formulario de login con el logotipo institucional de MISINCOL y subtítulo
 @Component({
   selector: 'app-login-card-header',
   standalone: true,

@@ -70,29 +70,33 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
     </div>
   `,
 })
+// Sección de campos básicos de una actividad: objetivo, estado, descripción y programación
 export class ActivityBasicFieldsComponent {
-  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>();
-  readonly state = input.required<ActivityState>();
-  readonly description = input.required<string>();
-  readonly responsible = input.required<string>();
-  readonly frequency = input.required<string>();
-  readonly timesPerYear = input.required<number>();
+  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>(); // Número del objetivo al que se asocia la actividad
+  readonly state = input.required<ActivityState>(); // Estado actual de la actividad
+  readonly description = input.required<string>(); // Descripción de la iniciativa o actividad
+  readonly responsible = input.required<string>(); // Persona o líder responsable
+  readonly frequency = input.required<string>(); // Frecuencia de realización
+  readonly timesPerYear = input.required<number>(); // Número de repeticiones al año
 
-  readonly objectiveNumberChanged = output<1 | 2 | 3 | 4>();
-  readonly stateChanged = output<ActivityState>();
-  readonly descriptionChanged = output<string>();
-  readonly responsibleChanged = output<string>();
-  readonly frequencyChanged = output<string>();
-  readonly timesPerYearChanged = output<number>();
+  readonly objectiveNumberChanged = output<1 | 2 | 3 | 4>(); // Emite cambios en el objetivo seleccionado
+  readonly stateChanged = output<ActivityState>(); // Emite cambios en el estado de la actividad
+  readonly descriptionChanged = output<string>(); // Emite cambios en la descripción
+  readonly responsibleChanged = output<string>(); // Emite cambios en el responsable
+  readonly frequencyChanged = output<string>(); // Emite cambios en la frecuencia
+  readonly timesPerYearChanged = output<number>(); // Emite cambios en las repeticiones por año
 
+  // Emite el nuevo número de objetivo seleccionado
   onObjectiveChange(event: Event): void {
     this.objectiveNumberChanged.emit(Number((event.target as HTMLSelectElement).value) as 1 | 2 | 3 | 4);
   }
 
+  // Emite el nuevo estado seleccionado para la actividad
   onStateChange(event: Event): void {
     this.stateChanged.emit((event.target as HTMLSelectElement).value as ActivityState);
   }
 
+  // Emite el texto actualizado de la descripción de la actividad
   onDescriptionInput(event: Event): void {
     this.descriptionChanged.emit((event.target as HTMLTextAreaElement).value);
   }

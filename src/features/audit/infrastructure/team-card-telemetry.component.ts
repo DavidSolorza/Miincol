@@ -53,7 +53,9 @@ import { AppIconComponent } from '../../../shared/components/icon/app-icon.compo
     </div>
   `,
 })
+// Bloque compacto de telemetría para tarjetas de equipo (último ingreso, última acción y acceso a bitácora)
 export class TeamCardTelemetryComponent {
+  // Resumen de telemetría del equipo y evento para abrir el modal de bitácora
   @Input({ required: true }) telemetry!: TeamTelemetrySummary;
   @Output() openAuditModal = new EventEmitter<void>();
 }

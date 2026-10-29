@@ -60,13 +60,15 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
     </div>
   `,
 })
+// Cabecera de detalle de un objetivo con título, descripción, presupuesto total y botones de acción
 export class ObjectiveCardHeaderComponent {
-  readonly objective = input.required<Objective>();
-  readonly completedCount = input.required<number>();
-  readonly totalObjectiveBudget = input.required<number>();
-  readonly editObjective = output<Objective>();
-  readonly openAddModal = output<void>();
+  readonly objective = input.required<Objective>(); // Datos del objetivo estratégico activo
+  readonly completedCount = input.required<number>(); // Cantidad de actividades completadas en el objetivo
+  readonly totalObjectiveBudget = input.required<number>(); // Presupuesto total acumulado del objetivo
+  readonly editObjective = output<Objective>(); // Emite cuando se solicita editar el objetivo
+  readonly openAddModal = output<void>(); // Emite cuando se solicita crear una nueva actividad
 
+  // Formatea el presupuesto numérico a formato de moneda colombiana (COP)
   formatCurrency(val: number): string {
     return formatCurrencyCOP(val);
   }

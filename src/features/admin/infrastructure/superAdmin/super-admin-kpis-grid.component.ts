@@ -1,3 +1,4 @@
+// Cuadrícula de 4 tarjetas KPI nacionales (Misiones Activas, Presupuesto, Avance Promedio y Alertas)
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import type { NationalKpis } from '../../domain/admin.types';
 import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
@@ -57,8 +58,9 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class SuperAdminKpisGridComponent {
-  @Input({ required: true }) kpis!: NationalKpis;
+  @Input({ required: true }) kpis!: NationalKpis; // Objeto con los indicadores nacionales consolidados
 
+  // Formatea montos numéricos al estándar de pesos colombianos (COP)
   formatCOP(val: number): string {
     return formatCurrencyCOP(val);
   }

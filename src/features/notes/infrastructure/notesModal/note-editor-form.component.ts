@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, output, signal } from '@angular/cor
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import { type NoteCategory, NOTE_CATEGORIES } from '../../domain/notes.types';
 
+// Datos del borrador de una nueva nota antes de guardarse
 export interface NoteDraftPayload {
   title: string;
   content: string;
@@ -71,33 +72,41 @@ export interface NoteDraftPayload {
     </form>
   `,
 })
+// Formulario para redactar, categorizar y fijar una nueva nota territorial
 export class NoteEditorFormComponent {
+  // Evento emitido cuando el usuario guarda una nueva nota válida
   readonly noteAdded = output<NoteDraftPayload>();
 
   readonly categories = NOTE_CATEGORIES;
   readonly categoryKeys = Object.keys(NOTE_CATEGORIES) as NoteCategory[];
 
+  // Signals locales para los campos del formulario de creación de nota
   readonly title = signal('');
   readonly content = signal('');
   readonly category = signal<NoteCategory>('idea');
   readonly isPinned = signal(false);
 
+  // Actualiza el título conforme el usuario escribe
   onTitleInput(event: Event): void {
     this.title.set((event.target as HTMLInputElement).value);
   }
 
+  // Actualiza el cuerpo de la nota conforme el usuario escribe
   onContentInput(event: Event): void {
     this.content.set((event.target as HTMLTextAreaElement).value);
   }
 
+  // Cambia la categoría seleccionada de la nota
   onCategoryChange(event: Event): void {
     this.category.set((event.target as HTMLSelectElement).value as NoteCategory);
   }
 
+  // Alterna si la nota debe fijarse al inicio de la agenda
   onPinChange(event: Event): void {
     this.isPinned.set((event.target as HTMLInputElement).checked);
   }
 
+  // Valida el formulario, emite el borrador de nota y limpia los campos
   handleSubmit(event: Event): void {
     event.preventDefault();
     if (!this.title().trim() || !this.content().trim()) return;

@@ -1,5 +1,6 @@
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 
+// Parámetros de entrada y callbacks para la verificación de credenciales de acceso
 export interface VerifyAuthParams {
   activeTab: 'admin' | 'team';
   identifier: string;
@@ -11,6 +12,7 @@ export interface VerifyAuthParams {
   onDone: () => void;
 }
 
+// Valida las credenciales de Super Admin o Equipo Territorial y dispara el callback correspondiente
 export const verifyAuthCredentials = ({
   activeTab,
   identifier,

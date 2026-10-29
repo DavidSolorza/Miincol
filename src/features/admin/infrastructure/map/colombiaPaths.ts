@@ -1,4 +1,5 @@
-export interface RegionShape {
+// Trazos vectoriales de macro-regiones biogeográficas y ríos principales de Colombia
+export interface RegionShape { // Geometría y estilo visual de una macro-región geográfica
   id: string;
   name: string;
   path: string;

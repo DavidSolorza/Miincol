@@ -2,6 +2,8 @@ import { appendAuditLog } from '../../audit/application/auditStorage';
 import { serviceBus } from '../../../core/bus';
 import type { Activity } from '../domain/plan.types';
 
+// Helpers para registrar y publicar eventos de auditoría sobre planes y actividades PDM
+// Registra un evento de auditoría en almacenamiento y lo emite en el bus de eventos
 export const logPlanAudit = (
   teamId: string,
   leaderName: string,
@@ -14,6 +16,7 @@ export const logPlanAudit = (
   serviceBus.publish('audit:log', { teamId, userName: leaderName, actionType, title, detail, phaseId });
 };
 
+// Construye el detalle descriptivo del cambio en una actividad y registra su auditoría
 export const logActivityUpdateAudit = (
   teamId: string,
   leaderName: string,

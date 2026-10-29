@@ -28,9 +28,11 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
     </div>
   `,
 })
+// Tarjeta compacta en la barra lateral que muestra el porcentaje de avance y presupuesto de la fase
 export class SidebarMetricsCardComponent {
-  readonly metrics = input.required<PlanMetrics>();
+  readonly metrics = input.required<PlanMetrics>(); // Métricas calculadas de la fase activa
 
+  // Formatea un valor numérico como moneda en pesos colombianos (COP)
   formatCurrency(val: number): string {
     return formatCurrencyCOP(val);
   }

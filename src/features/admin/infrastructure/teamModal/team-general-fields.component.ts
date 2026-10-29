@@ -1,3 +1,4 @@
+// Campos de identidad territorial del formulario de misión (nombre, etnia, municipio y departamento)
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { CreateTeamDto } from '../../domain/admin.types';
 import { COLOMBIA_DEPARTMENTS, normalizeText } from '../map/colombiaLocations';
@@ -72,11 +73,13 @@ import { COLOMBIA_DEPARTMENTS, normalizeText } from '../map/colombiaLocations';
   `,
 })
 export class TeamGeneralFieldsComponent {
-  @Input({ required: true }) formData!: CreateTeamDto;
-  @Output() updateChange = new EventEmitter<Partial<CreateTeamDto>>();
+  @Input({ required: true }) formData!: CreateTeamDto; // Estado actual del formulario de misión
+  @Output() updateChange = new EventEmitter<Partial<CreateTeamDto>>(); // Emite cambios parciales en los campos
 
+  // Lista de departamentos de Colombia ordenada alfabéticamente para el selector
   readonly sortedDepartments = COLOMBIA_DEPARTMENTS.slice().sort((a, b) => a.name.localeCompare(b.name));
 
+  // Normaliza y obtiene el nombre oficial del departamento seleccionado actualmente
   get currentDeptName(): string {
     const found = COLOMBIA_DEPARTMENTS.find(
       (d) =>

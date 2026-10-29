@@ -1,5 +1,6 @@
 import type { TeamNote } from '../domain/notes.types';
 
+// Genera las notas iniciales por defecto para la agenda territorial de un equipo misionero
 export const getInitialTeamNotes = (teamId: string, teamName: string, leader: string): TeamNote[] => {
   const now = new Date().toISOString();
   return [

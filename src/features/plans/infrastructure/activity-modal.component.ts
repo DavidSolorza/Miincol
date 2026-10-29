@@ -93,22 +93,21 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
     </app-modal>
   `,
 })
+// Modal con formulario completo para crear o editar una actividad ministerial
 export class ActivityModalComponent {
-  private readonly toastService = inject(ToastService);
-
-  readonly isOpen = input.required<boolean>();
-  readonly mode = input<'create' | 'edit'>('create');
-  readonly activityToEdit = input<Activity | null>(null);
-  readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>();
-
-  readonly closed = output<void>();
-  readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
-  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
-
-  readonly form = signal<ActivityFormState>(getInitialFormValues('create', null, 1));
-  readonly calculatedTotal = computed(() => (this.form().unitBudget || 0) * (this.form().timesPerYear || 0));
+  private readonly toastService = inject(ToastService); // Servicio de notificaciones toast
+  readonly isOpen = input.required<boolean>(); // Controla si el modal está abierto
+  readonly mode = input<'create' | 'edit'>('create'); // Modo de operación ('create' o 'edit')
+  readonly activityToEdit = input<Activity | null>(null); // Actividad a editar cuando el modo es 'edit'
+  readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>(); // Número de objetivo por defecto
+  readonly closed = output<void>(); // Emite al cerrar el modal
+  readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>(); // Emite nueva actividad
+  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actividad editada
+  readonly form = signal<ActivityFormState>(getInitialFormValues('create', null, 1)); // Estado reactivo del formulario
+  readonly calculatedTotal = computed(() => (this.form().unitBudget || 0) * (this.form().timesPerYear || 0)); // Presupuesto anual autocalculado
 
   constructor() {
+    // Reinicia o carga los valores del formulario cada vez que se abre el modal
     effect(() => {
       if (this.isOpen()) {
         this.form.set(getInitialFormValues(this.mode(), this.activityToEdit(), this.defaultObjectiveNumber()));
@@ -116,10 +115,12 @@ export class ActivityModalComponent {
     });
   }
 
+  // Actualiza un campo puntual dentro del estado del formulario de actividad
   patchField<K extends keyof ActivityFormState>(key: K, value: ActivityFormState[K]): void {
     this.form.update((prev) => ({ ...prev, [key]: value }));
   }
 
+  // Valida los campos obligatorios, calcula semanas y emite el evento de guardado o actualización
   handleSubmit(event: Event): void {
     event.preventDefault();
     const f = this.form();

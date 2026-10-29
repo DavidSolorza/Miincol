@@ -1,10 +1,10 @@
+// Lienzo SVG interactivo del mapa de Colombia con siluetas departamentales, halos de calor y marcadores
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import departmentsData from './data/colombiaDepartments.json';
 import { resolveTeamLocation, COLOMBIA_DEPARTMENTS, normalizeText, type ResolvedLocation } from './colombiaLocations';
-
 interface DepartmentPath { id: string; name: string; d: string; }
-const DEPARTMENTS = departmentsData as DepartmentPath[];
+const DEPARTMENTS = departmentsData as DepartmentPath[]; // Geometrías SVG de los departamentos
 
 @Component({
   selector: 'app-colombia-map-svg',
@@ -95,26 +95,24 @@ const DEPARTMENTS = departmentsData as DepartmentPath[];
   styles: [`:host { display: block; width: 100%; height: 100%; }`],
 })
 export class ColombiaMapSvgComponent {
-  @Input() teams: TeamSupervisionSummary[] = [];
-  @Input() selectedTeamId: string | null = null;
-  @Input() hoveredTeamId: string | null = null;
-  @Input() selectedDeptName: string | null = null;
-
-  @Output() selectTeam = new EventEmitter<TeamSupervisionSummary | null>();
-  @Output() hoverTeam = new EventEmitter<TeamSupervisionSummary | null>();
-  @Output() hoverDept = new EventEmitter<string | null>();
-  @Output() selectDept = new EventEmitter<string>();
-
-  readonly departments = DEPARTMENTS;
-
-  getLoc(team: TeamSupervisionSummary): ResolvedLocation { return resolveTeamLocation(team); }
-  getTeamColor(team: TeamSupervisionSummary): string { return team.themeColor || this.getLoc(team).accentColor || '#8B251E'; }
-
+  @Input() teams: TeamSupervisionSummary[] = []; // Equipos visibles en el mapa
+  @Input() selectedTeamId: string | null = null; // ID del equipo seleccionado
+  @Input() hoveredTeamId: string | null = null; // ID del equipo bajo el cursor
+  @Input() selectedDeptName: string | null = null; // Nombre del departamento filtrado
+  @Output() selectTeam = new EventEmitter<TeamSupervisionSummary | null>(); // Emite equipo al hacer clic en marcador
+  @Output() hoverTeam = new EventEmitter<TeamSupervisionSummary | null>(); // Emite equipo al pasar el cursor
+  @Output() hoverDept = new EventEmitter<string | null>(); // Emite nombre del departamento bajo el cursor
+  @Output() selectDept = new EventEmitter<string>(); // Emite departamento al hacer clic en su silueta
+  readonly departments = DEPARTMENTS; // Lista de trazos departamentales
+  getLoc(team: TeamSupervisionSummary): ResolvedLocation { return resolveTeamLocation(team); } // Coordenadas SVG del equipo
+  getTeamColor(team: TeamSupervisionSummary): string { return team.themeColor || this.getLoc(team).accentColor || '#8B251E'; } // Color del marcador
+  // Busca si algún equipo misionero pertenece al departamento indicado
   private getMatchingTeam(deptName: string): TeamSupervisionSummary | undefined {
     const norm = normalizeText(deptName);
     return this.teams.find((t) => normalizeText(this.getLoc(t).departmentName) === norm);
   }
 
+  // Calcula relleno, borde y sombra del departamento según selección o presencia misionera
   getDeptStyle(dept: DepartmentPath) {
     const normDeptName = normalizeText(dept.name);
     const matchingTeam = this.getMatchingTeam(dept.name);
@@ -131,11 +129,13 @@ export class ColombiaMapSvgComponent {
     return { fill: '#FAF8F4', stroke: '#D1CBC3', strokeWidth: 0.9, filter: null };
   }
 
+  // Genera el texto emergente nativo (<title>) para cada departamento
   getDeptTitle(dept: DepartmentPath): string {
     const m = this.getMatchingTeam(dept.name);
     return m ? `${dept.name} • Misión Activa: ${m.name} (${m.ethnicity})` : dept.name;
   }
 
+  // Selecciona el departamento al hacer clic y, si tiene misión asignada, también selecciona el equipo
   onDeptClick(e: Event, dept: DepartmentPath) {
     e.stopPropagation();
     this.selectDept.emit(dept.name);
@@ -143,5 +143,6 @@ export class ColombiaMapSvgComponent {
     if (m) this.selectTeam.emit(m);
   }
 
+  // Selecciona directamente un equipo al hacer clic en su marcador circular
   onMarkerClick(e: Event, team: TeamSupervisionSummary) { e.stopPropagation(); this.selectTeam.emit(team); }
 }

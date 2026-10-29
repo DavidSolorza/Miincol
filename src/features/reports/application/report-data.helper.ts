@@ -1,5 +1,6 @@
 import type { PhasePlan, Activity } from '../../plans/domain/plan.types';
 
+// Resumen de un objetivo estratégico con el conteo de sus actividades y presupuesto
 export interface ReportObjectiveSummary {
   number: number;
   title: string;
@@ -12,6 +13,7 @@ export interface ReportObjectiveSummary {
   activities: Activity[];
 }
 
+// Modelo de datos completo requerido para renderizar e imprimir el informe ejecutivo
 export interface ReportData {
   teamName: string;
   teamLeader: string;
@@ -28,6 +30,7 @@ export interface ReportData {
   generatedAt: string;
 }
 
+// Construye y consolida todas las métricas presupuestales y de avance a partir de un PhasePlan
 export const buildReportData = (plan: PhasePlan): ReportData => {
   let totalBudget = 0;
   let totalActivities = 0;

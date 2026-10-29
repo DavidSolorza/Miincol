@@ -36,8 +36,9 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     }
   `,
 })
+// Botón de acceso rápido en la barra lateral para volver a la vista principal del Plan PDM
 export class SidebarSegmentedControlComponent {
-  readonly isCollapsed = input.required<boolean>();
-  readonly viewChanged = output<'plans' | 'superadmin'>();
+  readonly isCollapsed = input.required<boolean>(); // Indica si el menú lateral está contraído
+  readonly viewChanged = output<'plans' | 'superadmin'>(); // Emite el cambio hacia la vista seleccionada
 }
 

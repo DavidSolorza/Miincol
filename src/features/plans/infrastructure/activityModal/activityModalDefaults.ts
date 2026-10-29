@@ -5,6 +5,7 @@
 
 import type { Activity, ActivityState } from '../../domain/plan.types';
 
+// Estado del formulario y funciones de inicialización y validación para el modal de actividad
 export interface ActivityFormState {
   objectiveNumber: 1 | 2 | 3 | 4;
   description: string;
@@ -23,6 +24,7 @@ export interface ActivityFormState {
   obstacles: string;
 }
 
+// Genera los valores iniciales del formulario según si se está creando o editando una actividad
 export const getInitialFormValues = (
   mode: 'create' | 'edit',
   activityToEdit: Activity | null | undefined,
@@ -67,6 +69,7 @@ export const getInitialFormValues = (
   };
 };
 
+// Verifica que la descripción y el responsable de la actividad no estén vacíos
 export const validateActivityForm = (description: string, responsible: string): boolean => {
   return description.trim().length > 0 && responsible.trim().length > 0;
 };

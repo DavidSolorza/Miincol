@@ -1,5 +1,6 @@
 import type { PhasePlan } from '../../domain/plan.types';
 
+// Configuración inicial del plan y objetivos para la fase de Entrenamiento y Discipulado
 export const entrenamientoPhase: PhasePlan = {
   phaseId: 'entrenamiento',
   phaseName: 'Entrenamiento y Discipulado de Líderes Locales',

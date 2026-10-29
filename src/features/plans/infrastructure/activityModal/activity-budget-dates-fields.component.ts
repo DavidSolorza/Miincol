@@ -74,28 +74,33 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
     </div>
   `,
 })
+// Sección de formulario para configurar el presupuesto unitario y las fechas de inicio y fin de la actividad
 export class ActivityBudgetDatesFieldsComponent {
-  readonly unitBudget = input.required<number>();
-  readonly calculatedTotal = input.required<number>();
-  readonly startDate = input.required<string>();
-  readonly endDate = input.required<string>();
+  readonly unitBudget = input.required<number>(); // Presupuesto unitario en pesos colombianos
+  readonly calculatedTotal = input.required<number>(); // Presupuesto total anual autocalculado
+  readonly startDate = input.required<string>(); // Fecha de inicio en formato ISO
+  readonly endDate = input.required<string>(); // Fecha de finalización en formato ISO
 
-  readonly unitBudgetChanged = output<number>();
-  readonly startDateChanged = output<string>();
-  readonly endDateChanged = output<string>();
+  readonly unitBudgetChanged = output<number>(); // Emite cuando cambia el presupuesto unitario
+  readonly startDateChanged = output<string>(); // Emite cuando cambia la fecha de inicio
+  readonly endDateChanged = output<string>(); // Emite cuando cambia la fecha de finalización
 
+  // Formatea un número como moneda en pesos colombianos (COP)
   formatCurrency(val: number): string {
     return formatCurrencyCOP(val);
   }
 
+  // Emite el nuevo valor numérico del presupuesto unitario
   onUnitBudgetInput(event: Event): void {
     this.unitBudgetChanged.emit(Number((event.target as HTMLInputElement).value));
   }
 
+  // Emite la nueva fecha de inicio seleccionada
   onStartDateInput(event: Event): void {
     this.startDateChanged.emit((event.target as HTMLInputElement).value);
   }
 
+  // Emite la nueva fecha de finalización seleccionada
   onEndDateInput(event: Event): void {
     this.endDateChanged.emit((event.target as HTMLInputElement).value);
   }

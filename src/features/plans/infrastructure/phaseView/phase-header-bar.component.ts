@@ -54,17 +54,19 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
     </div>
   `,
 })
+// Barra superior de la fase con título, contador de objetivos y acciones de creación o restablecimiento
 export class PhaseHeaderBarComponent {
-  private readonly toastService = inject(ToastService);
+  private readonly toastService = inject(ToastService); // Servicio para mostrar confirmaciones y alertas toast
 
-  readonly phaseName = input.required<string>();
-  readonly objectivesCount = input.required<number>();
-  readonly hasMaxObjectives = input.required<boolean>();
+  readonly phaseName = input.required<string>(); // Nombre descriptivo de la fase ministerial actual
+  readonly objectivesCount = input.required<number>(); // Cantidad de objetivos registrados en la fase
+  readonly hasMaxObjectives = input.required<boolean>(); // Indica si ya se alcanzó el máximo de 4 objetivos
 
-  readonly toggleMobileMenu = output<void>();
-  readonly resetToDefaults = output<void>();
-  readonly openCreateObjective = output<void>();
+  readonly toggleMobileMenu = output<void>(); // Emite para abrir el menú lateral en pantallas móviles
+  readonly resetToDefaults = output<void>(); // Emite para restaurar las actividades predeterminadas de la fase
+  readonly openCreateObjective = output<void>(); // Emite para abrir el modal de creación de objetivo
 
+  // Pide confirmación al usuario antes de restablecer los datos originales de prueba
   handleReset(): void {
     this.toastService.confirmAction({
       title: '¿Restablecer Actividades de Prueba?',

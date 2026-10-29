@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, HostListener, OnChanges, OnDestroy } from '@angular/core';
 import { AppIconComponent } from './icon/app-icon.component';
 
+// Componente base de ventana modal con fondo desenfocado, cierre con tecla Escape y bloqueo de scroll
 @Component({
   selector: 'app-modal',
   standalone: true,
@@ -43,12 +44,14 @@ import { AppIconComponent } from './icon/app-icon.component';
   `,
 })
 export class ModalComponent implements OnChanges, OnDestroy {
+  // Propiedades de visibilidad, textos de encabezado, ancho máximo y evento de cierre
   @Input() isOpen = false;
   @Input() title = '';
   @Input() subtitle?: string;
   @Input() maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' = '2xl';
   @Output() close = new EventEmitter<void>();
 
+  // Traduce el tamaño configurado a la clase max-w-* de Tailwind
   get maxWidthClass(): string {
     const map = {
       sm: 'max-w-sm',
@@ -61,17 +64,20 @@ export class ModalComponent implements OnChanges, OnDestroy {
     return map[this.maxWidth] || 'max-w-2xl';
   }
 
+  // Permite cerrar el modal presionando la tecla Escape
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.isOpen) this.close.emit();
   }
 
+  // Bloquea o restaura el scroll del body cuando el modal se abre o cierra
   ngOnChanges() {
     if (typeof document !== 'undefined') {
       document.body.style.overflow = this.isOpen ? 'hidden' : 'unset';
     }
   }
 
+  // Asegura restaurar el scroll al destruir el componente
   ngOnDestroy() {
     if (typeof document !== 'undefined') {
       document.body.style.overflow = 'unset';

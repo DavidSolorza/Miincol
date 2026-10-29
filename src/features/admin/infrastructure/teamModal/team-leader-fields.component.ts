@@ -1,3 +1,4 @@
+// Campos de liderazgo pastoral, teléfono WhatsApp y lista de obreros en el formulario de misión
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { CreateTeamDto } from '../../domain/admin.types';
 
@@ -48,11 +49,12 @@ import type { CreateTeamDto } from '../../domain/admin.types';
   `,
 })
 export class TeamLeaderFieldsComponent {
-  @Input({ required: true }) formData!: CreateTeamDto;
-  @Input() membersInput = '';
-  @Output() membersInputChange = new EventEmitter<string>();
-  @Output() updateChange = new EventEmitter<Partial<CreateTeamDto>>();
+  @Input({ required: true }) formData!: CreateTeamDto; // Datos actuales del formulario de misión
+  @Input() membersInput = ''; // Texto plano de miembros separados por comas
+  @Output() membersInputChange = new EventEmitter<string>(); // Emite el texto crudo de miembros al escribir
+  @Output() updateChange = new EventEmitter<Partial<CreateTeamDto>>(); // Emite el arreglo de miembros procesado
 
+  // Convierte la cadena separada por comas en un arreglo limpio de nombres de obreros
   onMembersChange(val: string) {
     this.membersInputChange.emit(val);
     const list = val.split(',').map((s) => s.trim()).filter(Boolean);

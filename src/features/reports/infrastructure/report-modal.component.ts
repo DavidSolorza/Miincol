@@ -52,13 +52,17 @@ import { ReportActivitiesDetailComponent } from './reportModal/report-activities
     </app-modal>
   `,
 })
+// Modal que presenta el Informe Ejecutivo del PDM listo para impresión o exportación a PDF
 export class ReportModalComponent {
+  // Entradas con el estado de apertura y el plan activo; salida para cerrar el modal
   readonly isOpen = input.required<boolean>();
   readonly plan = input.required<PhasePlan>();
   readonly closed = output<void>();
 
+  // Signal computado que transforma el plan activo en la estructura consolidada del informe
   readonly report = computed(() => buildReportData(this.plan()));
 
+  // Invoca el diálogo nativo de impresión del navegador para exportar el informe a PDF
   printReport(): void {
     window.print();
   }

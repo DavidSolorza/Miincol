@@ -1,5 +1,7 @@
+// Categorías permitidas para clasificar notas en la agenda territorial
 export type NoteCategory = 'idea' | 'actividad' | 'oracion' | 'urgente' | 'general';
 
+// Entidad de dominio que representa un apunte o nota de campo del equipo
 export interface TeamNote {
   id: string;
   teamId: string;
@@ -19,6 +21,7 @@ export interface NoteCategoryConfig {
   borderClass: string;
 }
 
+// Mapa de configuración visual (etiquetas y clases Tailwind) por categoría de nota
 export const NOTE_CATEGORIES: Record<NoteCategory, NoteCategoryConfig> = {
   idea: { label: 'Idea / Propuesta', bgClass: 'bg-amber-50', textClass: 'text-amber-800', borderClass: 'border-amber-200' },
   actividad: { label: 'Actividad PDM', bgClass: 'bg-emerald-50', textClass: 'text-emerald-800', borderClass: 'border-emerald-200' },

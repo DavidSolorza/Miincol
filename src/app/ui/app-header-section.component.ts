@@ -5,6 +5,7 @@ import { AppHeaderComponent } from './app-header.component';
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { AuthSession } from '../auth/appSession.types';
 
+// Sección superior del workspace: agrupa el banner de vista previa, botón móvil y cabecera
 @Component({
   selector: 'app-header-section',
   standalone: true,
@@ -51,6 +52,7 @@ import type { AuthSession } from '../auth/appSession.types';
   `,
 })
 export class AppHeaderSectionComponent {
+  // Entradas de estado visual, equipo activo y sesión
   readonly isAdminPreview = input.required<boolean>();
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly whatsappUrl = input<string | null>(null);
@@ -61,6 +63,7 @@ export class AppHeaderSectionComponent {
   readonly activeTeamId = input.required<string>();
   readonly session = input.required<AuthSession>();
 
+  // Eventos de navegación y acciones del encabezado
   readonly backToAdmin = output<void>();
   readonly openMobileSidebar = output<void>();
   readonly selectTeam = output<string>();

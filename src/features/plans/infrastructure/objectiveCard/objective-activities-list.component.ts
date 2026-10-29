@@ -40,12 +40,13 @@ import { ActivityItemComponent } from '../activity-item.component';
     </div>
   `,
 })
+// Lista de tarjetas de actividades de un objetivo con estado vacío cuando no hay coincidencias
 export class ObjectiveActivitiesListComponent {
-  readonly activities = input.required<Activity[]>();
-  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>();
-  readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
-  readonly activityDeleted = output<string>();
-  readonly openAddModal = output<1 | 2 | 3 | 4>();
-  readonly activityEdited = output<Activity>();
+  readonly activities = input.required<Activity[]>(); // Lista de actividades filtradas a renderizar
+  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>(); // Número del objetivo al que pertenecen las actividades
+  readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite cambios en una actividad
+  readonly activityDeleted = output<string>(); // Emite el ID de la actividad eliminada
+  readonly openAddModal = output<1 | 2 | 3 | 4>(); // Solicita abrir el modal para registrar la primera actividad
+  readonly activityEdited = output<Activity>(); // Solicita abrir el modal de edición completa de una actividad
 }
 

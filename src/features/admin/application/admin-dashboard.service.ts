@@ -1,3 +1,4 @@
+// Servicio reactivo de supervisión nacional: gestiona equipos, filtros, KPIs y persistencia local
 import { Injectable, signal, computed, effect } from '@angular/core';
 import type { TeamSupervisionSummary, CreateTeamDto, TeamHealthStatus } from '../domain/admin.types';
 import type { PhaseType } from '../../plans/domain/plan.types';
@@ -5,16 +6,15 @@ import { getTeamPhaseMetrics, PHASE_NAMES_MAP } from '../../plans/application/te
 import { INITIAL_NATIONAL_TEAMS } from './initialTeams';
 import { calculateNationalKpis } from './adminKpiCalculations';
 
-const STORAGE_KEY = 'misincol_teams_v2';
-
+const STORAGE_KEY = 'misincol_teams_v2'; // Clave de almacenamiento en localStorage
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
-  readonly allTeams = signal<TeamSupervisionSummary[]>(this.loadInitialTeams());
-  readonly searchTerm = signal('');
-  readonly phaseFilter = signal('ALL');
-  readonly statusFilter = signal('ALL');
-  readonly departmentFilter = signal('ALL');
-
+  readonly allTeams = signal<TeamSupervisionSummary[]>(this.loadInitialTeams()); // Lista maestra de equipos
+  readonly searchTerm = signal(''); // Término de búsqueda textual
+  readonly phaseFilter = signal('ALL'); // Filtro activo por fase del PDM
+  readonly statusFilter = signal('ALL'); // Filtro activo por estado de salud
+  readonly departmentFilter = signal('ALL'); // Filtro activo por departamento
+  // Signal computado con la lista de equipos filtrada por búsqueda, fase, salud y departamento
   readonly teams = computed(() => {
     const s = this.searchTerm().toLowerCase();
     const pf = this.phaseFilter();
@@ -35,9 +35,11 @@ export class AdminDashboardService {
     });
   });
 
+  // Signal computado con los KPIs nacionales consolidados
   readonly nationalKpis = computed(() => calculateNationalKpis(this.allTeams()));
 
   constructor() {
+    // Efecto reactivo que sincroniza automáticamente cualquier cambio de equipos en localStorage
     effect(() => {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.allTeams()));
@@ -47,6 +49,7 @@ export class AdminDashboardService {
     });
   }
 
+  // Carga los equipos desde localStorage o inicializa con las semillas nacionales y recalcula métricas
   private loadInitialTeams(): TeamSupervisionSummary[] {
     try {
       const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
@@ -65,6 +68,7 @@ export class AdminDashboardService {
     return INITIAL_NATIONAL_TEAMS.map((t) => ({ ...t, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) }));
   }
 
+  // Crea y registra un nuevo equipo misionero generando su identificador slug y configuración base
   handleCreateTeam(dto: CreateTeamDto): TeamSupervisionSummary {
     const slug =
       dto.slug?.trim() ||
@@ -109,6 +113,7 @@ export class AdminDashboardService {
     return newTeam;
   }
 
+  // Actualiza los datos parciales de un equipo existente por su ID o slug
   handleUpdateTeam(teamId: string, updates: Partial<TeamSupervisionSummary>) {
     this.allTeams.update((prev) =>
       prev.map((t) => {
@@ -123,15 +128,18 @@ export class AdminDashboardService {
     );
   }
 
+  // Elimina un equipo misionero del listado nacional
   handleDeleteTeam(teamId: string) {
     this.allTeams.update((prev) => prev.filter((t) => t.id !== teamId && t.slug !== teamId));
   }
 
+  // Cambia la fase activa del PDM de un equipo y recalcula sus métricas asociadas
   handlePhaseChange(id: string, phase: PhaseType) {
     const target = this.allTeams().find((t) => t.id === id || t.slug === id);
     this.handleUpdateTeam(id, { ...getTeamPhaseMetrics(id, phase, target) });
   }
 
+  // Actualiza el estado de salud operativa de un equipo misionero
   handleStatusChange(id: string, status: TeamHealthStatus) {
     this.handleUpdateTeam(id, { healthStatus: status });
   }

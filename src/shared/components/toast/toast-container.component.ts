@@ -3,6 +3,7 @@ import { ToastService } from './toast.service';
 import { ToastConfirmItemComponent } from './toast-confirm-item.component';
 import { AppIconComponent } from '../icon/app-icon.component';
 
+// Contenedor flotante superior que renderiza la cola de notificaciones y confirmaciones activas
 @Component({
   selector: 'app-toast-container',
   standalone: true,
@@ -39,6 +40,7 @@ import { AppIconComponent } from '../icon/app-icon.component';
   `,
 })
 export class ToastContainerComponent {
+  // Inyección del servicio de notificaciones para leer las colas reactivas
   readonly toastSvc = inject(ToastService);
 }
 

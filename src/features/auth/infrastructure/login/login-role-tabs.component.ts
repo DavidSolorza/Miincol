@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
+// Pestañas de selección de rol para alternar entre Misión en Campo y Super Admin
 @Component({
   selector: 'app-login-role-tabs',
   standalone: true,
@@ -29,6 +30,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class LoginRoleTabsComponent {
+  // Pestaña de rol activa y evento para notificar el cambio de rol
   @Input({ required: true }) activeTab!: 'admin' | 'team';
   @Output() selectTab = new EventEmitter<'admin' | 'team'>();
 }
