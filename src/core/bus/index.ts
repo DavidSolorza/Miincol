@@ -1,3 +1,3 @@
 export { serviceBus } from './ServiceBus';
-export { useServiceBusSubscriber, useServiceBusPublish } from './useServiceBus';
-export type { AppEventMap, EventTopic, EventCallback, ServiceBusSubscription } from './bus.types';
+export { NetworkBusService } from './network-bus.service';
+export type { AppEventMap, EventCallback, EventTopic, ServiceBusSubscription } from './bus.types';

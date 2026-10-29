@@ -1,5 +1,3 @@
-import { CheckCircle2, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 export interface ToastItem {
@@ -24,25 +22,6 @@ export interface ToastConfirmOptions {
 export interface ActiveConfirmToast extends ToastConfirmOptions {
   id: string;
 }
-
-export interface ToastContextValue {
-  showToast: (message: string, type?: ToastType, title?: string, duration?: number) => void;
-  confirmAction: (options: ToastConfirmOptions) => void;
-  toast: {
-    success: (message: string, title?: string, duration?: number) => void;
-    error: (message: string, title?: string, duration?: number) => void;
-    warning: (message: string, title?: string, duration?: number) => void;
-    info: (message: string, title?: string, duration?: number) => void;
-  };
-  removeToast: (id: string) => void;
-}
-
-export const TOAST_ICONS = {
-  success: CheckCircle2,
-  error: AlertCircle,
-  warning: AlertTriangle,
-  info: Info,
-};
 
 export const TOAST_THEMES = {
   success: {
