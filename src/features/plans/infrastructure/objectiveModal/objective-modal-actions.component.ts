@@ -66,14 +66,15 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     </div>
   `,
 })
+// Barra inferior de acciones del modal de objetivo con soporte para guardar, cancelar o confirmar eliminación
 export class ObjectiveModalActionsComponent {
-  readonly isEdit = input.required<boolean>();
-  readonly objectiveNumber = input<1 | 2 | 3 | 4 | undefined>(undefined);
-  readonly totalObjectivesCount = input.required<number>();
-  readonly confirmDelete = input.required<boolean>();
+  readonly isEdit = input.required<boolean>(); // Indica si el modal está en modo edición
+  readonly objectiveNumber = input<1 | 2 | 3 | 4 | undefined>(undefined); // Número del objetivo en edición
+  readonly totalObjectivesCount = input.required<number>(); // Cantidad total de objetivos para bloquear borrado si solo queda 1
+  readonly confirmDelete = input.required<boolean>(); // Indica si se activó el paso de confirmación de borrado
 
-  readonly confirmDeleteChanged = output<boolean>();
-  readonly deleted = output<void>();
-  readonly closed = output<void>();
+  readonly confirmDeleteChanged = output<boolean>(); // Emite cambios en el estado de confirmación de borrado
+  readonly deleted = output<void>(); // Emite el clic sobre el botón de eliminar objetivo
+  readonly closed = output<void>(); // Emite para cancelar y cerrar el modal
 }
 

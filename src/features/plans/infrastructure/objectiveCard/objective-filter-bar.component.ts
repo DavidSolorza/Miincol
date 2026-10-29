@@ -72,17 +72,19 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     </div>
   `,
 })
+// Barra de filtros por estado de ejecución y buscador de texto para las actividades de un objetivo
 export class ObjectiveFilterBarComponent {
-  readonly filterState = input.required<string>();
-  readonly searchTerm = input.required<string>();
-  readonly totalActivities = input.required<number>();
-  readonly pendingCount = input.required<number>();
-  readonly inProgressCount = input.required<number>();
-  readonly completedCount = input.required<number>();
+  readonly filterState = input.required<string>(); // Estado de filtro activo ('ALL', 'Pendiente', 'En Proceso', 'Completado')
+  readonly searchTerm = input.required<string>(); // Texto actual del buscador de iniciativas
+  readonly totalActivities = input.required<number>(); // Cantidad total de actividades del objetivo
+  readonly pendingCount = input.required<number>(); // Cantidad de actividades en estado 'Pendiente'
+  readonly inProgressCount = input.required<number>(); // Cantidad de actividades en estado 'En Proceso'
+  readonly completedCount = input.required<number>(); // Cantidad de actividades en estado 'Completado'
 
-  readonly filterStateChanged = output<string>();
-  readonly searchTermChanged = output<string>();
+  readonly filterStateChanged = output<string>(); // Emite el nuevo estado seleccionado para filtrar
+  readonly searchTermChanged = output<string>(); // Emite el texto ingresado en el campo de búsqueda
 
+  // Captura la entrada del buscador y emite el término actualizado
   onSearchInput(event: Event): void {
     this.searchTermChanged.emit((event.target as HTMLInputElement).value);
   }

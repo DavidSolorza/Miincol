@@ -3,7 +3,7 @@
  * Aligned with Technical Governance Contract v2026.4.0 (< 150 lines)
  */
 
-export interface DepartmentInfo {
+export interface DepartmentInfo { // Información base y centroide SVG de un departamento colombiano
   id: string;
   name: string;
   code: string;
@@ -11,7 +11,7 @@ export interface DepartmentInfo {
   accentColor: string;
 }
 
-export const COLOMBIA_DEPARTMENTS: DepartmentInfo[] = [
+export const COLOMBIA_DEPARTMENTS: DepartmentInfo[] = [ // Catálogo de los 33 departamentos y distrito capital con coordenadas y colores
   { id: 'CONAR', name: 'Nariño', code: 'NAR', center: { x: 64, y: 433 }, accentColor: '#2563EB' },
   { id: 'COLAG', name: 'La Guajira', code: 'LAG', center: { x: 292, y: 46 }, accentColor: '#8B251E' },
   { id: 'COCES', name: 'Cesar', code: 'CES', center: { x: 245, y: 130 }, accentColor: '#D97706' },
@@ -47,7 +47,7 @@ export const COLOMBIA_DEPARTMENTS: DepartmentInfo[] = [
   { id: 'COSAP', name: 'San Andrés y Providencia', code: 'SAP', center: { x: 90, y: 20 }, accentColor: '#0284C7' },
 ];
 
-export const MUNICIPALITY_LOCATIONS: Record<string, { x: number; y: number; department: string; label: string }> = {
+export const MUNICIPALITY_LOCATIONS: Record<string, { x: number; y: number; department: string; label: string }> = { // Diccionario de municipios clave con sus coordenadas exactas en el mapa SVG
   cumbal: { x: 62, y: 440, department: 'Nariño', label: 'Cumbal, Nariño' },
   chiles: { x: 58, y: 442, department: 'Nariño', label: 'Chiles, Nariño' },
   panan: { x: 65, y: 440, department: 'Nariño', label: 'Panán, Nariño' },

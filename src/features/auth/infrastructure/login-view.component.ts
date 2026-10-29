@@ -9,6 +9,7 @@ import { LoginFormFieldsComponent } from './login/login-form-fields.component';
 import { LoginQuickAccessChipsComponent, type QuickCredentialPayload } from './login/login-quick-access-chips.component';
 import { LoginSupportFooterComponent } from './login/login-support-footer.component';
 
+// Vista principal de inicio de sesión con diseño Split-Card, selector de rol y acceso rápido
 @Component({
   selector: 'app-login-view',
   standalone: true,
@@ -67,10 +68,12 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
   `,
 })
 export class LoginViewComponent implements OnInit, OnDestroy {
+  // Entradas de equipos disponibles y eventos de autenticación exitosa
   @Input() allTeams: TeamSupervisionSummary[] = [];
   @Output() adminSuccess = new EventEmitter<void>();
   @Output() teamSuccess = new EventEmitter<TeamSupervisionSummary>();
 
+  // Signals reactivos del formulario de login y estado de carga/error
   readonly activeTab = signal<'admin' | 'team'>('team');
   readonly identifier = signal('team-wayuu');
   readonly password = signal('wayuu2026');
@@ -79,6 +82,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   readonly error = signal<string | null>(null);
   readonly selectedQuickChip = signal('wayuu');
 
+  // Inicializa el bloqueo de scroll y precarga las credenciales del primer equipo
   ngOnInit() {
     if (typeof document !== 'undefined') { document.body.style.overflow = 'hidden'; document.documentElement.style.overflow = 'hidden'; }
     const initial = this.allTeams[0];
@@ -89,10 +93,12 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Restaura el scroll del documento al destruir la vista de login
   ngOnDestroy() {
     if (typeof document !== 'undefined') { document.body.style.overflow = ''; document.documentElement.style.overflow = ''; }
   }
 
+  // Cambia entre la pestaña de Equipo Territorial y Super Admin ajustando credenciales por defecto
   handleSelectTab(tab: 'admin' | 'team') {
     this.activeTab.set(tab);
     this.error.set(null);
@@ -107,6 +113,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Actualiza el identificador y PIN cuando el usuario elige un equipo en el selector
   handleTeamSelect(val: string) {
     this.identifier.set(val);
     this.selectedQuickChip.set(val.replace(/^team-/, '').toLowerCase());
@@ -114,6 +121,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     if (sel) this.password.set(sel.accessPin || `${(sel.slug || sel.id).replace(/^team-/, '')}2026`);
   }
 
+  // Autocompleta usuario y contraseña al pulsar un chip de acceso rápido
   fillCredentials(p: QuickCredentialPayload) {
     this.activeTab.set(p.type); this.selectedQuickChip.set(p.chipKey); this.error.set(null); this.password.set(p.pass);
     if (p.type === 'team') {
@@ -126,6 +134,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Ejecuta la validación de credenciales y emite el evento de acceso correspondiente
   handleSubmit() {
     this.error.set(null); this.loading.set(true);
     verifyAuthCredentials({

@@ -36,10 +36,11 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
     </div>
   `,
 })
+// Cuadrícula de tarjetas resumen de los objetivos estratégicos de la fase y botón para agregar uno nuevo
 export class PhaseObjectiveCardsGridComponent {
-  readonly objectives = input.required<Objective[]>();
-  readonly activeObjectiveNumber = input.required<number>();
-  readonly selectObjective = output<number>();
-  readonly openCreateObjective = output<void>();
+  readonly objectives = input.required<Objective[]>(); // Lista de objetivos estratégicos de la fase
+  readonly activeObjectiveNumber = input.required<number>(); // Número del objetivo actualmente activo
+  readonly selectObjective = output<number>(); // Emite el número del objetivo seleccionado por el usuario
+  readonly openCreateObjective = output<void>(); // Emite para abrir el modal de creación de un nuevo objetivo
 }
 

@@ -52,7 +52,9 @@ import { type NoteCategory, NOTE_CATEGORIES } from '../../domain/notes.types';
     </div>
   `,
 })
+// Barra de búsqueda y pestañas de filtrado por categoría para las notas del equipo
 export class NotesFilterTabsComponent {
+  // Entradas con categoría activa y búsqueda; salidas para notificar cambios de filtro
   readonly selectedCategory = input.required<NoteCategory | 'all'>();
   readonly searchTerm = input.required<string>();
   readonly categorySelected = output<NoteCategory | 'all'>();
@@ -61,6 +63,7 @@ export class NotesFilterTabsComponent {
   readonly categories = NOTE_CATEGORIES;
   readonly categoryKeys = Object.keys(NOTE_CATEGORIES) as NoteCategory[];
 
+  // Emite el nuevo texto de búsqueda al escribir en el campo
   onSearchInput(event: Event): void {
     this.searchChanged.emit((event.target as HTMLInputElement).value);
   }

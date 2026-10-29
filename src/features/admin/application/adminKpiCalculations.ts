@@ -1,6 +1,7 @@
+// Función pura que calcula los KPIs nacionales (misioneros, presupuesto, avance y alertas)
 import type { TeamSupervisionSummary, NationalKpis } from '../domain/admin.types';
 
-export const calculateNationalKpis = (teams: TeamSupervisionSummary[]): NationalKpis => {
+export const calculateNationalKpis = (teams: TeamSupervisionSummary[]): NationalKpis => { // Agrega métricas de todos los equipos activos
   let totalMissionaries = 0;
   let totalNationalBudget = 0;
   let totalExecutedBudget = 0;

@@ -1,5 +1,6 @@
 import type { PhasePlan, PlanMetrics } from '../domain/plan.types';
 
+// Calcula las métricas de presupuesto, avance y conteo de actividades de una fase
 export const calculatePlanMetrics = (plan: PhasePlan): PlanMetrics => {
   let totalBudget = 0;
   let totalActivities = 0;

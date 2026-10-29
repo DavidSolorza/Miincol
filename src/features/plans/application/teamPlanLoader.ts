@@ -3,6 +3,7 @@ import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
 import { PASTOS_PLANS_BY_PHASE } from './pastosPlanData';
 
+// Mapa de nombres legibles por cada identificador de fase ministerial
 export const PHASE_NAMES_MAP: Record<PhaseType, string> = {
   investigacion: '1. Investigación',
   encarnacion: '2. Encarnación',
@@ -11,6 +12,7 @@ export const PHASE_NAMES_MAP: Record<PhaseType, string> = {
   autocuidado: '5. Autocuidado',
 };
 
+// Genera un conjunto de planes personalizados a partir de la plantilla base para un equipo nuevo
 export const createCustomPlanForTeam = (
   teamId: string,
   teamData?: Partial<TeamSupervisionSummary>
@@ -39,6 +41,7 @@ export const createCustomPlanForTeam = (
   return base;
 };
 
+// Obtiene los planes de un equipo desde localStorage o retorna su plantilla predeterminada
 export const getPlansForTeam = (
   teamId: string,
   teamData?: Partial<TeamSupervisionSummary>

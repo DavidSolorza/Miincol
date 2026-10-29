@@ -3,6 +3,7 @@ import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import { PasswordInputFieldComponent } from './password-input-field.component';
 
+// Campos del formulario de inicio de sesión (selector de misión o usuario admin + contraseña)
 @Component({
   selector: 'app-login-form-fields',
   standalone: true,
@@ -69,6 +70,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
   `,
 })
 export class LoginFormFieldsComponent {
+  // Propiedades de entrada con credenciales actuales, estado de carga y lista de misiones
   @Input({ required: true }) activeTab!: 'admin' | 'team';
   @Input({ required: true }) identifier!: string;
   @Input({ required: true }) password!: string;
@@ -76,12 +78,14 @@ export class LoginFormFieldsComponent {
   @Input() loading = false;
   @Input() allTeams: TeamSupervisionSummary[] = [];
 
+  // Eventos de salida para sincronizar cambios en los campos y envío del formulario
   @Output() identifierChange = new EventEmitter<string>();
   @Output() passwordChange = new EventEmitter<string>();
   @Output() showPasswordChange = new EventEmitter<boolean>();
   @Output() teamSelect = new EventEmitter<string>();
   @Output() submitForm = new EventEmitter<Event>();
 
+  // Intercepta el submit nativo del formulario y emite el evento al componente padre
   onSubmit(e: Event) {
     e.preventDefault();
     this.submitForm.emit(e);

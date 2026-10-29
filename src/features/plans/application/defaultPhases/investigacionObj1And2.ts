@@ -1,5 +1,6 @@
 import type { Objective } from '../../domain/plan.types';
 
+// Datos predeterminados de los objetivos 1 y 2 para la fase de Investigación (Misión Wayuu)
 export const investigacionObj1And2: Objective[] = [
   {
     number: 1,

@@ -8,26 +8,31 @@ import { applyUpdateObjective, applyAddObjective, applyDeleteObjective } from '.
 import { getPlansForTeam } from './teamPhaseMetrics';
 import { logPlanAudit, logActivityUpdateAudit } from './planAuditHelper';
 
+// Servicio de aplicación que gestiona el estado reactivo de planes, objetivos y actividades PDM
 @Injectable({ providedIn: 'root' })
 export class PlanService {
-  readonly activePhaseId = signal<PhaseType>('investigacion');
-  readonly activeTeamId = signal<string>('team-wayuu');
-  readonly activeLeader = signal<string>('Líder');
-  readonly allPlans = signal<Record<string, PhasePlan>>(getPlansForTeam('team-wayuu'));
+  readonly activePhaseId = signal<PhaseType>('investigacion'); // Fase ministerial activa actualmente
+  readonly activeTeamId = signal<string>('team-wayuu'); // Identificador del equipo misionero activo
+  readonly activeLeader = signal<string>('Líder'); // Nombre del líder del equipo activo
+  readonly allPlans = signal<Record<string, PhasePlan>>(getPlansForTeam('team-wayuu')); // Mapa de planes por fase
 
+  // Plan correspondiente a la fase activa seleccionada
   readonly plan = computed<PhasePlan>(() => {
     const phaseId = this.activePhaseId();
     return this.allPlans()[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
   });
 
+  // Métricas calculadas automáticamente para el plan activo
   readonly metrics = computed<PlanMetrics>(() => calculatePlanMetrics(this.plan()));
 
+  // Carga los planes de un equipo específico en el estado reactivo
   loadTeamPlans(teamId: string, teamData?: Partial<TeamSupervisionSummary>): void {
     this.activeTeamId.set(teamId);
     this.activeLeader.set(teamData?.leader || 'Líder');
     this.allPlans.set(getPlansForTeam(teamId, teamData));
   }
 
+  // Persiste los planes actualizados en memoria y en localStorage
   private persistPlans(updated: Record<string, PhasePlan>): void {
     this.allPlans.set(updated);
     const storageKey = `misincol_pdm_plans_${this.activeTeamId()}`;
@@ -38,10 +43,12 @@ export class PlanService {
     }
   }
 
+  // Cambia la fase activa del plan ministerial
   switchPhase(phaseId: PhaseType): void {
     this.activePhaseId.set(phaseId);
   }
 
+  // Actualiza los campos de una actividad existente y registra auditoría
   updateActivity(activityId: string, updatedFields: Partial<Activity>): void {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
@@ -53,6 +60,7 @@ export class PlanService {
     logActivityUpdateAudit(this.activeTeamId(), this.activeLeader(), updatedFields, phaseId);
   }
 
+  // Agrega una nueva actividad al objetivo indicado y registra auditoría
   addActivity(objNum: 1 | 2 | 3 | 4, newAct: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>): void {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
@@ -64,6 +72,7 @@ export class PlanService {
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'activity_add', 'Agregó nueva actividad', newAct.description.slice(0, 40), phaseId);
   }
 
+  // Elimina una actividad de la fase actual y registra auditoría
   deleteActivity(activityId: string): void {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
@@ -75,6 +84,7 @@ export class PlanService {
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'activity_delete', 'Eliminó actividad', `Actividad eliminada de fase ${phaseId}`, phaseId);
   }
 
+  // Actualiza título o descripción de un objetivo estratégico y registra auditoría
   updateObjective(objNum: 1 | 2 | 3 | 4, updates: { title?: string; description?: string }): void {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
@@ -86,6 +96,7 @@ export class PlanService {
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'objective_update', 'Modificó objetivo PDM', updates.title || `Objetivo ${objNum}`, phaseId);
   }
 
+  // Crea un nuevo objetivo estratégico en la fase actual (máximo 4)
   addObjective(newObj: { title: string; description: string }): 1 | 2 | 3 | 4 | null {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
@@ -97,6 +108,7 @@ export class PlanService {
     return result.nextNumber;
   }
 
+  // Elimina un objetivo estratégico si existe más de uno en la fase
   deleteObjective(objNum: 1 | 2 | 3 | 4): boolean {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
@@ -107,6 +119,7 @@ export class PlanService {
     return true;
   }
 
+  // Restablece los planes del equipo activo a sus valores predeterminados
   resetToDefaults(teamData?: Partial<TeamSupervisionSummary>): void {
     const teamId = this.activeTeamId();
     localStorage.removeItem(`misincol_pdm_plans_${teamId}`);

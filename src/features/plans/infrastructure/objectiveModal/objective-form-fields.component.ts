@@ -66,19 +66,22 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     </div>
   `,
 })
+// Campos de formulario de título, descripción y aviso de límite para el modal de objetivo estratégico
 export class ObjectiveFormFieldsComponent {
-  readonly totalObjectivesCount = input.required<number>();
-  readonly error = input<string | null>(null);
-  readonly title = input.required<string>();
-  readonly description = input.required<string>();
+  readonly totalObjectivesCount = input.required<number>(); // Total actual de objetivos en la fase (máx 4)
+  readonly error = input<string | null>(null); // Mensaje de error de validación si existe
+  readonly title = input.required<string>(); // Valor actual del título del objetivo
+  readonly description = input.required<string>(); // Valor actual de la descripción del objetivo
 
-  readonly titleChanged = output<string>();
-  readonly descriptionChanged = output<string>();
+  readonly titleChanged = output<string>(); // Emite cada vez que cambia el título ingresado
+  readonly descriptionChanged = output<string>(); // Emite cada vez que cambia la descripción ingresada
 
+  // Propaga el cambio del campo de texto del título
   onTitleInput(event: Event): void {
     this.titleChanged.emit((event.target as HTMLInputElement).value);
   }
 
+  // Propaga el cambio del área de texto de la descripción
   onDescriptionInput(event: Event): void {
     this.descriptionChanged.emit((event.target as HTMLTextAreaElement).value);
   }

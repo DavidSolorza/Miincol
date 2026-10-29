@@ -1,3 +1,4 @@
+// Tarjeta flotante (tooltip) en la esquina inferior del mapa con resumen y acceso al equipo seleccionado
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
@@ -61,10 +62,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class ColombiaMapTooltipComponent {
-  @Input() team: TeamSupervisionSummary | null = null;
-  @Output() close = new EventEmitter<void>();
-  @Output() inspect = new EventEmitter<string>();
+  @Input() team: TeamSupervisionSummary | null = null; // Equipo activo a mostrar en el tooltip
+  @Output() close = new EventEmitter<void>(); // Emite para cerrar el tooltip y limpiar selección
+  @Output() inspect = new EventEmitter<string>(); // Emite el ID del equipo al pulsar "Supervisar"
 
+  // Devuelve el color institucional de la misión activa
   get color(): string {
     return this.team?.themeColor || '#8B251E';
   }

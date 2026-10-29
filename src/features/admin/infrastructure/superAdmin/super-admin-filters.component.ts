@@ -1,3 +1,4 @@
+// Barra de búsqueda rápida por texto (etnia, misión, líder o departamento) en Supervisión Nacional
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
@@ -30,7 +31,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class SuperAdminFiltersComponent {
-  @Input() searchTerm = '';
-  @Output() searchTermChange = new EventEmitter<string>();
+  @Input() searchTerm = ''; // Término actual de búsqueda
+  @Output() searchTermChange = new EventEmitter<string>(); // Emite el texto de búsqueda actualizado o vacío al limpiar
 }
 

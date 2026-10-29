@@ -4,6 +4,7 @@ import type { IconName } from '../../../../shared/components/icon/icon.types';
 import type { PhasePlan, PhaseType } from '../../domain/plan.types';
 import type { MissionaryTeam } from '../../../auth/domain/auth.types';
 
+// Configuración estática de los 5 pilares ministeriales del PDM con su icono y etiqueta
 const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
   { id: 'investigacion', label: 'Investigación', icon: 'compass' },
   { id: 'encarnacion', label: 'Encarnación', icon: 'users' },
@@ -75,18 +76,20 @@ const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
     </div>
   `,
 })
+// Lista de navegación de los pilares del PDM con contador de actividades por fase
 export class SidebarPhasesListComponent {
-  readonly allPlans = input.required<Record<string, PhasePlan>>();
-  readonly activePhaseId = input.required<PhaseType>();
-  readonly activeView = input.required<'plans' | 'superadmin'>();
-  readonly isCollapsed = input.required<boolean>();
-  readonly activeTeam = input.required<MissionaryTeam>();
+  readonly allPlans = input.required<Record<string, PhasePlan>>(); // Diccionario de planes por fase del equipo
+  readonly activePhaseId = input.required<PhaseType>(); // Fase ministerial actualmente seleccionada
+  readonly activeView = input.required<'plans' | 'superadmin'>(); // Vista activa de la aplicación
+  readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
+  readonly activeTeam = input.required<MissionaryTeam>(); // Datos del equipo misionero activo
 
-  readonly phaseSelected = output<PhaseType>();
-  readonly viewChanged = output<'plans' | 'superadmin'>();
+  readonly phaseSelected = output<PhaseType>(); // Emite la fase seleccionada por el usuario
+  readonly viewChanged = output<'plans' | 'superadmin'>(); // Emite cambio hacia la vista de planes si estaba en otra
 
-  readonly phasesConfig = PHASES_CONFIG;
+  readonly phasesConfig = PHASES_CONFIG; // Referencia a los pilares configurados para la plantilla
 
+  // Calcula el total de actividades y cuántas están completadas en una fase específica
   getPhaseCounts(phaseId: PhaseType): { total: number; completed: number } {
     const phasePlan = this.allPlans()[phaseId];
     if (!phasePlan) return { total: 0, completed: 0 };
@@ -98,6 +101,7 @@ export class SidebarPhasesListComponent {
     return { total, completed };
   }
 
+  // Selecciona una fase y asegura que la vista activa sea la de planes
   handleSelectPhase(phaseId: PhaseType): void {
     this.phaseSelected.emit(phaseId);
     if (this.activeView() !== 'plans') {

@@ -1,3 +1,4 @@
+// Barra de 4 filtros rápidos del mapa cartográfico (Fase PDM, Departamento, Etnia y Estado)
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
@@ -72,17 +73,18 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class ColombiaMapFiltersComponent {
-  @Input() selectedDept = 'ALL';
-  @Input() selectedStatus = 'ALL';
-  @Input() selectedPhase = 'ALL';
-  @Input() selectedEthnicity = 'ALL';
-  @Input() departments: string[] = [];
+  @Input() selectedDept = 'ALL'; // Departamento seleccionado
+  @Input() selectedStatus = 'ALL'; // Estado de salud seleccionado
+  @Input() selectedPhase = 'ALL'; // Fase del PDM seleccionada
+  @Input() selectedEthnicity = 'ALL'; // Etnia seleccionada
+  @Input() departments: string[] = []; // Opciones de departamentos disponibles
 
-  @Output() selectDept = new EventEmitter<string>();
-  @Output() selectStatus = new EventEmitter<string>();
-  @Output() selectPhase = new EventEmitter<string>();
-  @Output() selectEthnicity = new EventEmitter<string>();
+  @Output() selectDept = new EventEmitter<string>(); // Emite cambio de departamento
+  @Output() selectStatus = new EventEmitter<string>(); // Emite cambio de estado de salud
+  @Output() selectPhase = new EventEmitter<string>(); // Emite cambio de fase del PDM
+  @Output() selectEthnicity = new EventEmitter<string>(); // Emite cambio de etnia
 
+  // Calcula las clases Tailwind del selector resaltando en terracota cuando hay un filtro activo
   selectBaseClass(isActive: boolean): string {
     return `w-full text-[11px] font-bold px-2.5 py-1.5 pr-6 rounded-xl border transition-all duration-150 appearance-none cursor-pointer truncate shadow-2xs ${
       isActive

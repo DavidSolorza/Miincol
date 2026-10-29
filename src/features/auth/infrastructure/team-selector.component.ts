@@ -3,6 +3,7 @@ import type { MissionaryTeam } from '../domain/auth.types';
 import { ModalComponent } from '../../../shared/components/modal.component';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 
+// Modal para seleccionar y cambiar el equipo misionero activo
 @Component({
   selector: 'app-team-selector',
   standalone: true,
@@ -55,12 +56,15 @@ import { AppIconComponent } from '../../../shared/components/icon/app-icon.compo
   `,
 })
 export class TeamSelectorComponent {
+  // Estado de apertura del modal, lista de equipos e ID del equipo seleccionado
   @Input() isOpen = false;
   @Input() teams: MissionaryTeam[] = [];
   @Input() activeTeamId = '';
+  // Eventos para cerrar el modal o notificar el cambio de equipo
   @Output() close = new EventEmitter<void>();
   @Output() selectTeam = new EventEmitter<string>();
 
+  // Emite el ID del equipo elegido y cierra el diálogo modal
   selectAndClose(teamId: string) {
     this.selectTeam.emit(teamId);
     this.close.emit();

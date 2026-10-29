@@ -72,13 +72,16 @@ import { AuditLogItemComponent } from './auditModal/audit-log-item.component';
     }
   `,
 })
+// Modal de bitácora de auditoría y telemetría en tiempo real para un equipo misionero
 export class TeamAuditModalComponent implements OnChanges, OnDestroy {
+  // Propiedades de entrada del equipo supervisado y evento para cerrar el modal
   @Input() isOpen = false;
   @Input() teamId = '';
   @Input() teamName = '';
   @Input() leaderName = '';
   @Output() close = new EventEmitter<void>();
 
+  // Signals con los registros de auditoría, resumen de telemetría y filtro de categoría activo
   readonly logs = signal<TeamAuditLog[]>([]);
   readonly telemetry = signal<TeamTelemetrySummary>({
     teamId: '',
@@ -102,25 +105,30 @@ export class TeamAuditModalComponent implements OnChanges, OnDestroy {
 
   private sub?: ServiceBusSubscription;
 
+  // Escucha eventos de auditoría en el ServiceBus para refrescar la bitácora en vivo
   constructor() {
     this.sub = serviceBus.subscribe('audit:log', (payload) => {
       if (payload.teamId === this.teamId) this.refresh();
     });
   }
 
+  // Recarga los datos cuando cambia el equipo seleccionado en las propiedades de entrada
   ngOnChanges() {
     if (this.teamId) this.refresh();
   }
 
+  // Cancela la suscripción al ServiceBus al destruir el componente
   ngOnDestroy() {
     this.sub?.unsubscribe();
   }
 
+  // Sincroniza los logs y el resumen de telemetría desde el almacenamiento local
   refresh() {
     this.logs.set(getStoredAuditLogs(this.teamId, this.leaderName));
     this.telemetry.set(calculateTeamTelemetry(this.teamId, this.leaderName));
   }
 
+  // Filtra los registros de auditoría según la pestaña activa (ingresos, actividades o notas)
   get filteredLogs(): TeamAuditLog[] {
     const f = this.filter();
     return this.logs().filter((log) => {

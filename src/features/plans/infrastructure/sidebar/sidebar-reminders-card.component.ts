@@ -69,8 +69,9 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     }
   `,
 })
+// Tarjeta de avisos y recordatorios ministeriales ubicada en la barra lateral
 export class SidebarRemindersCardComponent {
-  readonly isCollapsed = input.required<boolean>();
-  readonly openNotesModal = output<void>();
+  readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está en modo compacto
+  readonly openNotesModal = output<void>(); // Emite para abrir el modal de notas y agenda territorial
 }
 

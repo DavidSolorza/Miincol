@@ -1,3 +1,4 @@
+// Sección intermedia de la tarjeta de equipo con presupuesto anual y barra de progreso porcentual
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
@@ -33,9 +34,10 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
   `,
 })
 export class TeamCardMetricsComponent {
-  @Input({ required: true }) team!: TeamSupervisionSummary;
-  @Input() themeColor = '#8B251E';
+  @Input({ required: true }) team!: TeamSupervisionSummary; // Datos del equipo misionero
+  @Input() themeColor = '#8B251E'; // Color aplicado a la barra de avance
 
+  // Devuelve el presupuesto total del equipo formateado en pesos colombianos (COP)
   get formattedBudget(): string {
     return formatCurrencyCOP(this.team.totalBudget);
   }

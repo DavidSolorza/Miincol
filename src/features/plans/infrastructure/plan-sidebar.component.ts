@@ -90,23 +90,24 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
     </aside>
   `,
 })
+// Barra lateral principal de navegación entre fases del PDM, métricas rápidas y acciones del equipo
 export class PlanSidebarComponent {
-  readonly allPlans = input.required<Record<string, PhasePlan>>();
-  readonly activePhaseId = input.required<PhaseType>();
-  readonly metrics = input.required<PlanMetrics>();
-  readonly activeTeam = input.required<MissionaryTeam>();
-  readonly activeView = input.required<'plans' | 'superadmin'>();
-  readonly isCollapsed = input.required<boolean>();
-  readonly isOpenMobile = input.required<boolean>();
-  readonly userRole = input<UserRole>('admin');
-  readonly whatsappUrl = input<string | null | undefined>(null);
+  readonly allPlans = input.required<Record<string, PhasePlan>>(); // Todos los planes por fase del equipo
+  readonly activePhaseId = input.required<PhaseType>(); // Identificador de la fase actualmente activa
+  readonly metrics = input.required<PlanMetrics>(); // Métricas consolidadas de la fase activa
+  readonly activeTeam = input.required<MissionaryTeam>(); // Datos del equipo misionero activo
+  readonly activeView = input.required<'plans' | 'superadmin'>(); // Vista activa de la aplicación
+  readonly isCollapsed = input.required<boolean>(); // Indica si el panel lateral está contraído en escritorio
+  readonly isOpenMobile = input.required<boolean>(); // Indica si el cajón lateral está abierto en móvil
+  readonly userRole = input<UserRole>('admin'); // Rol del usuario autenticado
+  readonly whatsappUrl = input<string | null | undefined>(null); // Enlace directo de contacto por WhatsApp
 
-  readonly selectPhase = output<PhaseType>();
-  readonly openReportModal = output<void>();
-  readonly openNotesModal = output<void>();
-  readonly changeView = output<'plans' | 'superadmin'>();
-  readonly toggleCollapse = output<void>();
-  readonly closeMobile = output<void>();
-  readonly logout = output<void>();
+  readonly selectPhase = output<PhaseType>(); // Emite la fase seleccionada por el usuario
+  readonly openReportModal = output<void>(); // Solicita abrir el modal de informe ejecutivo PDM
+  readonly openNotesModal = output<void>(); // Solicita abrir el modal de notas y agenda territorial
+  readonly changeView = output<'plans' | 'superadmin'>(); // Solicita cambiar entre la vista de planes y supervisión
+  readonly toggleCollapse = output<void>(); // Alterna el estado contraído o expandido de la barra lateral
+  readonly closeMobile = output<void>(); // Cierra la barra lateral en dispositivos móviles
+  readonly logout = output<void>(); // Emite el evento de cierre de sesión
 }
 

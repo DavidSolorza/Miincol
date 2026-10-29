@@ -80,10 +80,13 @@ import type { ReportData } from '../../application/report-data.helper';
     </div>
   `,
 })
+// Cabecera institucional del informe con botón de impresión y tarjetas de resumen ejecutivo
 export class ReportHeaderAndSummaryComponent {
+  // Entrada con los datos consolidados del informe y salida para disparar la impresión
   readonly report = input.required<ReportData>();
   readonly printed = output<void>();
 
+  // Formatea montos numéricos a pesos colombianos (COP)
   formatCurrency(val: number): string {
     return formatCurrencyCOP(val);
   }

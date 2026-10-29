@@ -39,7 +39,9 @@ import type { TeamDropdownItem } from './team-dropdown-trigger.component';
     </button>
   `,
 })
+// Opción individual de equipo dentro del menú desplegable de misiones territoriales
 export class TeamOptionItemComponent {
+  // Datos del equipo a renderizar, indicador de selección y evento al hacer clic
   @Input({ required: true }) team!: TeamDropdownItem;
   @Input() isSelected = false;
   @Output() select = new EventEmitter<void>();

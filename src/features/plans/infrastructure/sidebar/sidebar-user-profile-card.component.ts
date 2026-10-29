@@ -53,13 +53,15 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
     }
   `,
 })
+// Tarjeta inferior de perfil del equipo activo con opción de confirmación para cerrar sesión
 export class SidebarUserProfileCardComponent {
-  private readonly toastService = inject(ToastService);
+  private readonly toastService = inject(ToastService); // Servicio de notificaciones y diálogos de confirmación
 
-  readonly activeTeam = input.required<MissionaryTeam>();
-  readonly isCollapsed = input.required<boolean>();
-  readonly loggedOut = output<void>();
+  readonly activeTeam = input.required<MissionaryTeam>(); // Información del equipo misionero en sesión
+  readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
+  readonly loggedOut = output<void>(); // Emite el evento de salida cuando el usuario confirma cerrar sesión
 
+  // Solicita confirmación al usuario antes de emitir el cierre de sesión
   handleLogoutClick(): void {
     this.toastService.confirmAction({
       title: '¿Cerrar Sesión Territorial?',

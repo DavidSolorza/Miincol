@@ -1,3 +1,4 @@
+// Contenedor principal del mapa de Colombia con filtros, insignia departamental, lienzo SVG y tooltip
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, signal } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { resolveTeamLocation, normalizeText } from './colombiaLocations';
@@ -61,23 +62,25 @@ import { ColombiaMapTooltipComponent } from './colombia-map-tooltip.component';
   styles: [`:host { display: flex; flex-direction: column; height: 100%; min-height: 0; }`],
 })
 export class ColombiaMapCardComponent {
-  @Input() teams: TeamSupervisionSummary[] = [];
-  @Input() selectedTeamId: string | null = null;
-  @Output() selectTeamId = new EventEmitter<string | null>();
-  @Output() inspectTeam = new EventEmitter<string>();
+  @Input() teams: TeamSupervisionSummary[] = []; // Equipos recibidos desde el tablero de supervisión
+  @Input() selectedTeamId: string | null = null; // ID del equipo actualmente seleccionado
+  @Output() selectTeamId = new EventEmitter<string | null>(); // Emite el ID del equipo seleccionado o null al deseleccionar
+  @Output() inspectTeam = new EventEmitter<string>(); // Emite el ID del equipo a supervisar en detalle
 
-  readonly selectedDept = signal('ALL');
-  readonly selectedStatus = signal('ALL');
-  readonly selectedPhase = signal('ALL');
-  readonly selectedEthnicity = signal('ALL');
-  readonly hoveredTeam = signal<TeamSupervisionSummary | null>(null);
-  readonly hoveredDept = signal<string | null>(null);
+  readonly selectedDept = signal('ALL'); // Filtro local de departamento en el mapa
+  readonly selectedStatus = signal('ALL'); // Filtro local por estado de salud
+  readonly selectedPhase = signal('ALL'); // Filtro local por fase del PDM
+  readonly selectedEthnicity = signal('ALL'); // Filtro local por etnia indígena
+  readonly hoveredTeam = signal<TeamSupervisionSummary | null>(null); // Equipo bajo el cursor en el mapa
+  readonly hoveredDept = signal<string | null>(null); // Departamento bajo el cursor en el mapa
 
+  // Obtiene la lista ordenada de departamentos únicos con presencia misionera
   get departments(): string[] {
     const list = Array.from(new Set(this.teams.map((t) => resolveTeamLocation(t).departmentName))).filter(Boolean);
     return list.sort();
   }
 
+  // Filtra los equipos a renderizar en el mapa según los 4 selectores superiores
   get filteredTeams(): TeamSupervisionSummary[] {
     const dept = this.selectedDept();
     const status = this.selectedStatus();
@@ -97,14 +100,17 @@ export class ColombiaMapCardComponent {
     });
   }
 
+  // Devuelve el equipo activo para mostrar en el tooltip inferior (seleccionado o en hover)
   get activeTeam(): TeamSupervisionSummary | null {
     return this.teams.find((t) => t.id === this.selectedTeamId) || this.hoveredTeam();
   }
 
+  // Determina el nombre del departamento a mostrar en la insignia superior izquierda
   get currentBadgeDept(): string | null {
     return this.hoveredDept() || (this.selectedDept() !== 'ALL' ? this.selectedDept() : null);
   }
 
+  // Busca si existe una misión activa dentro del departamento actualmente resaltado en la insignia
   get currentBadgeTeam(): TeamSupervisionSummary | null {
     const hd = this.hoveredDept();
     if (hd) {
@@ -119,6 +125,7 @@ export class ColombiaMapCardComponent {
     return null;
   }
 
+  // Alterna la selección de un departamento al hacer clic sobre su silueta en el mapa
   toggleDept(dept: string) {
     this.selectedDept.set(this.selectedDept() === dept ? 'ALL' : dept);
   }

@@ -2,8 +2,10 @@
  * Dominio de Autenticación y Equipos de Misión
  */
 
+// Rol operativo dentro de la plataforma (administrador nacional o equipo territorial)
 export type UserRole = 'admin' | 'team';
 
+// Información estructural de un equipo misionero territorial
 export interface MissionaryTeam {
   id: string;
   name: string;
@@ -15,6 +17,7 @@ export interface MissionaryTeam {
   leaderPhone?: string;
 }
 
+// Datos de la sesión activa del usuario autenticado
 export interface UserSession {
   userId: string;
   userName: string;

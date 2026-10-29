@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
 import { AppIconComponent } from '../../shared/components/icon/app-icon.component';
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 
+// Cinta superior de aviso cuando el Coordinador inspecciona el PDM de un equipo misionero
 @Component({
   selector: 'app-admin-preview-banner',
   standalone: true,
@@ -42,6 +43,7 @@ import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
   `,
 })
 export class AdminPreviewBannerComponent {
+  // Datos del equipo supervisado, enlace WhatsApp y evento para regresar al panel general
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly whatsappUrl = input<string | null>(null);
   readonly backToAdmin = output<void>();

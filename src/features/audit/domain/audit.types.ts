@@ -1,3 +1,4 @@
+// Tipos de acción auditables dentro del Plan de Desarrollo Ministerial
 export type AuditActionType =
   | 'login'
   | 'activity_add'
@@ -9,6 +10,7 @@ export type AuditActionType =
   | 'note_delete'
   | 'report_generate';
 
+// Estructura de un registro individual en la bitácora de auditoría del equipo
 export interface TeamAuditLog {
   id: string;
   teamId: string;
@@ -20,6 +22,7 @@ export interface TeamAuditLog {
   timestamp: string; // ISO 8601
 }
 
+// Resumen consolidado de telemetría y último acceso de un equipo misionero
 export interface TeamTelemetrySummary {
   teamId: string;
   lastLoginAt: string;

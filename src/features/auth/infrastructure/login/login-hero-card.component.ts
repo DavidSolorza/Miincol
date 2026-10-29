@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
+// Tarjeta visual izquierda del portal de login con mensaje misional, fotografía y cita bíblica
 @Component({
   selector: 'app-login-hero-card',
   standalone: true,

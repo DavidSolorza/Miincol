@@ -1,5 +1,6 @@
 import type { PhasePlan } from '../../domain/plan.types';
 
+// Configuración inicial del plan y objetivos para la fase de Evangelización Contextualizada
 export const evangelizacionPhase: PhasePlan = {
   phaseId: 'evangelizacion',
   phaseName: 'Evangelización Contextualizada',

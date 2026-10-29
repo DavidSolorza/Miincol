@@ -58,15 +58,19 @@ import { NoteItemCardComponent } from './notesModal/note-item-card.component';
     }
   `,
 })
+// Modal de agenda territorial para gestionar notas, ideas y motivos de oración por equipo
 export class TeamNotesModalComponent {
+  // Entradas de visibilidad y equipo activo; salida para cerrar el modal
   readonly isOpen = input.required<boolean>();
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly closed = output<void>();
 
+  // Signals para la lista de notas, categoría seleccionada y término de búsqueda
   readonly notes = signal<TeamNote[]>([]);
   readonly selectedCategory = signal<NoteCategory | 'all'>('all');
   readonly searchTerm = signal('');
 
+  // Signal computado que filtra notas por categoría/texto y prioriza las fijadas (pinned)
   readonly filteredNotes = computed(() => {
     const cat = this.selectedCategory();
     const query = this.searchTerm().toLowerCase();
@@ -75,6 +79,7 @@ export class TeamNotesModalComponent {
       .sort((a, b) => (a.isPinned !== b.isPinned ? (a.isPinned ? -1 : 1) : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
   });
 
+  // Efecto reactivo que carga las notas del equipo activo desde localStorage o usa semillas
   constructor() {
     effect(() => {
       const team = this.activeTeam();
@@ -88,11 +93,13 @@ export class TeamNotesModalComponent {
     });
   }
 
+  // Actualiza el signal de notas y persiste los cambios en localStorage
   private saveNotes(updated: TeamNote[]): void {
     this.notes.set(updated);
     try { localStorage.setItem(`misincol_team_notes_${this.activeTeam().id}`, JSON.stringify(updated)); } catch { /* ignore */ }
   }
 
+  // Crea una nueva nota, la guarda y publica eventos de auditoría y notificación
   addNote(draft: NoteDraftPayload): void {
     const team = this.activeTeam();
     const author = team.leader || 'Misionero';
@@ -112,6 +119,8 @@ export class TeamNotesModalComponent {
     serviceBus.publish('ui:toast', { message: 'Nota agregada a la agenda territorial', type: 'success' });
   }
 
+  // Alterna el estado de fijación (pin) de una nota específica
   togglePin(id: string): void { this.saveNotes(this.notes().map((n) => (n.id === id ? { ...n, isPinned: !n.isPinned } : n))); }
+  // Elimina una nota de la agenda y muestra confirmación visual
   deleteNote(id: string): void { this.saveNotes(this.notes().filter((n) => n.id !== id)); serviceBus.publish('ui:toast', { message: 'Nota eliminada', type: 'info' }); }
 }

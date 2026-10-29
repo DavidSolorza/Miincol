@@ -21,7 +21,9 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     </div>
   `,
 })
+// Pie de tarjeta de login con enlace directo a soporte técnico vía WhatsApp
 export class LoginSupportFooterComponent {
+  // Enlace preconfigurado de WhatsApp para solicitar asistencia de acceso
   readonly whatsappUrl = `https://wa.me/573124589201?text=${encodeURIComponent(
     'Hola, necesito asistencia con mis credenciales de acceso al Plan Ministerial Misincol.'
   )}`;

@@ -108,19 +108,23 @@ import type { Objective } from '../../domain/plan.types';
     </button>
   `,
 })
+// Tarjeta individual de resumen de un objetivo estratégico con barra de progreso y presupuesto total
 export class PhaseObjectiveCardItemComponent {
-  readonly obj = input.required<Objective>();
-  readonly isSelected = input.required<boolean>();
-  readonly selected = output<void>();
+  readonly obj = input.required<Objective>(); // Datos del objetivo estratégico
+  readonly isSelected = input.required<boolean>(); // Indica si esta tarjeta es el objetivo actualmente seleccionado
+  readonly selected = output<void>(); // Emite cuando el usuario hace clic para seleccionar el objetivo
 
+  // Cantidad de actividades completadas dentro de este objetivo
   readonly completedCount = computed(() =>
     this.obj().activities.filter((a) => a.state === 'Completado').length
   );
-  readonly totalCount = computed(() => this.obj().activities.length);
+  readonly totalCount = computed(() => this.obj().activities.length); // Total de actividades del objetivo
+  // Porcentaje de progreso de actividades completadas en este objetivo
   readonly pct = computed(() =>
     this.totalCount() > 0 ? Math.round((this.completedCount() / this.totalCount()) * 100) : 0
   );
-  readonly isCompleted = computed(() => this.totalCount() > 0 && this.completedCount() === this.totalCount());
+  readonly isCompleted = computed(() => this.totalCount() > 0 && this.completedCount() === this.totalCount()); // Indica si todas están listas
+  // Suma y formatea el presupuesto total del objetivo en pesos colombianos (COP)
   readonly formattedBudget = computed(() => {
     const budget = this.obj().activities.reduce((acc, a) => acc + (a.totalBudget || 0), 0);
     return new Intl.NumberFormat('es-CO', {

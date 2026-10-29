@@ -47,9 +47,10 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     </div>
   `,
 })
+// Cabecera de marca del menú lateral con logotipo y botones de colapso o cierre móvil
 export class SidebarBrandComponent {
-  readonly isCollapsed = input.required<boolean>();
-  readonly toggleCollapse = output<void>();
-  readonly closeMobile = output<void>();
+  readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
+  readonly toggleCollapse = output<void>(); // Emite para expandir el panel lateral en escritorio
+  readonly closeMobile = output<void>(); // Emite para cerrar el menú lateral en versión móvil
 }
 

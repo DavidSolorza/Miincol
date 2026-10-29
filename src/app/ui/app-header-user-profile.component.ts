@@ -4,6 +4,7 @@ import { ToastService } from '../../shared/components/toast/toast.service';
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { AuthSession } from '../auth/appSession.types';
 
+// Bloque de perfil de usuario en la cabecera: muestra avatar, rol/nombre y botón de cierre de sesión
 @Component({
   selector: 'app-header-user-profile',
   standalone: true,
@@ -42,15 +43,18 @@ import type { AuthSession } from '../auth/appSession.types';
 export class AppHeaderUserProfileComponent {
   private readonly toastService = inject(ToastService);
 
+  // Entradas de sesión activa y equipo misionero
   readonly session = input.required<AuthSession>();
   readonly isSuperAdmin = input.required<boolean>();
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly loggedOut = output<void>();
 
+  // Nombre visible según si es Coordinador de Equipos o misión territorial
   readonly displayName = computed(() =>
     this.isSuperAdmin() ? 'Coordinador de Equipos' : this.activeTeam().name || this.session().userName
   );
 
+  // Solicita confirmación antes de cerrar la sesión activa
   handleLogoutClick(): void {
     this.toastService.confirmAction({
       title: '¿Cerrar Sesión del Sistema?',

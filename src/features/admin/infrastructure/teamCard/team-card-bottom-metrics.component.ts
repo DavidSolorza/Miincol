@@ -1,8 +1,10 @@
+// Pie de tarjeta de equipo con presupuesto abreviado, hora de último acceso y alertas críticas
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
+// Formatea montos en notación compacta (ej. $ 14.9M o $ 500k)
 const formatCompactCOP = (amount: number): string => {
   if (amount >= 1_000_000) return `$ ${(amount / 1_000_000).toFixed(1)}M`;
   if (amount >= 1_000) return `$ ${(amount / 1_000).toFixed(0)}k`;
@@ -52,23 +54,27 @@ const formatCompactCOP = (amount: number): string => {
   `,
 })
 export class TeamCardBottomMetricsComponent {
-  @Input({ required: true }) team!: TeamSupervisionSummary;
-  @Input() lastLoginTime?: string;
-  @Output() openAudit = new EventEmitter<void>();
+  @Input({ required: true }) team!: TeamSupervisionSummary; // Datos del equipo misionero
+  @Input() lastLoginTime?: string; // Texto con la hora del último ingreso registrado
+  @Output() openAudit = new EventEmitter<void>(); // Emite evento para abrir el modal de bitácora/auditoría
 
+  // Calcula el presupuesto proporcional al avance o devuelve el presupuesto total
   get targetBudget(): number {
     const executed = this.team.totalBudget * (this.team.progressPercentage / 100);
     return executed > 0 ? executed : this.team.totalBudget;
   }
 
+  // Devuelve el presupuesto en formato compacto para la tarjeta
   get formattedBudget(): string {
     return formatCompactCOP(this.targetBudget);
   }
 
+  // Devuelve el presupuesto completo en COP para el atributo title
   get fullBudget(): string {
     return formatCurrencyCOP(this.targetBudget);
   }
 
+  // Formatea la hora de último acceso eliminando el prefijo redundante
   get displayTime(): string {
     return this.lastLoginTime ? this.lastLoginTime.replace('Hoy, ', '') : (this.team.lastUpdate || '09:00');
   }

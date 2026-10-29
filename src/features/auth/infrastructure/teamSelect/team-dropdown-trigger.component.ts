@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
+// Datos resumidos de un equipo para mostrar en el selector desplegable
 export interface TeamDropdownItem {
   id: string;
   name: string;
@@ -37,7 +38,9 @@ export interface TeamDropdownItem {
     </button>
   `,
 })
+// Botón disparador que muestra la etnia y nombre del equipo activo en la barra superior
 export class TeamDropdownTriggerComponent {
+  // Equipo activo actual, estado de apertura del menú y evento para alternar visibilidad
   @Input() activeTeam?: TeamDropdownItem;
   @Input() isOpen = false;
   @Output() toggle = new EventEmitter<void>();

@@ -5,6 +5,7 @@ import { entrenamientoPhase } from './entrenamientoPhase';
 import { autocuidadoPhase } from './autocuidadoPhase';
 import type { PhasePlan } from '../../domain/plan.types';
 
+// Diccionario con los planes iniciales predeterminados para las cinco fases ministeriales
 export const INITIAL_PLANS_BY_PHASE: Record<string, PhasePlan> = {
   investigacion: investigacionPhase,
   encarnacion: encarnacionPhase,

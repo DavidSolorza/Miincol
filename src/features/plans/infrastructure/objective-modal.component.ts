@@ -43,26 +43,28 @@ import { ObjectiveModalActionsComponent } from './objectiveModal/objective-modal
     </app-modal>
   `,
 })
+// Modal para crear, editar o eliminar un objetivo estratégico dentro de la fase actual
 export class ObjectiveModalComponent {
-  private readonly toastService = inject(ToastService);
+  private readonly toastService = inject(ToastService); // Servicio de notificaciones toast
 
-  readonly isOpen = input.required<boolean>();
-  readonly mode = input.required<'create' | 'edit'>();
-  readonly objectiveNumber = input<1 | 2 | 3 | 4 | undefined>(undefined);
-  readonly initialTitle = input<string>('');
-  readonly initialDescription = input<string>('');
-  readonly totalObjectivesCount = input.required<number>();
+  readonly isOpen = input.required<boolean>(); // Indica si el modal está abierto
+  readonly mode = input.required<'create' | 'edit'>(); // Modo del modal ('create' o 'edit')
+  readonly objectiveNumber = input<1 | 2 | 3 | 4 | undefined>(undefined); // Número del objetivo en edición
+  readonly initialTitle = input<string>(''); // Título inicial del objetivo al editar
+  readonly initialDescription = input<string>(''); // Descripción inicial del objetivo al editar
+  readonly totalObjectivesCount = input.required<number>(); // Cantidad total de objetivos en la fase (máx 4)
 
-  readonly closed = output<void>();
-  readonly saved = output<{ title: string; description: string; number?: 1 | 2 | 3 | 4 }>();
-  readonly deleted = output<1 | 2 | 3 | 4>();
+  readonly closed = output<void>(); // Emite cuando se cierra el modal
+  readonly saved = output<{ title: string; description: string; number?: 1 | 2 | 3 | 4 }>(); // Emite los datos guardados del objetivo
+  readonly deleted = output<1 | 2 | 3 | 4>(); // Emite el número del objetivo confirmado para eliminar
 
-  readonly title = signal('');
-  readonly description = signal('');
-  readonly error = signal<string | null>(null);
-  readonly confirmDelete = signal(false);
+  readonly title = signal(''); // Valor reactivo del campo título
+  readonly description = signal(''); // Valor reactivo del campo descripción
+  readonly error = signal<string | null>(null); // Mensaje de error de validación
+  readonly confirmDelete = signal(false); // Estado de confirmación de doble clic para eliminar
 
   constructor() {
+    // Sincroniza los campos del formulario cuando se abre el modal
     effect(() => {
       if (this.isOpen()) {
         this.title.set(this.initialTitle());
@@ -73,6 +75,7 @@ export class ObjectiveModalComponent {
     });
   }
 
+  // Valida que título y descripción no estén vacíos y emite el objetivo guardado
   handleSubmit(event: Event): void {
     event.preventDefault();
     this.error.set(null);
@@ -97,6 +100,7 @@ export class ObjectiveModalComponent {
     this.closed.emit();
   }
 
+  // Gestiona la confirmación y eliminación del objetivo respetando el mínimo de 1 objetivo por fase
   handleDelete(): void {
     const objNum = this.objectiveNumber();
     if (!objNum) return;

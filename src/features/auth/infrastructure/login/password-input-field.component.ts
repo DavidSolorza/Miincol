@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
+// Campo de entrada de contraseña con botón para alternar visibilidad del texto
 @Component({
   selector: 'app-password-input-field',
   standalone: true,
@@ -31,6 +32,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   `,
 })
 export class PasswordInputFieldComponent {
+  // Valor de la contraseña, estado de visibilidad y eventos de actualización
   @Input() password = '';
   @Input() showPassword = false;
   @Output() passwordChange = new EventEmitter<string>();

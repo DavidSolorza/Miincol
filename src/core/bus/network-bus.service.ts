@@ -1,11 +1,14 @@
 import { Injectable, signal } from '@angular/core';
 import { serviceBus } from './ServiceBus';
 
+// Servicio reactivo de conectividad: monitorea el estado online/offline y tipo de red del navegador
 @Injectable({ providedIn: 'root' })
 export class NetworkBusService {
+  // Signals de conexión activa y velocidad efectiva (4g, 3g, etc.)
   readonly isOnline = signal<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   readonly effectiveType = signal<string | undefined>((navigator as any)?.connection?.effectiveType);
 
+  // Registra escuchas nativas del navegador y publica cambios en el ServiceBus
   constructor() {
     if (typeof window === 'undefined') return;
 

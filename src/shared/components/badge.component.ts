@@ -11,6 +11,7 @@ const VARIANT_STYLES: Record<BadgeVariant, { bg: string; text: string; border: s
   neutral: { bg: 'bg-stone-100', text: 'text-stone-700', border: 'border-stone-200', dotColor: 'bg-stone-400' },
 };
 
+// Componente transversal de etiqueta (Badge) para estados de actividades y categorías
 @Component({
   selector: 'app-badge',
   standalone: true,
@@ -25,15 +26,18 @@ const VARIANT_STYLES: Record<BadgeVariant, { bg: string; text: string; border: s
   `,
 })
 export class BadgeComponent {
+  // Configuración visual de variante cromática, tamaño e indicador de punto
   @Input() variant: BadgeVariant = 'neutral';
   @Input() size: 'sm' | 'md' = 'md';
   @Input() className = '';
   @Input() dot = false;
 
+  // Obtiene la paleta de colores asociada a la variante actual
   get current() {
     return VARIANT_STYLES[this.variant] || VARIANT_STYLES.neutral;
   }
 
+  // Construye las clases CSS finales combinando variante y tamaño
   get computedClass(): string {
     const c = this.current;
     const sizeStyle = this.size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs';

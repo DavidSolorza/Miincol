@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import type { ActivityState } from '../../domain/plan.types';
 
+// Mapa de clases CSS según el estado de ejecución de la actividad
 const STATE_STYLES: Record<ActivityState, string> = {
   Pendiente: 'bg-amber-50/90 text-amber-900 border-amber-200/80 shadow-2xs',
   'En Proceso': 'bg-orange-50/90 text-orange-900 border-orange-200/80 shadow-2xs',
@@ -37,16 +38,19 @@ const STATE_STYLES: Record<ActivityState, string> = {
     </div>
   `,
 })
+// Etiquetas superiores de una actividad con selector de estado, etapa territorial y frecuencia
 export class ActivityHeaderTagsComponent {
-  readonly state = input.required<ActivityState>();
-  readonly stage = input<string | undefined>(undefined);
-  readonly frequency = input.required<string>();
-  readonly stateChanged = output<ActivityState>();
+  readonly state = input.required<ActivityState>(); // Estado actual de la actividad
+  readonly stage = input<string | undefined>(undefined); // Etapa o área temática de la actividad
+  readonly frequency = input.required<string>(); // Periodicidad de ejecución de la actividad
+  readonly stateChanged = output<ActivityState>(); // Emite el nuevo estado seleccionado por el usuario
 
+  // Obtiene las clases de estilo visual correspondientes al estado actual
   getStyle(state: ActivityState): string {
     return STATE_STYLES[state] || STATE_STYLES.Pendiente;
   }
 
+  // Emite el cambio de estado cuando el usuario selecciona una opción del desplegable
   onSelectState(event: Event): void {
     this.stateChanged.emit((event.target as HTMLSelectElement).value as ActivityState);
   }

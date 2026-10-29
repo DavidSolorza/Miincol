@@ -65,12 +65,16 @@ import { type TeamNote, NOTE_CATEGORIES } from '../../domain/notes.types';
     </div>
   `,
 })
+// Tarjeta visual de una nota individual con acciones de fijar y eliminar
 export class NoteItemCardComponent {
+  // Entrada con los datos de la nota y salidas para fijar o borrar el registro
   readonly note = input.required<TeamNote>();
   readonly togglePin = output<string>();
   readonly deleted = output<string>();
 
+  // Signal computado con la configuración visual de la categoría de la nota
   readonly cat = computed(() => NOTE_CATEGORIES[this.note().category] || NOTE_CATEGORIES.general);
+  // Signal computado que formatea la fecha de creación en formato local colombiano
   readonly formattedDate = computed(() =>
     new Date(this.note().createdAt).toLocaleDateString('es-CO', {
       day: 'numeric',

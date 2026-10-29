@@ -1,3 +1,4 @@
+// Modal de formulario para crear o editar una misión territorial y su configuración operativa
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnChanges, inject, signal } from '@angular/core';
 import type { TeamSupervisionSummary, CreateTeamDto } from '../domain/admin.types';
 import { ModalComponent } from '../../../shared/components/modal.component';
@@ -6,6 +7,7 @@ import { TeamGeneralFieldsComponent } from './teamModal/team-general-fields.comp
 import { TeamLeaderFieldsComponent } from './teamModal/team-leader-fields.component';
 import { TeamSettingsFieldsComponent } from './teamModal/team-settings-fields.component';
 
+// Valores iniciales por defecto para el registro de una nueva misión
 const DEFAULT_FORM: CreateTeamDto = {
   name: '', ethnicity: '', region: '', department: '', leader: '', leaderPhone: '+57 ',
   members: [], currentPhaseId: 'investigacion', totalBudget: 15000000, themeColor: '#8B251E',
@@ -68,16 +70,17 @@ const DEFAULT_FORM: CreateTeamDto = {
 export class TeamModalComponent implements OnChanges {
   private readonly toastSvc = inject(ToastService);
 
-  @Input() isOpen = false;
-  @Input() initialData: TeamSupervisionSummary | null = null;
-  @Output() close = new EventEmitter<void>();
-  @Output() submitTeam = new EventEmitter<CreateTeamDto>();
+  @Input() isOpen = false; // Indica si el modal está abierto
+  @Input() initialData: TeamSupervisionSummary | null = null; // Datos del equipo a editar o null si es creación
+  @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
+  @Output() submitTeam = new EventEmitter<CreateTeamDto>(); // Emite el DTO validado al guardar
 
-  readonly formData = signal<CreateTeamDto>({ ...DEFAULT_FORM });
-  readonly membersInput = signal('');
-  readonly showPassword = signal(false);
-  readonly saving = signal(false);
+  readonly formData = signal<CreateTeamDto>({ ...DEFAULT_FORM }); // Estado reactivo del formulario
+  readonly membersInput = signal(''); // Cadena de miembros separados por coma
+  readonly showPassword = signal(false); // Alterna visibilidad del PIN de acceso
+  readonly saving = signal(false); // Indicador de guardado en curso
 
+  // Sincroniza el formulario cuando cambia el equipo seleccionado para editar
   ngOnChanges() {
     if (this.initialData) {
       this.formData.set({
@@ -106,10 +109,12 @@ export class TeamModalComponent implements OnChanges {
     }
   }
 
+  // Aplica actualizaciones parciales provenientes de los subcomponentes de campos
   handleChange(updates: Partial<CreateTeamDto>) {
     this.formData.update((prev) => ({ ...prev, ...updates }));
   }
 
+  // Envía los datos del formulario, notifica al usuario y cierra el modal
   handleSubmit(e: Event) {
     e.preventDefault();
     this.saving.set(true);

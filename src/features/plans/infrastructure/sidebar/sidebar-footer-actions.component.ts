@@ -91,22 +91,25 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     }
   `,
 })
+// Botones de acción en la barra lateral para abrir notas, informe ejecutivo y contacto por WhatsApp
 export class SidebarFooterActionsComponent {
-  readonly activeView = input.required<'plans' | 'superadmin'>();
-  readonly isTeamRestricted = input.required<boolean>();
-  readonly isCollapsed = input.required<boolean>();
-  readonly isOpenMobile = input.required<boolean>();
-  readonly whatsappUrl = input<string | null | undefined>(null);
+  readonly activeView = input.required<'plans' | 'superadmin'>(); // Vista activa actual
+  readonly isTeamRestricted = input.required<boolean>(); // Indica si el usuario tiene rol restringido a su equipo
+  readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
+  readonly isOpenMobile = input.required<boolean>(); // Indica si el menú móvil está abierto
+  readonly whatsappUrl = input<string | null | undefined>(null); // URL de WhatsApp para contactar al líder
 
-  readonly closeMobile = output<void>();
-  readonly openReportModal = output<void>();
-  readonly openNotesModal = output<void>();
+  readonly closeMobile = output<void>(); // Cierra el menú lateral móvil tras ejecutar una acción
+  readonly openReportModal = output<void>(); // Emite para abrir el modal de informe PDM
+  readonly openNotesModal = output<void>(); // Emite para abrir el modal de notas y agenda
 
+  // Abre el modal de notas y cierra el menú móvil si estaba abierto
   handleOpenNotes(): void {
     this.openNotesModal.emit();
     if (this.isOpenMobile()) this.closeMobile.emit();
   }
 
+  // Abre el modal de informe ejecutivo y cierra el menú móvil si estaba abierto
   handleOpenReport(): void {
     this.openReportModal.emit();
     if (this.isOpenMobile()) this.closeMobile.emit();

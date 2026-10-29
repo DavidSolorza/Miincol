@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnInit
 import type { ActiveConfirmToast } from './toast.types';
 import { AppIconComponent } from '../icon/app-icon.component';
 
+// Tarjeta interactiva de confirmación flotante con barra de progreso regresiva
 @Component({
   selector: 'app-toast-confirm-item',
   standalone: true,
@@ -63,16 +64,20 @@ import { AppIconComponent } from '../icon/app-icon.component';
   `,
 })
 export class ToastConfirmItemComponent implements OnInit, OnDestroy {
+  // Configuración de la confirmación activa y evento para descartar la tarjeta
   @Input({ required: true }) confirmItem!: ActiveConfirmToast;
   @Output() dismiss = new EventEmitter<void>();
 
+  // Porcentaje restante de la barra de progreso antes del cierre automático
   readonly progress = signal(100);
   private timer: any;
 
+  // Determina si la acción es destructiva (danger) para aplicar esquema de color rojo
   get isDanger(): boolean {
     return this.confirmItem.type === 'danger';
   }
 
+  // Inicia el temporizador de cuenta regresiva al montar el componente
   ngOnInit() {
     const duration = this.confirmItem.duration ?? 10000;
     if (duration <= 0) return;
@@ -90,15 +95,18 @@ export class ToastConfirmItemComponent implements OnInit, OnDestroy {
     }, interval);
   }
 
+  // Limpia el temporizador al destruir la tarjeta
   ngOnDestroy() {
     if (this.timer) clearInterval(this.timer);
   }
 
+  // Ejecuta el callback de confirmación y cierra el aviso
   handleConfirm() {
     this.confirmItem.onConfirm();
     this.dismiss.emit();
   }
 
+  // Ejecuta el callback de cancelación (si existe) y cierra el aviso
   handleCancel() {
     this.confirmItem.onCancel?.();
     this.dismiss.emit();

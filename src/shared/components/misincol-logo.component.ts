@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 
+// Componente reutilizable para renderizar el logotipo oficial de MISINCOL en distintas escalas
 @Component({
   selector: 'app-misincol-logo',
   standalone: true,
@@ -16,10 +17,12 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
   `,
 })
 export class MisincolLogoComponent {
+  // Propiedades de clase adicional y escala predefinida (sm, md, lg, xl)
   @Input() className = '';
   @Input() size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
   @Input() showSubtitle = false;
 
+  // Devuelve las clases de altura correspondientes al tamaño elegido
   get sizeClass(): string {
     const map = {
       sm: 'h-10 sm:h-12',

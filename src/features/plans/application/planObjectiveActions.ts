@@ -1,5 +1,7 @@
 import type { PhasePlan, Objective } from '../domain/plan.types';
 
+// Funciones puras para gestionar objetivos estratégicos dentro de una fase del plan
+// Modifica el título o la descripción de un objetivo específico
 export const applyUpdateObjective = (
   currentPlan: PhasePlan,
   objectiveNumber: 1 | 2 | 3 | 4,
@@ -17,6 +19,7 @@ export const applyUpdateObjective = (
   return { ...currentPlan, objectives: updatedObjectives };
 };
 
+// Agrega un nuevo objetivo asignando el primer número disponible del 1 al 4
 export const applyAddObjective = (
   currentPlan: PhasePlan,
   newObj: { title: string; description: string }
@@ -46,6 +49,7 @@ export const applyAddObjective = (
   };
 };
 
+// Elimina un objetivo del plan garantizando que siempre quede al menos uno
 export const applyDeleteObjective = (
   currentPlan: PhasePlan,
   objectiveNumber: 1 | 2 | 3 | 4

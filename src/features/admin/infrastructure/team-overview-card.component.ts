@@ -1,3 +1,4 @@
+// Tarjeta resumen de un equipo misionero con cabecera, métricas de avance, telemetría y modal de auditoría
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnChanges, OnDestroy, signal } from '@angular/core';
 import type { TeamSupervisionSummary } from '../domain/admin.types';
 import { calculateTeamTelemetry } from '../../audit/application/auditStorage';
@@ -53,20 +54,22 @@ import { TeamAuditModalComponent } from '../../audit/infrastructure/team-audit-m
   `,
 })
 export class TeamOverviewCardComponent implements OnChanges, OnDestroy {
-  @Input({ required: true }) team!: TeamSupervisionSummary;
-  @Input() isSelected = false;
-  @Output() select = new EventEmitter<void>();
-  @Output() inspectTeam = new EventEmitter<string>();
-  @Output() editTeam = new EventEmitter<TeamSupervisionSummary>();
+  @Input({ required: true }) team!: TeamSupervisionSummary; // Resumen del equipo a mostrar
+  @Input() isSelected = false; // Indica si la tarjeta está resaltada/seleccionada
+  @Output() select = new EventEmitter<void>(); // Emite al hacer clic en la tarjeta para seleccionarla en el mapa
+  @Output() inspectTeam = new EventEmitter<string>(); // Emite el ID del equipo para abrir su PDM
+  @Output() editTeam = new EventEmitter<TeamSupervisionSummary>(); // Emite el equipo para abrir el modal de edición
 
-  readonly isAuditModalOpen = signal(false);
-  readonly lastLoginFormatted = signal('Hoy, 09:00');
+  readonly isAuditModalOpen = signal(false); // Controla visibilidad de la bitácora de auditoría
+  readonly lastLoginFormatted = signal('Hoy, 09:00'); // Hora formateada del último acceso registrado
   private sub?: ServiceBusSubscription;
 
+  // Devuelve el color identitario de la misión o el terracota institucional por defecto
   get themeColor(): string {
     return this.team.themeColor || '#8B251E';
   }
 
+  // Se suscribe a eventos de auditoría en el bus para refrescar la telemetría en tiempo real
   constructor() {
     this.sub = serviceBus.subscribe('audit:log', (payload) => {
       if (this.team && payload.teamId === this.team.id) {
@@ -75,14 +78,17 @@ export class TeamOverviewCardComponent implements OnChanges, OnDestroy {
     });
   }
 
+  // Actualiza la telemetría cuando cambian los inputs de la tarjeta
   ngOnChanges() {
     if (this.team) this.refreshTelemetry();
   }
 
+  // Cancela la suscripción al bus al destruir el componente
   ngOnDestroy() {
     this.sub?.unsubscribe();
   }
 
+  // Calcula y actualiza la marca temporal del último ingreso del equipo
   private refreshTelemetry() {
     const t = calculateTeamTelemetry(this.team.id, this.team.leader);
     this.lastLoginFormatted.set(t.lastLoginFormatted);

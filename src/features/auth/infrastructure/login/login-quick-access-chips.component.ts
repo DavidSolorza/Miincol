@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
+// Estructura de datos de una credencial rápida preconfigurada
 export interface QuickCredentialPayload {
   type: 'admin' | 'team';
   user: string;
@@ -8,6 +9,7 @@ export interface QuickCredentialPayload {
   chipKey: string;
 }
 
+// Catálogo de chips de acceso rápido para pruebas e ingreso en 1 clic
 const PREDEFINED_CHIPS = [
   { type: 'admin' as const, user: 'admin', pass: '210910624Dj', key: 'admin', label: 'admin (210910624Dj)', isSpecial: true, color: '' },
   { type: 'team' as const, user: 'wayuu', pass: 'wayuu2026', key: 'wayuu', label: 'wayuu (wayuu2026)', isSpecial: false, color: '#8B251E' },
@@ -62,26 +64,32 @@ const PREDEFINED_CHIPS = [
     </div>
   `,
 })
+// Matriz de botones de credenciales predefinidas para autocompletar el login
 export class LoginQuickAccessChipsComponent {
+  // Clave del chip activo y evento para autocompletar credenciales
   @Input() selectedQuickChip = '';
   @Output() fillCredentials = new EventEmitter<QuickCredentialPayload>();
 
   readonly chips = PREDEFINED_CHIPS;
 
+  // Verifica si el chip coincide con la misión o rol actualmente seleccionado
   isSelected(key: string): boolean {
     return this.selectedQuickChip === key || this.selectedQuickChip === `team-${key}`;
   }
 
+  // Calcula el color de fondo dinámico según la identidad del equipo
   getBgColor(chip: typeof PREDEFINED_CHIPS[0]): string | null {
     if (!chip.color) return null;
     return this.isSelected(chip.key) ? chip.color : `${chip.color}15`;
   }
 
+  // Obtiene el color del texto cuando el chip no está activo
   getTextColor(chip: typeof PREDEFINED_CHIPS[0]): string | null {
     if (!chip.color || this.isSelected(chip.key)) return null;
     return chip.color;
   }
 
+  // Calcula el color del borde según el estado de selección del chip
   getBorderColor(chip: typeof PREDEFINED_CHIPS[0]): string | null {
     if (!chip.color) return null;
     return this.isSelected(chip.key) ? chip.color : `${chip.color}30`;

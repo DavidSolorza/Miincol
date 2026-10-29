@@ -3,10 +3,13 @@
  * Capa de Dominio: Cero dependencias externas.
  */
 
+// Tipos de fases ministeriales disponibles en el PDM
 export type PhaseType = 'investigacion' | 'encarnacion' | 'evangelizacion' | 'entrenamiento' | 'autocuidado';
 
+// Estados posibles de ejecución de una actividad
 export type ActivityState = 'Pendiente' | 'En Proceso' | 'Completado';
 
+// Entidad de dominio que representa una actividad ministerial
 export interface Activity {
   id: string;
   state: ActivityState;
@@ -29,6 +32,7 @@ export interface Activity {
   obstacles: string;
 }
 
+// Entidad que agrupa un objetivo estratégico y sus actividades asociadas
 export interface Objective {
   number: 1 | 2 | 3 | 4;
   title: string;
@@ -36,6 +40,7 @@ export interface Objective {
   activities: Activity[];
 }
 
+// Estructura completa del plan ministerial para una fase específica
 export interface PhasePlan {
   phaseId: PhaseType;
   phaseName: string;
@@ -46,6 +51,7 @@ export interface PhasePlan {
   objectives: Objective[];
 }
 
+// Indicadores y métricas consolidadas de avance y presupuesto de un plan
 export interface PlanMetrics {
   totalBudget: number;
   totalActivities: number;

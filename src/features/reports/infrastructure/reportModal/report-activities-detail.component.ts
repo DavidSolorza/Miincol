@@ -60,15 +60,19 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
     </div>
   `,
 })
+// Sección de detalle operativo de actividades, contingencias territoriales y firmas del informe
 export class ReportActivitiesDetailComponent {
+  // Entradas con el resumen de objetivos, nombre del líder y nombre del equipo misionero
   readonly objectivesSummary = input.required<ReportObjectiveSummary[]>();
   readonly teamLeader = input.required<string>();
   readonly teamName = input.required<string>();
 
+  // Signal computado que aplana todas las actividades de los objetivos en una sola lista
   readonly flatActivities = computed(() =>
     this.objectivesSummary().flatMap((obj) => obj.activities)
   );
 
+  // Formatea valores monetarios en pesos colombianos (COP)
   formatCurrency(val: number): string {
     return formatCurrencyCOP(val);
   }

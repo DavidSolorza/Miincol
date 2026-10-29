@@ -1,6 +1,8 @@
 import type { PhasePlan, Activity } from '../domain/plan.types';
 import { calculateWeeks } from '../../../shared/utils/formatters';
 
+// Funciones puras para crear, actualizar y eliminar actividades dentro de un plan
+// Actualiza una actividad existente, recalculando presupuesto, semanas o cambio de objetivo
 export const applyUpdateActivity = (
   currentPlan: PhasePlan,
   activityId: string,
@@ -19,14 +21,14 @@ export const applyUpdateActivity = (
 
   const merged: Activity = { ...currentActivity, ...updatedFields };
 
-  // Recalculate budget if unit or times changed
+  // Recalcula el presupuesto total si cambió el valor unitario o las repeticiones
   if ('unitBudget' in updatedFields || 'timesPerYear' in updatedFields) {
     const unit = typeof merged.unitBudget === 'number' ? merged.unitBudget : 0;
     const times = typeof merged.timesPerYear === 'number' ? merged.timesPerYear : 0;
     merged.totalBudget = Math.max(0, unit * times);
   }
 
-  // Recalculate weeks if dates changed
+  // Recalcula las semanas totales y restantes si cambiaron las fechas
   if ('startDate' in updatedFields || 'endDate' in updatedFields) {
     const { totalWeeks, remainingWeeks } = calculateWeeks(merged.startDate, merged.endDate);
     merged.totalWeeks = totalWeeks;
@@ -35,7 +37,7 @@ export const applyUpdateActivity = (
 
   const targetObjectiveNumber = merged.objectiveNumber || currentActivity.objectiveNumber;
 
-  // If moved to a different objective
+  // Si se movió a un objetivo diferente, actualiza las listas de ambos objetivos
   if (targetObjectiveNumber !== currentActivity.objectiveNumber) {
     const updatedObjectives = currentPlan.objectives.map((obj) => {
       if (obj.number === currentActivity!.objectiveNumber) {
@@ -49,7 +51,7 @@ export const applyUpdateActivity = (
     return { ...currentPlan, objectives: updatedObjectives };
   }
 
-  // In-place update within same objective
+  // Actualización en el mismo objetivo original
   const updatedObjectives = currentPlan.objectives.map((obj) => {
     const updatedActivities = obj.activities.map((act) => {
       if (act.id !== activityId) return act;
@@ -61,6 +63,7 @@ export const applyUpdateActivity = (
   return { ...currentPlan, objectives: updatedObjectives };
 };
 
+// Inserta una nueva actividad al inicio de la lista del objetivo correspondiente
 export const applyAddActivity = (
   currentPlan: PhasePlan,
   objectiveNumber: 1 | 2 | 3 | 4,
@@ -87,6 +90,7 @@ export const applyAddActivity = (
   return { ...currentPlan, objectives: updatedObjectives };
 };
 
+// Elimina una actividad por su identificador de todos los objetivos del plan
 export const applyDeleteActivity = (
   currentPlan: PhasePlan,
   activityId: string

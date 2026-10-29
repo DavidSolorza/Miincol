@@ -1,6 +1,7 @@
 import type { TeamAuditLog, TeamTelemetrySummary } from '../domain/audit.types';
 import { getInitialAuditLogs } from './initialAuditLogs';
 
+// Convierte una fecha ISO 8601 en texto relativo legible (ej. "Hace 15 min", "Ayer")
 export const formatRelativeTime = (isoString: string): string => {
   const date = new Date(isoString);
   const now = new Date();
@@ -17,6 +18,7 @@ export const formatRelativeTime = (isoString: string): string => {
   return date.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 };
 
+// Formatea una fecha ISO mostrando si ocurrió hoy o en una fecha anterior con su hora
 export const formatTimeHour = (isoString: string): string => {
   const date = new Date(isoString);
   const now = new Date();
@@ -25,6 +27,7 @@ export const formatTimeHour = (isoString: string): string => {
   return isToday ? `Hoy, ${hour}` : `${date.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })}, ${hour}`;
 };
 
+// Obtiene la bitácora de auditoría almacenada en localStorage para un equipo o carga semillas
 export const getStoredAuditLogs = (teamId: string, leaderName = 'Líder'): TeamAuditLog[] => {
   try {
     const raw = localStorage.getItem(`misincol_audit_logs_${teamId}`);
@@ -35,6 +38,7 @@ export const getStoredAuditLogs = (teamId: string, leaderName = 'Líder'): TeamA
   return getInitialAuditLogs(teamId, leaderName);
 };
 
+// Guarda los últimos 50 registros de auditoría del equipo en localStorage
 export const saveAuditLogs = (teamId: string, logs: TeamAuditLog[]): void => {
   try {
     localStorage.setItem(`misincol_audit_logs_${teamId}`, JSON.stringify(logs.slice(0, 50)));
@@ -43,6 +47,7 @@ export const saveAuditLogs = (teamId: string, logs: TeamAuditLog[]): void => {
   }
 };
 
+// Agrega un nuevo evento a la bitácora de auditoría del equipo y lo persiste
 export const appendAuditLog = (
   teamId: string,
   entry: Omit<TeamAuditLog, 'id' | 'timestamp'>,
@@ -59,6 +64,7 @@ export const appendAuditLog = (
   return newLog;
 };
 
+// Calcula el resumen de telemetría (último acceso y última acción) para las tarjetas de supervisión
 export const calculateTeamTelemetry = (teamId: string, leaderName = 'Líder'): TeamTelemetrySummary => {
   const logs = getStoredAuditLogs(teamId, leaderName);
   const lastLogin = logs.find((l) => l.actionType === 'login');

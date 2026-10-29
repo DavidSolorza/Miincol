@@ -90,35 +90,41 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
     </div>
   `,
 })
+// Sección del formulario de actividad para registrar diagnóstico actual, metas por plazo y obstáculos
 export class ActivityGoalsFieldsComponent {
-  readonly currentSituation = input.required<string>();
-  readonly shortTermGoal = input.required<string>();
-  readonly mediumTermGoal = input.required<string>();
-  readonly longTermGoal = input.required<string>();
-  readonly obstacles = input.required<string>();
+  readonly currentSituation = input.required<string>(); // Diagnóstico o situación actual en territorio
+  readonly shortTermGoal = input.required<string>(); // Meta proyectada a corto plazo (3 a 6 meses)
+  readonly mediumTermGoal = input.required<string>(); // Meta proyectada a mediano plazo (1 año)
+  readonly longTermGoal = input.required<string>(); // Meta proyectada a largo plazo (3 a 5 años)
+  readonly obstacles = input.required<string>(); // Dificultades u obstáculos territoriales identificados
 
-  readonly currentSituationChanged = output<string>();
-  readonly shortTermGoalChanged = output<string>();
-  readonly mediumTermGoalChanged = output<string>();
-  readonly longTermGoalChanged = output<string>();
-  readonly obstaclesChanged = output<string>();
+  readonly currentSituationChanged = output<string>(); // Emite cambios en la situación actual
+  readonly shortTermGoalChanged = output<string>(); // Emite cambios en la meta a corto plazo
+  readonly mediumTermGoalChanged = output<string>(); // Emite cambios en la meta a mediano plazo
+  readonly longTermGoalChanged = output<string>(); // Emite cambios en la meta a largo plazo
+  readonly obstaclesChanged = output<string>(); // Emite cambios en los obstáculos registrados
 
+  // Emite el texto actualizado del diagnóstico actual
   onCurrentSituationInput(event: Event): void {
     this.currentSituationChanged.emit((event.target as HTMLTextAreaElement).value);
   }
 
+  // Emite el texto actualizado de la meta a corto plazo
   onShortTermInput(event: Event): void {
     this.shortTermGoalChanged.emit((event.target as HTMLTextAreaElement).value);
   }
 
+  // Emite el texto actualizado de la meta a mediano plazo
   onMediumTermInput(event: Event): void {
     this.mediumTermGoalChanged.emit((event.target as HTMLTextAreaElement).value);
   }
 
+  // Emite el texto actualizado de la meta a largo plazo
   onLongTermInput(event: Event): void {
     this.longTermGoalChanged.emit((event.target as HTMLTextAreaElement).value);
   }
 
+  // Emite el texto actualizado del campo de dificultades u obstáculos
   onObstaclesInput(event: Event): void {
     this.obstaclesChanged.emit((event.target as HTMLInputElement).value);
   }

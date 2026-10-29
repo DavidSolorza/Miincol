@@ -3,6 +3,7 @@ import { AppIconComponent } from '../../../shared/components/icon/app-icon.compo
 import { TeamDropdownTriggerComponent, type TeamDropdownItem } from './teamSelect/team-dropdown-trigger.component';
 import { TeamOptionItemComponent } from './teamSelect/team-option-item.component';
 
+// Menú desplegable con buscador en tiempo real para cambiar de misión territorial desde la cabecera
 @Component({
   selector: 'app-team-select-dropdown',
   standalone: true,
@@ -62,17 +63,21 @@ import { TeamOptionItemComponent } from './teamSelect/team-option-item.component
 export class TeamSelectDropdownComponent {
   private readonly elRef = inject(ElementRef);
 
+  // Lista de equipos disponibles, ID del equipo activo y evento de selección
   @Input() teams: TeamDropdownItem[] = [];
   @Input() activeTeamId = '';
   @Output() selectTeam = new EventEmitter<string>();
 
+  // Signals para controlar apertura del dropdown y texto de búsqueda
   readonly isOpen = signal(false);
   readonly searchTerm = signal('');
 
+  // Obtiene el objeto del equipo actualmente seleccionado
   get activeTeam(): TeamDropdownItem | undefined {
     return this.teams.find((t) => t.id === this.activeTeamId) || this.teams[0];
   }
 
+  // Filtra los equipos por nombre, etnia o región según el término buscado
   get filteredTeams(): TeamDropdownItem[] {
     const q = this.searchTerm().toLowerCase();
     return this.teams.filter(
@@ -83,12 +88,14 @@ export class TeamSelectDropdownComponent {
     );
   }
 
+  // Selecciona un equipo, cierra el menú y limpia el buscador
   handleSelect(teamId: string) {
     this.selectTeam.emit(teamId);
     this.isOpen.set(false);
     this.searchTerm.set('');
   }
 
+  // Cierra el menú desplegable al hacer clic fuera del componente
   @HostListener('document:mousedown', ['$event'])
   onDocClick(event: MouseEvent) {
     if (this.isOpen() && !this.elRef.nativeElement.contains(event.target)) {
@@ -96,6 +103,7 @@ export class TeamSelectDropdownComponent {
     }
   }
 
+  // Cierra el menú desplegable al presionar la tecla Escape
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.isOpen()) this.isOpen.set(false);
