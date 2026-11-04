@@ -1,9 +1,4 @@
-/**
- * Default State and Validation for Activity Modal Form
- * Aligned with Technical Governance Contract v2026.4.0 (< 150 lines)
- */
-
-import type { Activity, ActivityState } from '../../domain/plan.types';
+import type { Activity, ActivityState, EssentialArea, AreaLevel } from '../../domain/plan.types';
 
 // Estado del formulario y funciones de inicialización y validación para el modal de actividad
 export interface ActivityFormState {
@@ -21,7 +16,8 @@ export interface ActivityFormState {
   shortTermGoal: string;
   mediumTermGoal: string;
   longTermGoal: string;
-  obstacles: string;
+  essentialArea?: EssentialArea;
+  areaLevel?: AreaLevel;
 }
 
 // Genera los valores iniciales del formulario según si se está creando o editando una actividad
@@ -32,7 +28,7 @@ export const getInitialFormValues = (
 ): ActivityFormState => {
   if (mode === 'edit' && activityToEdit) {
     return {
-      objectiveNumber: activityToEdit.objectiveNumber,
+      objectiveNumber: (activityToEdit.objectiveNumber as 1 | 2 | 3 | 4) || defaultObjectiveNumber,
       description: activityToEdit.description || '',
       stage: activityToEdit.stage || 'General',
       state: activityToEdit.state || 'Pendiente',
@@ -46,7 +42,8 @@ export const getInitialFormValues = (
       shortTermGoal: activityToEdit.shortTermGoal || '',
       mediumTermGoal: activityToEdit.mediumTermGoal || '',
       longTermGoal: activityToEdit.longTermGoal || '',
-      obstacles: activityToEdit.obstacles || '',
+      essentialArea: activityToEdit.essentialArea || 'General',
+      areaLevel: activityToEdit.areaLevel || 'Nivel 1',
     };
   }
 
@@ -65,7 +62,8 @@ export const getInitialFormValues = (
     shortTermGoal: '',
     mediumTermGoal: '',
     longTermGoal: '',
-    obstacles: '',
+    essentialArea: 'General',
+    areaLevel: 'Nivel 1',
   };
 };
 

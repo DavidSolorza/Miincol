@@ -80,12 +80,12 @@ const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
 export class SidebarPhasesListComponent {
   readonly allPlans = input.required<Record<string, PhasePlan>>(); // Diccionario de planes por fase del equipo
   readonly activePhaseId = input.required<PhaseType>(); // Fase ministerial actualmente seleccionada
-  readonly activeView = input.required<'plans' | 'superadmin'>(); // Vista activa de la aplicación
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>(); // Vista activa de la aplicación
   readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
   readonly activeTeam = input.required<MissionaryTeam>(); // Datos del equipo misionero activo
 
   readonly phaseSelected = output<PhaseType>(); // Emite la fase seleccionada por el usuario
-  readonly viewChanged = output<'plans' | 'superadmin'>(); // Emite cambio hacia la vista de planes si estaba en otra
+  readonly viewChanged = output<'plans' | 'general' | 'superadmin'>(); // Emite cambio hacia la vista de planes si estaba en otra
 
   readonly phasesConfig = PHASES_CONFIG; // Referencia a los pilares configurados para la plantilla
 

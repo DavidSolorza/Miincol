@@ -26,9 +26,7 @@ import type { Activity } from '../../domain/plan.types';
               <app-icon name="target" className="w-4 h-4 text-amber-600" />
               <span>Meta Corto Plazo (3-6m)</span>
             </div>
-            <p class="text-stone-600 leading-relaxed">
-              {{ activity().shortTermGoal }}
-            </p>
+            <p class="text-stone-600 leading-relaxed">{{ activity().shortTermGoal }}</p>
           </div>
         }
 
@@ -53,19 +51,14 @@ import type { Activity } from '../../domain/plan.types';
         </div>
       </div>
 
-      @if (activity().obstacles) {
-        <div class="flex items-start gap-2 bg-amber-50/70 p-3 rounded-xl border border-amber-200/60 text-amber-950">
-          <app-icon name="alert-triangle" className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-          <div>
-            <span class="font-bold text-[11px] uppercase tracking-wider text-amber-900 block">
-              Dificultades y Contingencias Territoriales:
+      <div class="flex items-center justify-between pt-1">
+        <div>
+          @if (activity().essentialArea) {
+            <span class="text-[10px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-lg border border-amber-200/60 font-['Outfit']">
+              {{ activity().essentialArea }} {{ activity().areaLevel ? '• ' + activity().areaLevel : '' }}
             </span>
-            <p class="text-amber-950 mt-0.5 leading-relaxed">{{ activity().obstacles }}</p>
-          </div>
+          }
         </div>
-      }
-
-      <div class="flex justify-end pt-1">
         <button
           type="button"
           (click)="edited.emit()"
@@ -78,9 +71,7 @@ import type { Activity } from '../../domain/plan.types';
     </div>
   `,
 })
-// Panel desplegable que muestra el diagnóstico territorial, metas por plazo y obstáculos de una actividad
 export class ActivityDetailsAccordionComponent {
-  readonly activity = input.required<Activity>(); // Actividad cuyos detalles y metas se visualizan
-  readonly edited = output<void>(); // Emite para abrir el modal de edición completa de la actividad
+  readonly activity = input.required<Activity>();
+  readonly edited = output<void>();
 }
-

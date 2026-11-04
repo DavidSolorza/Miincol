@@ -93,7 +93,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
 })
 // Botones de acción en la barra lateral para abrir notas, informe ejecutivo y contacto por WhatsApp
 export class SidebarFooterActionsComponent {
-  readonly activeView = input.required<'plans' | 'superadmin'>(); // Vista activa actual
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>(); // Vista activa actual
   readonly isTeamRestricted = input.required<boolean>(); // Indica si el usuario tiene rol restringido a su equipo
   readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
   readonly isOpenMobile = input.required<boolean>(); // Indica si el menú móvil está abierto

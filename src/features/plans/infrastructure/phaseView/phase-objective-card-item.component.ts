@@ -25,45 +25,35 @@ import type { Objective } from '../../domain/plan.types';
           <div class="flex items-center gap-1.5 min-w-0">
             <span
               [class]="
-                'w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center text-[10.5px] sm:text-xs font-black shrink-0 transition font-[\\'Outfit\\'] ' +
-                (isSelected()
-                  ? 'bg-gradient-to-br from-[#8B251E] to-[#E67324] text-white shadow-2xs'
-                  : 'bg-stone-100 text-stone-600 group-hover:bg-stone-200')
+                'w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center text-[10.5px] sm:text-xs font-black shrink-0 transition font-[Outfit] ' +
+                (isSelected() ? 'bg-gradient-to-br from-[#8B251E] to-[#E67324] text-white shadow-2xs' : 'bg-stone-100 text-stone-600 group-hover:bg-stone-200')
               "
             >
-              {{ obj().number }}
+              {{ displayIndex() }}
             </span>
-            <span
-              [class]="
-                'text-[10px] font-black uppercase tracking-wider font-[\\'Outfit\\'] truncate ' +
-                (isSelected() ? 'text-[#8B251E]' : 'text-stone-500 group-hover:text-stone-700')
-              "
-            >
-              Objetivo #{{ obj().number }}
+            <span [class]="'text-[10px] font-black uppercase tracking-wider font-[Outfit] truncate ' + (isSelected() ? 'text-[#8B251E]' : 'text-stone-500 group-hover:text-stone-700')">
+              Objetivo #{{ displayIndex() }}
             </span>
           </div>
 
-          <span
-            [class]="
-              'text-[9.5px] font-black px-1.5 py-0.5 rounded-md shrink-0 transition tracking-tight whitespace-nowrap ' +
-              (isCompleted()
-                ? 'bg-emerald-100/80 text-emerald-800 border border-emerald-200/60'
-                : isSelected()
-                ? 'bg-[#E67324]/15 text-[#8B251E] border border-[#E67324]/30'
-                : 'bg-stone-100 text-stone-600 border border-stone-200/50')
-            "
-          >
-            {{ completedCount() }}/{{ totalCount() }} listas
-          </span>
+          <div class="flex items-center gap-1">
+            @if (obj().essentialArea) {
+              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-100/70 text-[#8B251E] border border-orange-200/60 truncate max-w-[100px]">
+                {{ obj().essentialArea }}
+              </span>
+            }
+            <span
+              [class]="
+                'text-[9.5px] font-black px-1.5 py-0.5 rounded-md shrink-0 transition tracking-tight whitespace-nowrap ' +
+                (isCompleted() ? 'bg-emerald-100/80 text-emerald-800 border border-emerald-200/60' : isSelected() ? 'bg-[#E67324]/15 text-[#8B251E] border border-[#E67324]/30' : 'bg-stone-100 text-stone-600 border border-stone-200/50')
+              "
+            >
+              {{ completedCount() }}/{{ totalCount() }} listas
+            </span>
+          </div>
         </div>
 
-        <h4
-          [class]="
-            'font-[\\'Outfit\\'] font-bold text-xs sm:text-[13px] leading-snug line-clamp-2 transition ' +
-            (isSelected() ? 'text-stone-900 font-extrabold' : 'text-stone-800 group-hover:text-stone-900')
-          "
-          [title]="obj().title"
-        >
+        <h4 [class]="'font-[Outfit] font-bold text-xs sm:text-[13px] leading-snug line-clamp-2 transition ' + (isSelected() ? 'text-stone-900 font-extrabold' : 'text-stone-800 group-hover:text-stone-900')">
           {{ obj().title }}
         </h4>
 
@@ -82,14 +72,7 @@ import type { Objective } from '../../domain/plan.types';
       <div class="pt-1 space-y-1 w-full">
         <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden p-0.5">
           <div
-            [class]="
-              'h-full rounded-full transition-all duration-300 ' +
-              (isCompleted()
-                ? 'bg-emerald-500'
-                : isSelected()
-                ? 'bg-gradient-to-r from-[#8B251E] via-[#E67324] to-amber-400'
-                : 'bg-stone-300 group-hover:bg-stone-400')
-            "
+            [class]="'h-full rounded-full transition-all duration-300 ' + (isCompleted() ? 'bg-emerald-500' : isSelected() ? 'bg-gradient-to-r from-[#8B251E] via-[#E67324] to-amber-400' : 'bg-stone-300 group-hover:bg-stone-400')"
             [style.width.%]="pct()"
           ></div>
         </div>
@@ -108,23 +91,24 @@ import type { Objective } from '../../domain/plan.types';
     </button>
   `,
 })
-// Tarjeta individual de resumen de un objetivo estratégico con barra de progreso y presupuesto total
+// Tarjeta individual de resumen de un objetivo estratégico con enumeración dinámica según su posición en la lista
 export class PhaseObjectiveCardItemComponent {
-  readonly obj = input.required<Objective>(); // Datos del objetivo estratégico
-  readonly isSelected = input.required<boolean>(); // Indica si esta tarjeta es el objetivo actualmente seleccionado
-  readonly selected = output<void>(); // Emite cuando el usuario hace clic para seleccionar el objetivo
+  readonly obj = input.required<Objective>();
+  readonly index = input<number>(0); // Índice posicional dinámico del objetivo
+  readonly isSelected = input.required<boolean>();
+  readonly selected = output<void>();
 
-  // Cantidad de actividades completadas dentro de este objetivo
+  readonly displayIndex = computed(() => this.index() + 1);
+
   readonly completedCount = computed(() =>
     this.obj().activities.filter((a) => a.state === 'Completado').length
   );
-  readonly totalCount = computed(() => this.obj().activities.length); // Total de actividades del objetivo
-  // Porcentaje de progreso de actividades completadas en este objetivo
+  readonly totalCount = computed(() => this.obj().activities.length);
   readonly pct = computed(() =>
     this.totalCount() > 0 ? Math.round((this.completedCount() / this.totalCount()) * 100) : 0
   );
-  readonly isCompleted = computed(() => this.totalCount() > 0 && this.completedCount() === this.totalCount()); // Indica si todas están listas
-  // Suma y formatea el presupuesto total del objetivo en pesos colombianos (COP)
+  readonly isCompleted = computed(() => this.totalCount() > 0 && this.completedCount() === this.totalCount());
+
   readonly formattedBudget = computed(() => {
     const budget = this.obj().activities.reduce((acc, a) => acc + (a.totalBudget || 0), 0);
     return new Intl.NumberFormat('es-CO', {
@@ -134,4 +118,3 @@ export class PhaseObjectiveCardItemComponent {
     }).format(budget);
   });
 }
-

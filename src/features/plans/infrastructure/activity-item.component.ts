@@ -24,6 +24,8 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
             [state]="activity().state"
             [stage]="activity().stage"
             [frequency]="activity().frequency"
+            [essentialArea]="activity().essentialArea"
+            [areaLevel]="activity().areaLevel"
             (stateChanged)="onStateChange($event)"
           />
           <app-activity-budget-quick-edit
