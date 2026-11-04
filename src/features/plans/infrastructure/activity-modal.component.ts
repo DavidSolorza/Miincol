@@ -14,23 +14,13 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
 @Component({
   selector: 'app-activity-modal',
   standalone: true,
-  imports: [
-    ModalComponent,
-    AppIconComponent,
-    ActivityBasicFieldsComponent,
-    ActivityBudgetDatesFieldsComponent,
-    ActivityGoalsFieldsComponent,
-  ],
+  imports: [ModalComponent, AppIconComponent, ActivityBasicFieldsComponent, ActivityBudgetDatesFieldsComponent, ActivityGoalsFieldsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-modal
       [isOpen]="isOpen()"
       [title]="mode() === 'edit' ? 'Editar Actividad / Sub-Objetivo' : 'Nueva Iniciativa / Actividad Ministerial'"
-      [subtitle]="
-        mode() === 'edit'
-          ? 'Modifique cualquier información de la actividad, presupuesto, cronograma territorial o diagnóstico'
-          : 'Complete los campos para registrar una acción en el Plan de Desarrollo Ministerial'
-      "
+      [subtitle]="mode() === 'edit' ? 'Modifique área esencial, nivel, presupuesto y cronograma' : 'Registre una acción en el Plan de Desarrollo Ministerial'"
       maxWidth="2xl"
       (closed)="closed.emit()"
     >
@@ -42,12 +32,18 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           [responsible]="form().responsible"
           [frequency]="form().frequency"
           [timesPerYear]="form().timesPerYear"
+          [stage]="form().stage"
+          [essentialArea]="form().essentialArea"
+          [areaLevel]="form().areaLevel"
           (objectiveNumberChanged)="patchField('objectiveNumber', $event)"
           (stateChanged)="patchField('state', $event)"
+          (stageChanged)="patchField('stage', $event)"
           (descriptionChanged)="patchField('description', $event)"
           (responsibleChanged)="patchField('responsible', $event)"
           (frequencyChanged)="patchField('frequency', $event)"
           (timesPerYearChanged)="patchField('timesPerYear', $event)"
+          (essentialAreaChanged)="patchField('essentialArea', $event)"
+          (areaLevelChanged)="patchField('areaLevel', $event)"
         />
 
         <app-activity-budget-dates-fields
@@ -65,12 +61,10 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           [shortTermGoal]="form().shortTermGoal"
           [mediumTermGoal]="form().mediumTermGoal"
           [longTermGoal]="form().longTermGoal"
-          [obstacles]="form().obstacles"
           (currentSituationChanged)="patchField('currentSituation', $event)"
           (shortTermGoalChanged)="patchField('shortTermGoal', $event)"
           (mediumTermGoalChanged)="patchField('mediumTermGoal', $event)"
           (longTermGoalChanged)="patchField('longTermGoal', $event)"
-          (obstaclesChanged)="patchField('obstacles', $event)"
         />
 
         <div class="sticky bottom-0 bg-white/95 backdrop-blur-xs flex items-center justify-end gap-2.5 pt-3 pb-1 border-t border-stone-200/60 z-10">
@@ -83,7 +77,7 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           </button>
           <button
             type="submit"
-            class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] hover:to-[#D05E12] text-white font-bold text-xs transition flex items-center gap-2 shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 active:scale-95 cursor-pointer font-['Outfit']"
+            class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] text-white font-bold text-xs transition flex items-center gap-2 shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
           >
             <app-icon [name]="mode() === 'edit' ? 'check' : 'plus-circle'" className="w-4 h-4" />
             <span>{{ mode() === 'edit' ? 'Guardar Cambios' : 'Guardar Iniciativa' }}</span>
@@ -93,21 +87,19 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
     </app-modal>
   `,
 })
-// Modal con formulario completo para crear o editar una actividad ministerial
 export class ActivityModalComponent {
-  private readonly toastService = inject(ToastService); // Servicio de notificaciones toast
-  readonly isOpen = input.required<boolean>(); // Controla si el modal está abierto
-  readonly mode = input<'create' | 'edit'>('create'); // Modo de operación ('create' o 'edit')
-  readonly activityToEdit = input<Activity | null>(null); // Actividad a editar cuando el modo es 'edit'
-  readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>(); // Número de objetivo por defecto
-  readonly closed = output<void>(); // Emite al cerrar el modal
-  readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>(); // Emite nueva actividad
-  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actividad editada
-  readonly form = signal<ActivityFormState>(getInitialFormValues('create', null, 1)); // Estado reactivo del formulario
-  readonly calculatedTotal = computed(() => (this.form().unitBudget || 0) * (this.form().timesPerYear || 0)); // Presupuesto anual autocalculado
+  private readonly toastService = inject(ToastService);
+  readonly isOpen = input.required<boolean>();
+  readonly mode = input<'create' | 'edit'>('create');
+  readonly activityToEdit = input<Activity | null>(null);
+  readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>();
+  readonly closed = output<void>();
+  readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
+  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
+  readonly form = signal<ActivityFormState>(getInitialFormValues('create', null, 1));
+  readonly calculatedTotal = computed(() => (this.form().unitBudget || 0) * (this.form().timesPerYear || 0));
 
   constructor() {
-    // Reinicia o carga los valores del formulario cada vez que se abre el modal
     effect(() => {
       if (this.isOpen()) {
         this.form.set(getInitialFormValues(this.mode(), this.activityToEdit(), this.defaultObjectiveNumber()));
@@ -115,17 +107,15 @@ export class ActivityModalComponent {
     });
   }
 
-  // Actualiza un campo puntual dentro del estado del formulario de actividad
   patchField<K extends keyof ActivityFormState>(key: K, value: ActivityFormState[K]): void {
     this.form.update((prev) => ({ ...prev, [key]: value }));
   }
 
-  // Valida los campos obligatorios, calcula semanas y emite el evento de guardado o actualización
   handleSubmit(event: Event): void {
     event.preventDefault();
     const f = this.form();
     if (!validateActivityForm(f.description, f.responsible)) {
-      this.toastService.toast.warning('Por favor complete la descripción y el responsable de la actividad.', 'Campos Requeridos');
+      this.toastService.toast.warning('Por favor complete la descripción y el responsable.', 'Campos Requeridos');
       return;
     }
     const { totalWeeks, remainingWeeks } = calculateWeeks(f.startDate, f.endDate);
@@ -133,10 +123,10 @@ export class ActivityModalComponent {
     const editing = this.activityToEdit();
     if (this.mode() === 'edit' && editing) {
       this.updated.emit({ activityId: editing.id, updatedFields: payload });
-      this.toastService.toast.success('Actividad actualizada correctamente con todos los cambios', 'Actividad Modificada');
+      this.toastService.toast.success('Actividad actualizada correctamente', 'Actividad Modificada');
     } else {
       this.saved.emit({ objectiveNumber: f.objectiveNumber, activity: payload });
-      this.toastService.toast.success('Nueva actividad guardada correctamente en el plan', 'Actividad Creada');
+      this.toastService.toast.success('Nueva actividad guardada en el plan', 'Actividad Creada');
     }
     this.closed.emit();
   }

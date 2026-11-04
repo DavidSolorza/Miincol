@@ -47,7 +47,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
       />
 
       <div class="flex-1 overflow-y-auto px-2.5 py-1.5 space-y-2 sidebar-scroll-smooth">
-        @if (activeView() === 'plans') {
+        @if (activeView() !== 'superadmin') {
           <app-sidebar-phases-list
             [allPlans]="allPlans()"
             [activePhaseId]="activePhaseId()"
@@ -59,7 +59,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
           />
         }
 
-        @if (!isCollapsed() && activeView() === 'plans') {
+        @if (!isCollapsed() && activeView() !== 'superadmin') {
           <app-sidebar-metrics-card [metrics]="metrics()" />
         }
 
@@ -74,7 +74,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
           (openNotesModal)="openNotesModal.emit()"
         />
 
-        @if (activeView() === 'plans') {
+        @if (activeView() !== 'superadmin') {
           <app-sidebar-reminders-card
             [isCollapsed]="isCollapsed()"
             (openNotesModal)="openNotesModal.emit()"
@@ -90,24 +90,25 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
     </aside>
   `,
 })
-// Barra lateral principal de navegación entre fases del PDM, métricas rápidas y acciones del equipo
+// Barra lateral principal de navegaciÃ³n entre fases del PDM, mÃ©tricas rÃ¡pidas y acciones del equipo
 export class PlanSidebarComponent {
   readonly allPlans = input.required<Record<string, PhasePlan>>(); // Todos los planes por fase del equipo
   readonly activePhaseId = input.required<PhaseType>(); // Identificador de la fase actualmente activa
-  readonly metrics = input.required<PlanMetrics>(); // Métricas consolidadas de la fase activa
+  readonly metrics = input.required<PlanMetrics>(); // MÃ©tricas consolidadas de la fase activa
   readonly activeTeam = input.required<MissionaryTeam>(); // Datos del equipo misionero activo
-  readonly activeView = input.required<'plans' | 'superadmin'>(); // Vista activa de la aplicación
-  readonly isCollapsed = input.required<boolean>(); // Indica si el panel lateral está contraído en escritorio
-  readonly isOpenMobile = input.required<boolean>(); // Indica si el cajón lateral está abierto en móvil
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>(); // Vista activa de la aplicaciÃ³n
+  readonly isCollapsed = input.required<boolean>(); // Indica si el panel lateral estÃ¡ contraÃ­do en escritorio
+  readonly isOpenMobile = input.required<boolean>(); // Indica si el cajÃ³n lateral estÃ¡ abierto en mÃ³vil
   readonly userRole = input<UserRole>('admin'); // Rol del usuario autenticado
   readonly whatsappUrl = input<string | null | undefined>(null); // Enlace directo de contacto por WhatsApp
 
   readonly selectPhase = output<PhaseType>(); // Emite la fase seleccionada por el usuario
   readonly openReportModal = output<void>(); // Solicita abrir el modal de informe ejecutivo PDM
   readonly openNotesModal = output<void>(); // Solicita abrir el modal de notas y agenda territorial
-  readonly changeView = output<'plans' | 'superadmin'>(); // Solicita cambiar entre la vista de planes y supervisión
-  readonly toggleCollapse = output<void>(); // Alterna el estado contraído o expandido de la barra lateral
-  readonly closeMobile = output<void>(); // Cierra la barra lateral en dispositivos móviles
-  readonly logout = output<void>(); // Emite el evento de cierre de sesión
+  readonly changeView = output<'plans' | 'general' | 'superadmin'>(); // Solicita cambiar entre la vista de planes y supervisiÃ³n
+  readonly toggleCollapse = output<void>(); // Alterna el estado contraÃ­do o expandido de la barra lateral
+  readonly closeMobile = output<void>(); // Cierra la barra lateral en dispositivos mÃ³viles
+  readonly logout = output<void>(); // Emite el evento de cierre de sesiÃ³n
 }
+
 

@@ -58,7 +58,7 @@ export class AppHeaderSectionComponent {
   readonly whatsappUrl = input<string | null>(null);
   readonly shouldShowSidebar = input.required<boolean>();
   readonly isSuperAdmin = input.required<boolean>();
-  readonly activeView = input.required<'plans' | 'superadmin'>();
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>();
   readonly mappedTeams = input.required<MissionaryTeam[]>();
   readonly activeTeamId = input.required<string>();
   readonly session = input.required<AuthSession>();

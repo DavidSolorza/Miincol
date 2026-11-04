@@ -18,6 +18,7 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
       <div class="bg-white/95 rounded-2xl border border-stone-200/80 shadow-xs p-4 sm:p-5">
         <app-objective-card-header
           [objective]="objective()"
+          [index]="index()"
           [completedCount]="completedCount()"
           [totalObjectiveBudget]="totalObjectiveBudget()"
           (editObjective)="editObjective.emit($event)"
@@ -51,6 +52,7 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
 // Contenedor de detalle de un objetivo estratégico con cabecera, filtros y lista de actividades
 export class ObjectiveCardComponent {
   readonly objective = input.required<Objective>(); // Objetivo estratégico que se visualiza
+  readonly index = input<number | undefined>(undefined);
   readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actualizaciones de una actividad
   readonly activityDeleted = output<string>(); // Emite el ID de la actividad eliminada
   readonly openAddModal = output<1 | 2 | 3 | 4>(); // Solicita abrir el modal para agregar actividad en este objetivo

@@ -113,7 +113,7 @@ export class AppHeaderComponent {
   // Entradas reactivas del estado de navegación y equipo seleccionado
   readonly shouldShowSidebar = input.required<boolean>();
   readonly isSuperAdmin = input.required<boolean>();
-  readonly activeView = input.required<'plans' | 'superadmin'>();
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>();
   readonly mappedTeams = input.required<MissionaryTeam[]>();
   readonly activeTeamId = input.required<string>();
   readonly activeTeam = input.required<MissionaryTeam>();

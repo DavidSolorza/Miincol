@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import type { Objective } from '../../domain/plan.types';
 import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
@@ -13,8 +13,18 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
       <div class="min-w-0">
         <div class="flex items-center gap-2 flex-wrap">
           <span class="text-[10px] font-black text-[#8B251E] bg-[#8B251E]/10 px-2.5 py-1 rounded-xl border border-[#8B251E]/15 font-['Outfit']">
-            Objetivo #{{ objective().number }}
+            Objetivo #{{ displayIndex() }}
           </span>
+          @if (objective().essentialArea) {
+            <span class="text-[10px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-lg border border-amber-200/70 font-['Outfit']">
+              {{ objective().essentialArea }} {{ objective().areaLevel ? '• ' + objective().areaLevel : '' }}
+            </span>
+          }
+          @if (objective().stage) {
+            <span class="text-[10px] font-bold text-stone-700 bg-stone-100 px-2 py-0.5 rounded-lg border border-stone-200 font-['Outfit']">
+              {{ objective().stage }}
+            </span>
+          }
           <span class="text-xs font-semibold text-stone-400">
             • {{ completedCount() }} de {{ objective().activities.length }} listas
           </span>
@@ -35,13 +45,28 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
         <p class="text-xs text-stone-500 mt-1 leading-relaxed max-w-2xl font-medium">
           {{ objective().description }}
         </p>
+
+        @if (objective().mediumTermGoal || objective().longTermGoal) {
+          <div class="flex flex-wrap items-center gap-3 mt-2 text-[11px] text-stone-600 font-medium">
+            @if (objective().mediumTermGoal) {
+              <div class="flex items-center gap-1 bg-stone-100/80 px-2.5 py-1 rounded-lg border border-stone-200/60">
+                <span class="font-bold text-[#8B251E]">Meta Mediano:</span>
+                <span>{{ objective().mediumTermGoal }}</span>
+              </div>
+            }
+            @if (objective().longTermGoal) {
+              <div class="flex items-center gap-1 bg-stone-100/80 px-2.5 py-1 rounded-lg border border-stone-200/60">
+                <span class="font-bold text-amber-700">Meta Largo:</span>
+                <span>{{ objective().longTermGoal }}</span>
+              </div>
+            }
+          </div>
+        }
       </div>
 
       <div class="flex items-center gap-2.5 shrink-0 self-start md:self-center">
         <div class="px-3.5 py-2 rounded-2xl bg-gradient-to-br from-[#FAF7F2] to-stone-50 border border-stone-200/80 text-right shadow-2xs">
-          <span class="text-[9.5px] uppercase font-black text-stone-400 block tracking-wider leading-none">
-            Presupuesto Objetivo
-          </span>
+          <span class="text-[9.5px] uppercase font-black text-stone-400 block tracking-wider leading-none">Presupuesto</span>
           <span class="text-base sm:text-lg font-black text-[#8B251E] font-['Outfit'] mt-1 block tracking-tight">
             {{ formatCurrency(totalObjectiveBudget()) }}
           </span>
@@ -50,7 +75,7 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
         <button
           type="button"
           (click)="openAddModal.emit()"
-          class="bg-gradient-to-r from-[#8B251E] to-[#EA6A1B] hover:from-[#731E18] hover:to-[#D95F12] text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer font-['Outfit']"
+          class="bg-gradient-to-r from-[#8B251E] to-[#EA6A1B] hover:from-[#731E18] text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer font-['Outfit']"
         >
           <app-icon name="plus" className="w-5 h-5" />
           <span class="hidden sm:inline">Nueva Actividad</span>
@@ -60,17 +85,15 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
     </div>
   `,
 })
-// Cabecera de detalle de un objetivo con título, descripción, presupuesto total y botones de acción
 export class ObjectiveCardHeaderComponent {
-  readonly objective = input.required<Objective>(); // Datos del objetivo estratégico activo
-  readonly completedCount = input.required<number>(); // Cantidad de actividades completadas en el objetivo
-  readonly totalObjectiveBudget = input.required<number>(); // Presupuesto total acumulado del objetivo
-  readonly editObjective = output<Objective>(); // Emite cuando se solicita editar el objetivo
-  readonly openAddModal = output<void>(); // Emite cuando se solicita crear una nueva actividad
+  readonly objective = input.required<Objective>();
+  readonly index = input<number | undefined>(undefined);
+  readonly completedCount = input.required<number>();
+  readonly totalObjectiveBudget = input.required<number>();
+  readonly editObjective = output<Objective>();
+  readonly openAddModal = output<void>();
 
-  // Formatea el presupuesto numérico a formato de moneda colombiana (COP)
-  formatCurrency(val: number): string {
-    return formatCurrencyCOP(val);
-  }
+  readonly displayIndex = computed(() => (this.index() !== undefined ? this.index()! + 1 : this.objective().number));
+
+  formatCurrency(val: number): string { return formatCurrencyCOP(val); }
 }
-

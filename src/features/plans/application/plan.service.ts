@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import type { PhasePlan, Activity, PhaseType, PlanMetrics } from '../domain/plan.types';
+import type { PhasePlan, Activity, PhaseType, PlanMetrics, Objective, EssentialArea, AreaLevel } from '../domain/plan.types';
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
 import { calculatePlanMetrics } from './planCalculations';
@@ -85,7 +85,7 @@ export class PlanService {
   }
 
   // Actualiza título o descripción de un objetivo estratégico y registra auditoría
-  updateObjective(objNum: 1 | 2 | 3 | 4, updates: { title?: string; description?: string }): void {
+  updateObjective(objNum: number, updates: Partial<Objective>): void {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
     const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
@@ -97,7 +97,7 @@ export class PlanService {
   }
 
   // Crea un nuevo objetivo estratégico en la fase actual (máximo 4)
-  addObjective(newObj: { title: string; description: string }): 1 | 2 | 3 | 4 | null {
+  addObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): 1 | 2 | 3 | 4 | null {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
     const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
@@ -109,7 +109,7 @@ export class PlanService {
   }
 
   // Elimina un objetivo estratégico si existe más de uno en la fase
-  deleteObjective(objNum: 1 | 2 | 3 | 4): boolean {
+  deleteObjective(objNum: number): boolean {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
     const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];

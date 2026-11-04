@@ -3,6 +3,7 @@ import { ModalComponent } from '../../../shared/components/modal.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { ObjectiveFormFieldsComponent } from './objectiveModal/objective-form-fields.component';
 import { ObjectiveModalActionsComponent } from './objectiveModal/objective-modal-actions.component';
+import type { EssentialArea, AreaLevel } from '../domain/plan.types';
 
 @Component({
   selector: 'app-objective-modal',
@@ -13,11 +14,7 @@ import { ObjectiveModalActionsComponent } from './objectiveModal/objective-modal
     <app-modal
       [isOpen]="isOpen()"
       [title]="mode() === 'edit' ? 'Editar Objetivo #' + objectiveNumber() : 'Nuevo Objetivo Estratégico'"
-      [subtitle]="
-        mode() === 'edit'
-          ? 'Modifique el título y la justificación estratégica de este objetivo en la fase actual'
-          : 'Defina un nuevo eje estratégico para el equipo territorial (' + totalObjectivesCount() + '/4 objetivos)'
-      "
+      [subtitle]="mode() === 'edit' ? 'Modifique área, etapa y justificación estratégica' : 'Defina un nuevo eje estratégico ministerial'"
       maxWidth="lg"
       (closed)="closed.emit()"
     >
@@ -27,8 +24,18 @@ import { ObjectiveModalActionsComponent } from './objectiveModal/objective-modal
           [error]="error()"
           [title]="title()"
           [description]="description()"
+          [essentialArea]="essentialArea()"
+          [areaLevel]="areaLevel()"
+          [stage]="stage()"
+          [mediumTermGoal]="mediumTermGoal()"
+          [longTermGoal]="longTermGoal()"
           (titleChanged)="title.set($event)"
           (descriptionChanged)="description.set($event)"
+          (essentialAreaChanged)="essentialArea.set($event)"
+          (areaLevelChanged)="areaLevel.set($event)"
+          (stageChanged)="stage.set($event)"
+          (mediumTermGoalChanged)="mediumTermGoal.set($event)"
+          (longTermGoalChanged)="longTermGoal.set($event)"
         />
         <app-objective-modal-actions
           [isEdit]="mode() === 'edit'"
@@ -43,39 +50,55 @@ import { ObjectiveModalActionsComponent } from './objectiveModal/objective-modal
     </app-modal>
   `,
 })
-// Modal para crear, editar o eliminar un objetivo estratégico dentro de la fase actual
 export class ObjectiveModalComponent {
-  private readonly toastService = inject(ToastService); // Servicio de notificaciones toast
+  private readonly toastService = inject(ToastService);
 
-  readonly isOpen = input.required<boolean>(); // Indica si el modal está abierto
-  readonly mode = input.required<'create' | 'edit'>(); // Modo del modal ('create' o 'edit')
-  readonly objectiveNumber = input<1 | 2 | 3 | 4 | undefined>(undefined); // Número del objetivo en edición
-  readonly initialTitle = input<string>(''); // Título inicial del objetivo al editar
-  readonly initialDescription = input<string>(''); // Descripción inicial del objetivo al editar
-  readonly totalObjectivesCount = input.required<number>(); // Cantidad total de objetivos en la fase (máx 4)
+  readonly isOpen = input.required<boolean>();
+  readonly mode = input.required<'create' | 'edit'>();
+  readonly objectiveNumber = input<1 | 2 | 3 | 4 | undefined>(undefined);
+  readonly initialTitle = input<string>('');
+  readonly initialDescription = input<string>('');
+  readonly initialEssentialArea = input<EssentialArea | undefined>(undefined);
+  readonly initialAreaLevel = input<AreaLevel | undefined>(undefined);
+  readonly initialStage = input<string | undefined>('');
+  readonly initialMediumTermGoal = input<string | undefined>('');
+  readonly initialLongTermGoal = input<string | undefined>('');
+  readonly totalObjectivesCount = input.required<number>();
 
-  readonly closed = output<void>(); // Emite cuando se cierra el modal
-  readonly saved = output<{ title: string; description: string; number?: 1 | 2 | 3 | 4 }>(); // Emite los datos guardados del objetivo
-  readonly deleted = output<1 | 2 | 3 | 4>(); // Emite el número del objetivo confirmado para eliminar
+  readonly closed = output<void>();
+  readonly saved = output<{
+    title: string; description: string; number?: 1 | 2 | 3 | 4;
+    essentialArea?: EssentialArea; areaLevel?: AreaLevel;
+    stage?: string; mediumTermGoal?: string; longTermGoal?: string;
+  }>();
+  readonly deleted = output<1 | 2 | 3 | 4>();
 
-  readonly title = signal(''); // Valor reactivo del campo título
-  readonly description = signal(''); // Valor reactivo del campo descripción
-  readonly error = signal<string | null>(null); // Mensaje de error de validación
-  readonly confirmDelete = signal(false); // Estado de confirmación de doble clic para eliminar
+  readonly title = signal('');
+  readonly description = signal('');
+  readonly essentialArea = signal<EssentialArea>('Investigación');
+  readonly areaLevel = signal<AreaLevel>('Nivel 1');
+  readonly stage = signal('');
+  readonly mediumTermGoal = signal('');
+  readonly longTermGoal = signal('');
+  readonly error = signal<string | null>(null);
+  readonly confirmDelete = signal(false);
 
   constructor() {
-    // Sincroniza los campos del formulario cuando se abre el modal
     effect(() => {
       if (this.isOpen()) {
         this.title.set(this.initialTitle());
         this.description.set(this.initialDescription());
+        this.essentialArea.set(this.initialEssentialArea() || 'Investigación');
+        this.areaLevel.set(this.initialAreaLevel() || 'Nivel 1');
+        this.stage.set(this.initialStage() || '');
+        this.mediumTermGoal.set(this.initialMediumTermGoal() || '');
+        this.longTermGoal.set(this.initialLongTermGoal() || '');
         this.error.set(null);
         this.confirmDelete.set(false);
       }
     });
   }
 
-  // Valida que título y descripción no estén vacíos y emite el objetivo guardado
   handleSubmit(event: Event): void {
     event.preventDefault();
     this.error.set(null);
@@ -90,22 +113,24 @@ export class ObjectiveModalComponent {
       title: this.title().trim(),
       description: this.description().trim(),
       number: this.objectiveNumber(),
+      essentialArea: this.essentialArea(),
+      areaLevel: this.areaLevel(),
+      stage: this.stage().trim() || undefined,
+      mediumTermGoal: this.mediumTermGoal().trim(),
+      longTermGoal: this.longTermGoal().trim(),
     });
     this.toastService.toast.success(
-      this.mode() === 'edit'
-        ? `Objetivo #${this.objectiveNumber()} actualizado correctamente`
-        : 'Nuevo objetivo estratégico agregado a la fase',
+      this.mode() === 'edit' ? `Objetivo #${this.objectiveNumber()} actualizado` : 'Nuevo objetivo agregado',
       'Objetivo Guardado'
     );
     this.closed.emit();
   }
 
-  // Gestiona la confirmación y eliminación del objetivo respetando el mínimo de 1 objetivo por fase
   handleDelete(): void {
     const objNum = this.objectiveNumber();
     if (!objNum) return;
     if (this.totalObjectivesCount() <= 1) {
-      const msg = 'No se puede eliminar: Toda fase ministerial debe contar con al menos un objetivo.';
+      const msg = 'Debe contar con al menos un objetivo por fase.';
       this.error.set(msg);
       this.toastService.toast.warning(msg, 'Regla Ministerial');
       return;
@@ -115,8 +140,7 @@ export class ObjectiveModalComponent {
       return;
     }
     this.deleted.emit(objNum);
-    this.toastService.toast.info(`Objetivo #${objNum} eliminado de la fase`, 'Objetivo Eliminado');
+    this.toastService.toast.info(`Objetivo #${objNum} eliminado`, 'Objetivo Eliminado');
     this.closed.emit();
   }
 }
-

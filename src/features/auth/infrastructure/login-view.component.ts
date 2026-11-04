@@ -29,7 +29,7 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
       <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#E67324]/12 rounded-full blur-[100px] pointer-events-none gpu-layer transform-gpu"></div>
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none gpu-layer transform-gpu"></div>
 
-      <div class="w-full max-w-5xl bg-white rounded-[28px] sm:rounded-[36px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] border border-stone-200/80 p-3 sm:p-4 lg:p-5 flex flex-col md:flex-row gap-5 lg:gap-8 items-stretch relative z-10">
+      <div class="w-full max-w-5xl bg-white rounded-[28px] sm:rounded-[36px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] border border-stone-200/80 p-3 sm:p-4 lg:p-5 flex flex-col md:flex-row gap-5 lg:gap-8 items-stretch relative z-10" style="zoom: 0.85;">
         <app-login-hero-card />
 
         <div class="flex-1 p-3 sm:p-5 lg:p-7 flex flex-col justify-between">

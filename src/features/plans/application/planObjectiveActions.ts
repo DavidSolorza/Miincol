@@ -1,61 +1,77 @@
-import type { PhasePlan, Objective } from '../domain/plan.types';
+import type { PhasePlan, Objective, EssentialArea, AreaLevel } from '../domain/plan.types';
 
-// Funciones puras para gestionar objetivos estratégicos dentro de una fase del plan
-// Modifica el título o la descripción de un objetivo específico
+// Modifica campos de un objetivo específico (título, descripción, área esencial, nivel, metas)
 export const applyUpdateObjective = (
   currentPlan: PhasePlan,
-  objectiveNumber: 1 | 2 | 3 | 4,
-  updates: { title?: string; description?: string }
+  objectiveNumber: number,
+  updates: Partial<Objective>
 ): PhasePlan => {
   const updatedObjectives = currentPlan.objectives.map((obj) => {
     if (obj.number !== objectiveNumber) return obj;
     return {
       ...obj,
+      ...updates,
       title: updates.title !== undefined ? updates.title.trim() : obj.title,
       description: updates.description !== undefined ? updates.description.trim() : obj.description,
+      mediumTermGoal: updates.mediumTermGoal !== undefined ? updates.mediumTermGoal.trim() : obj.mediumTermGoal,
+      longTermGoal: updates.longTermGoal !== undefined ? updates.longTermGoal.trim() : obj.longTermGoal,
     };
   });
 
   return { ...currentPlan, objectives: updatedObjectives };
 };
 
-// Agrega un nuevo objetivo asignando el primer número disponible del 1 al 4
+// Agrega un nuevo objetivo con autoenumeración dinámica (1..4)
 export const applyAddObjective = (
   currentPlan: PhasePlan,
-  newObj: { title: string; description: string }
+  newObj: {
+    title: string;
+    description: string;
+    essentialArea?: EssentialArea;
+    areaLevel?: AreaLevel;
+    stage?: string;
+    mediumTermGoal?: string;
+    longTermGoal?: string;
+  }
 ): { updatedPlan: PhasePlan; nextNumber: 1 | 2 | 3 | 4 } | null => {
   if (currentPlan.objectives.length >= 4) return null;
 
-  const usedNumbers = new Set(currentPlan.objectives.map((o) => o.number));
-  const availableNumbers: (1 | 2 | 3 | 4)[] = [1, 2, 3, 4];
-  const nextNumber = availableNumbers.find((n) => !usedNumbers.has(n));
-
-  if (!nextNumber) return null;
-
+  const nextNumber = (currentPlan.objectives.length + 1) as 1 | 2 | 3 | 4;
   const createdObjective: Objective = {
     number: nextNumber,
     title: newObj.title.trim() || `Objetivo #${nextNumber}`,
     description: newObj.description.trim(),
+    essentialArea: newObj.essentialArea,
+    areaLevel: newObj.areaLevel,
+    stage: newObj.stage?.trim(),
+    mediumTermGoal: newObj.mediumTermGoal?.trim(),
+    longTermGoal: newObj.longTermGoal?.trim(),
     activities: [],
   };
 
-  const mergedObjectives = [...currentPlan.objectives, createdObjective].sort(
-    (a, b) => a.number - b.number
-  );
+  const merged = [...currentPlan.objectives, createdObjective].map((o, idx) => ({
+    ...o,
+    number: (idx + 1) as 1 | 2 | 3 | 4,
+    activities: o.activities.map((a) => ({ ...a, objectiveNumber: idx + 1 })),
+  }));
 
-  return {
-    updatedPlan: { ...currentPlan, objectives: mergedObjectives },
-    nextNumber,
-  };
+  return { updatedPlan: { ...currentPlan, objectives: merged }, nextNumber };
 };
 
-// Elimina un objetivo del plan garantizando que siempre quede al menos uno
+// Elimina un objetivo y renombra dinámicamente los índices restantes (2 -> 1, 3 -> 2, etc.)
 export const applyDeleteObjective = (
   currentPlan: PhasePlan,
-  objectiveNumber: 1 | 2 | 3 | 4
+  objectiveNumber: number
 ): PhasePlan | null => {
   if (currentPlan.objectives.length <= 1) return null;
 
-  const filtered = currentPlan.objectives.filter((o) => o.number !== objectiveNumber);
+  const filtered = currentPlan.objectives
+    .filter((o) => o.number !== objectiveNumber)
+    .map((o, idx) => ({
+      ...o,
+      number: (idx + 1) as 1 | 2 | 3 | 4,
+      activities: o.activities.map((a) => ({ ...a, objectiveNumber: idx + 1 })),
+    }));
+
   return { ...currentPlan, objectives: filtered };
 };

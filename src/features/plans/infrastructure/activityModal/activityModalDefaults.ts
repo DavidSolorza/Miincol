@@ -1,9 +1,4 @@
-/**
- * Default State and Validation for Activity Modal Form
- * Aligned with Technical Governance Contract v2026.4.0 (< 150 lines)
- */
-
-import type { Activity, ActivityState } from '../../domain/plan.types';
+import { type Activity, type ActivityState, type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain/plan.types';
 
 // Estado del formulario y funciones de inicialización y validación para el modal de actividad
 export interface ActivityFormState {
@@ -21,7 +16,8 @@ export interface ActivityFormState {
   shortTermGoal: string;
   mediumTermGoal: string;
   longTermGoal: string;
-  obstacles: string;
+  essentialArea?: EssentialArea;
+  areaLevel?: AreaLevel;
 }
 
 // Genera los valores iniciales del formulario según si se está creando o editando una actividad
@@ -31,10 +27,16 @@ export const getInitialFormValues = (
   defaultObjectiveNumber: 1 | 2 | 3 | 4
 ): ActivityFormState => {
   if (mode === 'edit' && activityToEdit) {
+    const area = activityToEdit.essentialArea || 'Investigación';
+    const allowed = STAGES_BY_AREA[area] || STAGES_BY_AREA.Investigación;
+    const stage = activityToEdit.stage && allowed.includes(activityToEdit.stage as any)
+      ? activityToEdit.stage
+      : allowed[0];
+
     return {
-      objectiveNumber: activityToEdit.objectiveNumber,
+      objectiveNumber: (activityToEdit.objectiveNumber as 1 | 2 | 3 | 4) || defaultObjectiveNumber,
       description: activityToEdit.description || '',
-      stage: activityToEdit.stage || 'General',
+      stage,
       state: activityToEdit.state || 'Pendiente',
       responsible: activityToEdit.responsible || '',
       frequency: activityToEdit.frequency || 'Mensual',
@@ -46,14 +48,15 @@ export const getInitialFormValues = (
       shortTermGoal: activityToEdit.shortTermGoal || '',
       mediumTermGoal: activityToEdit.mediumTermGoal || '',
       longTermGoal: activityToEdit.longTermGoal || '',
-      obstacles: activityToEdit.obstacles || '',
+      essentialArea: area,
+      areaLevel: activityToEdit.areaLevel || 'Nivel 1',
     };
   }
 
   return {
     objectiveNumber: defaultObjectiveNumber,
     description: '',
-    stage: 'General',
+    stage: STAGES_BY_AREA['Investigación'][0],
     state: 'Pendiente',
     responsible: '',
     frequency: 'Mensual',
@@ -65,7 +68,8 @@ export const getInitialFormValues = (
     shortTermGoal: '',
     mediumTermGoal: '',
     longTermGoal: '',
-    obstacles: '',
+    essentialArea: 'Investigación',
+    areaLevel: 'Nivel 1',
   };
 };
 

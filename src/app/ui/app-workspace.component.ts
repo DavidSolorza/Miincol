@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, signal, computed, effect, inject } from '@angular/core';
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { TeamSupervisionSummary } from '../../features/admin/domain/admin.types';
-import type { PhaseType } from '../../features/plans/domain/plan.types';
+import type { PhaseType, EssentialArea, AreaLevel } from '../../features/plans/domain/plan.types';
 import { AppSessionService } from '../auth/app-session.service';
 import { PlanService } from '../../features/plans/application/plan.service';
 import { AdminDashboardService } from '../../features/admin/application/admin-dashboard.service';
@@ -10,15 +10,20 @@ import { PlanSidebarComponent } from '../../features/plans/infrastructure/plan-s
 import { AppHeaderSectionComponent } from './app-header-section.component';
 import { SuperAdminViewComponent } from '../../features/admin/infrastructure/super-admin-view.component';
 import { PhaseViewComponent } from '../../features/plans/infrastructure/phase-view.component';
+import { GeneralInfoViewComponent } from '../../features/general-info/infrastructure/general-info-view.component';
 import { ReportModalComponent } from '../../features/reports/infrastructure/report-modal.component';
 import { TeamNotesModalComponent } from '../../features/notes/infrastructure/team-notes-modal.component';
 import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-selector.component';
 
-// Contenedor maestro del área de trabajo: integra Sidebar, Header, vistas (PDM / Super Admin) y modales
+// Contenedor maestro del área de trabajo: integra Sidebar, Header, vistas y modales
 @Component({
   selector: 'app-workspace',
   standalone: true,
-  imports: [PlanSidebarComponent, AppHeaderSectionComponent, SuperAdminViewComponent, PhaseViewComponent, ReportModalComponent, TeamNotesModalComponent, TeamSelectorComponent],
+  imports: [
+    PlanSidebarComponent, AppHeaderSectionComponent, SuperAdminViewComponent,
+    PhaseViewComponent, GeneralInfoViewComponent, ReportModalComponent,
+    TeamNotesModalComponent, TeamSelectorComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div [class]="'min-h-screen bg-[#FAF7F2] flex font-[\\'Plus_Jakarta_Sans\\'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E] ' + (sessionSvc.activeView() === 'superadmin' ? 'lg:h-screen lg:overflow-hidden' : '')">
@@ -65,6 +70,8 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
         <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">
           @if (sessionSvc.activeView() === 'superadmin' && isSuperAdmin()) {
             <app-super-admin-view (inspectTeam)="onInspectTeam($event)" (openReportModal)="isReportModalOpen.set(true)" />
+          } @else if (sessionSvc.activeView() === 'general') {
+            <app-general-info-view [activeTeam]="activeTeam()" />
           } @else {
             <app-phase-view
               [plan]="planService.plan()"
@@ -99,18 +106,15 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
   `,
 })
 export class AppWorkspaceComponent {
-  // Inyección de servicios de sesión, planes, supervisión y notificaciones
   readonly sessionSvc = inject(AppSessionService);
   readonly planService = inject(PlanService);
   private readonly dashboardSvc = inject(AdminDashboardService);
   private readonly toastService = inject(ToastService);
 
-  // Entradas del equipo activo y catálogo de misiones
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly activeTeamSummary = input<TeamSupervisionSummary | undefined>(undefined);
   readonly mappedTeams = input.required<MissionaryTeam[]>();
 
-  // Estado local de navegación de objetivos, modales y barra lateral
   readonly activeObjectiveNumber = signal(1);
   readonly isReportModalOpen = signal(false);
   readonly isNotesModalOpen = signal(false);
@@ -118,15 +122,13 @@ export class AppWorkspaceComponent {
   readonly isSidebarCollapsed = signal(false);
   readonly isMobileSidebarOpen = signal(false);
 
-  // Propiedades calculadas de permisos, visibilidad de sidebar y enlace WhatsApp del líder
   readonly isSuperAdmin = computed(() => this.sessionSvc.session()?.role === 'admin');
-  readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || this.sessionSvc.activeView() === 'plans');
+  readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || this.sessionSvc.activeView() !== 'superadmin');
   readonly whatsappUrl = computed(() => {
     const clean = (this.activeTeam().leaderPhone || '').replace(/[^\d]/g, '');
     return clean ? `https://wa.me/${clean}?text=${encodeURIComponent(`Hola ${this.activeTeam().leader}, te contacto de la Coordinación de Equipos de Misincol.`)}` : null;
   });
 
-  // Recarga automáticamente los planes cuando cambia el equipo activo
   constructor() {
     effect(() => {
       const team = this.activeTeam();
@@ -136,12 +138,11 @@ export class AppWorkspaceComponent {
     });
   }
 
-  // Manejadores de cambio de pilar, selección de misión y CRUD de objetivos
-  onSelectPhase(phaseId: PhaseType): void { this.planService.switchPhase(phaseId); this.activeObjectiveNumber.set(1); }
+  onSelectPhase(phaseId: PhaseType): void { this.planService.switchPhase(phaseId); this.sessionSvc.activeView.set('plans'); this.activeObjectiveNumber.set(1); }
   onSelectTeam(teamId: string): void { this.sessionSvc.activeTeamId.set(teamId); this.activeObjectiveNumber.set(1); }
   onInspectTeam(teamId: string): void { this.sessionSvc.handleInspectTeamFromAdmin(teamId, this.dashboardSvc.allTeams()); this.activeObjectiveNumber.set(1); }
   onGoToSuperAdmin(): void { this.sessionSvc.isAdminPreview.set(false); this.sessionSvc.activeView.set('superadmin'); }
-  onAddObjective(newObj: { title: string; description: string }): void { const num = this.planService.addObjective(newObj); if (num) this.activeObjectiveNumber.set(num); }
-  onDeleteObjective(objNum: 1 | 2 | 3 | 4): void { if (this.planService.deleteObjective(objNum)) { const rem = this.planService.plan().objectives; if (rem.length > 0) this.activeObjectiveNumber.set(rem[0].number); } }
+  onAddObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): void { const num = this.planService.addObjective(newObj); if (num) this.activeObjectiveNumber.set(num); }
+  onDeleteObjective(objNum: number): void { if (this.planService.deleteObjective(objNum)) { const rem = this.planService.plan().objectives; if (rem.length > 0) this.activeObjectiveNumber.set(rem[0].number); } }
   onModalSelectTeam(selectedId: string): void { this.onSelectTeam(selectedId); const chosen = this.mappedTeams().find((t) => t.id === selectedId); if (chosen) this.toastService.toast.info(`Misión seleccionada: ${chosen.name}`, 'Equipo Activo'); }
 }

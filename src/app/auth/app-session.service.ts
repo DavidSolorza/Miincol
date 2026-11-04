@@ -14,7 +14,7 @@ export class AppSessionService {
   readonly session = signal<AuthSession | null>(this.loadInitialSession());
   readonly activeTeamId = signal<string>(this.session()?.teamId || 'team-wayuu');
   readonly isAdminPreview = signal<boolean>(false);
-  readonly activeView = signal<'plans' | 'superadmin'>(
+  readonly activeView = signal<'plans' | 'general' | 'superadmin'>(
     this.session()?.role === 'admin' ? 'superadmin' : 'plans'
   );
 
@@ -100,3 +100,4 @@ export class AppSessionService {
     this.toastService.toast.info('Regresando al Tablero de Supervisión Nacional', 'Supervisión');
   }
 }
+

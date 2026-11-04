@@ -10,15 +10,16 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 items-stretch flex-1 h-full">
-      @for (obj of objectives(); track obj.number) {
+      @for (obj of objectives(); track obj.number; let i = $index) {
         <app-phase-objective-card-item
           [obj]="obj"
+          [index]="i"
           [isSelected]="activeObjectiveNumber() === obj.number"
           (selected)="selectObjective.emit(obj.number)"
         />
       }
 
-      @if (objectives().length < 4) {
+      @if (objectives().length < 6) {
         <button
           type="button"
           (click)="openCreateObjective.emit()"
@@ -29,18 +30,17 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
           </div>
           <div>
             <span class="text-xs font-bold text-stone-600 group-hover:text-[#8B251E] block">Nuevo Objetivo</span>
-            <span class="text-[10px] text-stone-400">({{ objectives().length }}/4 registrados)</span>
+            <span class="text-[10px] text-stone-400">({{ objectives().length }} registrados)</span>
           </div>
         </button>
       }
     </div>
   `,
 })
-// Cuadrícula de tarjetas resumen de los objetivos estratégicos de la fase y botón para agregar uno nuevo
+// Cuadrícula de tarjetas resumen de los objetivos estratégicos de la fase con enumeración dinámica
 export class PhaseObjectiveCardsGridComponent {
-  readonly objectives = input.required<Objective[]>(); // Lista de objetivos estratégicos de la fase
-  readonly activeObjectiveNumber = input.required<number>(); // Número del objetivo actualmente activo
-  readonly selectObjective = output<number>(); // Emite el número del objetivo seleccionado por el usuario
-  readonly openCreateObjective = output<void>(); // Emite para abrir el modal de creación de un nuevo objetivo
+  readonly objectives = input.required<Objective[]>();
+  readonly activeObjectiveNumber = input.required<number>();
+  readonly selectObjective = output<number>();
+  readonly openCreateObjective = output<void>();
 }
-
