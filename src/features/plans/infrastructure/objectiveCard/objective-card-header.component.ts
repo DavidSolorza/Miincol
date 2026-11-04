@@ -20,6 +20,11 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
               {{ objective().essentialArea }} {{ objective().areaLevel ? '• ' + objective().areaLevel : '' }}
             </span>
           }
+          @if (objective().stage) {
+            <span class="text-[10px] font-bold text-stone-700 bg-stone-100 px-2 py-0.5 rounded-lg border border-stone-200 font-['Outfit']">
+              {{ objective().stage }}
+            </span>
+          }
           <span class="text-xs font-semibold text-stone-400">
             • {{ completedCount() }} de {{ objective().activities.length }} listas
           </span>

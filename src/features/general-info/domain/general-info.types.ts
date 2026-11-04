@@ -58,3 +58,4 @@ export interface TeamGeneralInfo {
   budgetBreakdown: PillarBudgetBreakdown;
   updatedAt: string;
 }
+

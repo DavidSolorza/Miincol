@@ -29,6 +29,7 @@ export const applyAddObjective = (
     description: string;
     essentialArea?: EssentialArea;
     areaLevel?: AreaLevel;
+    stage?: string;
     mediumTermGoal?: string;
     longTermGoal?: string;
   }
@@ -42,6 +43,7 @@ export const applyAddObjective = (
     description: newObj.description.trim(),
     essentialArea: newObj.essentialArea,
     areaLevel: newObj.areaLevel,
+    stage: newObj.stage?.trim(),
     mediumTermGoal: newObj.mediumTermGoal?.trim(),
     longTermGoal: newObj.longTermGoal?.trim(),
     activities: [],

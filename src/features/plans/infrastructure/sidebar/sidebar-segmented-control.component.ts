@@ -41,3 +41,4 @@ export class SidebarSegmentedControlComponent {
   readonly isCollapsed = input.required<boolean>();
   readonly viewChanged = output<'plans' | 'general' | 'superadmin'>();
 }
+

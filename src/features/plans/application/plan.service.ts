@@ -97,7 +97,7 @@ export class PlanService {
   }
 
   // Crea un nuevo objetivo estratégico en la fase actual (máximo 4)
-  addObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; mediumTermGoal?: string; longTermGoal?: string }): 1 | 2 | 3 | 4 | null {
+  addObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): 1 | 2 | 3 | 4 | null {
     const phaseId = this.activePhaseId();
     const prev = this.allPlans();
     const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];

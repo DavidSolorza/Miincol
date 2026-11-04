@@ -74,3 +74,4 @@ import type { FieldMinistryMetrics } from '../../domain/general-info.types';
 export class GeneralFieldMetricsCardComponent {
   readonly metrics = input.required<FieldMinistryMetrics>();
 }
+

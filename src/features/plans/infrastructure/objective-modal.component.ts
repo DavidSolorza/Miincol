@@ -14,7 +14,7 @@ import type { EssentialArea, AreaLevel } from '../domain/plan.types';
     <app-modal
       [isOpen]="isOpen()"
       [title]="mode() === 'edit' ? 'Editar Objetivo #' + objectiveNumber() : 'Nuevo Objetivo Estratégico'"
-      [subtitle]="mode() === 'edit' ? 'Modifique área, nivel y justificación estratégica' : 'Defina un nuevo eje estratégico ministerial'"
+      [subtitle]="mode() === 'edit' ? 'Modifique área, etapa y justificación estratégica' : 'Defina un nuevo eje estratégico ministerial'"
       maxWidth="lg"
       (closed)="closed.emit()"
     >
@@ -26,12 +26,14 @@ import type { EssentialArea, AreaLevel } from '../domain/plan.types';
           [description]="description()"
           [essentialArea]="essentialArea()"
           [areaLevel]="areaLevel()"
+          [stage]="stage()"
           [mediumTermGoal]="mediumTermGoal()"
           [longTermGoal]="longTermGoal()"
           (titleChanged)="title.set($event)"
           (descriptionChanged)="description.set($event)"
           (essentialAreaChanged)="essentialArea.set($event)"
           (areaLevelChanged)="areaLevel.set($event)"
+          (stageChanged)="stage.set($event)"
           (mediumTermGoalChanged)="mediumTermGoal.set($event)"
           (longTermGoalChanged)="longTermGoal.set($event)"
         />
@@ -58,26 +60,24 @@ export class ObjectiveModalComponent {
   readonly initialDescription = input<string>('');
   readonly initialEssentialArea = input<EssentialArea | undefined>(undefined);
   readonly initialAreaLevel = input<AreaLevel | undefined>(undefined);
+  readonly initialStage = input<string | undefined>('');
   readonly initialMediumTermGoal = input<string | undefined>('');
   readonly initialLongTermGoal = input<string | undefined>('');
   readonly totalObjectivesCount = input.required<number>();
 
   readonly closed = output<void>();
   readonly saved = output<{
-    title: string;
-    description: string;
-    number?: 1 | 2 | 3 | 4;
-    essentialArea?: EssentialArea;
-    areaLevel?: AreaLevel;
-    mediumTermGoal?: string;
-    longTermGoal?: string;
+    title: string; description: string; number?: 1 | 2 | 3 | 4;
+    essentialArea?: EssentialArea; areaLevel?: AreaLevel;
+    stage?: string; mediumTermGoal?: string; longTermGoal?: string;
   }>();
   readonly deleted = output<1 | 2 | 3 | 4>();
 
   readonly title = signal('');
   readonly description = signal('');
-  readonly essentialArea = signal<EssentialArea>('General');
+  readonly essentialArea = signal<EssentialArea>('Investigación');
   readonly areaLevel = signal<AreaLevel>('Nivel 1');
+  readonly stage = signal('');
   readonly mediumTermGoal = signal('');
   readonly longTermGoal = signal('');
   readonly error = signal<string | null>(null);
@@ -88,8 +88,9 @@ export class ObjectiveModalComponent {
       if (this.isOpen()) {
         this.title.set(this.initialTitle());
         this.description.set(this.initialDescription());
-        this.essentialArea.set(this.initialEssentialArea() || 'General');
+        this.essentialArea.set(this.initialEssentialArea() || 'Investigación');
         this.areaLevel.set(this.initialAreaLevel() || 'Nivel 1');
+        this.stage.set(this.initialStage() || '');
         this.mediumTermGoal.set(this.initialMediumTermGoal() || '');
         this.longTermGoal.set(this.initialLongTermGoal() || '');
         this.error.set(null);
@@ -114,6 +115,7 @@ export class ObjectiveModalComponent {
       number: this.objectiveNumber(),
       essentialArea: this.essentialArea(),
       areaLevel: this.areaLevel(),
+      stage: this.stage().trim() || undefined,
       mediumTermGoal: this.mediumTermGoal().trim(),
       longTermGoal: this.longTermGoal().trim(),
     });

@@ -63,6 +63,7 @@ import { ObjectiveModalComponent } from './objective-modal.component';
         [initialDescription]="editingObjective()?.description || ''"
         [initialEssentialArea]="editingObjective()?.essentialArea"
         [initialAreaLevel]="editingObjective()?.areaLevel"
+        [initialStage]="editingObjective()?.stage || ''"
         [initialMediumTermGoal]="editingObjective()?.mediumTermGoal || ''"
         [initialLongTermGoal]="editingObjective()?.longTermGoal || ''"
         [totalObjectivesCount]="plan().objectives.length"
@@ -83,7 +84,7 @@ export class PhaseViewComponent {
   readonly activityDeleted = output<string>();
   readonly activityAdded = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
   readonly objectiveUpdated = output<{ objectiveNumber: number; updates: Partial<Objective> }>();
-  readonly objectiveAdded = output<{ title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; mediumTermGoal?: string; longTermGoal?: string }>();
+  readonly objectiveAdded = output<{ title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }>();
   readonly objectiveDeleted = output<number>();
   readonly resetToDefaults = output<void>();
   readonly toggleMobileMenu = output<void>();
@@ -110,7 +111,7 @@ export class PhaseViewComponent {
   closeActModal(): void { this.isAddModalOpen.set(false); this.editingActivity.set(null); }
   openObjModal(mode: 'create' | 'edit', obj: Objective | null): void { this.objectiveModalMode.set(mode); this.editingObjective.set(obj); this.isObjectiveModalOpen.set(true); }
 
-  handleSaveObjective(data: { title: string; description: string; number?: 1 | 2 | 3 | 4; essentialArea?: EssentialArea; areaLevel?: AreaLevel; mediumTermGoal?: string; longTermGoal?: string }): void {
+  handleSaveObjective(data: { title: string; description: string; number?: 1 | 2 | 3 | 4; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): void {
     if (this.objectiveModalMode() === 'create') {
       this.objectiveAdded.emit(data);
     } else if (data.number) {

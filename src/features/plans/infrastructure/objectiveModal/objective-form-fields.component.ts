@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
-import type { EssentialArea, AreaLevel } from '../../domain/plan.types';
+import { type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain/plan.types';
 
 @Component({
   selector: 'app-objective-form-fields',
@@ -16,30 +16,31 @@ import type { EssentialArea, AreaLevel } from '../../domain/plan.types';
         </div>
       }
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
         <div class="space-y-1">
-          <label class="font-bold text-stone-700 block text-xs">Área Esencial</label>
-          <select
-            [value]="essentialArea() || 'General'"
-            (change)="onAreaChange($event)"
-            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 hover:bg-white focus:bg-white text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 transition"
-          >
+          <label class="font-bold text-stone-700 block text-xs">Pilar / Área</label>
+          <select [value]="essentialArea() || 'Investigación'" (change)="onAreaChange($event)" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
             <option value="Investigación">Investigación</option>
             <option value="Encarnación">Encarnación</option>
             <option value="Evangelización">Evangelización</option>
             <option value="Entrenamiento">Entrenamiento</option>
             <option value="Autocuidado">Autocuidado</option>
-            <option value="General">General</option>
+            <option value="General">Ejes Transversales</option>
           </select>
         </div>
 
         <div class="space-y-1">
-          <label class="font-bold text-stone-700 block text-xs">Nivel del Objetivo</label>
-          <select
-            [value]="areaLevel() || 'Nivel 1'"
-            (change)="onLevelChange($event)"
-            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 hover:bg-white focus:bg-white text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 transition"
-          >
+          <label class="font-bold text-stone-700 block text-xs">Etapa del Pilar</label>
+          <select [value]="stage() || availableStages()[0]" (change)="onStageChange($event)" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
+            @for (st of availableStages(); track st) {
+              <option [value]="st">{{ st }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-stone-700 block text-xs">Nivel</label>
+          <select [value]="areaLevel() || 'Nivel 1'" (change)="onLevelChange($event)" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
             <option value="Nivel 1">Nivel 1</option>
             <option value="Nivel 2">Nivel 2</option>
             <option value="Nivel 3">Nivel 3</option>
@@ -62,7 +63,7 @@ import type { EssentialArea, AreaLevel } from '../../domain/plan.types';
             [value]="title()"
             (input)="onTitleInput($event)"
             placeholder="Ej. Diagnóstico Socio-Espiritual y Cartografía..."
-            class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 hover:bg-white focus:bg-white placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 font-medium text-xs text-stone-900 transition"
+            class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 text-xs text-stone-900"
             required
           />
         </div>
@@ -76,8 +77,8 @@ import type { EssentialArea, AreaLevel } from '../../domain/plan.types';
           [value]="description()"
           (input)="onDescriptionInput($event)"
           rows="2"
-          placeholder="Describa el propósito y alcance en campo..."
-          class="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50/40 hover:bg-white focus:bg-white placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 font-medium text-xs text-stone-900 leading-relaxed resize-none transition"
+          placeholder="Describa el propósito y alcance..."
+          class="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50/40 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 text-xs text-stone-900 resize-none"
           required
         ></textarea>
       </div>
@@ -90,7 +91,7 @@ import type { EssentialArea, AreaLevel } from '../../domain/plan.types';
             [value]="mediumTermGoal() || ''"
             (input)="onMediumGoalInput($event)"
             placeholder="Ej. 10 estudios bíblicos establecidos"
-            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 hover:bg-white focus:bg-white placeholder:text-stone-400 text-xs text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 transition"
+            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
           />
         </div>
         <div class="space-y-1">
@@ -100,7 +101,7 @@ import type { EssentialArea, AreaLevel } from '../../domain/plan.types';
             [value]="longTermGoal() || ''"
             (input)="onLongGoalInput($event)"
             placeholder="Ej. 2 nuevas comunidades de fe"
-            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 hover:bg-white focus:bg-white placeholder:text-stone-400 text-xs text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 transition"
+            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
           />
         </div>
       </div>
@@ -114,6 +115,7 @@ export class ObjectiveFormFieldsComponent {
   readonly description = input.required<string>();
   readonly essentialArea = input<EssentialArea | undefined>();
   readonly areaLevel = input<AreaLevel | undefined>();
+  readonly stage = input<string | undefined>('');
   readonly mediumTermGoal = input<string | undefined>('');
   readonly longTermGoal = input<string | undefined>('');
 
@@ -121,13 +123,21 @@ export class ObjectiveFormFieldsComponent {
   readonly descriptionChanged = output<string>();
   readonly essentialAreaChanged = output<EssentialArea>();
   readonly areaLevelChanged = output<AreaLevel>();
+  readonly stageChanged = output<string>();
   readonly mediumTermGoalChanged = output<string>();
   readonly longTermGoalChanged = output<string>();
 
-  onTitleInput(event: Event): void { this.titleChanged.emit((event.target as HTMLInputElement).value); }
-  onDescriptionInput(event: Event): void { this.descriptionChanged.emit((event.target as HTMLTextAreaElement).value); }
-  onAreaChange(event: Event): void { this.essentialAreaChanged.emit((event.target as HTMLSelectElement).value as EssentialArea); }
-  onLevelChange(event: Event): void { this.areaLevelChanged.emit((event.target as HTMLSelectElement).value as AreaLevel); }
-  onMediumGoalInput(event: Event): void { this.mediumTermGoalChanged.emit((event.target as HTMLInputElement).value); }
-  onLongGoalInput(event: Event): void { this.longTermGoalChanged.emit((event.target as HTMLInputElement).value); }
+  readonly availableStages = computed(() => STAGES_BY_AREA[this.essentialArea() || 'Investigación'] || STAGES_BY_AREA.Investigación);
+
+  onTitleInput(e: Event): void { this.titleChanged.emit((e.target as HTMLInputElement).value); }
+  onDescriptionInput(e: Event): void { this.descriptionChanged.emit((e.target as HTMLTextAreaElement).value); }
+  onStageChange(e: Event): void { this.stageChanged.emit((e.target as HTMLSelectElement).value); }
+  onAreaChange(e: Event): void {
+    const a = (e.target as HTMLSelectElement).value as EssentialArea;
+    this.essentialAreaChanged.emit(a);
+    this.stageChanged.emit((STAGES_BY_AREA[a] || STAGES_BY_AREA.Investigación)[0]);
+  }
+  onLevelChange(e: Event): void { this.areaLevelChanged.emit((e.target as HTMLSelectElement).value as AreaLevel); }
+  onMediumGoalInput(e: Event): void { this.mediumTermGoalChanged.emit((e.target as HTMLInputElement).value); }
+  onLongGoalInput(e: Event): void { this.longTermGoalChanged.emit((e.target as HTMLInputElement).value); }
 }
