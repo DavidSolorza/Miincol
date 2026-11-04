@@ -151,3 +151,4 @@ CHECK (
   (essential_area = 'General' AND stage IN ('ADN Multiplicador', 'Salida progresiva', 'Auto Cuidado del Misionero', 'General'))
 );
 ```
+
