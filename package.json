@@ -1,0 +1,19 @@
+{
+  "name": "misincol-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo para Misincol: Frontend (Angular 21+) y Backend (NestJS)",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "start:frontend": "npm --prefix frontend run dev",
+    "start:backend": "npm --prefix backend run start:dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "build": "npm run build:frontend && npm run build:backend",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "lint": "npm run lint:frontend"
+  }
+}
