@@ -1,11 +1,12 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import { type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
+import { ObjectiveGoalsFieldsComponent } from './objective-goals-fields.component';
 
 @Component({
   selector: 'app-objective-form-fields',
   standalone: true,
-  imports: [AppIconComponent],
+  imports: [AppIconComponent, ObjectiveGoalsFieldsComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-3.5">
@@ -25,7 +26,6 @@ import { type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
             <option value="Evangelización">Evangelización</option>
             <option value="Entrenamiento">Entrenamiento</option>
             <option value="Autocuidado">Autocuidado</option>
-            <option value="General">Ejes Transversales</option>
           </select>
         </div>
 
@@ -72,28 +72,14 @@ import { type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
         ></textarea>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div class="space-y-1">
-          <label class="font-bold text-stone-700 block text-xs">Meta a Mediano Plazo</label>
-          <input
-            type="text"
-            [value]="mediumTermGoal() || ''"
-            (input)="onMediumGoalInput($event)"
-            placeholder="Ej. 10 estudios bíblicos establecidos"
-            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
-          />
-        </div>
-        <div class="space-y-1">
-          <label class="font-bold text-stone-700 block text-xs">Meta a Largo Plazo</label>
-          <input
-            type="text"
-            [value]="longTermGoal() || ''"
-            (input)="onLongGoalInput($event)"
-            placeholder="Ej. 2 nuevas comunidades de fe"
-            class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
-          />
-        </div>
-      </div>
+      <app-objective-goals-fields
+        [shortTermGoal]="shortTermGoal()"
+        [mediumTermGoal]="mediumTermGoal()"
+        [longTermGoal]="longTermGoal()"
+        (shortTermGoalChanged)="shortTermGoalChanged.emit($event)"
+        (mediumTermGoalChanged)="mediumTermGoalChanged.emit($event)"
+        (longTermGoalChanged)="longTermGoalChanged.emit($event)"
+      />
     </div>
   `,
 })
@@ -104,6 +90,7 @@ export class ObjectiveFormFieldsComponent {
   readonly description = input.required<string>();
   readonly essentialArea = input<EssentialArea | undefined>();
   readonly stage = input<string | undefined>('');
+  readonly shortTermGoal = input<string | undefined>('');
   readonly mediumTermGoal = input<string | undefined>('');
   readonly longTermGoal = input<string | undefined>('');
 
@@ -111,6 +98,7 @@ export class ObjectiveFormFieldsComponent {
   readonly descriptionChanged = output<string>();
   readonly essentialAreaChanged = output<EssentialArea>();
   readonly stageChanged = output<string>();
+  readonly shortTermGoalChanged = output<string>();
   readonly mediumTermGoalChanged = output<string>();
   readonly longTermGoalChanged = output<string>();
 
@@ -124,6 +112,4 @@ export class ObjectiveFormFieldsComponent {
     this.essentialAreaChanged.emit(a);
     this.stageChanged.emit((STAGES_BY_AREA[a] || STAGES_BY_AREA.Investigación)[0]);
   }
-  onMediumGoalInput(e: Event): void { this.mediumTermGoalChanged.emit((e.target as HTMLInputElement).value); }
-  onLongGoalInput(e: Event): void { this.longTermGoalChanged.emit((e.target as HTMLInputElement).value); }
 }

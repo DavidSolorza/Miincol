@@ -27,7 +27,7 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
             <option value="Evangelización">Evangelización</option>
             <option value="Entrenamiento">Entrenamiento</option>
             <option value="Autocuidado">Autocuidado</option>
-            <option value="General">Ejes Transversales</option>
+            
           </select>
         </div>
 

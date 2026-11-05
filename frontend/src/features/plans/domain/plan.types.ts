@@ -10,7 +10,7 @@ export type PhaseType = 'investigacion' | 'encarnacion' | 'evangelizacion' | 'en
 export type ActivityState = 'Pendiente' | 'En Proceso' | 'Completado';
 
 // Áreas Esenciales del ministerio
-export type EssentialArea = 'Investigación' | 'Encarnación' | 'Evangelización' | 'Entrenamiento' | 'Autocuidado' | 'General';
+export type EssentialArea = 'Investigación' | 'Encarnación' | 'Evangelización' | 'Entrenamiento' | 'Autocuidado';
 export type AreaLevel = string; // Deprecado: Nivel eliminado de UI, conservado como string opcional
 
 // Catálogo de etapas ministeriales oficiales (según relacion pilar-etapa.xlsx)
@@ -41,7 +41,6 @@ export const STAGES_BY_AREA: Record<EssentialArea, readonly ActivityStage[]> = {
   Evangelización: ['Respuesta', 'Reunirse', 'Consolidar'],
   Entrenamiento: ['Consolidar', 'Liderazgo', 'Desarrollo eclesial'],
   Autocuidado: ['Auto-cuidado', 'Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
-  General: ['Auto-cuidado', 'Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
 };
 
 // Entidad de dominio que representa una actividad ministerial

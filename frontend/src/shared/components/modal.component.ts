@@ -10,7 +10,7 @@ import { AppIconComponent } from './icon/app-icon.component';
   template: `
     @if (isOpen) {
       <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-stone-900/40 backdrop-blur-sm animate-fadeIn">
-        <div class="fixed inset-0" (click)="close.emit()"></div>
+        <div class="fixed inset-0" (click)="handleClose()"></div>
 
         <div
           [class]="'relative w-full ' + maxWidthClass + ' bg-white rounded-3xl shadow-[0_24px_50px_-12px_rgba(28,25,23,0.2)] border border-stone-200/90 overflow-hidden z-10 flex flex-col max-h-[92vh]'"
@@ -27,7 +27,7 @@ import { AppIconComponent } from './icon/app-icon.component';
             </div>
             <button
               type="button"
-              (click)="close.emit()"
+              (click)="handleClose()"
               class="w-8 h-8 rounded-xl bg-stone-100/80 hover:bg-stone-200/80 text-stone-400 hover:text-stone-700 flex items-center justify-center transition cursor-pointer shrink-0 mt-0.5"
               aria-label="Cerrar modal"
             >
@@ -50,6 +50,12 @@ export class ModalComponent implements OnChanges, OnDestroy {
   @Input() subtitle?: string;
   @Input() maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' = '2xl';
   @Output() close = new EventEmitter<void>();
+  @Output() closed = new EventEmitter<void>();
+
+  handleClose(): void {
+    this.close.emit();
+    this.closed.emit();
+  }
 
   // Traduce el tamaño configurado a la clase max-w-* de Tailwind
   get maxWidthClass(): string {
@@ -67,7 +73,7 @@ export class ModalComponent implements OnChanges, OnDestroy {
   // Permite cerrar el modal presionando la tecla Escape
   @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.isOpen) this.close.emit();
+    if (this.isOpen) this.handleClose();
   }
 
   // Bloquea o restaura el scroll del body cuando el modal se abre o cierra

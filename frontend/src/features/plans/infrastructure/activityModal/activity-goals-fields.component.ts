@@ -36,7 +36,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
         <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
           <div>
             <label class="font-bold text-stone-700 block mb-1 text-[11px]">
-              Corto Plazo (3 - 6 Meses)
+              Corto Plazo (2 Meses)
             </label>
             <textarea
               [value]="shortTermGoal()"
@@ -49,7 +49,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
 
           <div>
             <label class="font-bold text-stone-700 block mb-1 text-[11px]">
-              Mediano Plazo (1 Año)
+              Mediano Plazo (6 Meses)
             </label>
             <textarea
               [value]="mediumTermGoal()"
@@ -62,7 +62,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
 
           <div>
             <label class="font-bold text-stone-700 block mb-1 text-[11px]">
-              Largo Plazo (3 - 5 Años)
+              Largo Plazo (1 Año)
             </label>
             <textarea
               [value]="longTermGoal()"

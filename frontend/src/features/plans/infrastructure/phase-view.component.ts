@@ -64,6 +64,7 @@ import { ObjectiveModalComponent } from './objective-modal.component';
         [initialEssentialArea]="editingObjective()?.essentialArea"
         [initialAreaLevel]="editingObjective()?.areaLevel"
         [initialStage]="editingObjective()?.stage || ''"
+        [initialShortTermGoal]="editingObjective()?.shortTermGoal || ''"
         [initialMediumTermGoal]="editingObjective()?.mediumTermGoal || ''"
         [initialLongTermGoal]="editingObjective()?.longTermGoal || ''"
         [totalObjectivesCount]="plan().objectives.length"

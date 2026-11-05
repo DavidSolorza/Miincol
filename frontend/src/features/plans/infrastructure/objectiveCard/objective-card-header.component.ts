@@ -46,17 +46,23 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
           {{ objective().description }}
         </p>
 
-        @if (objective().mediumTermGoal || objective().longTermGoal) {
+        @if (objective().shortTermGoal || objective().mediumTermGoal || objective().longTermGoal) {
           <div class="flex flex-wrap items-center gap-3 mt-2 text-[11px] text-stone-600 font-medium">
+            @if (objective().shortTermGoal) {
+              <div class="flex items-center gap-1 bg-stone-100/80 px-2.5 py-1 rounded-lg border border-stone-200/60">
+                <span class="font-bold text-emerald-800">Meta Corto (2m):</span>
+                <span>{{ objective().shortTermGoal }}</span>
+              </div>
+            }
             @if (objective().mediumTermGoal) {
               <div class="flex items-center gap-1 bg-stone-100/80 px-2.5 py-1 rounded-lg border border-stone-200/60">
-                <span class="font-bold text-[#8B251E]">Meta Mediano:</span>
+                <span class="font-bold text-[#8B251E]">Meta Mediano (6m):</span>
                 <span>{{ objective().mediumTermGoal }}</span>
               </div>
             }
             @if (objective().longTermGoal) {
               <div class="flex items-center gap-1 bg-stone-100/80 px-2.5 py-1 rounded-lg border border-stone-200/60">
-                <span class="font-bold text-amber-700">Meta Largo:</span>
+                <span class="font-bold text-amber-700">Meta Largo (1a):</span>
                 <span>{{ objective().longTermGoal }}</span>
               </div>
             }

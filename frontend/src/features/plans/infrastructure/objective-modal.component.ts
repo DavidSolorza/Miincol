@@ -26,12 +26,14 @@ import type { EssentialArea, AreaLevel } from '../domain/plan.types';
           [description]="description()"
           [essentialArea]="essentialArea()"
           [stage]="stage()"
+          [shortTermGoal]="shortTermGoal()"
           [mediumTermGoal]="mediumTermGoal()"
           [longTermGoal]="longTermGoal()"
           (titleChanged)="title.set($event)"
           (descriptionChanged)="description.set($event)"
           (essentialAreaChanged)="essentialArea.set($event)"
           (stageChanged)="stage.set($event)"
+          (shortTermGoalChanged)="shortTermGoal.set($event)"
           (mediumTermGoalChanged)="mediumTermGoal.set($event)"
           (longTermGoalChanged)="longTermGoal.set($event)"
         />
@@ -59,6 +61,7 @@ export class ObjectiveModalComponent {
   readonly initialEssentialArea = input<EssentialArea | undefined>(undefined);
   readonly initialAreaLevel = input<AreaLevel | undefined>(undefined);
   readonly initialStage = input<string | undefined>('');
+  readonly initialShortTermGoal = input<string | undefined>('');
   readonly initialMediumTermGoal = input<string | undefined>('');
   readonly initialLongTermGoal = input<string | undefined>('');
   readonly totalObjectivesCount = input.required<number>();
@@ -67,7 +70,7 @@ export class ObjectiveModalComponent {
   readonly saved = output<{
     title: string; description: string; number?: 1 | 2 | 3 | 4;
     essentialArea?: EssentialArea; areaLevel?: AreaLevel;
-    stage?: string; mediumTermGoal?: string; longTermGoal?: string;
+    stage?: string; shortTermGoal?: string; mediumTermGoal?: string; longTermGoal?: string;
   }>();
   readonly deleted = output<1 | 2 | 3 | 4>();
 
@@ -75,6 +78,7 @@ export class ObjectiveModalComponent {
   readonly description = signal('');
   readonly essentialArea = signal<EssentialArea>('Investigación');
   readonly stage = signal('');
+  readonly shortTermGoal = signal('');
   readonly mediumTermGoal = signal('');
   readonly longTermGoal = signal('');
   readonly error = signal<string | null>(null);
@@ -87,6 +91,7 @@ export class ObjectiveModalComponent {
         this.description.set(this.initialDescription());
         this.essentialArea.set(this.initialEssentialArea() || 'Investigación');
         this.stage.set(this.initialStage() || '');
+        this.shortTermGoal.set(this.initialShortTermGoal() || '');
         this.mediumTermGoal.set(this.initialMediumTermGoal() || '');
         this.longTermGoal.set(this.initialLongTermGoal() || '');
         this.error.set(null);
@@ -111,6 +116,7 @@ export class ObjectiveModalComponent {
       number: this.objectiveNumber(),
       essentialArea: this.essentialArea(),
       stage: this.stage().trim() || undefined,
+      shortTermGoal: this.shortTermGoal().trim(),
       mediumTermGoal: this.mediumTermGoal().trim(),
       longTermGoal: this.longTermGoal().trim(),
     });

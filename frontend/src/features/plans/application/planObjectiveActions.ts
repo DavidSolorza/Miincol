@@ -13,6 +13,7 @@ export const applyUpdateObjective = (
       ...updates,
       title: updates.title !== undefined ? updates.title.trim() : obj.title,
       description: updates.description !== undefined ? updates.description.trim() : obj.description,
+      shortTermGoal: updates.shortTermGoal !== undefined ? updates.shortTermGoal.trim() : obj.shortTermGoal,
       mediumTermGoal: updates.mediumTermGoal !== undefined ? updates.mediumTermGoal.trim() : obj.mediumTermGoal,
       longTermGoal: updates.longTermGoal !== undefined ? updates.longTermGoal.trim() : obj.longTermGoal,
     };
@@ -30,6 +31,7 @@ export const applyAddObjective = (
     essentialArea?: EssentialArea;
     areaLevel?: AreaLevel;
     stage?: string;
+    shortTermGoal?: string;
     mediumTermGoal?: string;
     longTermGoal?: string;
   }
@@ -44,6 +46,7 @@ export const applyAddObjective = (
     essentialArea: newObj.essentialArea,
     areaLevel: newObj.areaLevel,
     stage: newObj.stage?.trim(),
+    shortTermGoal: newObj.shortTermGoal?.trim(),
     mediumTermGoal: newObj.mediumTermGoal?.trim(),
     longTermGoal: newObj.longTermGoal?.trim(),
     activities: [],
