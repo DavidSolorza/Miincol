@@ -26,8 +26,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Ignore non-GET, chrome-extension, or dev websockets
+  // Bypass inmediato en desarrollo local para evitar intercepción de módulos dinámicos de Vite
   if (
+    self.location.hostname === 'localhost' ||
+    self.location.hostname === '127.0.0.1' ||
     event.request.method !== 'GET' ||
     url.protocol === 'ws:' ||
     url.protocol === 'wss:' ||
@@ -36,8 +38,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 1. Cache-First para assets inmutables (JS, CSS, imágenes, fuentes)
-  // Permite arranque instantáneo (<15ms) en redes débiles o sin conexión
+  // 1. Cache-First para assets inmutables en producción
   if (
     url.pathname.startsWith('/assets/') ||
     url.pathname.startsWith('/img/') ||
@@ -60,7 +61,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 2. Network-with-Timeout (1200ms) para navegación y documentos HTML
-  // Si la red es lenta o se cuelga, responde de inmediato con la versión en caché
   if (event.request.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') {
     event.respondWith(
       new Promise((resolve) => {

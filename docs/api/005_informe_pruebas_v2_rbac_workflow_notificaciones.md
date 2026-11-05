@@ -86,3 +86,4 @@ Se validó la implementación integral de los lineamientos del backend exigidos 
 - **Regla de 150 líneas por archivo:** 100% de cumplimiento en todos los archivos `.ts` creados y actualizados.
 - **Compilación TypeScript:** Exitosa sin advertencias ni errores en `backend/` y `frontend/`.
 - **Colección Postman:** Actualizada y documentada en [`misincol_api_collection.json`](file:///c:/Users/Usuario/Desktop/personales/planMinisterial/backend/postman/misincol_api_collection.json).
+
