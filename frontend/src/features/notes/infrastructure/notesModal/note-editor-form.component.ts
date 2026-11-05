@@ -24,7 +24,7 @@ export interface NoteDraftPayload {
             type="checkbox"
             [checked]="isPinned()"
             (change)="onPinChange($event)"
-            class="w-3.5 h-3.5 rounded text-[#8B251E] focus:ring-[#8B251E]"
+            class="w-3.5 h-3.5 rounded text-stone-900 focus:ring-stone-900"
           />
           <span class="text-[11px] font-semibold">Fijar al inicio</span>
         </label>

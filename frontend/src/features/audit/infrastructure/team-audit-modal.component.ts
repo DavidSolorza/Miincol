@@ -19,8 +19,8 @@ import { AuditLogItemComponent } from './auditModal/audit-log-item.component';
         >
           <div class="p-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
             <div class="flex items-center gap-2 min-w-0">
-              <div class="p-2 rounded-xl text-white shadow-2xs bg-gradient-to-br from-[#8B251E] to-[#E67324]">
-                <app-icon name="history" className="w-4 h-4" />
+              <div class="p-2 rounded-xl text-stone-900 bg-stone-100 border border-stone-200/80 shadow-2xs">
+                <app-icon name="history" className="w-4 h-4 text-[#E67324]" />
               </div>
               <div class="min-w-0">
                 <h3 class="text-sm font-extrabold text-stone-900 truncate">Bitácora de Telemetría y Monitoreo</h3>

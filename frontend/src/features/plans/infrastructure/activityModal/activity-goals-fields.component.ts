@@ -29,7 +29,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
       </div>
 
       <div class="p-3 sm:p-3.5 rounded-xl bg-white/80 border border-stone-200/80 space-y-2.5">
-        <span class="text-[10px] font-black uppercase tracking-wider text-[#8B251E] block font-['Outfit']">
+        <span class="text-[10px] font-black uppercase tracking-wider text-stone-800 block font-['Outfit']">
           Metas Proyectadas (Plazos de Ejecución)
         </span>
 

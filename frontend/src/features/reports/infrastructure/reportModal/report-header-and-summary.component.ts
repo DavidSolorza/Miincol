@@ -25,7 +25,7 @@ import type { ReportData } from '../../application/report-data.helper';
         </button>
       </div>
 
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-[#8B251E] pb-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-stone-800 pb-6">
         <div>
           <app-misincol-logo size="lg" />
           <p class="text-xs text-stone-500 mt-2 font-medium">
@@ -33,7 +33,7 @@ import type { ReportData } from '../../application/report-data.helper';
           </p>
         </div>
         <div class="text-left sm:text-right">
-          <span class="text-[10px] font-black uppercase tracking-wider text-[#8B251E] bg-[#8B251E]/10 px-3 py-1 rounded-full">
+          <span class="text-[10px] font-black uppercase tracking-wider text-stone-900 bg-stone-100 border border-stone-200 px-3 py-1 rounded-full">
             Informe Oficial PDM
           </span>
           <h2 class="text-lg font-black text-stone-900 mt-2 font-['Outfit']">{{ report().phaseName }}</h2>
@@ -56,14 +56,14 @@ import type { ReportData } from '../../application/report-data.helper';
         </div>
         <div>
           <span class="text-[10px] uppercase font-bold text-stone-400 block">Presupuesto Consolidado</span>
-          <span class="font-black text-[#8B251E] text-sm">{{ formatCurrency(report().totalBudget) }}</span>
+          <span class="font-black text-stone-900 text-sm">{{ formatCurrency(report().totalBudget) }}</span>
         </div>
       </div>
 
       <div class="grid grid-cols-3 gap-3">
         <div class="p-3.5 rounded-xl border border-stone-200 bg-white text-center">
           <span class="text-[11px] font-bold text-stone-500 uppercase block">Progreso de Fase</span>
-          <span class="text-2xl font-black text-[#8B251E] font-['Outfit']">{{ report().progressPercentage }}%</span>
+          <span class="text-2xl font-black text-stone-900 font-['Outfit']">{{ report().progressPercentage }}%</span>
           <span class="text-[10px] text-stone-400 block mt-0.5">Avance general</span>
         </div>
         <div class="p-3.5 rounded-xl border border-stone-200 bg-white text-center">

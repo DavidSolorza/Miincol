@@ -18,7 +18,7 @@ import { COLOMBIA_DEPARTMENTS, normalizeText } from '../map/colombiaLocations';
             [value]="formData.name"
             (input)="updateChange.emit({ name: $any($event.target).value })"
             placeholder="ej. Misión Pastos - Cumbal"
-            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-[#8B251E] text-stone-800 font-medium"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-stone-400 focus:ring-1 focus:ring-stone-300 text-stone-800 font-medium"
             required
           />
         </div>
@@ -29,7 +29,7 @@ import { COLOMBIA_DEPARTMENTS, normalizeText } from '../map/colombiaLocations';
             [value]="formData.ethnicity"
             (input)="updateChange.emit({ ethnicity: $any($event.target).value })"
             placeholder="ej. Pastos, Wayuu, Nasa, Emberá"
-            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-[#8B251E] text-stone-800 font-medium"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-stone-400 focus:ring-1 focus:ring-stone-300 text-stone-800 font-medium"
             required
           />
         </div>
@@ -43,7 +43,7 @@ import { COLOMBIA_DEPARTMENTS, normalizeText } from '../map/colombiaLocations';
             [value]="formData.region"
             (input)="updateChange.emit({ region: $any($event.target).value })"
             placeholder="ej. Cumbal, Uribia, Pueblo Rico, Toribío"
-            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-[#8B251E] text-stone-800 font-medium"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-stone-400 focus:ring-1 focus:ring-stone-300 text-stone-800 font-medium"
             required
           />
           <span class="text-[10px] text-stone-400 block mt-0.5">
@@ -56,7 +56,7 @@ import { COLOMBIA_DEPARTMENTS, normalizeText } from '../map/colombiaLocations';
           <select
             [value]="currentDeptName"
             (change)="updateChange.emit({ department: $any($event.target).value })"
-            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-[#8B251E] text-stone-800 font-bold"
+            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-stone-400 focus:ring-1 focus:ring-stone-300 text-stone-800 font-bold"
             required
           >
             <option value="">Seleccione Departamento</option>

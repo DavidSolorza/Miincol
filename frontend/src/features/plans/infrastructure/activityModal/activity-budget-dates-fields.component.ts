@@ -8,7 +8,7 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
   template: `
     <div class="bg-[#FAF7F2]/70 p-4 sm:p-5 rounded-2xl border border-stone-200/70 space-y-3.5">
       <div class="flex items-center gap-2 pb-1 border-b border-stone-200/60">
-        <span class="w-6 h-6 rounded-lg bg-[#E67324]/15 text-[#8B251E] flex items-center justify-center font-black text-xs font-['Outfit']">
+        <span class="w-6 h-6 rounded-lg bg-stone-100 border border-stone-200/80 text-stone-900 flex items-center justify-center font-black text-xs font-['Outfit']">
           2
         </span>
         <h4 class="font-['Outfit'] font-extrabold text-sm text-stone-900 tracking-tight">
@@ -28,7 +28,7 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
                 (input)="onUnitBudgetInput($event)"
                 step="10000"
                 min="0"
-                class="w-full pl-7 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-white focus:bg-white focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden font-black text-sm text-[#8B251E] transition"
+                class="w-full pl-7 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50/50 hover:bg-white focus:bg-white focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 focus:outline-hidden font-black text-sm text-stone-900 transition"
                 required
               />
             </div>
@@ -38,7 +38,7 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
             <span class="text-[10px] uppercase font-black tracking-wider text-stone-500">
               Total Estimado (Autocalculado)
             </span>
-            <span class="text-base font-black text-[#8B251E] font-['Outfit'] mt-0.5">
+            <span class="text-base font-black text-stone-900 font-['Outfit'] mt-0.5">
               {{ formatCurrency(calculatedTotal()) }}
             </span>
             <span class="text-[9.5px] text-stone-400 font-medium">

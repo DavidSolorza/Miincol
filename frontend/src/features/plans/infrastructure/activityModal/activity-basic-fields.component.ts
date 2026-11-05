@@ -10,7 +10,7 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
   template: `
     <div class="bg-[#FAF7F2]/70 p-4 sm:p-5 rounded-2xl border border-stone-200/70 space-y-3.5">
       <div class="flex items-center gap-2 pb-1 border-b border-stone-200/60">
-        <span class="w-6 h-6 rounded-lg bg-[#8B251E]/10 text-[#8B251E] flex items-center justify-center font-black text-xs font-['Outfit']">1</span>
+        <span class="w-6 h-6 rounded-lg bg-stone-100 border border-stone-200/80 text-stone-900 flex items-center justify-center font-black text-xs font-['Outfit']">1</span>
         <h4 class="font-['Outfit'] font-extrabold text-sm text-stone-900 tracking-tight">Información Básica, Pilar &amp; Etapa</h4>
       </div>
 

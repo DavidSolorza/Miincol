@@ -39,8 +39,8 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           [class]="
             'px-3 py-1.5 rounded-xl text-[11px] transition whitespace-nowrap cursor-pointer font-[\\'Outfit\\'] border ' +
             (filterState() === 'En Proceso'
-              ? 'bg-orange-100 text-[#8B251E] border-orange-300 font-bold shadow-xs'
-              : 'bg-orange-50/50 text-[#8B251E] border-orange-200/50 hover:bg-orange-100/70')
+              ? 'bg-orange-100 text-orange-950 border-orange-300 font-bold shadow-xs'
+              : 'bg-orange-50/50 text-orange-800 border-orange-200/50 hover:bg-orange-100/70')
           "
         >
           🔄 En Proceso ({{ inProgressCount() }})
@@ -66,7 +66,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           [value]="searchTerm()"
           (input)="onSearchInput($event)"
           placeholder="Buscar iniciativa..."
-          class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 bg-stone-50/60 placeholder:text-stone-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20 focus:border-[#E67324] transition"
+          class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 bg-stone-50/60 placeholder:text-stone-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-stone-200/50 focus:border-stone-400 transition"
         />
       </div>
     </div>

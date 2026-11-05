@@ -23,7 +23,7 @@ import { NoteItemCardComponent } from './notesModal/note-item-card.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (isOpen()) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-2xs animate-fadeIn selection:bg-[#E67324]/20 selection:text-[#8B251E]">
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-2xs animate-fadeIn selection:bg-stone-900/10 selection:text-stone-900">
         <div
           class="w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200/90 flex flex-col max-h-[90vh] overflow-hidden animate-slideUp"
           (click)="$event.stopPropagation()"

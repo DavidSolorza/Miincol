@@ -8,7 +8,7 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div>
-      <h3 class="text-sm font-bold text-stone-900 mb-2 font-['Outfit'] uppercase tracking-wider text-[#8B251E]">
+      <h3 class="text-sm font-bold text-stone-900 mb-2 font-['Outfit'] uppercase tracking-wider">
         2. Detalle Operativo de Actividades y Contingencias Territoriales
       </h3>
       <div class="space-y-3">
@@ -22,7 +22,7 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
                   (act.state === 'Completado'
                     ? 'bg-emerald-100 text-emerald-800'
                     : act.state === 'En Proceso'
-                    ? 'bg-orange-100 text-[#8B251E]'
+                    ? 'bg-orange-100 text-orange-900 border border-orange-200'
                     : 'bg-amber-100 text-amber-800')
                 "
               >

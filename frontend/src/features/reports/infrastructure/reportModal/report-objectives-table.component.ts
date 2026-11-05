@@ -8,7 +8,7 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div>
-      <h3 class="text-sm font-bold text-stone-900 mb-2 font-['Outfit'] uppercase tracking-wider text-[#8B251E]">
+      <h3 class="text-sm font-bold text-stone-900 mb-2 font-['Outfit'] uppercase tracking-wider">
         1. Balance por Objetivos Estratégicos
       </h3>
       <div class="overflow-x-auto rounded-xl border border-stone-200">
@@ -25,7 +25,7 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
           <tbody class="divide-y divide-stone-100">
             @for (obj of objectivesSummary(); track obj.number) {
               <tr class="hover:bg-stone-50/50">
-                <td class="p-2.5 font-black text-[#8B251E]">#{{ obj.number }}</td>
+                <td class="p-2.5 font-black text-stone-900">#{{ obj.number }}</td>
                 <td class="p-2.5">
                   <span class="font-bold text-stone-800 block">{{ obj.title }}</span>
                   <span class="text-[11px] text-stone-500 line-clamp-1">{{ obj.description }}</span>
@@ -36,7 +36,7 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
                   <span class="text-[#D05E12] font-bold">{{ obj.inProgressCount }}</span> /
                   <span class="text-amber-700 font-bold">{{ obj.pendingCount }}</span>
                 </td>
-                <td class="p-2.5 text-right font-black text-[#8B251E]">
+                <td class="p-2.5 text-right font-black text-stone-900">
                   {{ formatCurrency(obj.totalBudget) }}
                 </td>
               </tr>
@@ -45,7 +45,7 @@ import type { ReportObjectiveSummary } from '../../application/report-data.helpe
               <td colspan="4" class="p-2.5 text-right uppercase tracking-wider text-stone-700">
                 Total Presupuestal Fase:
               </td>
-              <td class="p-2.5 text-right text-sm font-black text-[#8B251E]">
+              <td class="p-2.5 text-right text-sm font-black text-stone-900">
                 {{ formatCurrency(totalBudget()) }}
               </td>
             </tr>
