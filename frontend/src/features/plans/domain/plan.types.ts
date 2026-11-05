@@ -9,34 +9,39 @@ export type PhaseType = 'investigacion' | 'encarnacion' | 'evangelizacion' | 'en
 // Estados posibles de ejecución de una actividad
 export type ActivityState = 'Pendiente' | 'En Proceso' | 'Completado';
 
-// Áreas Esenciales del ministerio y sus niveles
+// Áreas Esenciales del ministerio
 export type EssentialArea = 'Investigación' | 'Encarnación' | 'Evangelización' | 'Entrenamiento' | 'Autocuidado' | 'General';
-export type AreaLevel = 'Nivel 1' | 'Nivel 2' | 'Nivel 3' | 'Nivel 4' | 'Nivel 5';
+export type AreaLevel = string; // Deprecado: Nivel eliminado de UI, conservado como string opcional
 
-// Catálogo de etapas ministeriales oficiales por pilar
+// Catálogo de etapas ministeriales oficiales (según relacion pilar-etapa.xlsx)
 export type ActivityStage =
+  | 'Contacto'
+  | 'Comunicar'
+  | 'Respuesta'
+  | 'Reunirse'
+  | 'Consolidar'
+  | 'Liderazgo'
+  | 'Desarrollo eclesial'
+  | 'Auto-cuidado'
   | 'Contacto primeros oyentes'
   | 'Comunicar el evangelio'
   | 'Respuesta al evangelio'
   | 'Guiamos a reunirse'
   | 'Consolidamos'
-  | 'Liderazgo'
   | 'Desarrollo Eclesial'
-  | 'Involucrar liderazgo en el proceso'
-  | 'Pluralidad de liderazgo'
+  | 'Auto Cuidado del Misionero'
   | 'ADN Multiplicador'
   | 'Salida progresiva'
-  | 'Auto Cuidado del Misionero'
   | 'General';
 
-// Mapeo inmutable de etapas permitidas por Área Esencial (Pilar)
+// Mapeo oficial de etapas según matriz Excel relacion pilar-etapa.xlsx
 export const STAGES_BY_AREA: Record<EssentialArea, readonly ActivityStage[]> = {
-  Investigación: ['Contacto primeros oyentes'],
-  Encarnación: ['Comunicar el evangelio'],
-  Evangelización: ['Respuesta al evangelio', 'Guiamos a reunirse', 'Consolidamos'],
-  Entrenamiento: ['Liderazgo', 'Desarrollo Eclesial', 'Involucrar liderazgo en el proceso', 'Pluralidad de liderazgo'],
-  Autocuidado: ['Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
-  General: ['ADN Multiplicador', 'Salida progresiva', 'Auto Cuidado del Misionero', 'General'],
+  Investigación: ['Contacto'],
+  Encarnación: ['Contacto', 'Comunicar', 'Respuesta'],
+  Evangelización: ['Respuesta', 'Reunirse', 'Consolidar'],
+  Entrenamiento: ['Consolidar', 'Liderazgo', 'Desarrollo eclesial'],
+  Autocuidado: ['Auto-cuidado', 'Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
+  General: ['Auto-cuidado', 'Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
 };
 
 // Entidad de dominio que representa una actividad ministerial
@@ -48,7 +53,7 @@ export interface Activity {
   description: string;
   currentSituation: string;
   essentialArea?: EssentialArea; // Área esencial vinculada
-  areaLevel?: AreaLevel; // Nivel correspondiente
+  areaLevel?: AreaLevel; // Deprecado opcional
   shortTermGoal?: string;
   mediumTermGoal: string;
   longTermGoal: string;
@@ -70,8 +75,8 @@ export interface Objective {
   title: string;
   description: string;
   essentialArea?: EssentialArea; // Área esencial asociada
-  areaLevel?: AreaLevel; // Nivel del objetivo
-  stage?: string; // Etapa asociada según el pilar
+  stage?: string; // Etapa asociada según el pilar (según relacion pilar-etapa.xlsx)
+  areaLevel?: AreaLevel; // Deprecado opcional
   mediumTermGoal?: string; // Meta a mediano plazo proyectada
   longTermGoal?: string; // Meta a largo plazo proyectada
   activities: Activity[];

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
-import { type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain/plan.types';
+import { type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
 
 @Component({
   selector: 'app-objective-form-fields',
@@ -16,10 +16,10 @@ import { type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain
         </div>
       }
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div class="space-y-1">
           <label class="font-bold text-stone-700 block text-xs">Pilar / Área</label>
-          <select [value]="essentialArea() || 'Investigación'" (change)="onAreaChange($event)" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
+          <select [value]="essentialArea() || 'Investigación'" (change)="onAreaChange($event)" class="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
             <option value="Investigación">Investigación</option>
             <option value="Encarnación">Encarnación</option>
             <option value="Evangelización">Evangelización</option>
@@ -31,21 +31,10 @@ import { type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain
 
         <div class="space-y-1">
           <label class="font-bold text-stone-700 block text-xs">Etapa del Pilar</label>
-          <select [value]="stage() || availableStages()[0]" (change)="onStageChange($event)" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
+          <select [value]="stage() || availableStages()[0]" (change)="onStageChange($event)" class="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
             @for (st of availableStages(); track st) {
               <option [value]="st">{{ st }}</option>
             }
-          </select>
-        </div>
-
-        <div class="space-y-1">
-          <label class="font-bold text-stone-700 block text-xs">Nivel</label>
-          <select [value]="areaLevel() || 'Nivel 1'" (change)="onLevelChange($event)" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
-            <option value="Nivel 1">Nivel 1</option>
-            <option value="Nivel 2">Nivel 2</option>
-            <option value="Nivel 3">Nivel 3</option>
-            <option value="Nivel 4">Nivel 4</option>
-            <option value="Nivel 5">Nivel 5</option>
           </select>
         </div>
       </div>
@@ -114,7 +103,6 @@ export class ObjectiveFormFieldsComponent {
   readonly title = input.required<string>();
   readonly description = input.required<string>();
   readonly essentialArea = input<EssentialArea | undefined>();
-  readonly areaLevel = input<AreaLevel | undefined>();
   readonly stage = input<string | undefined>('');
   readonly mediumTermGoal = input<string | undefined>('');
   readonly longTermGoal = input<string | undefined>('');
@@ -122,7 +110,6 @@ export class ObjectiveFormFieldsComponent {
   readonly titleChanged = output<string>();
   readonly descriptionChanged = output<string>();
   readonly essentialAreaChanged = output<EssentialArea>();
-  readonly areaLevelChanged = output<AreaLevel>();
   readonly stageChanged = output<string>();
   readonly mediumTermGoalChanged = output<string>();
   readonly longTermGoalChanged = output<string>();
@@ -137,7 +124,6 @@ export class ObjectiveFormFieldsComponent {
     this.essentialAreaChanged.emit(a);
     this.stageChanged.emit((STAGES_BY_AREA[a] || STAGES_BY_AREA.Investigación)[0]);
   }
-  onLevelChange(e: Event): void { this.areaLevelChanged.emit((e.target as HTMLSelectElement).value as AreaLevel); }
   onMediumGoalInput(e: Event): void { this.mediumTermGoalChanged.emit((e.target as HTMLInputElement).value); }
   onLongGoalInput(e: Event): void { this.longTermGoalChanged.emit((e.target as HTMLInputElement).value); }
 }

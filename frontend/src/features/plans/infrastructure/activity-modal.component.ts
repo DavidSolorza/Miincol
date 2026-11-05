@@ -34,7 +34,6 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           [timesPerYear]="form().timesPerYear"
           [stage]="form().stage"
           [essentialArea]="form().essentialArea"
-          [areaLevel]="form().areaLevel"
           (objectiveNumberChanged)="patchField('objectiveNumber', $event)"
           (stateChanged)="patchField('state', $event)"
           (stageChanged)="patchField('stage', $event)"
@@ -43,7 +42,6 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           (frequencyChanged)="patchField('frequency', $event)"
           (timesPerYearChanged)="patchField('timesPerYear', $event)"
           (essentialAreaChanged)="patchField('essentialArea', $event)"
-          (areaLevelChanged)="patchField('areaLevel', $event)"
         />
 
         <app-activity-budget-dates-fields

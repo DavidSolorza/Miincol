@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
-import { type ActivityState, type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain/plan.types';
+import { type ActivityState, type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
 import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.component';
 
 @Component({
@@ -14,7 +14,7 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
         <h4 class="font-['Outfit'] font-extrabold text-sm text-stone-900 tracking-tight">Información Básica, Pilar &amp; Etapa</h4>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="font-bold text-stone-700 block mb-1 text-[11px]">Pilar / Área</label>
           <select
@@ -41,21 +41,6 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
             @for (st of availableStages(); track st) {
               <option [value]="st">{{ st }}</option>
             }
-          </select>
-        </div>
-
-        <div>
-          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Nivel</label>
-          <select
-            [value]="areaLevel() || 'Nivel 1'"
-            (change)="onLevelChange($event)"
-            class="w-full p-2.5 rounded-xl border border-stone-200 bg-white text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
-          >
-            <option value="Nivel 1">Nivel 1</option>
-            <option value="Nivel 2">Nivel 2</option>
-            <option value="Nivel 3">Nivel 3</option>
-            <option value="Nivel 4">Nivel 4</option>
-            <option value="Nivel 5">Nivel 5</option>
           </select>
         </div>
       </div>
@@ -121,7 +106,6 @@ export class ActivityBasicFieldsComponent {
   readonly frequency = input.required<string>();
   readonly timesPerYear = input.required<number>();
   readonly essentialArea = input<EssentialArea | undefined>();
-  readonly areaLevel = input<AreaLevel | undefined>();
 
   readonly objectiveNumberChanged = output<1 | 2 | 3 | 4>();
   readonly stateChanged = output<ActivityState>();
@@ -131,7 +115,6 @@ export class ActivityBasicFieldsComponent {
   readonly frequencyChanged = output<string>();
   readonly timesPerYearChanged = output<number>();
   readonly essentialAreaChanged = output<EssentialArea>();
-  readonly areaLevelChanged = output<AreaLevel>();
 
   readonly availableStages = computed(() => STAGES_BY_AREA[this.essentialArea() || 'Investigación'] || STAGES_BY_AREA.Investigación);
 
@@ -144,5 +127,4 @@ export class ActivityBasicFieldsComponent {
     this.essentialAreaChanged.emit(a);
     this.stageChanged.emit((STAGES_BY_AREA[a] || STAGES_BY_AREA.Investigación)[0]);
   }
-  onLevelChange(event: Event): void { this.areaLevelChanged.emit((event.target as HTMLSelectElement).value as AreaLevel); }
 }

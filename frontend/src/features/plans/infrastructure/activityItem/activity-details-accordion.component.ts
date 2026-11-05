@@ -55,7 +55,7 @@ import type { Activity } from '../../domain/plan.types';
         <div>
           @if (activity().essentialArea) {
             <span class="text-[10px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-lg border border-amber-200/60 font-['Outfit']">
-              {{ activity().essentialArea }} {{ activity().areaLevel ? '• ' + activity().areaLevel : '' }}
+              {{ activity().essentialArea }} {{ activity().stage ? '• ' + activity().stage : '' }}
             </span>
           }
         </div>

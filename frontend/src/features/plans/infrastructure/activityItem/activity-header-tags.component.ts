@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
-import type { ActivityState, EssentialArea, AreaLevel } from '../../domain/plan.types';
+import type { ActivityState, EssentialArea } from '../../domain/plan.types';
 
 const STATE_STYLES: Record<ActivityState, string> = {
   Pendiente: 'bg-amber-50/90 text-amber-900 border-amber-200/80 shadow-2xs',
@@ -30,7 +30,7 @@ const STATE_STYLES: Record<ActivityState, string> = {
 
       @if (essentialArea()) {
         <span class="inline-flex items-center text-[10.5px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-lg border border-amber-200/60 font-['Outfit']">
-          {{ essentialArea() }} {{ areaLevel() ? '• ' + areaLevel() : '' }}
+          {{ essentialArea() }}
         </span>
       }
 
@@ -48,7 +48,6 @@ export class ActivityHeaderTagsComponent {
   readonly stage = input<string | undefined>(undefined);
   readonly frequency = input.required<string>();
   readonly essentialArea = input<EssentialArea | undefined>();
-  readonly areaLevel = input<AreaLevel | undefined>();
   readonly stateChanged = output<ActivityState>();
 
   getStyle(state: ActivityState): string {

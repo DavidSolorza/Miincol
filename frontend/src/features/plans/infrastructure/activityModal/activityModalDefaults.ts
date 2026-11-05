@@ -1,4 +1,4 @@
-import { type Activity, type ActivityState, type EssentialArea, type AreaLevel, STAGES_BY_AREA } from '../../domain/plan.types';
+import { type Activity, type ActivityState, type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
 
 // Estado del formulario y funciones de inicialización y validación para el modal de actividad
 export interface ActivityFormState {
@@ -17,7 +17,7 @@ export interface ActivityFormState {
   mediumTermGoal: string;
   longTermGoal: string;
   essentialArea?: EssentialArea;
-  areaLevel?: AreaLevel;
+  areaLevel?: string;
 }
 
 // Genera los valores iniciales del formulario según si se está creando o editando una actividad
@@ -49,7 +49,7 @@ export const getInitialFormValues = (
       mediumTermGoal: activityToEdit.mediumTermGoal || '',
       longTermGoal: activityToEdit.longTermGoal || '',
       essentialArea: area,
-      areaLevel: activityToEdit.areaLevel || 'Nivel 1',
+      areaLevel: activityToEdit.areaLevel,
     };
   }
 
@@ -69,7 +69,6 @@ export const getInitialFormValues = (
     mediumTermGoal: '',
     longTermGoal: '',
     essentialArea: 'Investigación',
-    areaLevel: 'Nivel 1',
   };
 };
 

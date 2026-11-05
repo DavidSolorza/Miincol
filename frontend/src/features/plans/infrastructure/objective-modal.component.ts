@@ -25,14 +25,12 @@ import type { EssentialArea, AreaLevel } from '../domain/plan.types';
           [title]="title()"
           [description]="description()"
           [essentialArea]="essentialArea()"
-          [areaLevel]="areaLevel()"
           [stage]="stage()"
           [mediumTermGoal]="mediumTermGoal()"
           [longTermGoal]="longTermGoal()"
           (titleChanged)="title.set($event)"
           (descriptionChanged)="description.set($event)"
           (essentialAreaChanged)="essentialArea.set($event)"
-          (areaLevelChanged)="areaLevel.set($event)"
           (stageChanged)="stage.set($event)"
           (mediumTermGoalChanged)="mediumTermGoal.set($event)"
           (longTermGoalChanged)="longTermGoal.set($event)"
@@ -76,7 +74,6 @@ export class ObjectiveModalComponent {
   readonly title = signal('');
   readonly description = signal('');
   readonly essentialArea = signal<EssentialArea>('Investigación');
-  readonly areaLevel = signal<AreaLevel>('Nivel 1');
   readonly stage = signal('');
   readonly mediumTermGoal = signal('');
   readonly longTermGoal = signal('');
@@ -89,7 +86,6 @@ export class ObjectiveModalComponent {
         this.title.set(this.initialTitle());
         this.description.set(this.initialDescription());
         this.essentialArea.set(this.initialEssentialArea() || 'Investigación');
-        this.areaLevel.set(this.initialAreaLevel() || 'Nivel 1');
         this.stage.set(this.initialStage() || '');
         this.mediumTermGoal.set(this.initialMediumTermGoal() || '');
         this.longTermGoal.set(this.initialLongTermGoal() || '');
@@ -114,7 +110,6 @@ export class ObjectiveModalComponent {
       description: this.description().trim(),
       number: this.objectiveNumber(),
       essentialArea: this.essentialArea(),
-      areaLevel: this.areaLevel(),
       stage: this.stage().trim() || undefined,
       mediumTermGoal: this.mediumTermGoal().trim(),
       longTermGoal: this.longTermGoal().trim(),

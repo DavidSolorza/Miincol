@@ -17,7 +17,7 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
           </span>
           @if (objective().essentialArea) {
             <span class="text-[10px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-lg border border-amber-200/70 font-['Outfit']">
-              {{ objective().essentialArea }} {{ objective().areaLevel ? '• ' + objective().areaLevel : '' }}
+              {{ objective().essentialArea }}
             </span>
           }
           @if (objective().stage) {
