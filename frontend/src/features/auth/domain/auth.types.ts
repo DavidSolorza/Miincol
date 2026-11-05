@@ -3,7 +3,7 @@
  */
 
 // Rol operativo dentro de la plataforma (administrador nacional o equipo territorial)
-export type UserRole = 'admin' | 'team';
+export type UserRole = 'admin' | 'team' | 'ROLE_NACIONAL' | 'ROLE_LIDER';
 
 // Información estructural de un equipo misionero territorial
 export interface MissionaryTeam {

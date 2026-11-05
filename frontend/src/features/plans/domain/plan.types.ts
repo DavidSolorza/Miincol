@@ -86,6 +86,8 @@ export interface PhasePlan {
   teamMembers: string[];
   teamLeader: string;
   objectives: Objective[];
+  isLocked?: boolean; // Bloqueo de seguridad al marcar como Terminado
+  status?: 'DRAFT' | 'FINISHED'; // Estado de planeación del equipo
 }
 
 // Indicadores y métricas consolidadas de avance y presupuesto de un plan
