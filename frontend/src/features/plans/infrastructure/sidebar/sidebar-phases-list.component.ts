@@ -37,23 +37,22 @@ const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
         <button
           type="button"
           (click)="handleSelectPhase(p.id)"
-          [style.background]="isPhaseActive ? 'linear-gradient(90deg, #FDF0E8 0%, #F18A38 60%, #B83A05 100%)' : null"
           [class]="
-            'w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl transition-all duration-200 ease-out cursor-pointer group select-none ' +
+            'w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all duration-200 ease-out cursor-pointer group select-none ' +
             (isPhaseActive
-              ? 'text-stone-950 font-bold shadow-2xs overflow-hidden'
-              : 'bg-white/90 border border-stone-200/70 hover:border-[#E67324]/50 hover:bg-orange-50/30 text-stone-700 font-semibold') +
-            (isCollapsed() ? ' justify-center p-1.5' : '')
+              ? 'bg-white border-l-3.5 border-l-[#D95B14] border-stone-200/90 shadow-2xs text-stone-950 font-bold'
+              : 'bg-white/60 hover:bg-white border border-transparent hover:border-stone-200/80 text-stone-600 hover:text-stone-900 font-medium') +
+            (isCollapsed() ? ' justify-center p-2' : '')
           "
           [title]="'Pilar: ' + p.label"
         >
           <div class="flex items-center gap-2 overflow-hidden">
             <app-icon
               [name]="p.icon"
-              [className]="'w-3.5 h-3.5 shrink-0 transition ' + (isPhaseActive ? 'text-stone-900' : 'text-[#8B251E] group-hover:text-[#E67324]')"
+              [className]="'w-3.5 h-3.5 shrink-0 transition ' + (isPhaseActive ? 'text-[#D95B14]' : 'text-stone-400 group-hover:text-stone-700')"
             />
             @if (!isCollapsed()) {
-              <span [class]="'truncate font-[Outfit] text-xs ' + (isPhaseActive ? 'font-bold text-stone-950' : 'font-semibold text-stone-800')">
+              <span [class]="'truncate font-[Outfit] text-xs ' + (isPhaseActive ? 'font-bold text-stone-950' : 'font-medium text-stone-700')">
                 {{ p.label }}
               </span>
             }
@@ -64,8 +63,8 @@ const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
               [class]="
                 'text-[10px] font-bold px-1.5 py-0.5 rounded-md transition shrink-0 ' +
                 (isPhaseActive
-                  ? 'bg-black/15 text-white'
-                  : 'bg-orange-50/70 border border-orange-100/80 text-[#8B251E] group-hover:bg-orange-100/60')
+                  ? 'bg-[#D95B14] text-white shadow-2xs'
+                  : 'bg-stone-100/90 border border-stone-200/60 text-stone-500 group-hover:text-stone-700')
               "
             >
               {{ counts.total }}/{{ counts.completed }}

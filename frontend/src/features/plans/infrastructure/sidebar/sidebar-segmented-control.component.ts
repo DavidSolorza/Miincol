@@ -12,10 +12,10 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         <button
           type="button"
           (click)="viewChanged.emit('general')"
-          title="Informacion General"
-          class="w-8 h-5 rounded-full bg-black/15 hover:bg-black/25 p-0.5 flex items-center transition cursor-pointer"
+          title="Información General"
+          class="w-9 h-9 rounded-xl bg-stone-900 hover:bg-stone-800 text-[#E67324] flex items-center justify-center transition cursor-pointer shadow-2xs"
         >
-          <span class="w-4 h-4 rounded-full bg-white shadow-xs"></span>
+          <app-icon name="file-text" className="w-4 h-4" />
         </button>
       </div>
     } @else {
@@ -23,13 +23,12 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         <button
           type="button"
           (click)="viewChanged.emit('general')"
-          class="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl shadow-2xs hover:shadow-xs transition-all duration-200 ease-out cursor-pointer select-none overflow-hidden"
-          style="background: linear-gradient(90deg, #FDF0E8 0%, #F18A38 60%, #B83A05 100%)"
-          title="Informacion General de la Mision"
+          class="w-full flex items-center justify-center gap-2 py-2 px-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-100 shadow-2xs hover:shadow-xs transition-all duration-200 ease-out cursor-pointer select-none border border-stone-800/80"
+          title="Información General de la Misión"
         >
-          <app-icon name="file-text" className="w-3.5 h-3.5 shrink-0 text-stone-900" />
-          <span class="font-bold text-[10px] uppercase tracking-wider text-stone-950 font-['Outfit'] truncate">
-            INFORMACION GENERAL
+          <app-icon name="file-text" className="w-3.5 h-3.5 shrink-0 text-[#E67324]" />
+          <span class="font-bold text-[10.5px] uppercase tracking-wider text-stone-100 font-['Outfit'] truncate">
+            Información General
           </span>
         </button>
       </div>
