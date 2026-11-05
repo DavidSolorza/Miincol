@@ -28,6 +28,7 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
       <app-general-team-card
         [teamData]="infoService.currentInfo().teamData"
         (removeMember)="infoService.removeMember($event)"
+        (addMember)="infoService.addMember($event)"
       />
 
       <app-general-field-metrics-card

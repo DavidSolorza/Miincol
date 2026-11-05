@@ -19,19 +19,19 @@ import { ObjectiveGoalsFieldsComponent } from './objective-goals-fields.componen
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div class="space-y-1">
-          <label class="font-bold text-stone-700 block text-xs">Pilar / Área</label>
-          <select [value]="essentialArea() || 'Investigación'" (change)="onAreaChange($event)" class="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
-            <option value="Investigación">Investigación</option>
-            <option value="Encarnación">Encarnación</option>
-            <option value="Evangelización">Evangelización</option>
-            <option value="Entrenamiento">Entrenamiento</option>
-            <option value="Autocuidado">Autocuidado</option>
-          </select>
+          <label class="font-bold text-stone-700 block text-xs">Pilar PDM</label>
+          <div class="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-100/70 text-xs font-bold text-stone-900 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-[#E67324]"></span>
+              {{ essentialArea() || 'Investigación' }}
+            </span>
+            <span class="text-[10px] font-semibold text-stone-500 bg-white px-2 py-0.5 rounded-md border border-stone-200/60">Fijo</span>
+          </div>
         </div>
 
         <div class="space-y-1">
           <label class="font-bold text-stone-700 block text-xs">Etapa del Pilar</label>
-          <select [value]="stage() || availableStages()[0]" (change)="onStageChange($event)" class="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50/40 text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20">
+          <select [value]="stage() || availableStages()[0]" (change)="onStageChange($event)" class="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-white text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-stone-200/50 focus:border-stone-400 cursor-pointer">
             @for (st of availableStages(); track st) {
               <option [value]="st">{{ st }}</option>
             }
@@ -107,9 +107,4 @@ export class ObjectiveFormFieldsComponent {
   onTitleInput(e: Event): void { this.titleChanged.emit((e.target as HTMLInputElement).value); }
   onDescriptionInput(e: Event): void { this.descriptionChanged.emit((e.target as HTMLTextAreaElement).value); }
   onStageChange(e: Event): void { this.stageChanged.emit((e.target as HTMLSelectElement).value); }
-  onAreaChange(e: Event): void {
-    const a = (e.target as HTMLSelectElement).value as EssentialArea;
-    this.essentialAreaChanged.emit(a);
-    this.stageChanged.emit((STAGES_BY_AREA[a] || STAGES_BY_AREA.Investigación)[0]);
-  }
 }

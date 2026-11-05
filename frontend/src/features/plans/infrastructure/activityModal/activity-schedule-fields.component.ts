@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, computed, signal } from '@angular/core';
+import { GeneralInfoService } from '../../../general-info/application/general-info.service';
 
 @Component({
   selector: 'app-activity-schedule-fields',
@@ -7,15 +8,38 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
   template: `
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <div>
-        <label class="font-bold text-stone-700 block mb-1 text-[11px]">Responsable</label>
-        <input
-          type="text"
-          [value]="responsible()"
-          (input)="onResponsibleInput($event)"
-          placeholder="Ej. Pr. David Morales"
-          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs"
-          required
-        />
+        <div class="flex items-center justify-between mb-1">
+          <label class="font-bold text-stone-700 text-[11px]">Responsable</label>
+          <span class="text-[9.5px] text-stone-400 font-medium">Asignar de Equipo</span>
+        </div>
+        <div class="relative">
+          <select
+            (change)="onMemberSelect($event)"
+            class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 focus:outline-hidden transition-all text-xs text-stone-800 font-medium cursor-pointer"
+          >
+            <option value="" [selected]="!responsible()">-- Seleccionar integrante --</option>
+            @if (leader(); as l) {
+              <option [value]="l" [selected]="responsible() === l">{{ l }} (Líder Pastoral)</option>
+            }
+            @for (m of members(); track m.id) {
+              <option [value]="m.name" [selected]="responsible() === m.name">{{ m.name }} ({{ m.role }})</option>
+            }
+            <option value="__custom__" [selected]="isCustom() || (!isKnownMember(responsible()) && !!responsible())">
+              Otro / Escribir manualmente...
+            </option>
+          </select>
+        </div>
+
+        @if (isCustom() || (!isKnownMember(responsible()) && !!responsible())) {
+          <input
+            type="text"
+            [value]="responsible()"
+            (input)="onResponsibleInput($event)"
+            placeholder="Nombre del responsable..."
+            class="w-full mt-1.5 p-2 rounded-xl border border-stone-200 bg-white text-xs focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 focus:outline-hidden"
+            required
+          />
+        }
       </div>
 
       <div>
@@ -23,7 +47,7 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
         <select
           [value]="frequency()"
           (change)="onFrequencyChange($event)"
-          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs font-medium text-stone-800"
+          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 focus:outline-hidden transition-all text-xs font-medium text-stone-800 cursor-pointer"
         >
           <option value="Semanal">Semanal</option>
           <option value="Quincenal">Quincenal</option>
@@ -44,34 +68,52 @@ import { Component, ChangeDetectionStrategy, input, output } from '@angular/core
           (input)="onTimesInput($event)"
           min="1"
           max="365"
-          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs font-bold text-stone-800"
+          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 focus:outline-hidden transition-all text-xs font-bold text-stone-800"
           required
         />
       </div>
     </div>
   `,
 })
-// Subcomponente de campos de responsable, frecuencia y repeticiones anuales de una actividad
 export class ActivityScheduleFieldsComponent {
-  readonly responsible = input.required<string>(); // Nombre del responsable asignado a la actividad
-  readonly frequency = input.required<string>(); // Periodicidad seleccionada (Semanal, Mensual, etc.)
-  readonly timesPerYear = input.required<number>(); // Cantidad de repeticiones al año
+  private readonly generalInfoService = inject(GeneralInfoService);
 
-  readonly responsibleChanged = output<string>(); // Emite cambios en el nombre del responsable
-  readonly frequencyChanged = output<string>(); // Emite cambios en la frecuencia seleccionada
-  readonly timesPerYearChanged = output<number>(); // Emite cambios en el número de repeticiones anuales
+  readonly responsible = input.required<string>();
+  readonly frequency = input.required<string>();
+  readonly timesPerYear = input.required<number>();
 
-  // Emite el texto ingresado en el campo de responsable
+  readonly responsibleChanged = output<string>();
+  readonly frequencyChanged = output<string>();
+  readonly timesPerYearChanged = output<number>();
+
+  readonly isCustom = signal(false);
+  readonly members = computed(() => this.generalInfoService.currentInfo().teamData.members);
+  readonly leader = computed(() => this.generalInfoService.currentInfo().teamData.teamLeader);
+
+  isKnownMember(name: string): boolean {
+    if (!name) return false;
+    if (name === this.leader()) return true;
+    return this.members().some((m) => m.name === name);
+  }
+
+  onMemberSelect(event: Event): void {
+    const val = (event.target as HTMLSelectElement).value;
+    if (val === '__custom__') {
+      this.isCustom.set(true);
+    } else {
+      this.isCustom.set(false);
+      this.responsibleChanged.emit(val);
+    }
+  }
+
   onResponsibleInput(event: Event): void {
     this.responsibleChanged.emit((event.target as HTMLInputElement).value);
   }
 
-  // Emite la nueva frecuencia seleccionada en el desplegable
   onFrequencyChange(event: Event): void {
     this.frequencyChanged.emit((event.target as HTMLSelectElement).value);
   }
 
-  // Emite la cantidad numérica de repeticiones por año
   onTimesInput(event: Event): void {
     this.timesPerYearChanged.emit(Number((event.target as HTMLInputElement).value));
   }

@@ -31,7 +31,6 @@ import type { EssentialArea, AreaLevel } from '../domain/plan.types';
           [longTermGoal]="longTermGoal()"
           (titleChanged)="title.set($event)"
           (descriptionChanged)="description.set($event)"
-          (essentialAreaChanged)="essentialArea.set($event)"
           (stageChanged)="stage.set($event)"
           (shortTermGoalChanged)="shortTermGoal.set($event)"
           (mediumTermGoalChanged)="mediumTermGoal.set($event)"

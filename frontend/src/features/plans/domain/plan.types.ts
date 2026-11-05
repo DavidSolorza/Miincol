@@ -43,6 +43,15 @@ export const STAGES_BY_AREA: Record<EssentialArea, readonly ActivityStage[]> = {
   Autocuidado: ['Auto-cuidado', 'Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
 };
 
+// Relación fija directa entre identificador de fase PDM y el Pilar / Área correspondiente
+export const PHASE_TO_AREA: Record<PhaseType, EssentialArea> = {
+  investigacion: 'Investigación',
+  encarnacion: 'Encarnación',
+  evangelizacion: 'Evangelización',
+  entrenamiento: 'Entrenamiento',
+  autocuidado: 'Autocuidado',
+};
+
 // Entidad de dominio que representa una actividad ministerial
 export interface Activity {
   id: string;
