@@ -18,9 +18,9 @@ import type { ReportData } from '../../application/report-data.helper';
         <button
           type="button"
           (click)="printed.emit()"
-          class="bg-linear-to-r from-[#8B251E] to-[#E67324] hover:from-[#731E18] hover:to-[#D05E12] text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+          class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-2xs hover:shadow-xs transition flex items-center gap-1.5 cursor-pointer active:scale-95 font-['Outfit']"
         >
-          <app-icon name="printer" className="w-4 h-4" />
+          <app-icon name="printer" className="w-4 h-4 text-[#E67324]" />
           <span>Imprimir / Descargar PDF</span>
         </button>
       </div>

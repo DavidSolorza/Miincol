@@ -75,10 +75,10 @@ import type { AuthSession } from '../auth/appSession.types';
             <button
               type="button"
               (click)="dispatchOpenCreateTeam()"
-              class="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#A82E26] hover:from-[#781F19] hover:to-[#8B251E] text-white text-xs font-bold transition shadow-xs hover:shadow-sm active:scale-95 cursor-pointer font-['Outfit']"
+              class="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
               title="Registrar nuevo equipo misionero"
             >
-              <app-icon name="plus" className="w-3.5 h-3.5" />
+              <app-icon name="plus" className="w-3.5 h-3.5 text-[#E67324]" />
               <span>Nueva Misión</span>
             </button>
           </div>

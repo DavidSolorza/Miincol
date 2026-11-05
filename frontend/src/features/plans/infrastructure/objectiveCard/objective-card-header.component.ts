@@ -81,9 +81,9 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
         <button
           type="button"
           (click)="openAddModal.emit()"
-          class="bg-gradient-to-r from-[#8B251E] to-[#EA6A1B] hover:from-[#731E18] text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer font-['Outfit']"
+          class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-2xs hover:shadow-xs transition-all flex items-center gap-1.5 cursor-pointer font-['Outfit'] active:scale-95"
         >
-          <app-icon name="plus" className="w-5 h-5" />
+          <app-icon name="plus" className="w-4 h-4 text-[#E67324]" />
           <span class="hidden sm:inline">Nueva Actividad</span>
           <span class="sm:hidden">Nueva</span>
         </button>

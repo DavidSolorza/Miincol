@@ -20,7 +20,7 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
         </button>
 
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#8B251E] bg-gradient-to-r from-[#8B251E]/10 to-[#E67324]/10 px-3 py-1.5 rounded-xl border border-[#8B251E]/15 font-['Outfit'] shadow-2xs">
+          <span class="text-[11px] font-black uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200/80 font-['Outfit'] shadow-2xs">
             {{ phaseName() }}
           </span>
           <span class="text-xs font-semibold text-stone-400 hidden sm:inline">
@@ -43,10 +43,10 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
           <button
             type="button"
             (click)="openCreateObjective.emit()"
-            class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-[#8B251E] bg-[#8B251E]/10 hover:bg-[#8B251E]/15 border border-[#8B251E]/20 transition-all cursor-pointer active:scale-95 shadow-2xs"
+            class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-800 hover:text-stone-950 bg-white hover:bg-stone-50 border border-stone-200/90 hover:border-stone-300 transition-all cursor-pointer active:scale-95 shadow-2xs font-['Outfit']"
             title="Crear nuevo objetivo (Máx 4)"
           >
-            <app-icon name="plus" className="w-4.5 h-4.5" />
+            <app-icon name="plus" className="w-4 h-4 text-[#E67324]" />
             <span>Nuevo Objetivo</span>
           </button>
         }

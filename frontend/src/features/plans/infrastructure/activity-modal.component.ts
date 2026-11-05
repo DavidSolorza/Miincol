@@ -75,9 +75,9 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           </button>
           <button
             type="submit"
-            class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] text-white font-bold text-xs transition flex items-center gap-2 shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
+            class="px-5 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
           >
-            <app-icon [name]="mode() === 'edit' ? 'check' : 'plus-circle'" className="w-4 h-4" />
+            <app-icon [name]="mode() === 'edit' ? 'check' : 'plus-circle'" className="w-4 h-4 text-[#E67324]" />
             <span>{{ mode() === 'edit' ? 'Guardar Cambios' : 'Guardar Iniciativa' }}</span>
           </button>
         </div>

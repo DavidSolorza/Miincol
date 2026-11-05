@@ -63,9 +63,9 @@ export interface NoteDraftPayload {
       <div class="flex justify-end">
         <button
           type="submit"
-          class="px-3.5 py-1.5 rounded-lg bg-[#8B251E] hover:bg-[#731E18] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+          class="px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs hover:shadow-xs cursor-pointer active:scale-95 font-['Outfit']"
         >
-          <app-icon name="plus-circle" className="w-3.5 h-3.5" />
+          <app-icon name="plus-circle" className="w-3.5 h-3.5 text-[#E67324]" />
           <span>Guardar Nota</span>
         </button>
       </div>
