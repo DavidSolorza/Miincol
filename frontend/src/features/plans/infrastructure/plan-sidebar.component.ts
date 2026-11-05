@@ -33,7 +33,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
         (isCollapsed() ? 'lg:w-15 ' : 'lg:w-56 xl:w-60 ') +
         (isOpenMobile() ? 'translate-x-0 w-60 h-full rounded-r-[22px]' : '-translate-x-full lg:translate-x-0')
       "
-      style="background: linear-gradient(185deg, #FAF7F2 0%, #FAF5EE 50%, #F5ECE0 100%)"
+      style="background: linear-gradient(180deg, #FBF9F6 0%, #F8F5EE 100%)"
     >
       <app-sidebar-brand
         [isCollapsed]="isCollapsed()"

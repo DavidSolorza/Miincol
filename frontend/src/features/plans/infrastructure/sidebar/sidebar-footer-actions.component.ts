@@ -43,11 +43,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           <button
             type="button"
             (click)="handleOpenNotes()"
-            class="w-full py-1.5 px-3 rounded-xl bg-white/95 hover:bg-orange-50/50 border border-stone-200/90 hover:border-orange-300 text-stone-800 hover:text-[#8B251E] shadow-2xs transition-all duration-200 ease-out flex items-center justify-center gap-2 cursor-pointer font-['Outfit'] group"
+            class="w-full py-1.5 px-3 rounded-xl bg-white/90 hover:bg-stone-50 border border-stone-200/80 hover:border-stone-300 text-stone-700 hover:text-stone-900 shadow-2xs transition-all duration-200 ease-out flex items-center justify-center gap-2 cursor-pointer font-['Outfit'] group"
             title="Notas y Agenda Territorial"
           >
-            <app-icon name="notebook-pen" className="w-3.5 h-3.5 text-[#8B251E] group-hover:text-[#E67324] transition-colors shrink-0" />
-            <span class="font-semibold text-xs text-stone-800 group-hover:text-[#8B251E] transition-colors">
+            <app-icon name="notebook-pen" className="w-3.5 h-3.5 text-stone-500 group-hover:text-stone-800 transition-colors shrink-0" />
+            <span class="font-semibold text-xs text-stone-700 group-hover:text-stone-900 transition-colors">
               Notas y Agenda
             </span>
           </button>
@@ -55,11 +55,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           <button
             type="button"
             (click)="handleOpenReport()"
-            class="w-full py-1.5 px-3 rounded-xl bg-white/95 hover:bg-orange-50/50 border border-stone-200/90 hover:border-orange-300 text-stone-800 hover:text-[#8B251E] shadow-2xs transition-all duration-200 ease-out flex items-center justify-center gap-2 cursor-pointer font-['Outfit'] group"
+            class="w-full py-1.5 px-3 rounded-xl bg-white/90 hover:bg-stone-50 border border-stone-200/80 hover:border-stone-300 text-stone-700 hover:text-stone-900 shadow-2xs transition-all duration-200 ease-out flex items-center justify-center gap-2 cursor-pointer font-['Outfit'] group"
             title="Generar Informe Ejecutivo PDM"
           >
-            <app-icon name="file-bar-chart" className="w-3.5 h-3.5 text-[#8B251E] group-hover:text-[#E67324] transition-colors shrink-0" />
-            <span class="font-semibold text-xs text-stone-800 group-hover:text-[#8B251E] transition-colors">
+            <app-icon name="file-bar-chart" className="w-3.5 h-3.5 text-stone-500 group-hover:text-stone-800 transition-colors shrink-0" />
+            <span class="font-semibold text-xs text-stone-700 group-hover:text-stone-900 transition-colors">
               Informe PDM
             </span>
           </button>
@@ -69,20 +69,20 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
               [href]="whatsappUrl()!"
               target="_blank"
               rel="noreferrer"
-              class="w-full py-1.5 px-3 rounded-xl bg-white/95 border border-emerald-500/80 hover:border-emerald-600 text-emerald-700 hover:bg-emerald-50/50 font-semibold text-xs transition-all duration-200 ease-out flex items-center justify-center gap-1.5 shadow-2xs font-['Outfit']"
+              class="w-full py-1.5 px-3 rounded-xl bg-emerald-50/70 hover:bg-emerald-100/60 border border-emerald-200/80 text-emerald-800 font-semibold text-xs transition-all duration-200 ease-out flex items-center justify-center gap-1.5 shadow-2xs font-['Outfit']"
               title="Contactar al Líder por WhatsApp"
             >
-              <app-icon name="message-circle" className="w-3.5 h-3.5 text-emerald-500" />
+              <app-icon name="message-circle" className="w-3.5 h-3.5 text-emerald-600" />
               <span>Contacto Líder</span>
             </a>
           } @else {
             <button
               type="button"
               disabled
-              class="w-full py-1.5 px-3 rounded-xl bg-white/70 border border-emerald-400/40 text-emerald-600/60 font-semibold text-xs flex items-center justify-center gap-1.5 font-['Outfit'] cursor-not-allowed opacity-75"
+              class="w-full py-1.5 px-3 rounded-xl bg-stone-100/70 border border-stone-200/50 text-stone-400 font-semibold text-xs flex items-center justify-center gap-1.5 font-['Outfit'] cursor-not-allowed opacity-75"
               title="Sin teléfono de WhatsApp configurado"
             >
-              <app-icon name="message-circle" className="w-3.5 h-3.5 text-emerald-400" />
+              <app-icon name="message-circle" className="w-3.5 h-3.5 text-stone-300" />
               <span>Contacto Líder</span>
             </button>
           }
