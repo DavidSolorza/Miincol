@@ -76,3 +76,4 @@ export class ObjectiveGoalsFieldsComponent {
     else this.longTermGoalChanged.emit(val);
   }
 }
+
