@@ -43,6 +43,7 @@ import type { AuthSession } from '../auth/appSession.types';
           (openMobileSidebar)="openMobileSidebar.emit()"
           (selectTeam)="selectTeam.emit($event)"
           (goToSuperAdmin)="goToSuperAdmin.emit()"
+          (goToSecurity)="goToSecurity.emit()"
           (logout)="logout.emit()"
           (openReportModal)="openReportModal.emit()"
         />
@@ -57,7 +58,7 @@ export class AppHeaderSectionComponent {
   readonly whatsappUrl = input<string | null>(null);
   readonly shouldShowSidebar = input.required<boolean>();
   readonly isSuperAdmin = input.required<boolean>();
-  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>();
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin' | 'security'>();
   readonly mappedTeams = input.required<MissionaryTeam[]>();
   readonly activeTeamId = input.required<string>();
   readonly session = input.required<AuthSession>();
@@ -67,6 +68,7 @@ export class AppHeaderSectionComponent {
   readonly openMobileSidebar = output<void>();
   readonly selectTeam = output<string>();
   readonly goToSuperAdmin = output<void>();
+  readonly goToSecurity = output<void>();
   readonly logout = output<void>();
   readonly openReportModal = output<void>();
 }

@@ -64,6 +64,16 @@ import type { AuthSession } from '../auth/appSession.types';
           <div class="flex items-center gap-2 sm:gap-2.5">
             <button
               type="button"
+              (click)="goToSecurity.emit()"
+              class="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-stone-200/90 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold transition shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
+              title="Gestión de Roles y Matriz de Permisos"
+            >
+              <app-icon name="shield" className="w-3.5 h-3.5 text-[#E67324]" />
+              <span class="hidden md:inline">Roles y Permisos</span>
+            </button>
+
+            <button
+              type="button"
               (click)="openReportModal.emit()"
               class="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-stone-200/90 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold transition shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
               title="Descargar informe consolidado nacional"
@@ -113,7 +123,7 @@ export class AppHeaderComponent {
   // Entradas reactivas del estado de navegación y equipo seleccionado
   readonly shouldShowSidebar = input.required<boolean>();
   readonly isSuperAdmin = input.required<boolean>();
-  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>();
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin' | 'security'>();
   readonly mappedTeams = input.required<MissionaryTeam[]>();
   readonly activeTeamId = input.required<string>();
   readonly activeTeam = input.required<MissionaryTeam>();
@@ -123,6 +133,7 @@ export class AppHeaderComponent {
   readonly openMobileSidebar = output<void>();
   readonly selectTeam = output<string>();
   readonly goToSuperAdmin = output<void>();
+  readonly goToSecurity = output<void>();
   readonly logout = output<void>();
   readonly openReportModal = output<void>();
 

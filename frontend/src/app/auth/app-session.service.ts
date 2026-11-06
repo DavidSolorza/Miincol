@@ -14,7 +14,7 @@ export class AppSessionService {
   readonly session = signal<AuthSession | null>(this.loadInitialSession());
   readonly activeTeamId = signal<string>(this.session()?.teamId || 'team-wayuu');
   readonly isAdminPreview = signal<boolean>(false);
-  readonly activeView = signal<'plans' | 'general' | 'superadmin'>(
+  readonly activeView = signal<'plans' | 'general' | 'superadmin' | 'security'>(
     this.session()?.role === 'admin' ? 'superadmin' : 'plans'
   );
 
@@ -25,6 +25,9 @@ export class AppSessionService {
       if (view === 'dashboard' || view === 'supervision') {
         this.isAdminPreview.set(false);
         this.activeView.set('superadmin');
+      } else if (view === 'security') {
+        this.isAdminPreview.set(false);
+        this.activeView.set('security');
       } else {
         this.activeView.set('plans');
       }

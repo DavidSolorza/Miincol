@@ -176,3 +176,24 @@ graph TD
   1. **Retorno Superior en Sidebar:** Se añade el botón `← Volver a Supervisión Nacional` en la cabecera superior del sidebar en modo `isAdminPreview`.
   2. **Desactivación de Logout Accidental:** En modo supervisión, se oculta el botón de cierre de sesión en el perfil inferior del sidebar, sustituyéndolo por la etiqueta informativa `Supervisión`.
   3. **Persistencia de Accesos en Información General:** Se garantiza que los accesos a `Notas y Agenda`, `Informe PDM` y `Contacto Líder` se mantengan visibles tanto en las fases del PDM como en la vista macro de `Información General`.
+
+---
+
+### ADR-031: Gestor de Roles, Seguridad y Matriz Interactiva de Permisos
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Proveer una gobernanza centralizada de privilegios del sistema con matriz interactiva de doble entrada y restringir el acceso a historiales de ingreso y telemetría sensible exclusivamente a directores/administradores nacionales.
+- **Decisión:**
+  1. **Módulo Frontend `src/features/security/`:**
+     - `SecurityRolesViewComponent`: Vista de administración de roles y permisos con diseño coherente en tarjeta y paleta institucional.
+     - `SecurityMatrixTableComponent`: Tabla de doble entrada que cruza los 3 roles oficiales (`Usuario equipo`, `Líder equipo`, `Director nacional`) con las 10 capacidades del sistema agrupadas en 4 categorías (`Gestión de Equipos`, `Plan de Desarrollo (PDM)`, `Auditoría y Telemetría`, `Gobernanza y Sistema`).
+     - `SecurityMatrixService`: Servicio reactivo con señales Angular (`signal`), cálculo de conteos activos y persistencia local (`misincol_security_matrix_v1`).
+  2. **Restricción Estricta de Historiales de Ingreso:**
+     - En `TeamAuditModalComponent`, la pestaña "Ingresos" y los eventos de telemetría de login quedan restringidos al rol `admin` (`@Input() isAdmin = true`).
+     - Si el usuario no es administrador, no puede ver las horas, IPs ni accesos de los integrantes.
+  3. **Backend `SecurityModule`:**
+     - `SecurityController` con endpoints protegidos `GET /security/matrix` y `PUT /security/matrix` requiriendo rol `ROLE_NACIONAL`.
+     - Incorporación de `ROLE_USUARIO = 'ROLE_USUARIO'` en `UserRole`.
+- **Consecuencias:**
+  - Control granular de permisos auditable y adaptable.
+  - Protección de privacidad y seguridad en telemetría de accesos territoriales.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.

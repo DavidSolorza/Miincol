@@ -29,7 +29,11 @@ frontend/src/
 │   │   ├── application/                # PlanService, acciones puras (applyAddObjective, etc.)
 │   │   ├── domain/                     # Interfaces PhasePlan, Objective, Activity, EssentialArea
 │   │   └── infrastructure/             # PhaseView, ObjectiveCard, ActivityModal, PlanSidebar
-│   └── reports/                        # Reporte ejecutivo PDM consolidado
+│   ├── reports/                        # Reporte ejecutivo PDM consolidado
+│   └── security/                       # Gestor de roles y matriz interactiva de permisos
+│       ├── application/                # SecurityMatrixService y defaults de permisos
+│       ├── domain/                     # SYSTEM_ROLES, SYSTEM_PERMISSIONS y contratos
+│       └── infrastructure/             # SecurityRolesView, SecurityRolesHeader, SecurityMatrixTable
 └── shared/                             # Componentes transversales desacoplados (Icon, Toast, Modal)
 ```
 
@@ -72,6 +76,16 @@ frontend/src/
    - En modo supervisión, se remueve el botón de logout del pie de página para evitar cierres de sesión accidentales.
    - Los accesos de **Notas y Agenda**, **Informe PDM** y **Contacto Líder** permanecen visibles tanto en las fases del PDM como en la vista de **Información General**.
 
+4. **Gestor de Roles y Matriz de Permisos (`src/features/security/`)**:
+   - Acceso exclusivo desde el header superior para el Director Nacional / Administrador (`Roles y Permisos`).
+   - Matriz interactiva de doble entrada que cruza los roles (`Usuario equipo`, `Líder equipo`, `Director nacional`) con 10 permisos organizados en 4 categorías operativas.
+   - Conteo reactivo de permisos activos por rol e indicador de estado ("Personalizada" vs "Predeterminada") con opción de restablecer valores por defecto.
+   - Persistencia local y sincronización reactiva con `SecurityMatrixService`.
+
+5. **Restricción Estricta de Historiales de Ingreso**:
+   - En `TeamAuditModalComponent`, la pestaña "Ingresos" y los eventos de telemetría de login quedan restringidos al rol `admin` (`@Input() isAdmin = true`).
+   - Si el modal es abierto por un líder o usuario de equipo, la pestaña "Ingresos" queda completamente oculta y los eventos de inicio de sesión no se renderizan en la línea de tiempo.
+
 ---
 
 ## 🛠️ 4. Comandos del Frontend
@@ -86,3 +100,4 @@ npm run build
 # Previsualización del bundle dist/
 npm run preview
 ```
+

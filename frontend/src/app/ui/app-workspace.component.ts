@@ -11,6 +11,7 @@ import { AppHeaderSectionComponent } from './app-header-section.component';
 import { SuperAdminViewComponent } from '../../features/admin/infrastructure/super-admin-view.component';
 import { PhaseViewComponent } from '../../features/plans/infrastructure/phase-view.component';
 import { GeneralInfoViewComponent } from '../../features/general-info/infrastructure/general-info-view.component';
+import { SecurityRolesViewComponent } from '../../features/security/infrastructure/security-roles-view.component';
 import { ReportModalComponent } from '../../features/reports/infrastructure/report-modal.component';
 import { TeamNotesModalComponent } from '../../features/notes/infrastructure/team-notes-modal.component';
 import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-selector.component';
@@ -22,11 +23,11 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
   imports: [
     PlanSidebarComponent, AppHeaderSectionComponent, SuperAdminViewComponent,
     PhaseViewComponent, GeneralInfoViewComponent, ReportModalComponent,
-    TeamNotesModalComponent, TeamSelectorComponent,
+    TeamNotesModalComponent, TeamSelectorComponent, SecurityRolesViewComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div [class]="'min-h-screen bg-[#FAF7F2] flex font-[\\'Plus_Jakarta_Sans\\'] text-stone-900 selection:bg-stone-900 selection:text-white ' + (sessionSvc.activeView() === 'superadmin' ? 'lg:h-screen lg:overflow-hidden' : '')">
+    <div [class]="'min-h-screen bg-[#FAF7F2] flex font-[\\'Plus_Jakarta_Sans\\'] text-stone-900 selection:bg-stone-900 selection:text-white ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' ? 'lg:h-screen lg:overflow-hidden' : '')">
       @if (shouldShowSidebar()) {
         <app-plan-sidebar
           [allPlans]="planService.allPlans()"
@@ -62,14 +63,16 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
           (backToAdmin)="sessionSvc.handleBackToAdmin()"
           (openMobileSidebar)="isMobileSidebarOpen.set(true)"
           (selectTeam)="onSelectTeam($event)"
-          (goToSuperAdmin)="onGoToSuperAdmin()"
+          (goToSuperAdmin)="onGoToSuperAdmin()" (goToSecurity)="onGoToSecurity()"
           (logout)="sessionSvc.handleLogout()"
           (openReportModal)="isReportModalOpen.set(true)"
         />
 
-        <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">
+        <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">
           @if (sessionSvc.activeView() === 'superadmin' && isSuperAdmin()) {
             <app-super-admin-view (inspectTeam)="onInspectTeam($event)" (openReportModal)="isReportModalOpen.set(true)" />
+          } @else if (sessionSvc.activeView() === 'security' && isSuperAdmin()) {
+            <app-security-roles-view />
           } @else if (sessionSvc.activeView() === 'general') {
             <app-general-info-view [activeTeam]="activeTeam()" [isAdmin]="isSuperAdmin()" (assignTask)="onAssignTaskToMember($event)" />
           } @else {
@@ -117,11 +120,10 @@ export class AppWorkspaceComponent {
 
   readonly activeObjectiveNumber = signal(1);
   readonly isReportModalOpen = signal(false); readonly isNotesModalOpen = signal(false);
-  readonly isTeamModalOpen = signal(false); readonly isSidebarCollapsed = signal(false);
-  readonly isMobileSidebarOpen = signal(false);
+  readonly isTeamModalOpen = signal(false); readonly isSidebarCollapsed = signal(false); readonly isMobileSidebarOpen = signal(false);
 
   readonly isSuperAdmin = computed(() => this.sessionSvc.session()?.role === 'admin');
-  readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || this.sessionSvc.activeView() !== 'superadmin');
+  readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || (this.sessionSvc.activeView() !== 'superadmin' && this.sessionSvc.activeView() !== 'security'));
   readonly whatsappUrl = computed(() => {
     const clean = (this.activeTeam().leaderPhone || '').replace(/[^\d]/g, '');
     return clean ? `https://wa.me/${clean}?text=${encodeURIComponent(`Hola ${this.activeTeam().leader}, te contacto de la Coordinación de Equipos de Misincol.`)}` : null;
@@ -140,6 +142,7 @@ export class AppWorkspaceComponent {
   onSelectTeam(teamId: string): void { this.sessionSvc.activeTeamId.set(teamId); this.activeObjectiveNumber.set(1); }
   onInspectTeam(teamId: string): void { this.sessionSvc.handleInspectTeamFromAdmin(teamId, this.dashboardSvc.allTeams()); this.activeObjectiveNumber.set(1); }
   onGoToSuperAdmin(): void { this.sessionSvc.isAdminPreview.set(false); this.sessionSvc.activeView.set('superadmin'); }
+  onGoToSecurity(): void { this.sessionSvc.isAdminPreview.set(false); this.sessionSvc.activeView.set('security'); }
   onAddObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; shortTermGoal?: string; mediumTermGoal?: string; longTermGoal?: string }): void { const num = this.planService.addObjective(newObj); if (num) this.activeObjectiveNumber.set(num); }
   onDeleteObjective(objNum: number): void { if (this.planService.deleteObjective(objNum)) { const rem = this.planService.plan().objectives; if (rem.length > 0) this.activeObjectiveNumber.set(rem[0].number); } }
   onModalSelectTeam(selectedId: string): void { this.onSelectTeam(selectedId); const chosen = this.mappedTeams().find((t) => t.id === selectedId); if (chosen) this.toastService.toast.info(`Misión seleccionada: ${chosen.name}`, 'Equipo Activo'); }
