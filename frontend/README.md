@@ -106,6 +106,11 @@ frontend/src/
    - Botón `+ Nueva Persona` en la vista de roles (`SecurityUsersTableComponent`) con modal `CreateUserModalComponent` que solicita Nombre Completo, Correo Electrónico, Rol y Misión / Territorio.
    - Sincronización automática en `AdminDashboardService`: al crear o actualizar cualquier equipo misionero, su pastor líder y miembros aparecen inmediatamente en la tabla de asignación de roles.
 
+10. **Historial de Ingresos y Auditoría de Cambios (`activeView: 'audit'`)**:
+    - Acceso exclusivo en el sidebar (`PlanSidebarComponent`) y cabecera (`AppHeaderComponent`) únicamente visible para el rol Administrador / Director Nacional (`ROLE_NACIONAL`).
+    - **Trazabilidad de Modificaciones (`AuditChangesTableComponent`)**: Bitácora cronológica con detalle de autor, territorio, fecha/hora y comparativa explícita de **Valor Anterior ➔ Valor Nuevo** en estados, objetivos y presupuestos.
+    - **Historial de Inicios de Sesión (`AuditLoginsTableComponent`)**: Seguimiento de accesos por usuario, rol, IP y equipo.
+
 ---
 
 ## 🛠️ 4. Comandos del Frontend

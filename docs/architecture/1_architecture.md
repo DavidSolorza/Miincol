@@ -294,3 +294,27 @@ graph TD
   - Administración centralizada, consistente y libre de redundancia para la gobernanza del personal misionero.
   - Sincronización transparente en tiempo real entre misiones territoriales y el árbol de seguridad.
   - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-036: Módulo de Historial de Ingresos y Auditoría de Cambios (Acceso Exclusivo Director Nacional)
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Garantizar observabilidad, trazabilidad y registro forense de todas las mutaciones realizadas sobre el Plan de Desarrollo Ministerial (PDM) y los accesos al sistema, restringido de forma inviolable al Director Nacional / Administrador (`ROLE_NACIONAL`).
+- **Decisión:**
+  1. **Acceso Exclusivo en Sidebar y Cabecera:**
+     - En `PlanSidebarComponent`, botón *"Historial"* visible exclusivamente si `userRole() === 'admin'`. Oculto para líderes y usuarios de equipo.
+     - En `AppHeaderComponent`, botón *"Historial"* directo en la cabecera del Super Admin.
+     - En `AppWorkspaceComponent`, guardia defensiva que redirige cualquier intento de acceso no autorizado a la vista de auditoría.
+  2. **Trazabilidad de Modificaciones y Comparativa de Valores (`AuditChangesTableComponent`):**
+     - Despliega el autor, rol, territorio, fecha y hora exacta de cada mutación.
+     - Visualización comparativa de valores anteriores frente a nuevos:
+       $$\text{Valor Anterior (tachado)} \longrightarrow \text{Valor Nuevo (resaltado)}$$
+  3. **Historial de Inicios de Sesión (`AuditLoginsTableComponent`):**
+     - Registro de accesos con identidad, rol, IP de origen, fecha/hora y estado exitoso.
+  4. **Backend NestJS (`AuditModule`):**
+     - Endpoints protegidos `GET /audit/logs`, `GET /audit/changes` y `GET /audit/logins` con `@UseGuards(JwtAuthGuard, RolesGuard)` y `@Roles(UserRole.ROLE_NACIONAL)`.
+  5. **Modularización:**
+     - Todos los componentes y servicios (`AuditHistoryViewComponent`, `AuditChangesTableComponent`, `AuditLoginsTableComponent`, `AuditFiltersBarComponent`, `AuditService`, `AuditController`) se mantienen estrictamente `<= 150` líneas.
+- **Consecuencias:**
+  - Plena visibilidad, seguridad institucional y trazabilidad inmutable de cambios para la dirección nacional.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.

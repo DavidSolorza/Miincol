@@ -12,43 +12,35 @@ import { SuperAdminViewComponent } from '../../features/admin/infrastructure/sup
 import { PhaseViewComponent } from '../../features/plans/infrastructure/phase-view.component';
 import { GeneralInfoViewComponent } from '../../features/general-info/infrastructure/general-info-view.component';
 import { SecurityRolesViewComponent } from '../../features/security/infrastructure/security-roles-view.component';
+import { AuditHistoryViewComponent } from '../../features/audit/infrastructure/audit-history-view.component';
 import { ReportModalComponent } from '../../features/reports/infrastructure/report-modal.component';
 import { TeamNotesModalComponent } from '../../features/notes/infrastructure/team-notes-modal.component';
 import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-selector.component';
 
-// Contenedor maestro del área de trabajo: integra Sidebar, Header, vistas y modales
 @Component({
   selector: 'app-workspace',
   standalone: true,
   imports: [
     PlanSidebarComponent, AppHeaderSectionComponent, SuperAdminViewComponent,
     PhaseViewComponent, GeneralInfoViewComponent, ReportModalComponent,
-    TeamNotesModalComponent, TeamSelectorComponent, SecurityRolesViewComponent,
+    TeamNotesModalComponent, TeamSelectorComponent, SecurityRolesViewComponent, AuditHistoryViewComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       class="min-h-screen bg-[#FAF7F2] flex font-sans text-stone-900 selection:bg-stone-900 selection:text-white"
-      [class.lg:h-screen]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security'"
-      [class.lg:overflow-hidden]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security'"
+      [class.lg:h-screen]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit'"
+      [class.lg:overflow-hidden]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit'"
     >
       @if (shouldShowSidebar()) {
         <app-plan-sidebar
-          [allPlans]="planService.allPlans()"
-          [activePhaseId]="planService.activePhaseId()"
-          [metrics]="planService.metrics()"
-          [activeTeam]="activeTeam()"
-          [activeView]="sessionSvc.activeView()"
-          [isCollapsed]="isSidebarCollapsed()"
-          [isOpenMobile]="isMobileSidebarOpen()"
-          [userRole]="sessionSvc.session()!.role"
+          [allPlans]="planService.allPlans()" [activePhaseId]="planService.activePhaseId()"
+          [metrics]="planService.metrics()" [activeTeam]="activeTeam()" [activeView]="sessionSvc.activeView()"
+          [isCollapsed]="isSidebarCollapsed()" [isOpenMobile]="isMobileSidebarOpen()" [userRole]="sessionSvc.session()!.role"
           [isAdminPreview]="sessionSvc.isAdminPreview()" [whatsappUrl]="whatsappUrl()"
-          (selectPhase)="onSelectPhase($event)"
-          (openReportModal)="isReportModalOpen.set(true)"
-          (openNotesModal)="isNotesModalOpen.set(true)"
-          (changeView)="sessionSvc.activeView.set($event)"
-          (toggleCollapse)="isSidebarCollapsed.set(!isSidebarCollapsed())"
-          (closeMobile)="isMobileSidebarOpen.set(false)"
+          (selectPhase)="onSelectPhase($event)" (openReportModal)="isReportModalOpen.set(true)"
+          (openNotesModal)="isNotesModalOpen.set(true)" (changeView)="sessionSvc.activeView.set($event)"
+          (toggleCollapse)="isSidebarCollapsed.set(!isSidebarCollapsed())" (closeMobile)="isMobileSidebarOpen.set(false)"
           (logout)="sessionSvc.handleLogout()" (backToAdmin)="sessionSvc.handleBackToAdmin()"
         />
       }
@@ -60,29 +52,25 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
           [mappedTeams]="mappedTeams()" [activeTeamId]="sessionSvc.activeTeamId()" [session]="sessionSvc.session()!"
           (backToAdmin)="sessionSvc.handleBackToAdmin()" (openMobileSidebar)="isMobileSidebarOpen.set(true)"
           (selectTeam)="onSelectTeam($event)" (goToSuperAdmin)="onGoToSuperAdmin()" (goToSecurity)="onGoToSecurity()"
-          (logout)="sessionSvc.handleLogout()" (openReportModal)="isReportModalOpen.set(true)"
+          (goToAudit)="onGoToAudit()" (logout)="sessionSvc.handleLogout()" (openReportModal)="isReportModalOpen.set(true)"
         />
 
-        <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">
+        <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">
           @if (sessionSvc.activeView() === 'superadmin' && isSuperAdmin()) {
             <app-super-admin-view (inspectTeam)="onInspectTeam($event)" (openReportModal)="isReportModalOpen.set(true)" />
           } @else if (sessionSvc.activeView() === 'security' && isSuperAdmin()) {
             <app-security-roles-view />
+          } @else if (sessionSvc.activeView() === 'audit' && isSuperAdmin()) {
+            <app-audit-history-view (backToDashboard)="onGoToSuperAdmin()" />
           } @else if (sessionSvc.activeView() === 'general') {
             <app-general-info-view [activeTeam]="activeTeam()" [isAdmin]="isSuperAdmin()" (assignTask)="onAssignTaskToMember($event)" />
           } @else {
             <app-phase-view
-              [plan]="planService.plan()"
-              [activeObjectiveNumber]="activeObjectiveNumber()"
-              [activeTeam]="activeTeam()"
-              (selectObjective)="activeObjectiveNumber.set($event)"
-              (activityUpdated)="planService.updateActivity($event.activityId, $event.updatedFields)"
-              (activityDeleted)="planService.deleteActivity($event)"
-              (activityAdded)="planService.addActivity($event.objectiveNumber, $event.activity)"
-              (objectiveUpdated)="planService.updateObjective($event.objectiveNumber, $event.updates)"
-              (objectiveAdded)="onAddObjective($event)"
-              (objectiveDeleted)="onDeleteObjective($event)"
-              (resetToDefaults)="planService.resetToDefaults(activeTeamSummary())"
+              [plan]="planService.plan()" [activeObjectiveNumber]="activeObjectiveNumber()" [activeTeam]="activeTeam()"
+              (selectObjective)="activeObjectiveNumber.set($event)" (activityUpdated)="planService.updateActivity($event.activityId, $event.updatedFields)"
+              (activityDeleted)="planService.deleteActivity($event)" (activityAdded)="planService.addActivity($event.objectiveNumber, $event.activity)"
+              (objectiveUpdated)="planService.updateObjective($event.objectiveNumber, $event.updates)" (objectiveAdded)="onAddObjective($event)"
+              (objectiveDeleted)="onDeleteObjective($event)" (resetToDefaults)="planService.resetToDefaults(activeTeamSummary())"
               (toggleMobileMenu)="isMobileSidebarOpen.set(true)"
             />
           }
@@ -92,13 +80,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
       <app-report-modal [isOpen]="isReportModalOpen()" [plan]="planService.plan()" (closed)="isReportModalOpen.set(false)" />
       <app-team-notes-modal [isOpen]="isNotesModalOpen()" [activeTeam]="activeTeam()" (closed)="isNotesModalOpen.set(false)" />
       @if (isSuperAdmin()) {
-        <app-team-selector
-          [isOpen]="isTeamModalOpen()"
-          [teams]="mappedTeams()"
-          [activeTeamId]="activeTeam().id"
-          (close)="isTeamModalOpen.set(false)"
-          (selectTeam)="onModalSelectTeam($event)"
-        />
+        <app-team-selector [isOpen]="isTeamModalOpen()" [teams]="mappedTeams()" [activeTeamId]="activeTeam().id" (close)="isTeamModalOpen.set(false)" (selectTeam)="onModalSelectTeam($event)" />
       }
     </div>
   `,
@@ -118,7 +100,7 @@ export class AppWorkspaceComponent {
   readonly isTeamModalOpen = signal(false); readonly isSidebarCollapsed = signal(false); readonly isMobileSidebarOpen = signal(false);
 
   readonly isSuperAdmin = computed(() => this.sessionSvc.session()?.role === 'admin');
-  readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || (this.sessionSvc.activeView() !== 'superadmin' && this.sessionSvc.activeView() !== 'security'));
+  readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || (this.sessionSvc.activeView() !== 'superadmin' && this.sessionSvc.activeView() !== 'security' && this.sessionSvc.activeView() !== 'audit'));
   readonly whatsappUrl = computed(() => {
     const clean = (this.activeTeam().leaderPhone || '').replace(/[^\d]/g, '');
     return clean ? `https://wa.me/${clean}?text=${encodeURIComponent(`Hola ${this.activeTeam().leader}, te contacto de la Coordinación de Equipos de Misincol.`)}` : null;
@@ -138,6 +120,7 @@ export class AppWorkspaceComponent {
   onInspectTeam(teamId: string): void { this.sessionSvc.handleInspectTeamFromAdmin(teamId, this.dashboardSvc.allTeams()); this.activeObjectiveNumber.set(1); }
   onGoToSuperAdmin(): void { this.sessionSvc.isAdminPreview.set(false); this.sessionSvc.activeView.set('superadmin'); }
   onGoToSecurity(): void { this.sessionSvc.isAdminPreview.set(false); this.sessionSvc.activeView.set('security'); }
+  onGoToAudit(): void { this.sessionSvc.isAdminPreview.set(false); this.sessionSvc.activeView.set('audit'); }
   onAddObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; shortTermGoal?: string; mediumTermGoal?: string; longTermGoal?: string }): void { const num = this.planService.addObjective(newObj); if (num) this.activeObjectiveNumber.set(num); }
   onDeleteObjective(objNum: number): void { if (this.planService.deleteObjective(objNum)) { const rem = this.planService.plan().objectives; if (rem.length > 0) this.activeObjectiveNumber.set(rem[0].number); } }
   onModalSelectTeam(selectedId: string): void { this.onSelectTeam(selectedId); const chosen = this.mappedTeams().find((t) => t.id === selectedId); if (chosen) this.toastService.toast.info(`Misión seleccionada: ${chosen.name}`, 'Equipo Activo'); }
