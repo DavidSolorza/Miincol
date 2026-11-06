@@ -69,19 +69,22 @@ import type { Activity } from '../../domain/plan.types';
             </span>
           }
         </div>
-        <button
-          type="button"
-          (click)="edited.emit()"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 font-bold text-xs border border-stone-200/80 shadow-2xs transition cursor-pointer"
-        >
-          <app-icon name="edit-3" className="w-4 h-4 text-[#E67324]" />
-          <span>Editar Toda la Actividad</span>
-        </button>
+        @if (canEdit()) {
+          <button
+            type="button"
+            (click)="edited.emit()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 font-bold text-xs border border-stone-200/80 shadow-2xs transition cursor-pointer"
+          >
+            <app-icon name="edit-3" className="w-4 h-4 text-[#E67324]" />
+            <span>Editar Toda la Actividad</span>
+          </button>
+        }
       </div>
     </div>
   `,
 })
 export class ActivityDetailsAccordionComponent {
   readonly activity = input.required<Activity>();
+  readonly canEdit = input<boolean>(true);
   readonly edited = output<void>();
 }

@@ -92,7 +92,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
 
         <app-sidebar-footer-actions
           [activeView]="activeView()"
-          [isTeamRestricted]="userRole() === 'team'"
+          [isTeamRestricted]="userRole() === 'team' || userRole() === 'member'"
           [isCollapsed]="isCollapsed()"
           [isOpenMobile]="isOpenMobile()"
           [whatsappUrl]="whatsappUrl()"

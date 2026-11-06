@@ -19,7 +19,7 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
         />
       }
 
-      @if (objectives().length < 4) {
+      @if (canEdit() && objectives().length < 4) {
         <button
           type="button"
           (click)="openCreateObjective.emit()"
@@ -33,7 +33,7 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
             <span class="text-[10px] text-stone-400">({{ objectives().length }}/4 registrados)</span>
           </div>
         </button>
-      } @else {
+      } @else if (objectives().length >= 4) {
         <div class="p-3.5 sm:p-4 rounded-xl border border-stone-200/80 bg-stone-50/70 flex flex-col items-center justify-center text-center gap-1.5 min-h-[145px] sm:min-h-[160px] h-full w-full select-none">
           <div class="w-7 h-7 rounded-full bg-stone-200/80 text-stone-600 flex items-center justify-center text-xs font-bold font-['Outfit']">
             4/4
@@ -47,10 +47,10 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
     </div>
   `,
 })
-// Cuadrícula de tarjetas resumen de los objetivos estratégicos de la fase con enumeración dinámica
 export class PhaseObjectiveCardsGridComponent {
   readonly objectives = input.required<Objective[]>();
   readonly activeObjectiveNumber = input.required<number>();
+  readonly canEdit = input<boolean>(true);
   readonly selectObjective = output<number>();
   readonly openCreateObjective = output<void>();
 }

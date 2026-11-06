@@ -79,6 +79,17 @@ export class AppSessionService {
     this.toastService.toast.success(`Bienvenido equipo ${team.name}`, 'Sesión Iniciada');
   }
 
+  // Inicia sesión como Usuario de Equipo (solo lectura + edición de estados de tareas propias)
+  handleMemberLogin(team: TeamSupervisionSummary, memberName: string): void {
+    const newSession: AuthSession = { role: 'member', teamId: team.id, userName: memberName };
+    this.session.set(newSession);
+    try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }
+    this.activeTeamId.set(team.id);
+    this.activeView.set('plans');
+    this.isAdminPreview.set(false);
+    this.toastService.toast.success(`Bienvenido(a) ${memberName} (Usuario de Equipo)`, 'Sesión Iniciada');
+  }
+
   // Cierra la sesión actual y limpia el almacenamiento local
   handleLogout(): void {
     this.session.set(null);

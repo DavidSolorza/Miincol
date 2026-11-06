@@ -96,6 +96,12 @@ frontend/src/
    - Botón nativo `PwaInstallButtonComponent` en la barra superior para instalación en Windows, macOS y Linux con 1 clic.
    - Optimización de activos (logotipo reducido en un 94% a 54 KB) y Service Worker v3 con caché instantáneo de 0 ms para baja latencia en campo.
 
+8. **Restricción de Usuario de Equipo en el Árbol PDM (`role: 'member'`)**:
+   - Acceso con credenciales de colaborador (ej. Aída Secue / `aida2026`).
+   - El árbol PDM completo es de **solo lectura**: se ocultan los botones para crear objetivos (`+ Nuevo Objetivo`), editar objetivos (`Editar`), crear actividades (`+ Nueva Actividad`, `Registrar primera actividad`), editar presupuesto y eliminar actividades.
+   - **Edición Exclusiva de Estado**: el colaborador solo puede modificar el estado (`Pendiente` ➔ `En Proceso` ➔ `Completado`) de las actividades que tienen asignado su nombre en `responsible`. Para las demás actividades, el estado se muestra protegido con candado `🔒` en modo solo lectura.
+   - En la tarjeta del colaborador se visualiza la insignia `"Tu tarea"` con realce esmeralda, y su perfil en el sidebar refleja su identidad personal.
+
 ---
 
 ## 🛠️ 4. Comandos del Frontend

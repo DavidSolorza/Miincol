@@ -18,6 +18,7 @@ import type { MissionaryTeam } from '../features/auth/domain/auth.types';
         [allTeams]="dashboardService.allTeams()"
         (adminSuccess)="sessionService.handleAdminLogin()"
         (teamSuccess)="sessionService.handleTeamLogin($event)"
+        (memberSuccess)="sessionService.handleMemberLogin($event.team, $event.memberName)"
       />
     } @else {
       <app-workspace

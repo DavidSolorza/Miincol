@@ -239,3 +239,33 @@ graph TD
 - **Consecuencias:**
   - Carga instantánea, alta resiliencia y experiencia de usuario fluida y libre de errores.
   - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-034: Restricción de Acceso para "Usuario de Equipo" en el Árbol PDM (Solo Lectura con Edición Exclusiva de Estado en Tareas Asignadas)
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Se requiere restringir las capacidades de los colaboradores con rol "Usuario de equipo" (`ROLE_USUARIO` / `member`). Al ingresar al espacio de su equipo en la vista del Plan de Desarrollo Ministerial (PDM), deben poder explorar la estructura jerárquica en árbol (`MissionaryTeam` ➔ `PhasePlan` ➔ `Objective` ➔ `Activity`), pero sin permisos para crear, editar o eliminar objetivos, presupuestos, fechas o descripciones. Su única potestad de mutación es actualizar el estado (`Pendiente` ➔ `En Proceso` ➔ `Completado`) de las actividades que les han sido asignadas expresamente a su nombre.
+- **Decisión:**
+  1. **Backend (`NestJS`):**
+     - En `ActivitiesService` y `ActivitiesController`:
+       - Se implementó el endpoint `PATCH /activities/:id/status`. Si el rol del usuario es `ROLE_USUARIO`, se verifica que el campo `responsible` de la actividad coincida con el nombre del usuario. De lo contrario, se arroja `ForbiddenException`.
+       - En `create()`, `update()` y `delete()`, se bloquea de forma inquebrantable cualquier intento de ejecución por parte de usuarios con rol `ROLE_USUARIO`.
+     - En `ObjectivesController`:
+       - Se bloquean los métodos `create()`, `update()` y `delete()` ante peticiones de `ROLE_USUARIO`.
+  2. **Frontend (`Angular Standalone + Signals`):**
+     - Soporte para rol `member` en `AppSessionService`, `AuthSession` y `verifyAuthCredentials` (con chip de acceso rápido para Aída Secue en Misión Nasa).
+     - En `PhaseViewComponent`, `ObjectiveCardComponent`, `ObjectiveCardHeaderComponent`, `ObjectiveActivitiesListComponent`:
+       - Detección reactiva mediante `isMember = computed(() => session()?.role === 'member')`.
+       - Ocultamiento de botones de creación y edición de objetivos (`+ Nuevo Objetivo`, botón `Editar Objetivo`, botón `Restablecer`).
+       - Ocultamiento de botones de creación y edición de actividades (`+ Nueva Actividad`, `+ Registrar primera actividad`).
+     - En `ActivityItemComponent`, `ActivityHeaderTagsComponent`, `ActivityBudgetQuickEditComponent` y `ActivityDetailsAccordionComponent`:
+       - Cálculo de asignación de la tarea `isAssigned = computed(...)` comparando el nombre del usuario en sesión contra `activity.responsible`.
+       - Si la actividad está asignada al usuario miembro, se presenta una insignia visual `"Tu tarea"`, borde esmeralda sutil, y un `<select>` interactivo para cambiar su estado (`Pendiente`, `En Proceso`, `Completado`).
+       - Si la actividad pertenece a otro colaborador, el estado se muestra como insignia no interactiva con candado `🔒` y tooltip de solo lectura.
+       - Los controles de presupuesto rápido (valor unitario, repeticiones, lápiz y papelera) y el modal de edición profunda quedan completamente ocultos.
+     - En `SidebarUserProfileCardComponent`:
+       - Despliega el nombre y apellido del colaborador autenticado (`Aída Secue • Equipo`) en la tarjeta inferior de perfil.
+- **Consecuencias:**
+  - Seguridad multinivel robusta tanto en el servidor backend como en la interfaz de usuario.
+  - Experiencia de usuario empática, clara y ergonómica para los colaboradores en campo.
+  - Cumplimiento estricto del límite `<= 150` líneas por archivo en el 100% de la base de código.

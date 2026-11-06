@@ -30,37 +30,39 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
       </div>
 
       <div class="flex items-center gap-2 ml-auto">
-        <button
-          type="button"
-          (click)="handleReset()"
-          class="w-8 h-8 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 border border-transparent hover:border-stone-200 flex items-center justify-center transition cursor-pointer"
-          title="Restablecer datos originales"
-        >
-          <app-icon name="rotate-ccw" className="w-4.5 h-4.5" />
-        </button>
-
-        @if (!hasMaxObjectives()) {
+        @if (canEdit()) {
           <button
             type="button"
-            (click)="openCreateObjective.emit()"
-            class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-800 hover:text-stone-950 bg-white hover:bg-stone-50 border border-stone-200/90 hover:border-stone-300 transition-all cursor-pointer active:scale-95 shadow-2xs font-['Outfit']"
-            title="Crear nuevo objetivo (Máx 4)"
+            (click)="handleReset()"
+            class="w-8 h-8 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 border border-transparent hover:border-stone-200 flex items-center justify-center transition cursor-pointer"
+            title="Restablecer datos originales"
           >
-            <app-icon name="plus" className="w-4 h-4 text-[#E67324]" />
-            <span>Nuevo Objetivo</span>
+            <app-icon name="rotate-ccw" className="w-4.5 h-4.5" />
           </button>
+
+          @if (!hasMaxObjectives()) {
+            <button
+              type="button"
+              (click)="openCreateObjective.emit()"
+              class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-800 hover:text-stone-950 bg-white hover:bg-stone-50 border border-stone-200/90 hover:border-stone-300 transition-all cursor-pointer active:scale-95 shadow-2xs font-['Outfit']"
+              title="Crear nuevo objetivo (Máx 4)"
+            >
+              <app-icon name="plus" className="w-4 h-4 text-[#E67324]" />
+              <span>Nuevo Objetivo</span>
+            </button>
+          }
         }
       </div>
     </div>
   `,
 })
-// Barra superior de la fase con título, contador de objetivos y acciones de creación o restablecimiento
 export class PhaseHeaderBarComponent {
-  private readonly toastService = inject(ToastService); // Servicio para mostrar confirmaciones y alertas toast
+  private readonly toastService = inject(ToastService);
 
-  readonly phaseName = input.required<string>(); // Nombre descriptivo de la fase ministerial actual
-  readonly objectivesCount = input.required<number>(); // Cantidad de objetivos registrados en la fase
-  readonly hasMaxObjectives = input.required<boolean>(); // Indica si ya se alcanzó el máximo de 4 objetivos
+  readonly phaseName = input.required<string>();
+  readonly objectivesCount = input.required<number>();
+  readonly hasMaxObjectives = input.required<boolean>();
+  readonly canEdit = input<boolean>(true);
 
   readonly toggleMobileMenu = output<void>(); // Emite para abrir el menú lateral en pantallas móviles
   readonly resetToDefaults = output<void>(); // Emite para restaurar las actividades predeterminadas de la fase

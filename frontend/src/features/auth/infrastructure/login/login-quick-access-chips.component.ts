@@ -14,6 +14,7 @@ const PREDEFINED_CHIPS = [
   { type: 'admin' as const, user: 'admin', pass: '210910624Dj', key: 'admin', label: 'admin (210910624Dj)', isSpecial: true, color: '' },
   { type: 'team' as const, user: 'wayuu', pass: 'wayuu2026', key: 'wayuu', label: 'wayuu (wayuu2026)', isSpecial: false, color: '#8B251E' },
   { type: 'team' as const, user: 'nasa', pass: 'nasa2026', key: 'nasa', label: 'nasa (nasa2026)', isSpecial: false, color: '#047857' },
+  { type: 'team' as const, user: 'aida', pass: 'aida2026', key: 'aida', label: 'aida [usuario] (aida2026)', isSpecial: false, color: '#059669' },
   { type: 'team' as const, user: 'pastos', pass: 'pastos2026', key: 'pastos', label: 'pastos (pastos2026)', isSpecial: false, color: '#1D4ED8' },
   { type: 'team' as const, user: 'embera', pass: 'embera2026', key: 'embera', label: 'embera (embera2026)', isSpecial: false, color: '#7E22CE' },
   { type: 'team' as const, user: 'arhuaco', pass: 'arhuaco2026', key: 'arhuaco', label: 'arhuaco (arhuaco2026)', isSpecial: false, color: '#B45309' },
