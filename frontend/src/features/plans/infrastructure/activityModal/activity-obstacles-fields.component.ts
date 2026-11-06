@@ -41,3 +41,4 @@ export class ActivityObstaclesFieldsComponent {
     this.obstaclesChanged.emit((event.target as HTMLTextAreaElement).value);
   }
 }
+

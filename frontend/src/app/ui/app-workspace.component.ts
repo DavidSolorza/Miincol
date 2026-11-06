@@ -26,7 +26,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div [class]="'min-h-screen bg-[#FAF7F2] flex font-[\\'Plus_Jakarta_Sans\\'] text-stone-900 selection:bg-[#E67324]/20 selection:text-[#8B251E] ' + (sessionSvc.activeView() === 'superadmin' ? 'lg:h-screen lg:overflow-hidden' : '')">
+    <div [class]="'min-h-screen bg-[#FAF7F2] flex font-[\\'Plus_Jakarta_Sans\\'] text-stone-900 selection:bg-stone-900 selection:text-white ' + (sessionSvc.activeView() === 'superadmin' ? 'lg:h-screen lg:overflow-hidden' : '')">
       @if (shouldShowSidebar()) {
         <app-plan-sidebar
           [allPlans]="planService.allPlans()"
@@ -71,7 +71,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
           @if (sessionSvc.activeView() === 'superadmin' && isSuperAdmin()) {
             <app-super-admin-view (inspectTeam)="onInspectTeam($event)" (openReportModal)="isReportModalOpen.set(true)" />
           } @else if (sessionSvc.activeView() === 'general') {
-            <app-general-info-view [activeTeam]="activeTeam()" />
+            <app-general-info-view [activeTeam]="activeTeam()" [isAdmin]="isSuperAdmin()" (assignTask)="onAssignTaskToMember($event)" />
           } @else {
             <app-phase-view
               [plan]="planService.plan()"
@@ -116,10 +116,8 @@ export class AppWorkspaceComponent {
   readonly mappedTeams = input.required<MissionaryTeam[]>();
 
   readonly activeObjectiveNumber = signal(1);
-  readonly isReportModalOpen = signal(false);
-  readonly isNotesModalOpen = signal(false);
-  readonly isTeamModalOpen = signal(false);
-  readonly isSidebarCollapsed = signal(false);
+  readonly isReportModalOpen = signal(false); readonly isNotesModalOpen = signal(false);
+  readonly isTeamModalOpen = signal(false); readonly isSidebarCollapsed = signal(false);
   readonly isMobileSidebarOpen = signal(false);
 
   readonly isSuperAdmin = computed(() => this.sessionSvc.session()?.role === 'admin');
@@ -145,4 +143,5 @@ export class AppWorkspaceComponent {
   onAddObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; shortTermGoal?: string; mediumTermGoal?: string; longTermGoal?: string }): void { const num = this.planService.addObjective(newObj); if (num) this.activeObjectiveNumber.set(num); }
   onDeleteObjective(objNum: number): void { if (this.planService.deleteObjective(objNum)) { const rem = this.planService.plan().objectives; if (rem.length > 0) this.activeObjectiveNumber.set(rem[0].number); } }
   onModalSelectTeam(selectedId: string): void { this.onSelectTeam(selectedId); const chosen = this.mappedTeams().find((t) => t.id === selectedId); if (chosen) this.toastService.toast.info(`Misión seleccionada: ${chosen.name}`, 'Equipo Activo'); }
+  onAssignTaskToMember(name: string): void { this.planService.pendingAssignee.set(name); this.sessionSvc.activeView.set('plans'); this.toastService.toast.info(`Asignando iniciativa para ${name}`, 'Plan Ministerial'); }
 }

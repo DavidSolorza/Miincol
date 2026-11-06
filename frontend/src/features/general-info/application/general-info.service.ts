@@ -4,7 +4,16 @@ import { serviceBus } from '../../../core/bus';
 
 const STORAGE_PREFIX = 'misincol_general_info_';
 
-function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Territorial', leader = 'Líder en Campo'): TeamGeneralInfo {
+function buildDefaultMembers(leader: string, teamMembers?: string[]): TeamMemberContact[] {
+  if (!teamMembers?.length) return [{ id: 'm1', name: leader, role: 'Líder Pastoral', phone: '+57 320 000 0000' }];
+  return teamMembers.map((name, i) => ({
+    id: `m_${i + 1}`, name,
+    role: name.toLowerCase().includes(leader.toLowerCase()) ? 'Líder Pastoral' : (i % 2 === 0 ? 'Obrero Misionero' : 'Evangelista'),
+    phone: `+57 31${i} 450 ${1000 + i * 111}`,
+  }));
+}
+
+function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Territorial', leader = 'Líder en Campo', teamMembers?: string[]): TeamGeneralInfo {
   return {
     teamId,
     teamData: {
@@ -15,36 +24,19 @@ function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Territoria
       teamLeader: leader,
       evangelicalCongregationsCount: 1,
       evangelicalBelieversCount: 25,
-      members: [
-        { id: 'm1', name: leader, role: 'Líder Pastoral', phone: '+57 300 000 0000', email: 'lider@misincol.org', location: 'Campo' },
-        { id: 'm2', name: 'Obrero Misionero', role: 'Evangelista', phone: '+57 310 000 0000', email: 'campo@misincol.org', location: 'Sede' },
-      ],
+      members: buildDefaultMembers(leader, teamMembers),
     },
     fieldMetrics: {
-      firstTimeContactedCount: 120,
-      interestedInGospelCount: 45,
-      heardGospelCount: 80,
-      seekingGodCount: 30,
-      gospelResponseOpportunitiesCount: 25,
-      newBelieversCount: 14,
-      baptizedCount: 6,
-      regularBibleStudyParticipantsCount: 22,
-      personalMentorshipCount: 8,
-      newGroupsMeetingInYearCount: 3,
-      ministerialTrainingCount: 5,
-      biblicalTrainingCount: 12,
-      pastoralPracticalTrainingCount: 4,
-      otherAreasTrainingCount: 6,
-      newGroupsWithChurchPerspectiveCount: 2,
-      finalChurchesCount: 1,
-      churchGenerationsCount: 2,
+      firstTimeContactedCount: 120, interestedInGospelCount: 45, heardGospelCount: 80,
+      seekingGodCount: 30, gospelResponseOpportunitiesCount: 25, newBelieversCount: 14,
+      baptizedCount: 6, regularBibleStudyParticipantsCount: 22, personalMentorshipCount: 8,
+      newGroupsMeetingInYearCount: 3, ministerialTrainingCount: 5, biblicalTrainingCount: 12,
+      pastoralPracticalTrainingCount: 4, otherAreasTrainingCount: 6,
+      newGroupsWithChurchPerspectiveCount: 2, finalChurchesCount: 1, churchGenerationsCount: 2,
     },
     budgetBreakdown: {
-      investigacionBudget: 2500000,
-      encarnacionBudget: 3200000,
-      evangelizacionBudget: 4800000,
-      entrenamientoBudget: 3100000,
-      autocuidadoBudget: 1900000,
+      investigacionBudget: 2500000, encarnacionBudget: 3200000, evangelizacionBudget: 4800000,
+      entrenamientoBudget: 3100000, autocuidadoBudget: 1900000,
     },
     updatedAt: new Date().toISOString(),
   };
@@ -59,16 +51,22 @@ export class GeneralInfoService {
     return b.investigacionBudget + b.encarnacionBudget + b.evangelizacionBudget + b.entrenamientoBudget + b.autocuidadoBudget;
   });
 
-  loadTeamInfo(teamId: string, teamName?: string, leader?: string): void {
+  loadTeamInfo(teamId: string, teamName?: string, leader?: string, teamMembers?: string[]): void {
     const key = `${STORAGE_PREFIX}${teamId}`;
     try {
       const saved = localStorage.getItem(key);
       if (saved) {
-        this.currentInfo.set(JSON.parse(saved));
+        const parsed: TeamGeneralInfo = JSON.parse(saved);
+        const hasPlaceholder = parsed.teamData.members.some((m) => m.name === 'Obrero Misionero');
+        if (hasPlaceholder && teamMembers?.length) {
+          parsed.teamData.members = buildDefaultMembers(leader || parsed.teamData.teamLeader, teamMembers);
+          this.persist(teamId, parsed);
+        }
+        this.currentInfo.set(parsed);
         return;
       }
     } catch { /* ignore fallback */ }
-    const fresh = createDefaultGeneralInfo(teamId, teamName, leader);
+    const fresh = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers);
     this.currentInfo.set(fresh);
     this.persist(teamId, fresh);
   }

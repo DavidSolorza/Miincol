@@ -33,9 +33,7 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
         </div>
         <div class="p-2.5 rounded-xl bg-stone-50/80 border border-stone-200/60">
           <span class="text-[10px] uppercase font-bold text-stone-400 block">Presencia Evangélica</span>
-          <span class="font-bold text-stone-800 text-sm mt-0.5 block truncate">
-            {{ teamData().evangelicalCongregationsCount }} Congregaciones • {{ teamData().evangelicalBelieversCount }} Creyentes
-          </span>
+          <span class="font-bold text-stone-800 text-sm mt-0.5 block truncate">{{ teamData().evangelicalCongregationsCount }} Congregaciones • {{ teamData().evangelicalBelieversCount }} Creyentes</span>
         </div>
       </div>
 
@@ -44,19 +42,21 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
           <span class="text-xs font-bold text-stone-700 uppercase tracking-wider font-['Outfit']">
             Integrantes del Equipo ({{ teamData().members.length }})
           </span>
-          <button
-            type="button"
-            (click)="isAdding.set(!isAdding())"
-            class="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer shadow-2xs font-['Outfit']"
-          >
-            <app-icon [name]="isAdding() ? 'x' : 'plus'" className="w-3.5 h-3.5 text-[#E67324]" />
-            <span>{{ isAdding() ? 'Cancelar' : 'Agregar Integrante' }}</span>
-          </button>
+          @if (isAdmin()) {
+            <button
+              type="button"
+              (click)="isAdding.set(!isAdding())"
+              class="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-bold text-[11px] flex items-center gap-1.5 transition cursor-pointer shadow-2xs font-['Outfit']"
+            >
+              <app-icon [name]="isAdding() ? 'x' : 'plus'" className="w-3.5 h-3.5 text-[#E67324]" />
+              <span>{{ isAdding() ? 'Cancelar' : 'Agregar Integrante' }}</span>
+            </button>
+          }
         </div>
 
-        @if (isAdding()) {
+        @if (isAdmin() && isAdding()) {
           <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 space-y-2.5 text-xs animate-fadeIn">
-            <span class="font-bold text-stone-800 block text-[11px]">Nuevo Integrante de Equipo</span>
+            <span class="font-bold text-stone-800 block text-[11px]">Nuevo Integrante de Equipo (Acción de Administrador)</span>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input
                 type="text"
@@ -100,9 +100,22 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
                 <span class="text-xs font-bold text-stone-900 block truncate">{{ m.name }}</span>
                 <span class="text-[10px] text-stone-500 block truncate">{{ m.role }} • {{ m.phone }}</span>
               </div>
-              <button type="button" (click)="removeMember.emit(m.id)" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition cursor-pointer" title="Remover integrante">
-                <app-icon name="trash-2" className="w-3.5 h-3.5" />
-              </button>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  (click)="assignTask.emit(m.name)"
+                  class="px-2 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-[10.5px] flex items-center gap-1 transition cursor-pointer border border-stone-200/80 active:scale-95"
+                  title="Asignar tarea a este integrante en el plan"
+                >
+                  <app-icon name="plus-circle" className="w-3 h-3 text-[#E67324]" />
+                  <span>Asignar Tarea</span>
+                </button>
+                @if (isAdmin()) {
+                  <button type="button" (click)="removeMember.emit(m.id)" class="text-stone-400 hover:text-rose-600 p-1 rounded-lg transition cursor-pointer" title="Remover integrante">
+                    <app-icon name="trash-2" className="w-3.5 h-3.5" />
+                  </button>
+                }
+              </div>
             </div>
           }
         </div>
@@ -112,8 +125,10 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
 })
 export class GeneralTeamCardComponent {
   readonly teamData = input.required<GeneralTeamData>();
+  readonly isAdmin = input<boolean>(false);
   readonly removeMember = output<string>();
   readonly addMember = output<{ name: string; role: string; phone: string }>();
+  readonly assignTask = output<string>();
 
   readonly newName = signal('');
   readonly newRole = signal('');
@@ -127,9 +142,6 @@ export class GeneralTeamCardComponent {
       role: this.newRole().trim() || 'Obrero de Campo',
       phone: this.newPhone().trim() || '+57 300 000 0000',
     });
-    this.newName.set('');
-    this.newRole.set('');
-    this.newPhone.set('');
-    this.isAdding.set(false);
+    this.newName.set(''); this.newRole.set(''); this.newPhone.set(''); this.isAdding.set(false);
   }
 }

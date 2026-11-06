@@ -100,6 +100,7 @@ export class ActivityModalComponent {
   readonly activityToEdit = input<Activity | null>(null);
   readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>();
   readonly currentPillarArea = input<EssentialArea>('Investigación');
+  readonly defaultResponsible = input<string>('');
   readonly closed = output<void>();
   readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
   readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
@@ -109,7 +110,9 @@ export class ActivityModalComponent {
   constructor() {
     effect(() => {
       if (this.isOpen()) {
-        this.form.set(getInitialFormValues(this.mode(), this.activityToEdit(), this.defaultObjectiveNumber(), this.currentPillarArea()));
+        const initial = getInitialFormValues(this.mode(), this.activityToEdit(), this.defaultObjectiveNumber(), this.currentPillarArea());
+        if (this.mode() === 'create' && this.defaultResponsible()) initial.responsible = this.defaultResponsible();
+        this.form.set(initial);
       }
     });
   }

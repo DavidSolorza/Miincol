@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, computed, inject, effect } from '@angular/core';
 import { type PhasePlan, type Objective, type Activity, type EssentialArea, type AreaLevel, PHASE_TO_AREA } from '../domain/plan.types';
 import type { MissionaryTeam } from '../../auth/domain/auth.types';
+import { PlanService } from '../application/plan.service';
 import { PhaseHeaderBarComponent } from './phaseView/phase-header-bar.component';
 import { PhaseObjectiveCardsGridComponent } from './phaseView/phase-objective-cards-grid.component';
 import { ObjectiveCardComponent } from './objective-card.component';
@@ -51,6 +52,7 @@ import { ObjectiveModalComponent } from './objective-modal.component';
         [activityToEdit]="editingActivity()"
         [defaultObjectiveNumber]="modalDefaultObjective()"
         [currentPillarArea]="currentPillarArea()"
+        [defaultResponsible]="modalDefaultResponsible()"
         (closed)="closeActModal()"
         (saved)="activityAdded.emit($event)"
         (updated)="activityUpdated.emit($event)"
@@ -93,6 +95,7 @@ export class PhaseViewComponent {
 
   readonly isAddModalOpen = signal(false);
   readonly modalDefaultObjective = signal<1 | 2 | 3 | 4>(1);
+  readonly modalDefaultResponsible = signal('');
   readonly activityModalMode = signal<'create' | 'edit'>('create');
   readonly editingActivity = signal<Activity | null>(null);
 
@@ -100,18 +103,31 @@ export class PhaseViewComponent {
   readonly objectiveModalMode = signal<'create' | 'edit'>('create');
   readonly editingObjective = signal<Objective | null>(null);
 
+  private readonly planService = inject(PlanService);
+
   readonly currentPillarArea = computed<EssentialArea>(() => PHASE_TO_AREA[this.plan().phaseId] || 'Investigación');
   readonly activeObjectiveIndex = computed(() => this.plan().objectives.findIndex((o) => o.number === this.activeObjectiveNumber()));
   readonly activeObjective = computed(() => this.plan().objectives.find((o) => o.number === this.activeObjectiveNumber()) || this.plan().objectives[0]);
 
-  openActModal(mode: 'create' | 'edit', act: Activity | null, objNum: 1 | 2 | 3 | 4): void {
+  constructor() {
+    effect(() => {
+      const assignee = this.planService.pendingAssignee();
+      if (assignee) {
+        this.openActModal('create', null, 1, assignee);
+        this.planService.pendingAssignee.set(null);
+      }
+    });
+  }
+
+  openActModal(mode: 'create' | 'edit', act: Activity | null, objNum: 1 | 2 | 3 | 4, responsible = ''): void {
     this.activityModalMode.set(mode);
     this.editingActivity.set(act);
     this.modalDefaultObjective.set(objNum);
+    this.modalDefaultResponsible.set(responsible);
     this.isAddModalOpen.set(true);
   }
 
-  closeActModal(): void { this.isAddModalOpen.set(false); this.editingActivity.set(null); }
+  closeActModal(): void { this.isAddModalOpen.set(false); this.editingActivity.set(null); this.modalDefaultResponsible.set(''); }
   openObjModal(mode: 'create' | 'edit', obj: Objective | null): void { this.objectiveModalMode.set(mode); this.editingObjective.set(obj); this.isObjectiveModalOpen.set(true); }
 
   handleSaveObjective(data: { title: string; description: string; number?: 1 | 2 | 3 | 4; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): void {

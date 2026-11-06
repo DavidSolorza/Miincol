@@ -14,7 +14,7 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
     <div class="w-full space-y-4 max-w-full overflow-x-hidden animate-fadeIn">
       <div class="flex flex-wrap items-center justify-between gap-2 bg-white/90 p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs">
         <div>
-          <span class="text-[10px] font-black uppercase text-[#8B251E] tracking-widest block font-['Outfit']">MISINCOL • Vista Macro</span>
+          <span class="text-[10px] font-black uppercase text-[#E67324] tracking-widest block font-['Outfit']">MISINCOL • Vista Macro</span>
           <h2 class="text-base sm:text-lg font-black text-stone-900 font-['Outfit'] leading-tight">
             Información General: {{ activeTeam().name }}
           </h2>
@@ -27,8 +27,10 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
 
       <app-general-team-card
         [teamData]="infoService.currentInfo().teamData"
+        [isAdmin]="isAdmin()"
         (removeMember)="infoService.removeMember($event)"
         (addMember)="infoService.addMember($event)"
+        (assignTask)="assignTask.emit($event)"
       />
 
       <app-general-field-metrics-card
@@ -44,12 +46,14 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
 })
 export class GeneralInfoViewComponent {
   readonly activeTeam = input.required<MissionaryTeam>();
+  readonly isAdmin = input<boolean>(false);
+  readonly assignTask = output<string>();
   readonly infoService = inject(GeneralInfoService);
 
   constructor() {
     effect(() => {
       const team = this.activeTeam();
-      this.infoService.loadTeamInfo(team.id, team.name, team.leader);
+      this.infoService.loadTeamInfo(team.id, team.name, team.leader, team.members);
     });
   }
 }
