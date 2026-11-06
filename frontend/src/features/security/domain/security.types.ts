@@ -132,3 +132,4 @@ export const SYSTEM_PERMISSIONS: PermissionDef[] = [
     description: 'Administración de la matriz de seguridad del sistema.',
   },
 ];
+

@@ -41,3 +41,4 @@ export const DEFAULT_ROLE_PERMISSIONS_MATRIX: RolePermissionsMatrix = {
     'security.roles.manage': true,
   },
 };
+

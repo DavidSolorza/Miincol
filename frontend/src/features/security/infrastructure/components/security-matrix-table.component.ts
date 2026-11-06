@@ -77,3 +77,4 @@ export class SecurityMatrixTableComponent {
   readonly permissions = SYSTEM_PERMISSIONS;
   readonly toggle = output<{ role: SystemRoleId; perm: PermissionKey }>();
 }
+

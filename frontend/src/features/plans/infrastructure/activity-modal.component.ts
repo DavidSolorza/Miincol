@@ -114,7 +114,7 @@ export class ActivityModalComponent {
         if (this.mode() === 'create' && this.defaultResponsible()) initial.responsible = this.defaultResponsible();
         this.form.set(initial);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   patchField<K extends keyof ActivityFormState>(key: K, value: ActivityFormState[K]): void {

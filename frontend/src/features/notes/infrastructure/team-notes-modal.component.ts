@@ -90,7 +90,7 @@ export class TeamNotesModalComponent {
       } catch {
         this.notes.set(getInitialTeamNotes(team.id, team.name, team.leader));
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   // Actualiza el signal de notas y persiste los cambios en localStorage

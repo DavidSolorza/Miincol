@@ -100,7 +100,7 @@ export class ActivityItemComponent {
       const act = this.activity();
       this.unitBudgetInput.set(act.unitBudget);
       this.timesPerYearInput.set(act.timesPerYear);
-    });
+    }, { allowSignalWrites: true });
   }
 
   // Formatea una fecha ISO a formato legible en español

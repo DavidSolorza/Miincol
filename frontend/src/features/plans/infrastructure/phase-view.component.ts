@@ -116,7 +116,7 @@ export class PhaseViewComponent {
         this.openActModal('create', null, 1, assignee);
         this.planService.pendingAssignee.set(null);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   openActModal(mode: 'create' | 'edit', act: Activity | null, objNum: 1 | 2 | 3 | 4, responsible = ''): void {

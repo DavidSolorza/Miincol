@@ -91,7 +91,7 @@ export class ObjectiveModalComponent {
         this.longTermGoal.set(this.initialLongTermGoal() || '');
         this.error.set(null); this.confirmDelete.set(false);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   handleSubmit(event: Event): void {

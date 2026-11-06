@@ -54,7 +54,7 @@ export class GeneralInfoViewComponent {
     effect(() => {
       const team = this.activeTeam();
       this.infoService.loadTeamInfo(team.id, team.name, team.leader, team.members);
-    });
+    }, { allowSignalWrites: true });
   }
 }
 

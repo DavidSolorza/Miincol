@@ -24,3 +24,4 @@ import { SecurityMatrixTableComponent } from './components/security-matrix-table
 export class SecurityRolesViewComponent {
   readonly securitySvc = inject(SecurityMatrixService);
 }
+

@@ -135,7 +135,7 @@ export class AppWorkspaceComponent {
       const summary = this.activeTeamSummary();
       this.planService.loadTeamPlans(team.id, summary);
       if (summary?.currentPhaseId) this.planService.switchPhase(summary.currentPhaseId);
-    });
+    }, { allowSignalWrites: true });
   }
 
   onSelectPhase(phaseId: PhaseType): void { this.planService.switchPhase(phaseId); this.sessionSvc.activeView.set('plans'); this.activeObjectiveNumber.set(1); }
