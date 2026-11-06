@@ -1,18 +1,16 @@
 import { Component, ChangeDetectionStrategy, input, output, signal, computed } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
-import { USER_ROLE_OPTIONS, type SystemUser } from '../../domain/security-users.types';
+import { CreateUserModalComponent } from './create-user-modal.component';
+import { USER_ROLE_OPTIONS, type SystemUser, type CreateSystemUserDto } from '../../domain/security-users.types';
 import type { SystemRoleId } from '../../domain/security.types';
+import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
 
-const ROLE_ORDER: Record<SystemRoleId, number> = {
-  national_director: 1,
-  team_leader: 2,
-  team_member: 3,
-};
+const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, team_leader: 2, team_member: 3 };
 
 @Component({
   selector: 'app-security-users-table',
   standalone: true,
-  imports: [AppIconComponent],
+  imports: [AppIconComponent, CreateUserModalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bg-white/95 rounded-2xl border border-stone-200/90 shadow-2xs overflow-hidden select-none space-y-3 p-3.5 sm:p-4">
@@ -25,6 +23,16 @@ const ROLE_ORDER: Record<SystemRoleId, number> = {
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            (click)="isCreateModalOpen.set(true)"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs shadow-2xs transition cursor-pointer font-['Outfit'] active:scale-95"
+            title="Registrar nueva persona en el sistema"
+          >
+            <app-icon name="plus" className="w-3.5 h-3.5 text-[#E67324]" />
+            <span>Nueva Persona</span>
+          </button>
+
           <div class="inline-flex items-center p-0.5 rounded-xl bg-stone-100 border border-stone-200 gap-0.5">
             <button
               type="button"
@@ -46,7 +54,7 @@ const ROLE_ORDER: Record<SystemRoleId, number> = {
             }
           </div>
 
-          <div class="relative min-w-[170px] sm:min-w-[210px]">
+          <div class="relative min-w-[170px] sm:min-w-[200px]">
             <input
               type="text"
               [value]="searchTerm()"
@@ -101,9 +109,7 @@ const ROLE_ORDER: Record<SystemRoleId, number> = {
                         class="px-2 py-1 rounded-lg text-[10.5px] font-bold transition cursor-pointer font-['Outfit']"
                         [class]="user.role === opt.id ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
                         [title]="'Asignar rol: ' + opt.label"
-                      >
-                        {{ opt.label.replace(' ', '\n') }}
-                      </button>
+                      >{{ opt.label.replace(' ', '\n') }}</button>
                     }
                   </div>
                 </td>
@@ -113,18 +119,21 @@ const ROLE_ORDER: Record<SystemRoleId, number> = {
         </table>
       </div>
     </div>
+
+    <app-create-user-modal [isOpen]="isCreateModalOpen()" [teams]="teams()" (closed)="isCreateModalOpen.set(false)" (created)="userCreated.emit($event)" />
   `,
 })
 export class SecurityUsersTableComponent {
   readonly users = input.required<SystemUser[]>();
+  readonly teams = input<TeamSupervisionSummary[]>([]);
   readonly roleChanged = output<{ userId: string; newRole: SystemRoleId }>();
+  readonly userCreated = output<CreateSystemUserDto>();
+
   readonly searchTerm = signal('');
   readonly selectedRole = signal<SystemRoleId | 'all'>('all');
-  readonly roleOptions = [
-    USER_ROLE_OPTIONS.find((r) => r.id === 'national_director')!,
-    USER_ROLE_OPTIONS.find((r) => r.id === 'team_leader')!,
-    USER_ROLE_OPTIONS.find((r) => r.id === 'team_member')!,
-  ];
+  readonly isCreateModalOpen = signal(false);
+
+  readonly roleOptions = [USER_ROLE_OPTIONS.find((r) => r.id === 'national_director')!, USER_ROLE_OPTIONS.find((r) => r.id === 'team_leader')!, USER_ROLE_OPTIONS.find((r) => r.id === 'team_member')!];
 
   readonly filteredUsers = computed(() => {
     const q = this.searchTerm().trim().toLowerCase();

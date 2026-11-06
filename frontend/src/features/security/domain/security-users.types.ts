@@ -12,6 +12,16 @@ export interface SystemUser {
   avatarSeed?: string;
 }
 
+export interface CreateSystemUserDto {
+  fullName: string;
+  email: string;
+  role: SystemRoleId;
+  teamId?: string;
+  teamName: string;
+  territory?: string;
+  phone?: string;
+}
+
 export const USER_ROLE_OPTIONS: Array<{
   id: SystemRoleId;
   label: string;

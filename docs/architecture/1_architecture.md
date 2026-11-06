@@ -269,3 +269,28 @@ graph TD
   - Seguridad multinivel robusta tanto en el servidor backend como en la interfaz de usuario.
   - Experiencia de usuario empática, clara y ergonómica para los colaboradores en campo.
   - Cumplimiento estricto del límite `<= 150` líneas por archivo en el 100% de la base de código.
+
+---
+
+### ADR-035: Creación de Personas desde Roles y Sincronización Automática con Equipos Misioneros
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Permitir al Director Nacional registrar colaboradores directamente desde la vista de gestión de roles solicitando nombre, correo, rol y equipo, y garantizar sincronización automática e inmediata cuando se crean nuevos equipos en el sistema nacional.
+- **Decisión:**
+  1. **Creación Directa de Personas (`CreateUserModalComponent`):**
+     - Botón `+ Nueva Persona` en `SecurityUsersTableComponent`.
+     - Modal atómico con validación de:
+       1. Nombre Completo
+       2. Correo Electrónico
+       3. Rol (`Usuario de equipo`, `Líder de equipo`, `Director nacional`)
+       4. Territorio / Equipo (Selector dinámico de misiones territoriales o Coordinación Nacional).
+     - Persistencia reactiva inmediata en `SecurityUsersService` (`misincol_system_users_v1`) y vinculación a los miembros de la misión en `AdminDashboardService`.
+  2. **Sincronización Automática al Crear Equipos (`AdminDashboardService`):**
+     - Cuando se registra o actualiza un equipo misionero en `handleCreateTeam`, se invoca automáticamente `securityUsersSvc.ensureTeamLeaderAndMembers(team)`.
+     - El pastor líder y todos los miembros registrados en el equipo aparecen de forma inmediata en la tabla de asignación de roles sin duplicidad ni pasos manuales.
+  3. **Modularización Estricta:**
+     - `INITIAL_SYSTEM_USERS` desacoplado a `security-users.helpers.ts`.
+     - `CreateUserModalComponent`, `SecurityUsersTableComponent` y `SecurityUsersService` se mantienen estrictamente `<= 150` líneas.
+- **Consecuencias:**
+  - Administración centralizada, consistente y libre de redundancia para la gobernanza del personal misionero.
+  - Sincronización transparente en tiempo real entre misiones territoriales y el árbol de seguridad.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.

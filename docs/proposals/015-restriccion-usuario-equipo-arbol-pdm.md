@@ -57,3 +57,4 @@ Territorio / Equipo (MissionaryTeam)
 - Límite estricto de máximo 150 líneas por archivo `.ts`.
 - Cero SDKs comerciales.
 - Ejecución 100% local en la rama `featurePrueba`.
+

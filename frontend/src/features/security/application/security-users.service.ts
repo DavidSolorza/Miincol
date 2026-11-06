@@ -1,101 +1,11 @@
 import { Injectable, signal, inject } from '@angular/core';
 import type { SystemRoleId } from '../domain/security.types';
-import type { SystemUser } from '../domain/security-users.types';
+import type { SystemUser, CreateSystemUserDto } from '../domain/security-users.types';
+import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { INITIAL_SYSTEM_USERS } from './security-users.helpers';
 
 const STORAGE_KEY = 'misincol_system_users_v1';
-
-const INITIAL_SYSTEM_USERS: SystemUser[] = [
-  {
-    id: 'usr-1',
-    fullName: 'Coordinador de Equipos',
-    email: 'director@misincol.org',
-    role: 'national_director',
-    teamName: 'Coordinación Nacional',
-    territory: 'Sede Central Bogotá',
-    phone: '+57 310 000 0001',
-  },
-  {
-    id: 'usr-2',
-    fullName: 'Pr. Marcos Chocué',
-    email: 'marcos.chocue@misincol.org',
-    role: 'team_leader',
-    teamId: 'team-nasa',
-    teamName: 'Misión Nasa - Tierradentro',
-    territory: 'Cauca • Tierradentro',
-    phone: '+57 300 000 0000',
-  },
-  {
-    id: 'usr-3',
-    fullName: 'Aída Secue',
-    email: 'aida.secue@misincol.org',
-    role: 'team_member',
-    teamId: 'team-nasa',
-    teamName: 'Misión Nasa - Tierradentro',
-    territory: 'Cauca • Tierradentro',
-    phone: '+57 311 450 1111',
-  },
-  {
-    id: 'usr-4',
-    fullName: 'Santiago Ramos',
-    email: 'santiago.ramos@misincol.org',
-    role: 'team_member',
-    teamId: 'team-nasa',
-    teamName: 'Misión Nasa - Tierradentro',
-    territory: 'Cauca • Tierradentro',
-    phone: '+57 312 450 1222',
-  },
-  {
-    id: 'usr-5',
-    fullName: 'Pr. David Morales',
-    email: 'david.morales@misincol.org',
-    role: 'team_leader',
-    teamId: 'team-wayuu',
-    teamName: 'Misión Wayúu - Alta Guajira',
-    territory: 'La Guajira • Uribia',
-    phone: '+57 310 450 2000',
-  },
-  {
-    id: 'usr-6',
-    fullName: 'Pr. Camilo Canticus',
-    email: 'camilo.canticus@misincol.org',
-    role: 'team_leader',
-    teamId: 'team-pastos',
-    teamName: 'Misión Pastos - Nariño',
-    territory: 'Nariño • Cumbal',
-    phone: '+57 315 450 3000',
-  },
-  {
-    id: 'usr-7',
-    fullName: 'Hno. Jairo Guanga',
-    email: 'jairo.guanga@misincol.org',
-    role: 'team_member',
-    teamId: 'team-pastos',
-    teamName: 'Misión Pastos - Nariño',
-    territory: 'Nariño • Cumbal',
-    phone: '+57 315 450 3001',
-  },
-  {
-    id: 'usr-8',
-    fullName: 'Pr. Elkin Ismare',
-    email: 'elkin.ismare@misincol.org',
-    role: 'team_leader',
-    teamId: 'team-embera',
-    teamName: 'Misión Emberá - Alto San Juan',
-    territory: 'Chocó • Tadó',
-    phone: '+57 320 450 4000',
-  },
-  {
-    id: 'usr-9',
-    fullName: 'Pr. José Izquierdo',
-    email: 'jose.izquierdo@misincol.org',
-    role: 'team_leader',
-    teamId: 'team-arhuaco',
-    teamName: 'Misión Arhuaco - Sierra Nevada',
-    territory: 'Cesar • Nabusímake',
-    phone: '+57 318 450 5000',
-  },
-];
 
 @Injectable({ providedIn: 'root' })
 export class SecurityUsersService {
@@ -118,6 +28,65 @@ export class SecurityUsersService {
     } catch { /* ignore */ }
   }
 
+  createUser(dto: CreateSystemUserDto): SystemUser {
+    const newUser: SystemUser = {
+      id: 'usr-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+      fullName: dto.fullName.trim(),
+      email: dto.email.trim().toLowerCase(),
+      role: dto.role,
+      teamId: dto.teamId,
+      teamName: dto.teamName,
+      territory: dto.territory || '',
+      phone: dto.phone || '',
+    };
+
+    const updated = [newUser, ...this.users()];
+    this.persist(updated);
+    this.toastSvc.toast.success(`Colaborador ${newUser.fullName} registrado con éxito`, 'Usuario Creado');
+    return newUser;
+  }
+
+  ensureTeamLeaderAndMembers(team: TeamSupervisionSummary): void {
+    const current = this.users();
+    const toAdd: SystemUser[] = [];
+    const leaderExists = current.some((u) => u.fullName.toLowerCase() === team.leader.toLowerCase() || (u.teamId === team.id && u.role === 'team_leader'));
+
+    if (!leaderExists && team.leader) {
+      toAdd.push({
+        id: 'usr-' + Date.now() + '-ldr',
+        fullName: team.leader,
+        email: team.leader.toLowerCase().replace(/[^a-z0-9]/g, '.') + '@misincol.org',
+        role: 'team_leader',
+        teamId: team.id,
+        teamName: team.name,
+        territory: team.department ? `${team.department} • ${team.region}` : team.region,
+        phone: team.leaderPhone || '',
+      });
+    }
+
+    if (team.members && team.members.length > 0) {
+      team.members.forEach((memName, idx) => {
+        if (!memName || memName.toLowerCase() === team.leader.toLowerCase()) return;
+        const memberExists = current.some((u) => u.fullName.toLowerCase() === memName.toLowerCase());
+        if (!memberExists && !toAdd.some((u) => u.fullName.toLowerCase() === memName.toLowerCase())) {
+          toAdd.push({
+            id: 'usr-' + Date.now() + '-m' + idx,
+            fullName: memName,
+            email: memName.toLowerCase().replace(/[^a-z0-9]/g, '.') + '@misincol.org',
+            role: 'team_member',
+            teamId: team.id,
+            teamName: team.name,
+            territory: team.department ? `${team.department} • ${team.region}` : team.region,
+          });
+        }
+      });
+    }
+
+    if (toAdd.length > 0) {
+      this.persist([...toAdd, ...current]);
+    }
+  }
+
   updateUserRole(userId: string, newRole: SystemRoleId): void {
     const prev = this.users();
     const target = prev.find((u) => u.id === userId);
@@ -134,4 +103,3 @@ export class SecurityUsersService {
     this.toastSvc.toast.info('Listado de usuarios restablecido a valores predeterminados', 'Seguridad');
   }
 }
-

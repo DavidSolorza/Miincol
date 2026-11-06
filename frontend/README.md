@@ -102,6 +102,10 @@ frontend/src/
    - **Edición Exclusiva de Estado**: el colaborador solo puede modificar el estado (`Pendiente` ➔ `En Proceso` ➔ `Completado`) de las actividades que tienen asignado su nombre en `responsible`. Para las demás actividades, el estado se muestra protegido con candado `🔒` en modo solo lectura.
    - En la tarjeta del colaborador se visualiza la insignia `"Tu tarea"` con realce esmeralda, y su perfil en el sidebar refleja su identidad personal.
 
+9. **Creación Directa de Personas y Sincronización Automática con Equipos**:
+   - Botón `+ Nueva Persona` en la vista de roles (`SecurityUsersTableComponent`) con modal `CreateUserModalComponent` que solicita Nombre Completo, Correo Electrónico, Rol y Misión / Territorio.
+   - Sincronización automática en `AdminDashboardService`: al crear o actualizar cualquier equipo misionero, su pastor líder y miembros aparecen inmediatamente en la tabla de asignación de roles.
+
 ---
 
 ## 🛠️ 4. Comandos del Frontend
