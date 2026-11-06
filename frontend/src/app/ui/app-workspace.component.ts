@@ -37,14 +37,14 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
           [isCollapsed]="isSidebarCollapsed()"
           [isOpenMobile]="isMobileSidebarOpen()"
           [userRole]="sessionSvc.session()!.role"
-          [whatsappUrl]="whatsappUrl()"
+          [isAdminPreview]="sessionSvc.isAdminPreview()" [whatsappUrl]="whatsappUrl()"
           (selectPhase)="onSelectPhase($event)"
           (openReportModal)="isReportModalOpen.set(true)"
           (openNotesModal)="isNotesModalOpen.set(true)"
           (changeView)="sessionSvc.activeView.set($event)"
           (toggleCollapse)="isSidebarCollapsed.set(!isSidebarCollapsed())"
           (closeMobile)="isMobileSidebarOpen.set(false)"
-          (logout)="sessionSvc.handleLogout()"
+          (logout)="sessionSvc.handleLogout()" (backToAdmin)="sessionSvc.handleBackToAdmin()"
         />
       }
 

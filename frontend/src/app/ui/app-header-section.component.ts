@@ -16,7 +16,6 @@ import type { AuthSession } from '../auth/appSession.types';
       @if (isAdminPreview()) {
         <app-admin-preview-banner
           [activeTeam]="activeTeam()"
-          [whatsappUrl]="whatsappUrl()"
           (backToAdmin)="backToAdmin.emit()"
         />
       }

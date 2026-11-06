@@ -11,14 +11,20 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
   template: `
     @if (isCollapsed()) {
       <div class="p-2 flex justify-center">
-        <button
-          type="button"
-          (click)="handleLogoutClick()"
-          [title]="activeTeam().leader + ' • Click para cerrar sesión'"
-          class="w-9 h-9 rounded-xl bg-white hover:bg-stone-100 text-stone-700 border border-stone-200/80 flex items-center justify-center transition-all shadow-2xs cursor-pointer"
-        >
-          <app-icon name="users" className="w-4 h-4 text-stone-700" />
-        </button>
+        @if (isAdminPreview()) {
+          <div class="w-9 h-9 rounded-xl bg-white text-stone-700 border border-stone-200/80 flex items-center justify-center shadow-2xs select-none" [title]="activeTeam().leader">
+            <app-icon name="users" className="w-4 h-4 text-stone-700" />
+          </div>
+        } @else {
+          <button
+            type="button"
+            (click)="handleLogoutClick()"
+            [title]="activeTeam().leader + ' • Click para cerrar sesión'"
+            class="w-9 h-9 rounded-xl bg-white hover:bg-stone-100 text-stone-700 border border-stone-200/80 flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+          >
+            <app-icon name="users" className="w-4 h-4 text-stone-700" />
+          </button>
+        }
       </div>
     } @else {
       <div class="p-2 pt-1 select-none">
@@ -39,14 +45,20 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
             </div>
           </div>
 
-          <button
-            type="button"
-            (click)="handleLogoutClick()"
-            title="Cerrar sesión"
-            class="text-stone-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer shrink-0"
-          >
-            <app-icon name="log-out" className="w-3.5 h-3.5" />
-          </button>
+          @if (!isAdminPreview()) {
+            <button
+              type="button"
+              (click)="handleLogoutClick()"
+              title="Cerrar sesión"
+              class="text-stone-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer shrink-0"
+            >
+              <app-icon name="log-out" className="w-3.5 h-3.5" />
+            </button>
+          } @else {
+            <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-md bg-stone-100 text-stone-600 border border-stone-200/80 font-['Outfit'] shrink-0 select-none">
+              Supervisión
+            </span>
+          }
         </div>
       </div>
     }
@@ -58,6 +70,7 @@ export class SidebarUserProfileCardComponent {
 
   readonly activeTeam = input.required<MissionaryTeam>(); // Información del equipo misionero en sesión
   readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está contraída
+  readonly isAdminPreview = input<boolean>(false); // Modo supervisión de administrador
   readonly loggedOut = output<void>(); // Emite el evento de salida cuando el usuario confirma cerrar sesión
 
   // Solicita confirmación al usuario antes de emitir el cierre de sesión

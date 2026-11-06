@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import type { PhasePlan, PhaseType, PlanMetrics } from '../domain/plan.types';
 import type { MissionaryTeam, UserRole } from '../../auth/domain/auth.types';
 import { SidebarBrandComponent } from './sidebar/sidebar-brand.component';
@@ -13,6 +14,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
   selector: 'app-plan-sidebar',
   standalone: true,
   imports: [
+    AppIconComponent,
     SidebarBrandComponent,
     SidebarSegmentedControlComponent,
     SidebarPhasesListComponent,
@@ -40,6 +42,31 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
         (toggleCollapse)="toggleCollapse.emit()"
         (closeMobile)="closeMobile.emit()"
       />
+
+      @if (isAdminPreview()) {
+        <div class="px-2.5 pt-0.5 pb-1 select-none">
+          @if (isCollapsed()) {
+            <button
+              type="button"
+              (click)="backToAdmin.emit()"
+              class="w-9 h-9 mx-auto rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300/80 flex items-center justify-center transition cursor-pointer shadow-2xs"
+              title="Volver a Supervisión Nacional"
+            >
+              <app-icon name="arrow-left" className="w-4 h-4 text-amber-900" />
+            </button>
+          } @else {
+            <button
+              type="button"
+              (click)="backToAdmin.emit()"
+              class="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 border border-amber-300/80 text-[10.5px] font-bold font-['Outfit'] transition shadow-2xs cursor-pointer active:scale-95"
+              title="Regresar al Tablero de Supervisión Nacional"
+            >
+              <app-icon name="arrow-left" className="w-3.5 h-3.5 text-amber-900 shrink-0" />
+              <span class="truncate">Volver a Supervisión Nacional</span>
+            </button>
+          }
+        </div>
+      }
 
       <app-sidebar-segmented-control
         [isCollapsed]="isCollapsed()"
@@ -85,30 +112,33 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
       <app-sidebar-user-profile-card
         [activeTeam]="activeTeam()"
         [isCollapsed]="isCollapsed()"
+        [isAdminPreview]="isAdminPreview()"
         (loggedOut)="logout.emit()"
       />
     </aside>
   `,
 })
-// Barra lateral principal de navegaciÃ³n entre fases del PDM, mÃ©tricas rÃ¡pidas y acciones del equipo
+// Barra lateral principal de navegación entre fases del PDM, métricas rápidas y acciones del equipo
 export class PlanSidebarComponent {
   readonly allPlans = input.required<Record<string, PhasePlan>>(); // Todos los planes por fase del equipo
   readonly activePhaseId = input.required<PhaseType>(); // Identificador de la fase actualmente activa
-  readonly metrics = input.required<PlanMetrics>(); // MÃ©tricas consolidadas de la fase activa
+  readonly metrics = input.required<PlanMetrics>(); // Métricas consolidadas de la fase activa
   readonly activeTeam = input.required<MissionaryTeam>(); // Datos del equipo misionero activo
-  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>(); // Vista activa de la aplicaciÃ³n
-  readonly isCollapsed = input.required<boolean>(); // Indica si el panel lateral estÃ¡ contraÃ­do en escritorio
-  readonly isOpenMobile = input.required<boolean>(); // Indica si el cajÃ³n lateral estÃ¡ abierto en mÃ³vil
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>(); // Vista activa de la aplicación
+  readonly isCollapsed = input.required<boolean>(); // Indica si el panel lateral está contraído en escritorio
+  readonly isOpenMobile = input.required<boolean>(); // Indica si el cajón lateral está abierto en móvil
   readonly userRole = input<UserRole>('admin'); // Rol del usuario autenticado
+  readonly isAdminPreview = input<boolean>(false); // Indica si está en modo supervisión previa
   readonly whatsappUrl = input<string | null | undefined>(null); // Enlace directo de contacto por WhatsApp
 
   readonly selectPhase = output<PhaseType>(); // Emite la fase seleccionada por el usuario
   readonly openReportModal = output<void>(); // Solicita abrir el modal de informe ejecutivo PDM
   readonly openNotesModal = output<void>(); // Solicita abrir el modal de notas y agenda territorial
-  readonly changeView = output<'plans' | 'general' | 'superadmin'>(); // Solicita cambiar entre la vista de planes y supervisiÃ³n
-  readonly toggleCollapse = output<void>(); // Alterna el estado contraÃ­do o expandido de la barra lateral
-  readonly closeMobile = output<void>(); // Cierra la barra lateral en dispositivos mÃ³viles
-  readonly logout = output<void>(); // Emite el evento de cierre de sesiÃ³n
+  readonly changeView = output<'plans' | 'general' | 'superadmin'>(); // Solicita cambiar entre la vista de planes y supervisión
+  readonly toggleCollapse = output<void>(); // Alterna el estado contraído o expandido de la barra lateral
+  readonly closeMobile = output<void>(); // Cierra la barra lateral en dispositivos móviles
+  readonly logout = output<void>(); // Emite el evento de cierre de sesión
+  readonly backToAdmin = output<void>(); // Emite para regresar al tablero de supervisión nacional
 }
 
 

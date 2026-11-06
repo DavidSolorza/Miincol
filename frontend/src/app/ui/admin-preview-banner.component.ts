@@ -19,17 +19,6 @@ import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
       </div>
 
       <div class="flex items-center gap-2">
-        @if (whatsappUrl()) {
-          <a
-            [href]="whatsappUrl()!"
-            target="_blank"
-            rel="noreferrer"
-            class="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold transition text-[11px]"
-          >
-            <app-icon name="message-circle" className="w-3 h-3 text-emerald-700" />
-            <span>WhatsApp</span>
-          </a>
-        }
         <button
           type="button"
           (click)="backToAdmin.emit()"
@@ -45,7 +34,6 @@ import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 export class AdminPreviewBannerComponent {
   // Datos del equipo supervisado, enlace WhatsApp y evento para regresar al panel general
   readonly activeTeam = input.required<MissionaryTeam>();
-  readonly whatsappUrl = input<string | null>(null);
   readonly backToAdmin = output<void>();
 }
 
