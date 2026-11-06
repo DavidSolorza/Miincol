@@ -20,7 +20,7 @@ import { SYSTEM_PERMISSIONS, SYSTEM_ROLES, type PermissionDef, type RolePermissi
                 <th class="py-3 px-3 text-center font-black uppercase tracking-wider text-[11px]">
                   <div class="inline-flex flex-col items-center">
                     <span>{{ role.name }}</span>
-                    <span [class]="'text-[9px] font-bold px-1.5 py-0.2 rounded mt-0.5 border ' + role.badgeClass">
+                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded mt-0.5 border" [class]="role.badgeClass">
                       {{ role.badge }}
                     </span>
                   </div>

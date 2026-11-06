@@ -40,7 +40,10 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
           <div class="p-3 rounded-2xl bg-white/95 border border-stone-200/80 shadow-2xs space-y-1.5">
             <div class="flex items-center justify-between gap-1">
               <span class="text-xs font-black text-stone-900 font-['Outfit']">{{ role.name }}</span>
-              <span [class]="'text-[9.5px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider font-[\'Outfit\'] ' + role.badgeClass">
+              <span
+                class="text-[9.5px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider font-['Outfit']"
+                [class]="role.badgeClass"
+              >
                 {{ role.badge }}
               </span>
             </div>
