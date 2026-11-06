@@ -93,7 +93,7 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
           </div>
         }
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           @for (m of teamData().members; track m.id) {
             <div class="p-2.5 rounded-xl border border-stone-200/80 bg-white flex items-center justify-between gap-2 shadow-2xs">
               <div class="min-w-0">

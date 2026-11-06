@@ -59,7 +59,8 @@ export class AdminDashboardService {
         const list = hasPastos ? parsed : [...parsed, INITIAL_NATIONAL_TEAMS.find((t) => t.id === 'team-pastos')!];
         return list.map((t) => {
           const init = INITIAL_NATIONAL_TEAMS.find((it) => it.id === t.id || it.slug === t.slug);
-          return { ...t, coordinates: t.coordinates || init?.coordinates, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) };
+          const mem = (t.members && t.members.length > 0) ? t.members : (init?.members || [t.leader]);
+          return { ...t, coordinates: t.coordinates || init?.coordinates, members: mem, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) };
         });
       }
     } catch (e) {

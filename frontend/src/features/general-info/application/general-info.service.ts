@@ -5,12 +5,17 @@ import { serviceBus } from '../../../core/bus';
 const STORAGE_PREFIX = 'misincol_general_info_';
 
 function buildDefaultMembers(leader: string, teamMembers?: string[]): TeamMemberContact[] {
-  if (!teamMembers?.length) return [{ id: 'm1', name: leader, role: 'Líder Pastoral', phone: '+57 320 000 0000' }];
-  return teamMembers.map((name, i) => ({
-    id: `m_${i + 1}`, name,
-    role: name.toLowerCase().includes(leader.toLowerCase()) ? 'Líder Pastoral' : (i % 2 === 0 ? 'Obrero Misionero' : 'Evangelista'),
-    phone: `+57 31${i} 450 ${1000 + i * 111}`,
-  }));
+  const clean = leader.replace(/^(pr\.|pastor|hna\.|hno\.)\s+/i, '').trim().toLowerCase();
+  const list = teamMembers && teamMembers.length > 0 ? teamMembers : [leader, 'Aída Secue', 'Santiago Ramos'];
+  return list.map((name, i) => {
+    const isLead = name.toLowerCase().includes(clean) || clean.includes(name.toLowerCase());
+    return {
+      id: `m_${i + 1}`,
+      name: isLead ? leader : name,
+      role: isLead ? 'Líder Pastoral' : (i === 1 ? 'Obrera Misionera / Salud' : 'Evangelista / Discipulado'),
+      phone: `+57 31${i} 450 ${1000 + i * 111}`,
+    };
+  });
 }
 
 function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Territorial', leader = 'Líder en Campo', teamMembers?: string[]): TeamGeneralInfo {
@@ -58,7 +63,8 @@ export class GeneralInfoService {
       if (saved) {
         const parsed: TeamGeneralInfo = JSON.parse(saved);
         const hasPlaceholder = parsed.teamData.members.some((m) => m.name === 'Obrero Misionero');
-        if (hasPlaceholder && teamMembers?.length) {
+        const countMismatch = !!teamMembers?.length && parsed.teamData.members.length < teamMembers.length;
+        if (hasPlaceholder || countMismatch) {
           parsed.teamData.members = buildDefaultMembers(leader || parsed.teamData.teamLeader, teamMembers);
           this.persist(teamId, parsed);
         }
