@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, inject, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, effect } from '@angular/core';
 import { GeneralInfoService } from '../application/general-info.service';
 import { GeneralTeamCardComponent } from './components/general-team-card.component';
 import { GeneralFieldMetricsCardComponent } from './components/general-field-metrics-card.component';
