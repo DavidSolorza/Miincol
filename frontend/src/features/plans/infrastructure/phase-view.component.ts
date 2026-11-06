@@ -128,7 +128,10 @@ export class PhaseViewComponent {
   }
 
   closeActModal(): void { this.isAddModalOpen.set(false); this.editingActivity.set(null); this.modalDefaultResponsible.set(''); }
-  openObjModal(mode: 'create' | 'edit', obj: Objective | null): void { this.objectiveModalMode.set(mode); this.editingObjective.set(obj); this.isObjectiveModalOpen.set(true); }
+  openObjModal(mode: 'create' | 'edit', obj: Objective | null): void {
+    if (mode === 'create' && this.plan().objectives.length >= 4) return;
+    this.objectiveModalMode.set(mode); this.editingObjective.set(obj); this.isObjectiveModalOpen.set(true);
+  }
 
   handleSaveObjective(data: { title: string; description: string; number?: 1 | 2 | 3 | 4; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): void {
     const payload = { ...data, essentialArea: data.essentialArea || this.currentPillarArea() };

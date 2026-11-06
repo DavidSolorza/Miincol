@@ -24,7 +24,7 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
             {{ phaseName() }}
           </span>
           <span class="text-xs font-semibold text-stone-400 hidden sm:inline">
-            • {{ objectivesCount() }} Objetivos Estratégicos
+            • {{ objectivesCount() }}/4 Objetivos Estratégicos
           </span>
         </div>
       </div>

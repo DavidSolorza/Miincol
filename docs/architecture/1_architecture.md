@@ -154,3 +154,25 @@ graph TD
   - Compilación Ahead-of-Time (AOT) con verificación estricta de plantillas (`strictTemplates: true`).
   - Detección de cambios granular y ultra-rápida mediante Angular Signals + `OnPush`.
   - Cumplimiento del 100% del límite de `< 150` líneas por archivo en todos los archivos `.ts` del repositorio.
+
+---
+
+### ADR-029: Reglas Ministeriales Territoriales (5 Pilares, Límite de 4 Objetivos y Roles)
+- **Estado:** Aprobado e Implementado (`2026-11-05`).
+- **Contexto:** Definir con total precisión metodológica los pilares oficiales de MISINCOL, la cota máxima de objetivos por fase y los privilegios de mutación de integrantes entre coordinadores y líderes en campo.
+- **Decisión:**
+  1. **Los 5 Pilares Fundamentales:** Se remueve la categoría `General` (Ejes Transversales), consolidando la metodología en: `Investigación`, `Encarnación`, `Evangelización`, `Entrenamiento` y `Autocuidado`.
+  2. **Cota Máxima de 4 Objetivos Estratégicos:**
+     - En el frontend, `PhaseObjectiveCardsGridComponent` bloquea la creación al alcanzar 4 objetivos, sustituyendo el botón punteado por la tarjeta de estado `4/4 Límite Máximo Alcanzado`.
+     - En el backend, `ObjectivesService.create()` rechaza cualquier intento de superar 4 objetivos lanzando `BadRequestException`.
+  3. **Privilegios de Integrantes:** Solo usuarios con rol `admin` pueden agregar o remover integrantes en `GeneralTeamCardComponent`. Los líderes territoriales solo cuentan con el botón `Asignar Tarea`.
+
+---
+
+### ADR-030: Reorganización del Sidebar y Retorno a Supervisión Nacional
+- **Estado:** Aprobado e Implementado (`2026-11-05`).
+- **Contexto:** Optimizar la ergonomía de navegación cuando un coordinador inspecciona el PDM de una misión territorial.
+- **Decisión:**
+  1. **Retorno Superior en Sidebar:** Se añade el botón `← Volver a Supervisión Nacional` en la cabecera superior del sidebar en modo `isAdminPreview`.
+  2. **Desactivación de Logout Accidental:** En modo supervisión, se oculta el botón de cierre de sesión en el perfil inferior del sidebar, sustituyéndolo por la etiqueta informativa `Supervisión`.
+  3. **Persistencia de Accesos en Información General:** Se garantiza que los accesos a `Notas y Agenda`, `Informe PDM` y `Contacto Líder` se mantengan visibles tanto en las fases del PDM como en la vista macro de `Información General`.

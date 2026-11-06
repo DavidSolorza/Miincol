@@ -19,7 +19,7 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
         />
       }
 
-      @if (objectives().length < 6) {
+      @if (objectives().length < 4) {
         <button
           type="button"
           (click)="openCreateObjective.emit()"
@@ -30,9 +30,19 @@ import { PhaseObjectiveCardItemComponent } from './phase-objective-card-item.com
           </div>
           <div>
             <span class="text-xs font-bold text-stone-600 group-hover:text-[#8B251E] block">Nuevo Objetivo</span>
-            <span class="text-[10px] text-stone-400">({{ objectives().length }} registrados)</span>
+            <span class="text-[10px] text-stone-400">({{ objectives().length }}/4 registrados)</span>
           </div>
         </button>
+      } @else {
+        <div class="p-3.5 sm:p-4 rounded-xl border border-stone-200/80 bg-stone-50/70 flex flex-col items-center justify-center text-center gap-1.5 min-h-[145px] sm:min-h-[160px] h-full w-full select-none">
+          <div class="w-7 h-7 rounded-full bg-stone-200/80 text-stone-600 flex items-center justify-center text-xs font-bold font-['Outfit']">
+            4/4
+          </div>
+          <div>
+            <span class="text-xs font-bold text-stone-700 block font-['Outfit']">Límite Máximo Alcanzado</span>
+            <span class="text-[10px] text-stone-400 block mt-0.5">Fase completa (máx. 4 objetivos permitidos)</span>
+          </div>
+        </div>
       }
     </div>
   `,
