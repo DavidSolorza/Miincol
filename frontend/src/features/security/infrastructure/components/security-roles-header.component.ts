@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 import { SYSTEM_ROLES } from '../../domain/security.types';
 
@@ -16,23 +16,50 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
           </div>
           <div>
             <h2 class="text-base sm:text-lg font-black text-stone-900 font-['Outfit'] leading-tight">
-              Gestor de Roles y Matriz de Permisos
+              Gestor de Roles y Seguridad Territorial
             </h2>
             <p class="text-[11px] text-stone-500">
-              Control de acceso basado en roles (RBAC) y privilegios del sistema MISINCOL
+              Control de acceso basado en roles (RBAC) y asignación directa a personas
             </p>
           </div>
         </div>
 
-        <button
-          type="button"
-          (click)="resetDefaults.emit()"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-bold transition cursor-pointer shadow-2xs font-['Outfit'] active:scale-95"
-          title="Restablecer matriz por defecto"
-        >
-          <app-icon name="rotate-ccw" className="w-3.5 h-3.5 text-stone-500" />
-          <span>Restablecer Matriz</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center p-1 rounded-xl bg-stone-100 border border-stone-200 gap-1">
+            <button
+              type="button"
+              (click)="tabChanged.emit('matrix')"
+              [class]="'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer font-[\'Outfit\'] ' +
+                (activeTab() === 'matrix' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60')
+              "
+            >
+              <app-icon name="layers" className="w-3.5 h-3.5 text-[#E67324]" />
+              <span>Matriz de Permisos</span>
+            </button>
+            <button
+              type="button"
+              (click)="tabChanged.emit('users')"
+              [class]="'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer font-[\'Outfit\'] ' +
+                (activeTab() === 'users' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60')
+              "
+            >
+              <app-icon name="users" className="w-3.5 h-3.5 text-[#E67324]" />
+              <span>Roles de Personas</span>
+            </button>
+          </div>
+
+          @if (activeTab() === 'matrix') {
+            <button
+              type="button"
+              (click)="resetDefaults.emit()"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-bold transition cursor-pointer shadow-2xs font-['Outfit'] active:scale-95"
+              title="Restablecer matriz por defecto"
+            >
+              <app-icon name="rotate-ccw" className="w-3.5 h-3.5 text-stone-500" />
+              <span class="hidden sm:inline">Restablecer</span>
+            </button>
+          }
+        </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -60,6 +87,7 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
 })
 export class SecurityRolesHeaderComponent {
   readonly roles = SYSTEM_ROLES;
+  readonly activeTab = input<'matrix' | 'users'>('matrix');
+  readonly tabChanged = output<'matrix' | 'users'>();
   readonly resetDefaults = output<void>();
 }
-

@@ -30,10 +30,10 @@ frontend/src/
 │   │   ├── domain/                     # Interfaces PhasePlan, Objective, Activity, EssentialArea
 │   │   └── infrastructure/             # PhaseView, ObjectiveCard, ActivityModal, PlanSidebar
 │   ├── reports/                        # Reporte ejecutivo PDM consolidado
-│   └── security/                       # Gestor de roles y matriz interactiva de permisos
-│       ├── application/                # SecurityMatrixService y defaults de permisos
-│       ├── domain/                     # SYSTEM_ROLES, SYSTEM_PERMISSIONS y contratos
-│       └── infrastructure/             # SecurityRolesView, SecurityRolesHeader, SecurityMatrixTable
+│   └── security/                       # Gestor de roles y seguridad territorial
+│       ├── application/                # SecurityMatrixService, SecurityUsersService y defaults
+│       ├── domain/                     # SYSTEM_ROLES, SYSTEM_PERMISSIONS y contratos de usuario
+│       └── infrastructure/             # SecurityRolesView, Header, MatrixTable, UsersTable
 └── shared/                             # Componentes transversales desacoplados (Icon, Toast, Modal)
 ```
 
@@ -80,7 +80,8 @@ frontend/src/
    - Acceso exclusivo desde el header superior para el Director Nacional / Administrador (`Roles y Permisos`).
    - Matriz interactiva de doble entrada que cruza los roles (`Usuario equipo`, `Líder equipo`, `Director nacional`) con 10 permisos organizados en 4 categorías operativas.
    - Conteo reactivo de permisos activos por rol e indicador de estado ("Personalizada" vs "Predeterminada") con opción de restablecer valores por defecto.
-   - Persistencia local y sincronización reactiva con `SecurityMatrixService`.
+   - Pestaña de **Asignación de Roles por Persona (`SecurityUsersTableComponent`)** para reasignar el rol de directores, líderes y colaboradores con persistencia reactiva en `SecurityUsersService`.
+   - Botón superior de la cabecera renombrado a **"Volver al Dashboard"** con icono `arrow-left` para un retorno ágil al mapa split-screen nacional.
 
 5. **Restricción Estricta de Historiales de Ingreso**:
    - En `TeamAuditModalComponent`, la pestaña "Ingresos" y los eventos de telemetría de login quedan restringidos al rol `admin` (`@Input() isAdmin = true`).

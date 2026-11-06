@@ -100,11 +100,11 @@ import type { AuthSession } from '../auth/appSession.types';
             <button
               type="button"
               (click)="goToSuperAdmin.emit()"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-2xs cursor-pointer font-['Outfit']"
-              title="Volver al panel general de supervisión"
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-[#8B251E] text-white text-xs font-bold transition shadow-2xs cursor-pointer font-['Outfit'] active:scale-95"
+              title="Volver al panel general de supervisión nacional"
             >
-              <app-icon name="shield-check" className="w-3.5 h-3.5 text-[#E67324]" />
-              <span class="hidden sm:inline">Super Admin</span>
+              <app-icon name="arrow-left" className="w-3.5 h-3.5 text-[#E67324]" />
+              <span class="hidden sm:inline">Volver al Dashboard</span>
             </button>
           }
 

@@ -197,3 +197,22 @@ graph TD
   - Control granular de permisos auditable y adaptable.
   - Protección de privacidad y seguridad en telemetría de accesos territoriales.
   - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-032: Asignación Directa de Roles por Persona y Renombrado de Retorno al Dashboard
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Permitir a los directores nacionales reasignar el rol de cualquier colaborador directamente desde el Gestor de Roles y simplificar el botón de retorno superior ("Volver al Dashboard").
+- **Decisión:**
+  1. **Asignación de Roles por Persona (`SecurityUsersTableComponent`):**
+     - Se integró un selector de pestañas en `SecurityRolesHeaderComponent` para alternar entre "Matriz de Permisos" y "Roles de Personas".
+     - `SecurityUsersTableComponent` despliega a los colaboradores con su territorio, correo institucional, rol actual y un selector interactivo para reasignar su rol (`Usuario equipo`, `Líder equipo`, `Director nacional`).
+     - `SecurityUsersService` gestiona el estado reactivo con Angular Signals, persistencia en `misincol_system_users_v1` y notificaciones vía `ToastService`.
+  2. **Renombrado del Botón en la Cabecera (`AppHeaderComponent`):**
+     - Se sustituyó la etiqueta `"Super Admin"` por `"Volver al Dashboard"`, acompañada del icono `arrow-left`, facilitando una navegación intuitiva y natural de regreso al mapa y tablero nacional.
+  3. **Backend (`UsersController`):**
+     - Endpoint `PATCH /users/:id/role` protegido por `@Roles(UserRole.ROLE_NACIONAL)` y validado con `UpdateUserRoleDto`.
+- **Consecuencias:**
+  - Administración ágil y transparente de las identidades y privilegios del personal misionero.
+  - Mayor ergonomía de navegación para la dirección nacional.
+  - Cumplimiento del 100% de la cota de 150 líneas por archivo.
