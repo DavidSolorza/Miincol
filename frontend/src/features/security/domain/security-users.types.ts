@@ -33,3 +33,4 @@ export const USER_ROLE_OPTIONS: Array<{
     badgeClass: 'bg-stone-900 text-[#E67324] border-stone-800',
   },
 ];
+

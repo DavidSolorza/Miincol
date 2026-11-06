@@ -29,9 +29,8 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
             <button
               type="button"
               (click)="tabChanged.emit('matrix')"
-              [class]="'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer font-[\'Outfit\'] ' +
-                (activeTab() === 'matrix' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60')
-              "
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer font-['Outfit']"
+              [class]="activeTab() === 'matrix' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
             >
               <app-icon name="layers" className="w-3.5 h-3.5 text-[#E67324]" />
               <span>Matriz de Permisos</span>
@@ -39,9 +38,8 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
             <button
               type="button"
               (click)="tabChanged.emit('users')"
-              [class]="'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer font-[\'Outfit\'] ' +
-                (activeTab() === 'users' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60')
-              "
+              class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer font-['Outfit']"
+              [class]="activeTab() === 'users' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
             >
               <app-icon name="users" className="w-3.5 h-3.5 text-[#E67324]" />
               <span>Roles de Personas</span>

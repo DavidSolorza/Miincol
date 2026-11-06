@@ -12,13 +12,20 @@ export interface AppEventMap {
   'team:select': { teamId: string };
   'team:inspect': { teamId: string };
   'plan:phase_select': { phaseId: string };
+  'pdm:phase_switch': { phaseId: string };
+  'pdm:plan_persisted': { teamId: string; phaseId: string };
+  'security:role_update': { userId: string; newRole: string };
+  'security:matrix_update': { timestamp: number };
+  'pwa:install_prompt': { canInstall: boolean };
   'ui:toast': {
     message: string;
     type?: 'success' | 'error' | 'warning' | 'info';
     title?: string;
     duration?: number;
   };
-  'ui:view_change': { view: 'dashboard' | 'phases' | 'supervision' | 'team-space' | 'reports' };
+  'ui:view_change': {
+    view: 'dashboard' | 'phases' | 'supervision' | 'team-space' | 'reports' | 'security' | 'general' | 'plans' | 'superadmin';
+  };
   'perf:sync': { timestamp: number };
   'audit:log': {
     teamId: string;

@@ -71,11 +71,8 @@ import type { SystemRoleId } from '../../domain/security.types';
                       <button
                         type="button"
                         (click)="roleChanged.emit({ userId: user.id, newRole: opt.id })"
-                        [class]="'px-2 py-1 rounded-lg text-[10.5px] font-bold transition cursor-pointer font-[\'Outfit\'] ' +
-                          (user.role === opt.id
-                            ? 'bg-stone-900 text-white shadow-2xs'
-                            : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60')
-                        "
+                        class="px-2 py-1 rounded-lg text-[10.5px] font-bold transition cursor-pointer font-['Outfit']"
+                        [class]="user.role === opt.id ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
                         [title]="'Asignar rol: ' + opt.label"
                       >
                         {{ opt.label.replace(' ', '\n') }}
@@ -118,3 +115,4 @@ export class SecurityUsersTableComponent {
     return this.roleOptions.find((r) => r.id === roleId)?.badgeClass || '';
   }
 }
+

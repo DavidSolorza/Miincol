@@ -21,7 +21,7 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
         </div>
         <div class="text-right text-xs text-stone-500">
           <span>Actualizado: </span>
-          <strong class="text-stone-800">{{ infoService.currentInfo().updatedAt.slice(0, 10) }}</strong>
+          <strong class="text-stone-800">{{ (infoService.currentInfo().updatedAt || '').slice(0, 10) || '2026-11-06' }}</strong>
         </div>
       </div>
 

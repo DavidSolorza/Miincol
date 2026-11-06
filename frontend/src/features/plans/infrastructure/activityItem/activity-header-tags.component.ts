@@ -19,7 +19,8 @@ const STATE_STYLES: Record<ActivityState, string> = {
         <select
           [value]="state()"
           (change)="onSelectState($event)"
-          [class]="'text-[11px] font-bold py-1 pl-3 pr-6 rounded-xl border transition cursor-pointer appearance-none font-[\\'Outfit\\'] ' + getStyle(state())"
+          class="text-[11px] font-bold py-1 pl-3 pr-6 rounded-xl border transition cursor-pointer appearance-none font-['Outfit']"
+          [class]="getStyle(state())"
         >
           <option value="Pendiente">⏳ Pendiente</option>
           <option value="En Proceso">🔄 En Proceso</option>

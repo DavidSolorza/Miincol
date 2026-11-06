@@ -62,8 +62,10 @@ export class GeneralInfoService {
       const saved = localStorage.getItem(key);
       if (saved) {
         const parsed: TeamGeneralInfo = JSON.parse(saved);
-        const hasPlaceholder = parsed.teamData.members.some((m) => m.name === 'Obrero Misionero');
-        const countMismatch = !!teamMembers?.length && parsed.teamData.members.length < teamMembers.length;
+        if (!parsed.updatedAt) parsed.updatedAt = new Date().toISOString();
+        if (!parsed.budgetBreakdown) parsed.budgetBreakdown = createDefaultGeneralInfo(teamId).budgetBreakdown;
+        const hasPlaceholder = parsed.teamData?.members?.some((m) => m.name === 'Obrero Misionero');
+        const countMismatch = !!teamMembers?.length && (parsed.teamData?.members?.length || 0) < teamMembers.length;
         if (hasPlaceholder || countMismatch) {
           parsed.teamData.members = buildDefaultMembers(leader || parsed.teamData.teamLeader, teamMembers);
           this.persist(teamId, parsed);

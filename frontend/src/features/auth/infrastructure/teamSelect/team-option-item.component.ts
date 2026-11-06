@@ -20,7 +20,11 @@ import type { TeamDropdownItem } from './team-dropdown-trigger.component';
             <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded text-white shadow-2xs shrink-0 bg-[#8B251E]">
               {{ team.ethnicity }}
             </span>
-            <span [class]="'font-bold text-xs truncate font-[\\'Outfit\\'] ' + (isSelected ? 'text-[#8B251E]' : 'text-stone-900')">
+            <span
+              class="font-bold text-xs truncate font-['Outfit']"
+              [class.text-[#8B251E]]="isSelected"
+              [class.text-stone-900]="!isSelected"
+            >
               {{ team.name }}
             </span>
           </div>

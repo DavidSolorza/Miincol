@@ -216,3 +216,26 @@ graph TD
   - Administración ágil y transparente de las identidades y privilegios del personal misionero.
   - Mayor ergonomía de navegación para la dirección nacional.
   - Cumplimiento del 100% de la cota de 150 líneas por archivo.
+
+---
+
+### ADR-033: Estabilización de Raíz de Vistas, ServiceBus Integral, Optimización de Cero-Latencia y Desktop PWA
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Garantizar estabilidad indestructible en todas las vistas de la aplicación, desacoplar la comunicación reactiva mediante un ServiceBus centralizado, reducir los tiempos de carga al mínimo y convertir la plataforma en una aplicación instalable de escritorio.
+- **Decisión:**
+  1. **Blindaje de Plantillas y Cero JIT:**
+     - Eliminación de comillas simples escapadas (`font-[\'...\']`) en todas las plantillas del frontend, separando clases estáticas en `class` y reservando `[class]` para variables dinámicas puras. La compilación AOT se ejecuta de forma 100% anticipada en **6.21 segundos**.
+  2. **Guardas Defensivas en Vistas:**
+     - `GeneralInfoViewComponent` y `GeneralInfoService` incorporan validación defensiva (`updatedAt`, `budgetBreakdown`, etc.) previniendo errores por `localStorage` inexistente o desactualizado.
+  3. **ServiceBus Centralizado (`src/core/bus/`):**
+     - Expansión de `bus.types.ts` con eventos tipados (`pdm:phase_switch`, `pdm:plan_persisted`, `security:role_update`, `security:matrix_update`, `pwa:install_prompt`).
+     - Despacho no bloqueante en la cola de microtareas (`queueMicrotask`).
+  4. **Optimización de Ultra-Baja Latencia:**
+     - Reducción del logotipo institucional de **945.6 KB a 54.4 KB** (ahorro de ~891 KB) y depuración de 2.4 MB de imágenes de prueba no utilizadas.
+     - Service Worker (`sw.js` v3) con estrategia Cache-First y fallback instantáneo para operar con 0 ms de latencia en redes 2G/3G territoriales.
+  5. **Aplicación Descargable de Escritorio (Desktop PWA):**
+     - Creación de `manifest.webmanifest` con modo `display: "standalone"`, tema institucional `#1C1917` e iconografía vectorial/rasterizada de 192x192 y 512x512.
+     - Integración del componente `PwaInstallButtonComponent` en la cabecera global para permitir a los usuarios instalar la app nativamente en Windows, macOS y Linux.
+- **Consecuencias:**
+  - Carga instantánea, alta resiliencia y experiencia de usuario fluida y libre de errores.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.

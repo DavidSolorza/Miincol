@@ -27,7 +27,11 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div [class]="'min-h-screen bg-[#FAF7F2] flex font-[\\'Plus_Jakarta_Sans\\'] text-stone-900 selection:bg-stone-900 selection:text-white ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' ? 'lg:h-screen lg:overflow-hidden' : '')">
+    <div
+      class="min-h-screen bg-[#FAF7F2] flex font-sans text-stone-900 selection:bg-stone-900 selection:text-white"
+      [class.lg:h-screen]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security'"
+      [class.lg:overflow-hidden]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security'"
+    >
       @if (shouldShowSidebar()) {
         <app-plan-sidebar
           [allPlans]="planService.allPlans()"
@@ -51,21 +55,12 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
 
       <div [class]="'flex-1 flex flex-col min-w-0 ' + (sessionSvc.activeView() === 'superadmin' ? 'h-full lg:h-screen lg:overflow-hidden' : 'min-h-screen')">
         <app-header-section
-          [isAdminPreview]="sessionSvc.isAdminPreview()"
-          [activeTeam]="activeTeam()"
-          [whatsappUrl]="whatsappUrl()"
-          [shouldShowSidebar]="shouldShowSidebar()"
-          [isSuperAdmin]="isSuperAdmin()"
-          [activeView]="sessionSvc.activeView()"
-          [mappedTeams]="mappedTeams()"
-          [activeTeamId]="sessionSvc.activeTeamId()"
-          [session]="sessionSvc.session()!"
-          (backToAdmin)="sessionSvc.handleBackToAdmin()"
-          (openMobileSidebar)="isMobileSidebarOpen.set(true)"
-          (selectTeam)="onSelectTeam($event)"
-          (goToSuperAdmin)="onGoToSuperAdmin()" (goToSecurity)="onGoToSecurity()"
-          (logout)="sessionSvc.handleLogout()"
-          (openReportModal)="isReportModalOpen.set(true)"
+          [isAdminPreview]="sessionSvc.isAdminPreview()" [activeTeam]="activeTeam()" [whatsappUrl]="whatsappUrl()"
+          [shouldShowSidebar]="shouldShowSidebar()" [isSuperAdmin]="isSuperAdmin()" [activeView]="sessionSvc.activeView()"
+          [mappedTeams]="mappedTeams()" [activeTeamId]="sessionSvc.activeTeamId()" [session]="sessionSvc.session()!"
+          (backToAdmin)="sessionSvc.handleBackToAdmin()" (openMobileSidebar)="isMobileSidebarOpen.set(true)"
+          (selectTeam)="onSelectTeam($event)" (goToSuperAdmin)="onGoToSuperAdmin()" (goToSecurity)="onGoToSecurity()"
+          (logout)="sessionSvc.handleLogout()" (openReportModal)="isReportModalOpen.set(true)"
         />
 
         <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">

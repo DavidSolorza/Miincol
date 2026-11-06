@@ -4,6 +4,7 @@ import { MisincolLogoComponent } from '../../shared/components/misincol-logo.com
 import { NetworkStatusBadgeComponent } from '../../shared/components/network-status-badge.component';
 import { TeamSelectDropdownComponent } from '../../features/auth/infrastructure/team-select-dropdown.component';
 import { AppHeaderUserProfileComponent } from './app-header-user-profile.component';
+import { PwaInstallButtonComponent } from '../../shared/components/pwa/pwa-install-button.component';
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { AuthSession } from '../auth/appSession.types';
 
@@ -12,11 +13,8 @@ import type { AuthSession } from '../auth/appSession.types';
   selector: 'app-header',
   standalone: true,
   imports: [
-    AppIconComponent,
-    MisincolLogoComponent,
-    NetworkStatusBadgeComponent,
-    TeamSelectDropdownComponent,
-    AppHeaderUserProfileComponent,
+    AppIconComponent, MisincolLogoComponent, NetworkStatusBadgeComponent,
+    TeamSelectDropdownComponent, AppHeaderUserProfileComponent, PwaInstallButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -94,7 +92,8 @@ import type { AuthSession } from '../auth/appSession.types';
           </div>
         }
 
-        <div class="flex items-center gap-2.5 sm:gap-3">
+        <div class="flex items-center gap-2 sm:gap-2.5">
+          <app-pwa-install-button />
           <app-network-status-badge />
           @if (isSuperAdmin() && activeView() !== 'superadmin') {
             <button
