@@ -374,4 +374,35 @@ graph TD
   - Plena conformidad con el documento base y flujo de trabajo misionero.
   - 100% de cumplimiento del límite estricto de 150 líneas por archivo en TypeScript.
 
+---
+
+### ADR-039: Alineación y Cuadre de Lógica Presupuestal en Backend NestJS
+- **Estado:** Aprobado e Implementado (`2026-11-07`).
+- **Contexto:** Sincronizar las cifras presupuestales oficiales de los 6 equipos territoriales entre el frontend, backend NestJS y el documento Excel oficial (*PDM 2026 Pastos Vr1.xlsx*), garantizando que todo cálculo de porcentaje de ejecución y desglose por pilares cuadre matemáticamente.
+- **Decisión:**
+  1. **Ampliación de la Entidad `Team`:**
+     - Campos `totalBudget`, `executedBudget`, `budgetPercentage`, `currentPhaseId`, `healthStatus`, `themeColor`, `accessPin` y `pillarBudgets`.
+  2. **Sembrado Completo de los 6 Equipos Territoriales (`INITIAL_TEAMS_DATA`):**
+     - Misión Pastos - Cumbal: **$11,210,000 COP** (fiel a celda de *Presupuesto Total* y *Entrenamiento* de `PDM 2026 Pastos Vr1.xlsx`).
+     - Misión Wayuu - Alta Guajira: **$14,900,000 COP**.
+     - Misión Nasa - Tierradentro: **$18,200,000 COP**.
+     - Misión Iku - Sierra Nevada: **$12,500,000 COP**.
+     - Misión Emberá Chamí - Risaralda: **$16,800,000 COP**.
+     - Misión Nukak Makú - Selva de Guaviare: **$21,000,000 COP**.
+     - Total Nacional Consolidado: **$94,610,000 COP**.
+  3. **Calculadora Reactiva (`team-budget.calculator.ts`):**
+     - Cálculo de porcentaje de ejecución: $\text{budgetPercentage} = \text{round}((\text{executedBudget} / \text{totalBudget}) \times 100)$.
+     - Generación de resumen presupuestal por equipo y KPIs nacionales consolidados.
+  4. **Nuevos Endpoints en `TeamsController`:**
+     - `GET /teams/summary/kpis`: KPIs nacionales de presupuesto y salud territorial.
+     - `GET /teams/:id/budget-summary`: Conciliación presupuestal por misión.
+  5. **Desglose Mensual en `ActivitiesService`:**
+     - Soporte para `monthlyBudget?: number[]` (12 meses). Si está presente, el total se deriva de la suma de los meses planificados.
+  6. **Gobernanza de Modularidad:**
+     - Desacople de datos en `initial-teams-andina.data.ts` y `initial-teams-caribe.data.ts`, garantizando `<=` 150 líneas en todos los archivos.
+- **Consecuencias:**
+  - 100% de coherencia financiera y cuadre de cifras exactas en todo el sistema.
+  - Apego estricto a las Reglas de Oro v2026.4.0.
+
+
 
