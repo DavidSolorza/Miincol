@@ -77,7 +77,7 @@ const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, directo
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-100 text-xs font-['Outfit']">
-            @for (user of filteredUsers(); track user.id) {
+            @for (user of filteredUsers(); track (user.id + '-' + $index)) {
               <tr
                 app-security-users-table-row
                 [user]="user"
