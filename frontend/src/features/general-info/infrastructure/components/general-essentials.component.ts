@@ -99,3 +99,4 @@ export class GeneralEssentialsComponent {
     this.essentialsChanged.emit(this.essentials().filter((e) => e !== item));
   }
 }
+

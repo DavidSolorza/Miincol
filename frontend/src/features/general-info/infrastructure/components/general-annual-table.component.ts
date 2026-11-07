@@ -140,3 +140,4 @@ export class GeneralAnnualTableComponent {
     this.metricChanged.emit({ [field]: val });
   }
 }
+

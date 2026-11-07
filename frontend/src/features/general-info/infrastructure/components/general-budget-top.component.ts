@@ -80,3 +80,4 @@ export class GeneralBudgetTopComponent {
     return formatCurrencyCOP(amount);
   }
 }
+

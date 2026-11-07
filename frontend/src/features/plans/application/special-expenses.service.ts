@@ -37,3 +37,4 @@ export class SpecialExpensesService {
     return this.expenses().filter((e) => !e.objectiveNumber || e.objectiveNumber === objNum);
   }
 }
+

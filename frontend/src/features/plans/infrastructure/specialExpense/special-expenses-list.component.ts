@@ -60,3 +60,4 @@ export class SpecialExpensesListComponent {
     return formatCurrencyCOP(val);
   }
 }
+

@@ -120,3 +120,4 @@ export class GeneralTeamFooterComponent {
     this.updateTeamData.emit({ [field]: val });
   }
 }
+

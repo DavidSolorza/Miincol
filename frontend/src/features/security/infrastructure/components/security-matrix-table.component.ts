@@ -45,7 +45,7 @@ import { SYSTEM_PERMISSIONS, SYSTEM_ROLES, type PermissionDef, type RolePermissi
                   </div>
                 </td>
                 @for (role of roles; track role.id) {
-                  @let isGranted = matrix()[role.id][perm.key];
+                  @let isGranted = !!matrix()?.[role.id]?.[perm.key];
                   @let isLocked = role.id === 'national_director' && (perm.key === 'security.roles.manage' || perm.key === 'audit.history.view');
                   <td class="py-2.5 px-3 text-center">
                     <button

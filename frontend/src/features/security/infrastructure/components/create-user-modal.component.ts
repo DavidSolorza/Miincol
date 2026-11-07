@@ -99,7 +99,7 @@ export class CreateUserModalComponent {
         this.role.set('team_member');
         this.selectedTeamId.set('national');
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   close(): void {

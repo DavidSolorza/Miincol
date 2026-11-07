@@ -114,3 +114,4 @@ export class GeneralMinisterialTrainingComponent {
     this.churchChanged.emit({ [field]: val });
   }
 }
+

@@ -78,9 +78,9 @@ import { GeneralInfoService } from '../../../general-info/application/general-in
 export class ActivityScheduleFieldsComponent {
   private readonly generalInfoService = inject(GeneralInfoService);
 
-  readonly responsible = input.required<string>();
-  readonly frequency = input.required<string>();
-  readonly timesPerYear = input.required<number>();
+  readonly responsible = input<string>('');
+  readonly frequency = input<string>('Mensual');
+  readonly timesPerYear = input<number>(12);
 
   readonly responsibleChanged = output<string>();
   readonly frequencyChanged = output<string>();

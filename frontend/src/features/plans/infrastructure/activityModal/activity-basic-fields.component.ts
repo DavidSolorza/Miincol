@@ -83,8 +83,10 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
       </div>
 
       <app-activity-schedule-fields
+        [responsible]="responsible()"
         [frequency]="frequency()"
         [timesPerYear]="timesPerYear()"
+        (responsibleChanged)="responsibleChanged.emit($event)"
         (frequencyChanged)="frequencyChanged.emit($event)"
         (timesPerYearChanged)="timesPerYearChanged.emit($event)"
       />

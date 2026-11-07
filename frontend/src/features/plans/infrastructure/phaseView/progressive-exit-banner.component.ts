@@ -25,3 +25,4 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
 export class ProgressiveExitBannerComponent {
   readonly isVisible = input.required<boolean>();
 }
+

@@ -62,3 +62,4 @@ export class PhaseModalsComponent {
   readonly objectiveDeleted = output<number>();
   readonly saveSpecialExpense = output<Omit<SpecialExpense, 'id' | 'createdAt'>>();
 }
+

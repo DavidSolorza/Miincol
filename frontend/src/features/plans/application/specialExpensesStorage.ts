@@ -16,3 +16,4 @@ export const persistSpecialExpenses = (teamId: string, expenses: SpecialExpense[
     console.warn('Error al guardar gastos especiales:', e);
   }
 };
+

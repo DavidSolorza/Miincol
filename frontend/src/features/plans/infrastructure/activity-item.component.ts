@@ -112,7 +112,7 @@ export class ActivityItemComponent {
       const act = this.activity();
       this.unitBudgetInput.set(act.unitBudget);
       this.timesPerYearInput.set(act.timesPerYear);
-    }, { allowSignalWrites: true });
+    });
   }
 
   fmtDate(d: string): string { return formatDate(d); }

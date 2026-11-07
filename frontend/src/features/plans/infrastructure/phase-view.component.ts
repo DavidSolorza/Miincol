@@ -116,7 +116,7 @@ export class PhaseViewComponent {
     effect(() => {
       const a = this.planService.pendingAssignee();
       if (a && !this.isReadOnly()) { this.openActModal('create', null, 1, a); this.planService.pendingAssignee.set(null); }
-    }, { allowSignalWrites: true });
+    });
   }
 
   openActModal(m: 'create' | 'edit', act: Activity | null, obj: 1 | 2 | 3 | 4, r = ''): void {

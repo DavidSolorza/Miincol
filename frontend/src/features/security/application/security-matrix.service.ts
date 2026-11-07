@@ -20,6 +20,7 @@ export class SecurityMatrixService {
           team_member: { ...DEFAULT_ROLE_PERMISSIONS_MATRIX.team_member, ...parsed.team_member },
           team_leader: { ...DEFAULT_ROLE_PERMISSIONS_MATRIX.team_leader, ...parsed.team_leader },
           national_director: { ...DEFAULT_ROLE_PERMISSIONS_MATRIX.national_director, ...parsed.national_director },
+          director_general: { ...DEFAULT_ROLE_PERMISSIONS_MATRIX.director_general, ...parsed.director_general },
         };
       }
     } catch { /* fallback to default */ }
