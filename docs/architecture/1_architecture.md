@@ -154,3 +154,197 @@ graph TD
   - Compilación Ahead-of-Time (AOT) con verificación estricta de plantillas (`strictTemplates: true`).
   - Detección de cambios granular y ultra-rápida mediante Angular Signals + `OnPush`.
   - Cumplimiento del 100% del límite de `< 150` líneas por archivo en todos los archivos `.ts` del repositorio.
+
+---
+
+### ADR-029: Reglas Ministeriales Territoriales (5 Pilares, Límite de 4 Objetivos y Roles)
+- **Estado:** Aprobado e Implementado (`2026-11-05`).
+- **Contexto:** Definir con total precisión metodológica los pilares oficiales de MISINCOL, la cota máxima de objetivos por fase y los privilegios de mutación de integrantes entre coordinadores y líderes en campo.
+- **Decisión:**
+  1. **Los 5 Pilares Fundamentales:** Se remueve la categoría `General` (Ejes Transversales), consolidando la metodología en: `Investigación`, `Encarnación`, `Evangelización`, `Entrenamiento` y `Autocuidado`.
+  2. **Cota Máxima de 4 Objetivos Estratégicos:**
+     - En el frontend, `PhaseObjectiveCardsGridComponent` bloquea la creación al alcanzar 4 objetivos, sustituyendo el botón punteado por la tarjeta de estado `4/4 Límite Máximo Alcanzado`.
+     - En el backend, `ObjectivesService.create()` rechaza cualquier intento de superar 4 objetivos lanzando `BadRequestException`.
+  3. **Privilegios de Integrantes:** Solo usuarios con rol `admin` pueden agregar o remover integrantes en `GeneralTeamCardComponent`. Los líderes territoriales solo cuentan con el botón `Asignar Tarea`.
+
+---
+
+### ADR-030: Reorganización del Sidebar y Retorno a Supervisión Nacional
+- **Estado:** Aprobado e Implementado (`2026-11-05`).
+- **Contexto:** Optimizar la ergonomía de navegación cuando un coordinador inspecciona el PDM de una misión territorial.
+- **Decisión:**
+  1. **Retorno Superior en Sidebar:** Se añade el botón `← Volver a Supervisión Nacional` en la cabecera superior del sidebar en modo `isAdminPreview`.
+  2. **Desactivación de Logout Accidental:** En modo supervisión, se oculta el botón de cierre de sesión en el perfil inferior del sidebar, sustituyéndolo por la etiqueta informativa `Supervisión`.
+  3. **Persistencia de Accesos en Información General:** Se garantiza que los accesos a `Notas y Agenda`, `Informe PDM` y `Contacto Líder` se mantengan visibles tanto en las fases del PDM como en la vista macro de `Información General`.
+
+---
+
+### ADR-031: Gestor de Roles, Seguridad y Matriz Interactiva de Permisos
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Proveer una gobernanza centralizada de privilegios del sistema con matriz interactiva de doble entrada y restringir el acceso a historiales de ingreso y telemetría sensible exclusivamente a directores/administradores nacionales.
+- **Decisión:**
+  1. **Módulo Frontend `src/features/security/`:**
+     - `SecurityRolesViewComponent`: Vista de administración de roles y permisos con diseño coherente en tarjeta y paleta institucional.
+     - `SecurityMatrixTableComponent`: Tabla de doble entrada que cruza los 3 roles oficiales (`Usuario equipo`, `Líder equipo`, `Director nacional`) con las 10 capacidades del sistema agrupadas en 4 categorías (`Gestión de Equipos`, `Plan de Desarrollo (PDM)`, `Auditoría y Telemetría`, `Gobernanza y Sistema`).
+     - `SecurityMatrixService`: Servicio reactivo con señales Angular (`signal`), cálculo de conteos activos y persistencia local (`misincol_security_matrix_v1`).
+  2. **Restricción Estricta de Historiales de Ingreso:**
+     - En `TeamAuditModalComponent`, la pestaña "Ingresos" y los eventos de telemetría de login quedan restringidos al rol `admin` (`@Input() isAdmin = true`).
+     - Si el usuario no es administrador, no puede ver las horas, IPs ni accesos de los integrantes.
+  3. **Backend `SecurityModule`:**
+     - `SecurityController` con endpoints protegidos `GET /security/matrix` y `PUT /security/matrix` requiriendo rol `ROLE_NACIONAL`.
+     - Incorporación de `ROLE_USUARIO = 'ROLE_USUARIO'` en `UserRole`.
+- **Consecuencias:**
+  - Control granular de permisos auditable y adaptable.
+  - Protección de privacidad y seguridad en telemetría de accesos territoriales.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-032: Asignación Directa de Roles por Persona y Renombrado de Retorno al Dashboard
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Permitir a los directores nacionales reasignar el rol de cualquier colaborador directamente desde el Gestor de Roles y simplificar el botón de retorno superior ("Volver al Dashboard").
+- **Decisión:**
+  1. **Asignación de Roles por Persona (`SecurityUsersTableComponent`):**
+     - Se integró un selector de pestañas en `SecurityRolesHeaderComponent` para alternar entre "Matriz de Permisos" y "Roles de Personas".
+     - `SecurityUsersTableComponent` despliega a los colaboradores con su territorio, correo institucional, rol actual y un selector interactivo para reasignar su rol (`Usuario equipo`, `Líder equipo`, `Director nacional`).
+     - `SecurityUsersService` gestiona el estado reactivo con Angular Signals, persistencia en `misincol_system_users_v1` y notificaciones vía `ToastService`.
+  2. **Renombrado del Botón en la Cabecera (`AppHeaderComponent`):**
+     - Se sustituyó la etiqueta `"Super Admin"` por `"Volver al Dashboard"`, acompañada del icono `arrow-left`, facilitando una navegación intuitiva y natural de regreso al mapa y tablero nacional.
+  3. **Backend (`UsersController`):**
+     - Endpoint `PATCH /users/:id/role` protegido por `@Roles(UserRole.ROLE_NACIONAL)` y validado con `UpdateUserRoleDto`.
+- **Consecuencias:**
+  - Administración ágil y transparente de las identidades y privilegios del personal misionero.
+  - Mayor ergonomía de navegación para la dirección nacional.
+  - Cumplimiento del 100% de la cota de 150 líneas por archivo.
+
+---
+
+### ADR-033: Estabilización de Raíz de Vistas, ServiceBus Integral, Optimización de Cero-Latencia y Desktop PWA
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Garantizar estabilidad indestructible en todas las vistas de la aplicación, desacoplar la comunicación reactiva mediante un ServiceBus centralizado, reducir los tiempos de carga al mínimo y convertir la plataforma en una aplicación instalable de escritorio.
+- **Decisión:**
+  1. **Blindaje de Plantillas y Cero JIT:**
+     - Eliminación de comillas simples escapadas (`font-[\'...\']`) en todas las plantillas del frontend, separando clases estáticas en `class` y reservando `[class]` para variables dinámicas puras. La compilación AOT se ejecuta de forma 100% anticipada en **6.21 segundos**.
+  2. **Guardas Defensivas en Vistas:**
+     - `GeneralInfoViewComponent` y `GeneralInfoService` incorporan validación defensiva (`updatedAt`, `budgetBreakdown`, etc.) previniendo errores por `localStorage` inexistente o desactualizado.
+  3. **ServiceBus Centralizado (`src/core/bus/`):**
+     - Expansión de `bus.types.ts` con eventos tipados (`pdm:phase_switch`, `pdm:plan_persisted`, `security:role_update`, `security:matrix_update`, `pwa:install_prompt`).
+     - Despacho no bloqueante en la cola de microtareas (`queueMicrotask`).
+  4. **Optimización de Ultra-Baja Latencia:**
+     - Reducción del logotipo institucional de **945.6 KB a 54.4 KB** (ahorro de ~891 KB) y depuración de 2.4 MB de imágenes de prueba no utilizadas.
+     - Service Worker (`sw.js` v3) con estrategia Cache-First y fallback instantáneo para operar con 0 ms de latencia en redes 2G/3G territoriales.
+  5. **Aplicación Descargable de Escritorio (Desktop PWA):**
+     - Creación de `manifest.webmanifest` con modo `display: "standalone"`, tema institucional `#1C1917` e iconografía vectorial/rasterizada de 192x192 y 512x512.
+     - Integración del componente `PwaInstallButtonComponent` en la cabecera global para permitir a los usuarios instalar la app nativamente en Windows, macOS y Linux.
+- **Consecuencias:**
+  - Carga instantánea, alta resiliencia y experiencia de usuario fluida y libre de errores.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-034: Restricción de Acceso para "Usuario de Equipo" en el Árbol PDM (Solo Lectura con Edición Exclusiva de Estado en Tareas Asignadas)
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Se requiere restringir las capacidades de los colaboradores con rol "Usuario de equipo" (`ROLE_USUARIO` / `member`). Al ingresar al espacio de su equipo en la vista del Plan de Desarrollo Ministerial (PDM), deben poder explorar la estructura jerárquica en árbol (`MissionaryTeam` ➔ `PhasePlan` ➔ `Objective` ➔ `Activity`), pero sin permisos para crear, editar o eliminar objetivos, presupuestos, fechas o descripciones. Su única potestad de mutación es actualizar el estado (`Pendiente` ➔ `En Proceso` ➔ `Completado`) de las actividades que les han sido asignadas expresamente a su nombre.
+- **Decisión:**
+  1. **Backend (`NestJS`):**
+     - En `ActivitiesService` y `ActivitiesController`:
+       - Se implementó el endpoint `PATCH /activities/:id/status`. Si el rol del usuario es `ROLE_USUARIO`, se verifica que el campo `responsible` de la actividad coincida con el nombre del usuario. De lo contrario, se arroja `ForbiddenException`.
+       - En `create()`, `update()` y `delete()`, se bloquea de forma inquebrantable cualquier intento de ejecución por parte de usuarios con rol `ROLE_USUARIO`.
+     - En `ObjectivesController`:
+       - Se bloquean los métodos `create()`, `update()` y `delete()` ante peticiones de `ROLE_USUARIO`.
+  2. **Frontend (`Angular Standalone + Signals`):**
+     - Soporte para rol `member` en `AppSessionService`, `AuthSession` y `verifyAuthCredentials` (con chip de acceso rápido para Aída Secue en Misión Nasa).
+     - En `PhaseViewComponent`, `ObjectiveCardComponent`, `ObjectiveCardHeaderComponent`, `ObjectiveActivitiesListComponent`:
+       - Detección reactiva mediante `isMember = computed(() => session()?.role === 'member')`.
+       - Ocultamiento de botones de creación y edición de objetivos (`+ Nuevo Objetivo`, botón `Editar Objetivo`, botón `Restablecer`).
+       - Ocultamiento de botones de creación y edición de actividades (`+ Nueva Actividad`, `+ Registrar primera actividad`).
+     - En `ActivityItemComponent`, `ActivityHeaderTagsComponent`, `ActivityBudgetQuickEditComponent` y `ActivityDetailsAccordionComponent`:
+       - Cálculo de asignación de la tarea `isAssigned = computed(...)` comparando el nombre del usuario en sesión contra `activity.responsible`.
+       - Si la actividad está asignada al usuario miembro, se presenta una insignia visual `"Tu tarea"`, borde esmeralda sutil, y un `<select>` interactivo para cambiar su estado (`Pendiente`, `En Proceso`, `Completado`).
+       - Si la actividad pertenece a otro colaborador, el estado se muestra como insignia no interactiva con candado `🔒` y tooltip de solo lectura.
+       - Los controles de presupuesto rápido (valor unitario, repeticiones, lápiz y papelera) y el modal de edición profunda quedan completamente ocultos.
+     - En `SidebarUserProfileCardComponent`:
+       - Despliega el nombre y apellido del colaborador autenticado (`Aída Secue • Equipo`) en la tarjeta inferior de perfil.
+- **Consecuencias:**
+  - Seguridad multinivel robusta tanto en el servidor backend como en la interfaz de usuario.
+  - Experiencia de usuario empática, clara y ergonómica para los colaboradores en campo.
+  - Cumplimiento estricto del límite `<= 150` líneas por archivo en el 100% de la base de código.
+
+---
+
+### ADR-035: Creación de Personas desde Roles y Sincronización Automática con Equipos Misioneros
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Permitir al Director Nacional registrar colaboradores directamente desde la vista de gestión de roles solicitando nombre, correo, rol y equipo, y garantizar sincronización automática e inmediata cuando se crean nuevos equipos en el sistema nacional.
+- **Decisión:**
+  1. **Creación Directa de Personas (`CreateUserModalComponent`):**
+     - Botón `+ Nueva Persona` en `SecurityUsersTableComponent`.
+     - Modal atómico con validación de:
+       1. Nombre Completo
+       2. Correo Electrónico
+       3. Rol (`Usuario de equipo`, `Líder de equipo`, `Director nacional`)
+       4. Territorio / Equipo (Selector dinámico de misiones territoriales o Coordinación Nacional).
+     - Persistencia reactiva inmediata en `SecurityUsersService` (`misincol_system_users_v1`) y vinculación a los miembros de la misión en `AdminDashboardService`.
+  2. **Sincronización Automática al Crear Equipos (`AdminDashboardService`):**
+     - Cuando se registra o actualiza un equipo misionero en `handleCreateTeam`, se invoca automáticamente `securityUsersSvc.ensureTeamLeaderAndMembers(team)`.
+     - El pastor líder y todos los miembros registrados en el equipo aparecen de forma inmediata en la tabla de asignación de roles sin duplicidad ni pasos manuales.
+  3. **Modularización Estricta:**
+     - `INITIAL_SYSTEM_USERS` desacoplado a `security-users.helpers.ts`.
+     - `CreateUserModalComponent`, `SecurityUsersTableComponent` y `SecurityUsersService` se mantienen estrictamente `<= 150` líneas.
+- **Consecuencias:**
+  - Administración centralizada, consistente y libre de redundancia para la gobernanza del personal misionero.
+  - Sincronización transparente en tiempo real entre misiones territoriales y el árbol de seguridad.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-036: Módulo de Historial de Ingresos y Auditoría de Cambios (Acceso Exclusivo Director Nacional)
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Garantizar observabilidad, trazabilidad y registro forense de todas las mutaciones realizadas sobre el Plan de Desarrollo Ministerial (PDM) y los accesos al sistema, restringido de forma inviolable al Director Nacional / Administrador (`ROLE_NACIONAL`).
+- **Decisión:**
+  1. **Acceso Exclusivo en Sidebar y Cabecera:**
+     - En `PlanSidebarComponent`, botón *"Historial"* visible exclusivamente si `userRole() === 'admin'`. Oculto para líderes y usuarios de equipo.
+     - En `AppHeaderComponent`, botón *"Historial"* directo en la cabecera del Super Admin.
+     - En `AppWorkspaceComponent`, guardia defensiva que redirige cualquier intento de acceso no autorizado a la vista de auditoría.
+  2. **Trazabilidad de Modificaciones y Comparativa de Valores (`AuditChangesTableComponent`):**
+     - Despliega el autor, rol, territorio, fecha y hora exacta de cada mutación.
+     - Visualización comparativa de valores anteriores frente a nuevos:
+       $$\text{Valor Anterior (tachado)} \longrightarrow \text{Valor Nuevo (resaltado)}$$
+  3. **Historial de Inicios de Sesión (`AuditLoginsTableComponent`):**
+     - Registro de accesos con identidad, rol, IP de origen, fecha/hora y estado exitoso.
+  4. **Backend NestJS (`AuditModule`):**
+     - Endpoints protegidos `GET /audit/logs`, `GET /audit/changes` y `GET /audit/logins` con `@UseGuards(JwtAuthGuard, RolesGuard)` y `@Roles(UserRole.ROLE_NACIONAL)`.
+  5. **Modularización:**
+     - Todos los componentes y servicios (`AuditHistoryViewComponent`, `AuditChangesTableComponent`, `AuditLoginsTableComponent`, `AuditFiltersBarComponent`, `AuditService`, `AuditController`) se mantienen estrictamente `<= 150` líneas.
+- **Consecuencias:**
+  - Plena visibilidad, seguridad institucional y trazabilidad inmutable de cambios para la dirección nacional.
+  - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-037: CRUD Completo de Personas y Contenedor con Scroll y Cabecera Sticky en Gestión de Roles
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Dotar al Director Nacional de capacidades CRUD completas (Crear, Editar, Eliminar y Reasignar Rol) sobre los colaboradores del sistema en la vista de Roles, integrando un contenedor con desplazamiento vertical suave (`max-h-[480px] overflow-y-auto`) y cabecera pegajosa (`sticky top-0`) para optimizar la experiencia en tablas con gran volumen de registros.
+- **Decisión:**
+  1. **Contenedor con Scroll y Sticky Header (`SecurityUsersTableComponent`):**
+     - Envoltura de la tabla con `overflow-x-auto overflow-y-auto max-h-[480px] sidebar-scroll-smooth border border-stone-200/80 rounded-xl`.
+     - Cabecera de la tabla fija con `sticky top-0 z-10 bg-stone-50/95 backdrop-blur-xs shadow-2xs`.
+  2. **Acciones de Edición y Eliminación por Fila (`SecurityUsersTableRowComponent`):**
+     - Botón de edición (`edit-3`): abre `CreateUserModalComponent` precargado con la información existente del colaborador (`userToEdit`).
+     - Botón de eliminación (`trash-2`): dispara confirmación de seguridad reactiva mediante `ToastService.confirmAction()`.
+  3. **Operaciones CRUD en `SecurityUsersService`:**
+     - `createUser(dto)`: genera y persiste un nuevo colaborador.
+     - `updateUser(userId, updates)`: actualiza datos personales, rol o territorio y persiste en `misincol_system_users_v1`.
+     - `deleteUser(userId)`: remueve al colaborador del almacenamiento reactivo y emite notificación toast informativa.
+  4. **Sincronización Bidireccional de Equipos (`SecurityRolesViewComponent`):**
+     - Al guardar una nueva persona asignada a una misión, se añade automáticamente a la lista de miembros de `AdminDashboardService`.
+     - Al reasignar roles, se actualizan los permisos y visualización de forma inmediata.
+  5. **Modularización Estricta (`<= 150` líneas):**
+     - Extracción atómica de `SecurityUsersTableRowComponent` (`84` líneas).
+     - `SecurityUsersTableComponent` reducido a `147` líneas.
+     - `CreateUserModalComponent` (`131` líneas) con modo dual creación/edición.
+     - `SecurityUsersService` (`115` líneas).
+- **Consecuencias:**
+  - Ergonomía visual de nivel profesional con tabla navegable mediante scroll suave y cabeceras fijas.
+  - Autonomía completa para el Director Nacional en la gobernanza y mantenimiento de identidades misioneras.
+  - 100% de apego al límite de 150 líneas por archivo bajo la gobernanza técnica.
+

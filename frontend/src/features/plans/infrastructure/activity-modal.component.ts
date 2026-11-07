@@ -2,25 +2,29 @@ import { Component, ChangeDetectionStrategy, input, output, signal, computed, ef
 import { ModalComponent } from '../../../shared/components/modal.component';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
-import type { Activity } from '../domain/plan.types';
+import type { Activity, EssentialArea } from '../domain/plan.types';
 import { calculateWeeks } from '../../../shared/utils/formatters';
 import { getInitialFormValues, validateActivityForm } from './activityModal/activityModalDefaults';
 import { ActivityBasicFieldsComponent } from './activityModal/activity-basic-fields.component';
 import { ActivityBudgetDatesFieldsComponent } from './activityModal/activity-budget-dates-fields.component';
 import { ActivityGoalsFieldsComponent } from './activityModal/activity-goals-fields.component';
+import { ActivityObstaclesFieldsComponent } from './activityModal/activity-obstacles-fields.component';
 
 type ActivityFormState = ReturnType<typeof getInitialFormValues>;
 
 @Component({
   selector: 'app-activity-modal',
   standalone: true,
-  imports: [ModalComponent, AppIconComponent, ActivityBasicFieldsComponent, ActivityBudgetDatesFieldsComponent, ActivityGoalsFieldsComponent],
+  imports: [
+    ModalComponent, AppIconComponent, ActivityBasicFieldsComponent,
+    ActivityBudgetDatesFieldsComponent, ActivityGoalsFieldsComponent, ActivityObstaclesFieldsComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-modal
       [isOpen]="isOpen()"
       [title]="mode() === 'edit' ? 'Editar Actividad / Sub-Objetivo' : 'Nueva Iniciativa / Actividad Ministerial'"
-      [subtitle]="mode() === 'edit' ? 'Modifique área esencial, nivel, presupuesto y cronograma' : 'Registre una acción en el Plan de Desarrollo Ministerial'"
+      [subtitle]="mode() === 'edit' ? 'Modifique área esencial, presupuesto, cronograma y dificultades' : 'Registre una acción en el Plan de Desarrollo Ministerial'"
       maxWidth="2xl"
       (closed)="closed.emit()"
     >
@@ -41,7 +45,6 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           (responsibleChanged)="patchField('responsible', $event)"
           (frequencyChanged)="patchField('frequency', $event)"
           (timesPerYearChanged)="patchField('timesPerYear', $event)"
-          (essentialAreaChanged)="patchField('essentialArea', $event)"
         />
 
         <app-activity-budget-dates-fields
@@ -65,6 +68,11 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           (longTermGoalChanged)="patchField('longTermGoal', $event)"
         />
 
+        <app-activity-obstacles-fields
+          [obstacles]="form().obstacles"
+          (obstaclesChanged)="patchField('obstacles', $event)"
+        />
+
         <div class="sticky bottom-0 bg-white/95 backdrop-blur-xs flex items-center justify-end gap-2.5 pt-3 pb-1 border-t border-stone-200/60 z-10">
           <button
             type="button"
@@ -75,9 +83,9 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           </button>
           <button
             type="submit"
-            class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] text-white font-bold text-xs transition flex items-center gap-2 shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
+            class="px-5 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
           >
-            <app-icon [name]="mode() === 'edit' ? 'check' : 'plus-circle'" className="w-4 h-4" />
+            <app-icon [name]="mode() === 'edit' ? 'check' : 'plus-circle'" className="w-4 h-4 text-[#E67324]" />
             <span>{{ mode() === 'edit' ? 'Guardar Cambios' : 'Guardar Iniciativa' }}</span>
           </button>
         </div>
@@ -91,6 +99,8 @@ export class ActivityModalComponent {
   readonly mode = input<'create' | 'edit'>('create');
   readonly activityToEdit = input<Activity | null>(null);
   readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>();
+  readonly currentPillarArea = input<EssentialArea>('Investigación');
+  readonly defaultResponsible = input<string>('');
   readonly closed = output<void>();
   readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
   readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
@@ -100,9 +110,11 @@ export class ActivityModalComponent {
   constructor() {
     effect(() => {
       if (this.isOpen()) {
-        this.form.set(getInitialFormValues(this.mode(), this.activityToEdit(), this.defaultObjectiveNumber()));
+        const initial = getInitialFormValues(this.mode(), this.activityToEdit(), this.defaultObjectiveNumber(), this.currentPillarArea());
+        if (this.mode() === 'create' && this.defaultResponsible()) initial.responsible = this.defaultResponsible();
+        this.form.set(initial);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   patchField<K extends keyof ActivityFormState>(key: K, value: ActivityFormState[K]): void {

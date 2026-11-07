@@ -21,6 +21,7 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
           [index]="index()"
           [completedCount]="completedCount()"
           [totalObjectiveBudget]="totalObjectiveBudget()"
+          [canEdit]="canEdit()"
           (editObjective)="editObjective.emit($event)"
           (openAddModal)="openAddModal.emit(objectiveNumber())"
         />
@@ -40,6 +41,7 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
         <app-objective-activities-list
           [activities]="filteredActivities()"
           [objectiveNumber]="objectiveNumber()"
+          [canEdit]="canEdit()"
           (activityUpdated)="activityUpdated.emit($event)"
           (activityDeleted)="activityDeleted.emit($event)"
           (openAddModal)="openAddModal.emit($event)"
@@ -53,6 +55,7 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
 export class ObjectiveCardComponent {
   readonly objective = input.required<Objective>(); // Objetivo estratégico que se visualiza
   readonly index = input<number | undefined>(undefined);
+  readonly canEdit = input<boolean>(true);
   readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actualizaciones de una actividad
   readonly activityDeleted = output<string>(); // Emite el ID de la actividad eliminada
   readonly openAddModal = output<1 | 2 | 3 | 4>(); // Solicita abrir el modal para agregar actividad en este objetivo

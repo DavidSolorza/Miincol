@@ -1,0 +1,41 @@
+{
+  "name": "MISINCOL - Plan de Desarrollo Ministerial",
+  "short_name": "MISINCOL PDM",
+  "description": "Sistema de gestión y seguimiento territorial del Plan de Desarrollo Ministerial para Misiones Indígenas en Colombia.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FAF7F2",
+  "theme_color": "#1C1917",
+  "lang": "es-CO",
+  "categories": ["productivity", "business", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Supervisión Nacional",
+      "url": "/",
+      "description": "Tablero y mapa nacional de supervisión misionera"
+    }
+  ]
+}
+

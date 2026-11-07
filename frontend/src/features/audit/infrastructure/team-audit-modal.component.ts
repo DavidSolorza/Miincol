@@ -19,8 +19,8 @@ import { AuditLogItemComponent } from './auditModal/audit-log-item.component';
         >
           <div class="p-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/50">
             <div class="flex items-center gap-2 min-w-0">
-              <div class="p-2 rounded-xl text-white shadow-2xs bg-gradient-to-br from-[#8B251E] to-[#E67324]">
-                <app-icon name="history" className="w-4 h-4" />
+              <div class="p-2 rounded-xl text-stone-900 bg-stone-100 border border-stone-200/80 shadow-2xs">
+                <app-icon name="history" className="w-4 h-4 text-[#E67324]" />
               </div>
               <div class="min-w-0">
                 <h3 class="text-sm font-extrabold text-stone-900 truncate">Bitácora de Telemetría y Monitoreo</h3>
@@ -39,11 +39,13 @@ import { AuditLogItemComponent } from './auditModal/audit-log-item.component';
           </div>
 
           <div class="px-4 py-2 bg-stone-50/80 border-b border-stone-200/60 flex items-center justify-between text-[11px] flex-wrap gap-2">
-            <span>
-              Último acceso registrado: <strong class="text-stone-800">{{ telemetry().lastLoginFormatted }}</strong>
-            </span>
+            @if (isAdmin) {
+              <span>Último acceso registrado: <strong class="text-stone-800">{{ telemetry().lastLoginFormatted }}</strong></span>
+            } @else {
+              <span class="text-stone-500 font-medium">Historiales de ingreso restringidos a Administrador</span>
+            }
             <div class="flex items-center gap-1">
-              @for (tab of tabs; track tab.id) {
+              @for (tab of visibleTabs; track tab.id) {
                 <button
                   type="button"
                   (click)="filter.set(tab.id)"
@@ -79,20 +81,15 @@ export class TeamAuditModalComponent implements OnChanges, OnDestroy {
   @Input() teamId = '';
   @Input() teamName = '';
   @Input() leaderName = '';
+  @Input() isAdmin = true;
   @Output() close = new EventEmitter<void>();
 
   // Signals con los registros de auditoría, resumen de telemetría y filtro de categoría activo
   readonly logs = signal<TeamAuditLog[]>([]);
   readonly telemetry = signal<TeamTelemetrySummary>({
-    teamId: '',
-    lastLoginAt: '',
-    lastLoginFormatted: 'Hoy, 09:00',
-    isRecentLogin: true,
-    lastActionTitle: 'Actividad en PDM',
-    lastActionDetail: '',
-    lastActionAt: 'Reciente',
-    lastActionType: 'login',
-    totalActionsCount: 0,
+    teamId: '', lastLoginAt: '', lastLoginFormatted: 'Hoy, 09:00', isRecentLogin: true,
+    lastActionTitle: 'Actividad en PDM', lastActionDetail: '', lastActionAt: 'Reciente',
+    lastActionType: 'login', totalActionsCount: 0,
   });
   readonly filter = signal<'all' | 'login' | 'activity' | 'note'>('all');
 
@@ -102,6 +99,10 @@ export class TeamAuditModalComponent implements OnChanges, OnDestroy {
     { id: 'activity', label: 'Actividades' },
     { id: 'note', label: 'Notas' },
   ];
+
+  get visibleTabs() {
+    return this.isAdmin ? this.tabs : this.tabs.filter((t) => t.id !== 'login');
+  }
 
   private sub?: ServiceBusSubscription;
 
@@ -128,15 +129,17 @@ export class TeamAuditModalComponent implements OnChanges, OnDestroy {
     this.telemetry.set(calculateTeamTelemetry(this.teamId, this.leaderName));
   }
 
-  // Filtra los registros de auditoría según la pestaña activa (ingresos, actividades o notas)
+  // Filtra los registros de auditoría según la pestaña activa (restringiendo ingresos si no es admin)
   get filteredLogs(): TeamAuditLog[] {
     const f = this.filter();
-    return this.logs().filter((log) => {
-      if (f === 'login') return log.actionType === 'login';
-      if (f === 'activity') return log.actionType.startsWith('activity_') || log.actionType.startsWith('objective_');
-      if (f === 'note') return log.actionType.startsWith('note_');
-      return true;
-    });
+    return this.logs()
+      .filter((log) => this.isAdmin || log.actionType !== 'login')
+      .filter((log) => {
+        if (f === 'login') return this.isAdmin && log.actionType === 'login';
+        if (f === 'activity') return log.actionType.startsWith('activity_') || log.actionType.startsWith('objective_');
+        if (f === 'note') return log.actionType.startsWith('note_');
+        return true;
+      });
   }
 }
 

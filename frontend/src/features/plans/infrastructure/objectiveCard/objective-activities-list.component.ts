@@ -19,13 +19,15 @@ import { ActivityItemComponent } from '../activity-item.component';
           <p class="text-xs text-stone-400 max-w-xs mt-0.5">
             No coinciden con el filtro actual o aún no se han registrado en este objetivo.
           </p>
-          <button
-            type="button"
-            (click)="openAddModal.emit(objectiveNumber())"
-            class="mt-3 text-xs font-bold text-[#8B251E] hover:text-[#731E18] flex items-center gap-1.5 cursor-pointer"
-          >
-            <app-icon name="plus" className="w-4.5 h-4.5" /> Registrar primera actividad
-          </button>
+          @if (canEdit()) {
+            <button
+              type="button"
+              (click)="openAddModal.emit(objectiveNumber())"
+              class="mt-3 text-xs font-bold text-[#8B251E] hover:text-[#731E18] flex items-center gap-1.5 cursor-pointer"
+            >
+              <app-icon name="plus" className="w-4.5 h-4.5" /> Registrar primera actividad
+            </button>
+          }
         </div>
       } @else {
         @for (act of activities(); track act.id) {
@@ -40,13 +42,13 @@ import { ActivityItemComponent } from '../activity-item.component';
     </div>
   `,
 })
-// Lista de tarjetas de actividades de un objetivo con estado vacío cuando no hay coincidencias
 export class ObjectiveActivitiesListComponent {
-  readonly activities = input.required<Activity[]>(); // Lista de actividades filtradas a renderizar
-  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>(); // Número del objetivo al que pertenecen las actividades
-  readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite cambios en una actividad
-  readonly activityDeleted = output<string>(); // Emite el ID de la actividad eliminada
-  readonly openAddModal = output<1 | 2 | 3 | 4>(); // Solicita abrir el modal para registrar la primera actividad
-  readonly activityEdited = output<Activity>(); // Solicita abrir el modal de edición completa de una actividad
+  readonly activities = input.required<Activity[]>();
+  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>();
+  readonly canEdit = input<boolean>(true);
+  readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
+  readonly activityDeleted = output<string>();
+  readonly openAddModal = output<1 | 2 | 3 | 4>();
+  readonly activityEdited = output<Activity>();
 }
 

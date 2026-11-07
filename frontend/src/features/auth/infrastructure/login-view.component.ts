@@ -72,6 +72,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   @Input() allTeams: TeamSupervisionSummary[] = [];
   @Output() adminSuccess = new EventEmitter<void>();
   @Output() teamSuccess = new EventEmitter<TeamSupervisionSummary>();
+  @Output() memberSuccess = new EventEmitter<{ team: TeamSupervisionSummary; memberName: string }>();
 
   // Signals reactivos del formulario de login y estado de carga/error
   readonly activeTab = signal<'admin' | 'team'>('team');
@@ -140,6 +141,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     verifyAuthCredentials({
       activeTab: this.activeTab(), identifier: this.identifier(), password: this.password(), allTeams: this.allTeams,
       onAdminSuccess: () => this.adminSuccess.emit(), onTeamSuccess: (team) => this.teamSuccess.emit(team),
+      onMemberSuccess: (team, memberName) => this.memberSuccess.emit({ team, memberName }),
       onError: (msg) => this.error.set(msg), onDone: () => this.loading.set(false),
     });
   }

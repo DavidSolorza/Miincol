@@ -47,7 +47,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">Alertas Críticas</span>
           <app-icon name="alert-triangle" className="w-3.5 h-3.5 text-rose-500" />
         </div>
-        <div [class]="'text-xl font-black font-[\\'Outfit\\'] ' + (kpis.activeCriticalAlerts > 0 ? 'text-rose-600' : 'text-emerald-700')">
+        <div
+          class="text-xl font-black font-['Outfit']"
+          [class.text-rose-600]="kpis.activeCriticalAlerts > 0"
+          [class.text-emerald-700]="kpis.activeCriticalAlerts <= 0"
+        >
           {{ kpis.activeCriticalAlerts }}
         </div>
         <div class="text-[10px] text-stone-400 mt-0.5">

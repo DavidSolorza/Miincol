@@ -41,8 +41,8 @@ import { type NoteCategory, NOTE_CATEGORIES } from '../../domain/notes.types';
             [class]="
               'px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition cursor-pointer whitespace-nowrap border flex items-center gap-1.5 ' +
               (selectedCategory() === cat
-                ? 'bg-[#8B251E] text-white border-[#8B251E] shadow-2xs'
-                : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50')
+                ? 'bg-stone-900 text-white border-stone-900 shadow-2xs'
+                : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50 hover:text-stone-900')
             "
           >
             <span>{{ categories[cat].label }}</span>

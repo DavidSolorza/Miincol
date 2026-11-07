@@ -14,7 +14,7 @@ export class AppSessionService {
   readonly session = signal<AuthSession | null>(this.loadInitialSession());
   readonly activeTeamId = signal<string>(this.session()?.teamId || 'team-wayuu');
   readonly isAdminPreview = signal<boolean>(false);
-  readonly activeView = signal<'plans' | 'general' | 'superadmin'>(
+  readonly activeView = signal<'plans' | 'general' | 'superadmin' | 'security' | 'audit'>(
     this.session()?.role === 'admin' ? 'superadmin' : 'plans'
   );
 
@@ -25,6 +25,12 @@ export class AppSessionService {
       if (view === 'dashboard' || view === 'supervision') {
         this.isAdminPreview.set(false);
         this.activeView.set('superadmin');
+      } else if (view === 'security') {
+        this.isAdminPreview.set(false);
+        this.activeView.set('security');
+      } else if (view === 'audit') {
+        this.isAdminPreview.set(false);
+        this.activeView.set('audit');
       } else {
         this.activeView.set('plans');
       }
@@ -74,6 +80,17 @@ export class AppSessionService {
     this.activeView.set('plans');
     this.isAdminPreview.set(false);
     this.toastService.toast.success(`Bienvenido equipo ${team.name}`, 'Sesión Iniciada');
+  }
+
+  // Inicia sesión como Usuario de Equipo (solo lectura + edición de estados de tareas propias)
+  handleMemberLogin(team: TeamSupervisionSummary, memberName: string): void {
+    const newSession: AuthSession = { role: 'member', teamId: team.id, userName: memberName };
+    this.session.set(newSession);
+    try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }
+    this.activeTeamId.set(team.id);
+    this.activeView.set('plans');
+    this.isAdminPreview.set(false);
+    this.toastService.toast.success(`Bienvenido(a) ${memberName} (Usuario de Equipo)`, 'Sesión Iniciada');
   }
 
   // Cierra la sesión actual y limpia el almacenamiento local

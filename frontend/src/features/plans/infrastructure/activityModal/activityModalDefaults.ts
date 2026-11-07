@@ -16,6 +16,7 @@ export interface ActivityFormState {
   shortTermGoal: string;
   mediumTermGoal: string;
   longTermGoal: string;
+  obstacles: string;
   essentialArea?: EssentialArea;
   areaLevel?: string;
 }
@@ -24,10 +25,11 @@ export interface ActivityFormState {
 export const getInitialFormValues = (
   mode: 'create' | 'edit',
   activityToEdit: Activity | null | undefined,
-  defaultObjectiveNumber: 1 | 2 | 3 | 4
+  defaultObjectiveNumber: 1 | 2 | 3 | 4,
+  defaultArea: EssentialArea = 'Investigación'
 ): ActivityFormState => {
   if (mode === 'edit' && activityToEdit) {
-    const area = activityToEdit.essentialArea || 'Investigación';
+    const area = activityToEdit.essentialArea || defaultArea;
     const allowed = STAGES_BY_AREA[area] || STAGES_BY_AREA.Investigación;
     const stage = activityToEdit.stage && allowed.includes(activityToEdit.stage as any)
       ? activityToEdit.stage
@@ -48,15 +50,19 @@ export const getInitialFormValues = (
       shortTermGoal: activityToEdit.shortTermGoal || '',
       mediumTermGoal: activityToEdit.mediumTermGoal || '',
       longTermGoal: activityToEdit.longTermGoal || '',
+      obstacles: activityToEdit.obstacles || '',
       essentialArea: area,
       areaLevel: activityToEdit.areaLevel,
     };
   }
 
+  const initialArea = defaultArea;
+  const initialStages = STAGES_BY_AREA[initialArea] || STAGES_BY_AREA.Investigación;
+
   return {
     objectiveNumber: defaultObjectiveNumber,
     description: '',
-    stage: STAGES_BY_AREA['Investigación'][0],
+    stage: initialStages[0],
     state: 'Pendiente',
     responsible: '',
     frequency: 'Mensual',
@@ -68,7 +74,8 @@ export const getInitialFormValues = (
     shortTermGoal: '',
     mediumTermGoal: '',
     longTermGoal: '',
-    essentialArea: 'Investigación',
+    obstacles: '',
+    essentialArea: initialArea,
   };
 };
 

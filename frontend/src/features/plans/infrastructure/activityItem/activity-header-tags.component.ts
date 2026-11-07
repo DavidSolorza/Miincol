@@ -15,18 +15,31 @@ const STATE_STYLES: Record<ActivityState, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-center gap-2 flex-wrap">
-      <div class="relative">
-        <select
-          [value]="state()"
-          (change)="onSelectState($event)"
-          [class]="'text-[11px] font-bold py-1 pl-3 pr-6 rounded-xl border transition cursor-pointer appearance-none font-[\\'Outfit\\'] ' + getStyle(state())"
+      @if (canEditState()) {
+        <div class="relative">
+          <select
+            [value]="state()"
+            (change)="onSelectState($event)"
+            class="text-[11px] font-bold py-1 pl-3 pr-6 rounded-xl border transition cursor-pointer appearance-none font-['Outfit']"
+            [class]="getStyle(state())"
+            title="Cambiar estado de mi actividad"
+          >
+            <option value="Pendiente">⏳ Pendiente</option>
+            <option value="En Proceso">🔄 En Proceso</option>
+            <option value="Completado">✅ Completado</option>
+          </select>
+          <app-icon name="chevron-down" className="w-4 h-4 text-stone-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+        </div>
+      } @else {
+        <span
+          class="inline-flex items-center gap-1.5 text-[11px] font-bold py-1 px-2.5 rounded-xl border font-['Outfit'] select-none opacity-90"
+          [class]="getStyle(state())"
+          title="Solo lectura: actividad asignada a otro colaborador"
         >
-          <option value="Pendiente">⏳ Pendiente</option>
-          <option value="En Proceso">🔄 En Proceso</option>
-          <option value="Completado">✅ Completado</option>
-        </select>
-        <app-icon name="chevron-down" className="w-4 h-4 text-stone-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-      </div>
+          <app-icon name="lock" className="w-3.5 h-3.5 text-stone-400" />
+          {{ stateLabel(state()) }}
+        </span>
+      }
 
       @if (essentialArea()) {
         <span class="inline-flex items-center text-[10.5px] font-bold text-amber-900 bg-amber-100/80 px-2 py-0.5 rounded-lg border border-amber-200/60 font-['Outfit']">
@@ -48,10 +61,20 @@ export class ActivityHeaderTagsComponent {
   readonly stage = input<string | undefined>(undefined);
   readonly frequency = input.required<string>();
   readonly essentialArea = input<EssentialArea | undefined>();
+  readonly canEditState = input<boolean>(true);
   readonly stateChanged = output<ActivityState>();
 
   getStyle(state: ActivityState): string {
     return STATE_STYLES[state] || STATE_STYLES.Pendiente;
+  }
+
+  stateLabel(state: ActivityState): string {
+    switch (state) {
+      case 'Pendiente': return '⏳ Pendiente';
+      case 'En Proceso': return '🔄 En Proceso';
+      case 'Completado': return '✅ Completado';
+      default: return state;
+    }
   }
 
   onSelectState(event: Event): void {

@@ -16,7 +16,7 @@ import { AppIconComponent } from './icon/app-icon.component';
           [class]="'relative w-full ' + maxWidthClass + ' bg-white rounded-3xl shadow-[0_24px_50px_-12px_rgba(28,25,23,0.2)] border border-stone-200/90 overflow-hidden z-10 flex flex-col max-h-[92vh]'"
           (click)="$event.stopPropagation()"
         >
-          <div class="h-1 w-full bg-gradient-to-r from-[#8B251E] via-[#E67324] to-[#8B251E]"></div>
+          <div class="h-1 w-full bg-stone-900"></div>
 
           <div class="flex items-start justify-between px-6 sm:px-7 py-4.5 sm:py-5 border-b border-stone-100 bg-gradient-to-b from-[#FFFDF9] via-[#FAF7F2]/60 to-white gap-3">
             <div>

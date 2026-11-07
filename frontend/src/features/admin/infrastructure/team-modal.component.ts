@@ -58,7 +58,7 @@ const DEFAULT_FORM: CreateTeamDto = {
           <button
             type="submit"
             [disabled]="saving()"
-            class="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] hover:to-[#D05E12] text-white shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 transition cursor-pointer disabled:opacity-50 font-['Outfit']"
+            class="px-5 py-2.5 rounded-xl text-xs font-bold bg-stone-900 hover:bg-stone-800 text-white shadow-2xs hover:shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-50 font-['Outfit']"
           >
             {{ saving() ? 'Guardando...' : initialData ? 'Guardar Cambios' : 'Crear Misión' }}
           </button>

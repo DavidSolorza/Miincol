@@ -31,7 +31,6 @@ import type { EssentialArea, AreaLevel } from '../domain/plan.types';
           [longTermGoal]="longTermGoal()"
           (titleChanged)="title.set($event)"
           (descriptionChanged)="description.set($event)"
-          (essentialAreaChanged)="essentialArea.set($event)"
           (stageChanged)="stage.set($event)"
           (shortTermGoalChanged)="shortTermGoal.set($event)"
           (mediumTermGoalChanged)="mediumTermGoal.set($event)"
@@ -78,31 +77,30 @@ export class ObjectiveModalComponent {
   readonly description = signal('');
   readonly essentialArea = signal<EssentialArea>('Investigación');
   readonly stage = signal('');
-  readonly shortTermGoal = signal('');
-  readonly mediumTermGoal = signal('');
-  readonly longTermGoal = signal('');
-  readonly error = signal<string | null>(null);
+  readonly shortTermGoal = signal(''); readonly mediumTermGoal = signal('');
+  readonly longTermGoal = signal(''); readonly error = signal<string | null>(null);
   readonly confirmDelete = signal(false);
 
   constructor() {
     effect(() => {
       if (this.isOpen()) {
-        this.title.set(this.initialTitle());
-        this.description.set(this.initialDescription());
+        this.title.set(this.initialTitle()); this.description.set(this.initialDescription());
         this.essentialArea.set(this.initialEssentialArea() || 'Investigación');
-        this.stage.set(this.initialStage() || '');
-        this.shortTermGoal.set(this.initialShortTermGoal() || '');
+        this.stage.set(this.initialStage() || ''); this.shortTermGoal.set(this.initialShortTermGoal() || '');
         this.mediumTermGoal.set(this.initialMediumTermGoal() || '');
         this.longTermGoal.set(this.initialLongTermGoal() || '');
-        this.error.set(null);
-        this.confirmDelete.set(false);
+        this.error.set(null); this.confirmDelete.set(false);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   handleSubmit(event: Event): void {
     event.preventDefault();
     this.error.set(null);
+    if (this.mode() === 'create' && this.totalObjectivesCount() >= 4) {
+      const msg = 'Regla Ministerial: Toda fase admite como máximo 4 objetivos estratégicos.';
+      this.error.set(msg); this.toastService.toast.warning(msg, 'Límite de Objetivos'); return;
+    }
     if (!this.title().trim() || !this.description().trim()) {
       const msg = 'El título y la descripción del objetivo son obligatorios.';
       this.error.set(msg);

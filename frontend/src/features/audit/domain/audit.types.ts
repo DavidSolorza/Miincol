@@ -8,18 +8,26 @@ export type AuditActionType =
   | 'objective_add'
   | 'note_add'
   | 'note_delete'
-  | 'report_generate';
+  | 'report_generate'
+  | 'role_update'
+  | 'security_update';
 
 // Estructura de un registro individual en la bitácora de auditoría del equipo
 export interface TeamAuditLog {
   id: string;
   teamId: string;
+  teamName?: string;
   userName: string;
+  userRole?: string;
   actionType: AuditActionType;
   title: string;
   detail: string;
+  fieldModified?: string;
+  previousValue?: string;
+  newValue?: string;
   phaseId?: string;
   timestamp: string; // ISO 8601
+  ipAddress?: string;
 }
 
 // Resumen consolidado de telemetría y último acceso de un equipo misionero

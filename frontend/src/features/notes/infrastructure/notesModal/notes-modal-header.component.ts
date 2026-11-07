@@ -10,8 +10,8 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
   template: `
     <div class="p-4 sm:p-5 border-b border-stone-200/80 flex items-center justify-between bg-white relative">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-[#8B251E]/10 flex items-center justify-center text-[#8B251E] shrink-0">
-          <app-icon name="notebook-pen" className="w-5 h-5" />
+        <div class="w-10 h-10 rounded-xl bg-stone-100 border border-stone-200/80 flex items-center justify-center text-stone-900 shrink-0">
+          <app-icon name="notebook-pen" className="w-5 h-5 text-[#E67324]" />
         </div>
         <div>
           <div class="flex items-center gap-2">

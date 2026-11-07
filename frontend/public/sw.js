@@ -1,9 +1,12 @@
-const CACHE_NAME = 'misincol-pdm-cache-v2';
+const CACHE_NAME = 'misincol-pdm-cache-v3';
 const CRITICAL_ASSETS = [
   '/',
   '/index.html',
+  '/manifest.webmanifest',
   '/img/misincol.png',
-  '/img/6ccf873cb76d7a5e6651271758e7ce81.jpg',
+  '/favicon.svg',
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
 ];
 
 self.addEventListener('install', (event) => {

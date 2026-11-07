@@ -44,7 +44,7 @@ import { AppIconComponent } from '../icon/app-icon.component';
             <button
               type="button"
               (click)="handleConfirm()"
-              [class]="'px-3 py-1 rounded-xl text-white font-bold text-xs shadow-xs transition cursor-pointer active:scale-95 font-[Outfit] ' + (isDanger ? 'bg-[#8B251E] hover:bg-[#6E1A14]' : 'bg-gradient-to-r from-[#E67324] to-[#8B251E] hover:opacity-95')"
+              [class]="'px-3.5 py-1.5 rounded-xl text-white font-bold text-xs shadow-2xs hover:shadow-xs transition cursor-pointer active:scale-95 font-[Outfit] ' + (isDanger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-stone-900 hover:bg-stone-800')"
             >
               {{ confirmItem.confirmLabel || 'Confirmar' }}
             </button>

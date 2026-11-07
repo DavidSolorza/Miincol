@@ -1,0 +1,44 @@
+import type { RolePermissionsMatrix } from '../domain/security.types';
+
+export const DEFAULT_ROLE_PERMISSIONS_MATRIX: RolePermissionsMatrix = {
+  team_member: {
+    'pdm.view': true,
+    'pdm.activities.edit': false,
+    'pdm.activities.delete': false,
+    'pdm.objectives.manage': false,
+    'team.tasks.assign': false,
+    'team.members.manage': false,
+    'notes.manage': true,
+    'reports.team.export': false,
+    'reports.national.view': false,
+    'audit.history.view': false,
+    'security.roles.manage': false,
+  },
+  team_leader: {
+    'pdm.view': true,
+    'pdm.activities.edit': true,
+    'pdm.activities.delete': true,
+    'pdm.objectives.manage': false,
+    'team.tasks.assign': true,
+    'team.members.manage': false,
+    'notes.manage': true,
+    'reports.team.export': true,
+    'reports.national.view': false,
+    'audit.history.view': false,
+    'security.roles.manage': false,
+  },
+  national_director: {
+    'pdm.view': true,
+    'pdm.activities.edit': true,
+    'pdm.activities.delete': true,
+    'pdm.objectives.manage': true,
+    'team.tasks.assign': true,
+    'team.members.manage': true,
+    'notes.manage': true,
+    'reports.team.export': true,
+    'reports.national.view': true,
+    'audit.history.view': true,
+    'security.roles.manage': true,
+  },
+};
+

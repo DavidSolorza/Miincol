@@ -14,6 +14,7 @@ export class PlanService {
   readonly activePhaseId = signal<PhaseType>('investigacion'); // Fase ministerial activa actualmente
   readonly activeTeamId = signal<string>('team-wayuu'); // Identificador del equipo misionero activo
   readonly activeLeader = signal<string>('Líder'); // Nombre del líder del equipo activo
+  readonly pendingAssignee = signal<string | null>(null); // Integrante preseleccionado al asignar tarea desde Información General
   readonly allPlans = signal<Record<string, PhasePlan>>(getPlansForTeam('team-wayuu')); // Mapa de planes por fase
 
   // Plan correspondiente a la fase activa seleccionada

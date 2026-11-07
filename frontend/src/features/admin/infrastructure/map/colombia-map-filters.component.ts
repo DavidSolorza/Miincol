@@ -88,7 +88,7 @@ export class ColombiaMapFiltersComponent {
   selectBaseClass(isActive: boolean): string {
     return `w-full text-[11px] font-bold px-2.5 py-1.5 pr-6 rounded-xl border transition-all duration-150 appearance-none cursor-pointer truncate shadow-2xs ${
       isActive
-        ? 'bg-[#8B251E]/10 border-[#8B251E]/40 text-[#8B251E]'
+        ? 'bg-stone-900 border-stone-900 text-white'
         : 'bg-[#FAF7F2] hover:bg-[#F3EBDD]/70 border-[#E7DFD5] text-stone-700 hover:text-stone-900'
     }`;
   }

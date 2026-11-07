@@ -15,7 +15,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         [value]="searchTerm"
         (input)="searchTermChange.emit($any($event.target).value)"
         placeholder="Search por etnia, misión o departamento..."
-        class="w-full pl-11 pr-10 py-2.5 text-xs sm:text-[13px] rounded-2xl bg-white border border-stone-200/90 shadow-2xs text-stone-800 placeholder:text-stone-400 focus:outline-hidden focus:border-[#8B251E] focus:ring-2 focus:ring-[#8B251E]/10 transition"
+        class="w-full pl-11 pr-10 py-2.5 text-xs sm:text-[13px] rounded-2xl bg-white border border-stone-200/90 shadow-2xs text-stone-800 placeholder:text-stone-400 focus:outline-hidden focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 transition"
       />
       @if (searchTerm) {
         <button

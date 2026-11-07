@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, effect, inject, computed } from '@angular/core';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import type { Activity, ActivityState } from '../domain/plan.types';
 import { formatDate } from '../../../shared/utils/formatters';
+import { AppSessionService } from '../../../app/auth/app-session.service';
 import { ActivityHeaderTagsComponent } from './activityItem/activity-header-tags.component';
 import { ActivityBudgetQuickEditComponent } from './activityItem/activity-budget-quick-edit.component';
 import { ActivityDetailsAccordionComponent } from './activityItem/activity-details-accordion.component';
@@ -9,15 +10,10 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
 @Component({
   selector: 'app-activity-item',
   standalone: true,
-  imports: [
-    AppIconComponent,
-    ActivityHeaderTagsComponent,
-    ActivityBudgetQuickEditComponent,
-    ActivityDetailsAccordionComponent,
-  ],
+  imports: [AppIconComponent, ActivityHeaderTagsComponent, ActivityBudgetQuickEditComponent, ActivityDetailsAccordionComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-white rounded-2xl border border-stone-200/70 hover:border-stone-300 hover:shadow-xs transition-all duration-200 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-stone-200/70 hover:border-stone-300 hover:shadow-xs transition-all duration-200 overflow-hidden" [class.ring-1]="isMember() && isAssigned()" [class.ring-emerald-400/50]="isMember() && isAssigned()">
       <div class="p-4 sm:p-4.5 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2.5">
           <app-activity-header-tags
@@ -25,6 +21,7 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
             [stage]="activity().stage"
             [frequency]="activity().frequency"
             [essentialArea]="activity().essentialArea"
+            [canEditState]="canEditState()"
             (stateChanged)="onStateChange($event)"
           />
           <app-activity-budget-quick-edit
@@ -34,6 +31,7 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
             [isEditingBudget]="isEditingBudget()"
             [unitBudgetInput]="unitBudgetInput()"
             [timesPerYearInput]="timesPerYearInput()"
+            [canEdit]="canEditFull()"
             (editingBudgetToggled)="isEditingBudget.set($event)"
             (unitBudgetChanged)="unitBudgetInput.set($event)"
             (timesPerYearChanged)="timesPerYearInput.set($event)"
@@ -52,6 +50,9 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
             <span class="inline-flex items-center gap-1.5 font-bold text-stone-700 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200/60 shadow-2xs">
               <app-icon name="user" className="w-4 h-4 text-[#8B251E]" />
               {{ activity().responsible || 'Sin responsable asignado' }}
+              @if (isMember() && isAssigned()) {
+                <span class="text-[9.5px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded-md">Tu tarea</span>
+              }
             </span>
             <span class="inline-flex items-center gap-1.5 text-stone-500 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200/60">
               <app-icon name="calendar" className="w-4 h-4 text-stone-400" />
@@ -76,51 +77,54 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
       @if (isExpanded()) {
         <app-activity-details-accordion
           [activity]="activity()"
+          [canEdit]="canEditFull()"
           (edited)="edited.emit(activity())"
         />
       }
     </div>
   `,
 })
-// Tarjeta individual de una actividad con edición rápida de estado, presupuesto y acordeón de diagnóstico
 export class ActivityItemComponent {
-  readonly activity = input.required<Activity>(); // Datos completos de la actividad a mostrar
-  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actualizaciones parciales de la actividad
-  readonly deleted = output<string>(); // Emite el ID de la actividad cuando se confirma su eliminación
-  readonly edited = output<Activity>(); // Solicita abrir el modal de edición completa para esta actividad
+  private readonly sessionSvc = inject(AppSessionService);
 
-  readonly isExpanded = signal(false); // Controla si el acordeón de diagnóstico y metas está desplegado
-  readonly isEditingBudget = signal(false); // Indica si el modo de edición rápida de presupuesto está activo
-  readonly unitBudgetInput = signal(0); // Valor temporal del presupuesto unitario durante la edición rápida
-  readonly timesPerYearInput = signal(1); // Valor temporal de las repeticiones anuales durante la edición rápida
+  readonly activity = input.required<Activity>();
+  readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
+  readonly deleted = output<string>();
+  readonly edited = output<Activity>();
+
+  readonly isExpanded = signal(false);
+  readonly isEditingBudget = signal(false);
+  readonly unitBudgetInput = signal(0);
+  readonly timesPerYearInput = signal(1);
+
+  readonly isMember = computed(() => this.sessionSvc.session()?.role === 'member');
+  readonly isAssigned = computed(() => {
+    if (!this.isMember()) return true;
+    const cur = (this.sessionSvc.session()?.userName || '').toLowerCase().trim();
+    const resp = (this.activity().responsible || '').toLowerCase().trim();
+    return !!resp && !!cur && (resp.includes(cur) || cur.includes(resp));
+  });
+  readonly canEditState = computed(() => !this.isMember() || this.isAssigned());
+  readonly canEditFull = computed(() => !this.isMember());
 
   constructor() {
-    // Sincroniza los inputs locales de presupuesto cuando cambia la actividad recibida
     effect(() => {
       const act = this.activity();
       this.unitBudgetInput.set(act.unitBudget);
       this.timesPerYearInput.set(act.timesPerYear);
-    });
+    }, { allowSignalWrites: true });
   }
 
-  // Formatea una fecha ISO a formato legible en español
-  fmtDate(d: string): string {
-    return formatDate(d);
-  }
+  fmtDate(d: string): string { return formatDate(d); }
 
-  // Emite la actualización inmediata cuando el usuario cambia el estado de la actividad
   onStateChange(state: ActivityState): void {
     this.updated.emit({ activityId: this.activity().id, updatedFields: { state } });
   }
 
-  // Guarda los cambios de presupuesto unitario y frecuencia anual desde la edición rápida
   handleSaveBudget(): void {
     this.updated.emit({
       activityId: this.activity().id,
-      updatedFields: {
-        unitBudget: Number(this.unitBudgetInput()) || 0,
-        timesPerYear: Number(this.timesPerYearInput()) || 1,
-      },
+      updatedFields: { unitBudget: Number(this.unitBudgetInput()) || 0, timesPerYear: Number(this.timesPerYearInput()) || 1 },
     });
     this.isEditingBudget.set(false);
   }

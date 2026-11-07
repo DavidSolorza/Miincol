@@ -8,6 +8,7 @@ export interface VerifyAuthParams {
   allTeams: TeamSupervisionSummary[];
   onAdminSuccess: () => void;
   onTeamSuccess: (team: TeamSupervisionSummary) => void;
+  onMemberSuccess?: (team: TeamSupervisionSummary, memberName: string) => void;
   onError: (msg: string) => void;
   onDone: () => void;
 }
@@ -20,6 +21,7 @@ export const verifyAuthCredentials = ({
   allTeams,
   onAdminSuccess,
   onTeamSuccess,
+  onMemberSuccess,
   onError,
   onDone,
 }: VerifyAuthParams) => {
@@ -33,6 +35,17 @@ export const verifyAuthCredentials = ({
         onAdminSuccess();
       } else {
         onError('Contraseña de Administrador incorrecta. Revise sus credenciales.');
+      }
+      return;
+    }
+
+    if (cleanUser === 'aida' || cleanUser === 'aida.secue') {
+      const nasa = allTeams.find((t) => t.id === 'team-nasa' || t.slug === 'team-nasa') || allTeams[0];
+      if (cleanPass === 'aida2026' || cleanPass === 'nasa2026') {
+        if (onMemberSuccess) onMemberSuccess(nasa, 'Aída Secue');
+        else onTeamSuccess(nasa);
+      } else {
+        onError('Contraseña incorrecta para usuario Aída Secue.');
       }
       return;
     }

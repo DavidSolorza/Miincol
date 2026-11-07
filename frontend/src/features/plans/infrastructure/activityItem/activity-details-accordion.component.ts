@@ -12,7 +12,7 @@ import type { Activity } from '../../domain/plan.types';
       <div [class]="'grid grid-cols-1 gap-3 ' + (activity().shortTermGoal ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3')">
         <div class="bg-white p-3.5 rounded-xl border border-stone-200/70 shadow-2xs">
           <div class="flex items-center gap-1.5 font-bold text-stone-800 mb-1">
-            <app-icon name="file-text" className="w-4 h-4 text-[#8B251E]" />
+            <app-icon name="file-text" className="w-4 h-4 text-stone-700" />
             <span>Situación Actual (Diagnóstico)</span>
           </div>
           <p class="text-stone-600 leading-relaxed">
@@ -51,6 +51,16 @@ import type { Activity } from '../../domain/plan.types';
         </div>
       </div>
 
+      @if (activity().obstacles) {
+        <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200/80 text-xs">
+          <div class="flex items-center gap-1.5 font-bold text-amber-900 mb-1">
+            <app-icon name="alert-triangle" className="w-4 h-4 text-amber-600" />
+            <span>Dificultades y Contingencias en Territorio</span>
+          </div>
+          <p class="text-amber-800 leading-relaxed">{{ activity().obstacles }}</p>
+        </div>
+      }
+
       <div class="flex items-center justify-between pt-1">
         <div>
           @if (activity().essentialArea) {
@@ -59,19 +69,22 @@ import type { Activity } from '../../domain/plan.types';
             </span>
           }
         </div>
-        <button
-          type="button"
-          (click)="edited.emit()"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 font-bold text-xs border border-stone-200/80 shadow-2xs transition cursor-pointer"
-        >
-          <app-icon name="edit-3" className="w-4 h-4 text-[#8B251E]" />
-          <span>Editar Toda la Actividad</span>
-        </button>
+        @if (canEdit()) {
+          <button
+            type="button"
+            (click)="edited.emit()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 font-bold text-xs border border-stone-200/80 shadow-2xs transition cursor-pointer"
+          >
+            <app-icon name="edit-3" className="w-4 h-4 text-[#E67324]" />
+            <span>Editar Toda la Actividad</span>
+          </button>
+        }
       </div>
     </div>
   `,
 })
 export class ActivityDetailsAccordionComponent {
   readonly activity = input.required<Activity>();
+  readonly canEdit = input<boolean>(true);
   readonly edited = output<void>();
 }

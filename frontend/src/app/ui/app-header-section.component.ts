@@ -16,7 +16,6 @@ import type { AuthSession } from '../auth/appSession.types';
       @if (isAdminPreview()) {
         <app-admin-preview-banner
           [activeTeam]="activeTeam()"
-          [whatsappUrl]="whatsappUrl()"
           (backToAdmin)="backToAdmin.emit()"
         />
       }
@@ -44,6 +43,8 @@ import type { AuthSession } from '../auth/appSession.types';
           (openMobileSidebar)="openMobileSidebar.emit()"
           (selectTeam)="selectTeam.emit($event)"
           (goToSuperAdmin)="goToSuperAdmin.emit()"
+          (goToSecurity)="goToSecurity.emit()"
+          (goToAudit)="goToAudit.emit()"
           (logout)="logout.emit()"
           (openReportModal)="openReportModal.emit()"
         />
@@ -52,22 +53,22 @@ import type { AuthSession } from '../auth/appSession.types';
   `,
 })
 export class AppHeaderSectionComponent {
-  // Entradas de estado visual, equipo activo y sesión
   readonly isAdminPreview = input.required<boolean>();
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly whatsappUrl = input<string | null>(null);
   readonly shouldShowSidebar = input.required<boolean>();
   readonly isSuperAdmin = input.required<boolean>();
-  readonly activeView = input.required<'plans' | 'general' | 'superadmin'>();
+  readonly activeView = input.required<'plans' | 'general' | 'superadmin' | 'security' | 'audit'>();
   readonly mappedTeams = input.required<MissionaryTeam[]>();
   readonly activeTeamId = input.required<string>();
   readonly session = input.required<AuthSession>();
 
-  // Eventos de navegación y acciones del encabezado
   readonly backToAdmin = output<void>();
   readonly openMobileSidebar = output<void>();
   readonly selectTeam = output<string>();
   readonly goToSuperAdmin = output<void>();
+  readonly goToSecurity = output<void>();
+  readonly goToAudit = output<void>();
   readonly logout = output<void>();
   readonly openReportModal = output<void>();
 }

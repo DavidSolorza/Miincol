@@ -7,7 +7,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
   imports: [AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (activeView() === 'plans' || isTeamRestricted()) {
+    @if (activeView() !== 'superadmin') {
       @if (isCollapsed()) {
         <div class="space-y-1.5 pt-1 flex flex-col items-center">
           <button

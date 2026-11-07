@@ -57,9 +57,9 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         </button>
         <button
           type="submit"
-          class="px-5 py-2 rounded-xl bg-gradient-to-r from-[#8B251E] to-[#E67324] hover:from-[#751E18] hover:to-[#D05E12] text-white font-bold text-xs transition flex items-center gap-2 shadow-xs hover:shadow-md hover:shadow-[#8B251E]/20 active:scale-95 cursor-pointer font-['Outfit']"
+          class="px-5 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
         >
-          <app-icon [name]="isEdit() ? 'pencil' : 'plus'" className="w-3.5 h-3.5" />
+          <app-icon [name]="isEdit() ? 'pencil' : 'plus'" className="w-3.5 h-3.5 text-[#E67324]" />
           <span>{{ isEdit() ? 'Guardar Cambios' : 'Crear Objetivo' }}</span>
         </button>
       </div>
