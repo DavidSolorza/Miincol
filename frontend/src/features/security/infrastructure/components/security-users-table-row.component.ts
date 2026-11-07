@@ -82,3 +82,4 @@ export class SecurityUsersTableRowComponent {
     return this.roleOptions().find((r) => r.id === this.user().role)?.badgeClass || '';
   }
 }
+
