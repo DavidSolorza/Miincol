@@ -404,5 +404,40 @@ graph TD
   - 100% de coherencia financiera y cuadre de cifras exactas en todo el sistema.
   - Apego estricto a las Reglas de Oro v2026.4.0.
 
+---
+
+### ADR-040: Suite Integral de Pruebas Unitarias, Pruebas por Componentes, Persistencia JSON Limpia y Sanitización de Frontend
+- **Estado:** Aprobado e Implementado (`2026-11-07`).
+- **Contexto:** Establecer una base de pruebas automatizadas sólida (unitarias, por componentes e integración) y una capa de persistencia limpia basada en archivos JSON estructurados en el backend (`backend/data/*.json`), complementado con la sanitización total del almacenamiento local del frontend (`localStorage`).
+- **Decisión:**
+  1. **Motor de Pruebas Vitest en Backend y Frontend:**
+     - Vitest configurado en ambos extremos para ejecución instantánea sin necesidad de bundlers lentos.
+     - Pruebas backend (21 tests, 5 suites):
+       - `team-budget.calculator.spec.ts`: Cuadre matemático de presupuestos y porcentajes.
+       - `is-stage-consistent.validator.spec.ts`: Validador de etapas misioneras PDM.
+       - `security.service.spec.ts`: Matriz de permisos RBAC para los 4 roles (admin, lider, colaborador, director_general).
+       - `teams.service.spec.ts`: Operaciones CRUD, reseteo a datos limpios y transiciones de estado.
+       - `teams-budget-integration.spec.ts`: Prueba de integración extremo a extremo con NestJS TestingModule y persistencia JSON.
+     - Pruebas frontend (18 tests, 6 suites):
+       - `general-info.calculations.spec.ts`: Totales de entrenamiento y desarrollo eclesial.
+       - `planCalculations.spec.ts`: Métricas de actividades y avance de objetivos estratégicos.
+       - `adminKpiCalculations.spec.ts`: KPIs nacionales y presupuesto de $94.610.000 COP.
+       - `cleanStorage.spec.ts`: Sanitización y depuración de almacenamiento local.
+       - `team-card-metrics.component.spec.ts`: Componente de métricas, etiquetas de etapas y porcentajes.
+       - `general-budget-top.component.spec.ts`: Componente de desglose por pilares y formato COP.
+  2. **Persistencia JSON Limpia en Backend (`backend/data/*.json`):**
+     - Módulo `JsonDbModule` y servicio `JsonDbService` con lectura/escritura atómica basada en `fs.promises`.
+     - Archivos estructurados: `teams.json`, `users.json`, `objectives.json`, `activities.json`, `security-matrix.json` y `audit.json`.
+     - Endpoint `POST /api/teams/reset-database` para restablecimiento a las semillas oficiales.
+  3. **Sanitización Automática de Almacenamiento Frontend (`cleanStorage.ts`):**
+     - Detección de versión de esquema (`2026.4.0-clean-v1`).
+     - Purga automática de llaves obsoletas de versiones previas.
+     - Ejecución automática en el bootstrap de la aplicación (`src/main.ts`).
+- **Consecuencias:**
+  - 39 pruebas automáticas ejecutándose con 100% de éxito.
+  - Código fuente estrictamente `<= 150` líneas por archivo.
+  - Cero dependencias comerciales externas opacas.
+
+
 
 
