@@ -87,3 +87,4 @@ export class AuditLoginsTableComponent {
     return 'bg-emerald-50 text-emerald-800 border-emerald-200';
   }
 }
+

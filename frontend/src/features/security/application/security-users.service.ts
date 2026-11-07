@@ -39,11 +39,27 @@ export class SecurityUsersService {
       territory: dto.territory || '',
       phone: dto.phone || '',
     };
-
-    const updated = [newUser, ...this.users()];
-    this.persist(updated);
+    this.persist([newUser, ...this.users()]);
     this.toastSvc.toast.success(`Colaborador ${newUser.fullName} registrado con éxito`, 'Usuario Creado');
     return newUser;
+  }
+
+  updateUser(userId: string, updates: Partial<SystemUser>): SystemUser | undefined {
+    const prev = this.users();
+    const target = prev.find((u) => u.id === userId);
+    if (!target) return undefined;
+    const merged: SystemUser = { ...target, ...updates };
+    this.persist(prev.map((u) => (u.id === userId ? merged : u)));
+    this.toastSvc.toast.success(`Datos de ${merged.fullName} actualizados`, 'Colaborador Editado');
+    return merged;
+  }
+
+  deleteUser(userId: string): void {
+    const prev = this.users();
+    const target = prev.find((u) => u.id === userId);
+    if (!target) return;
+    this.persist(prev.filter((u) => u.id !== userId));
+    this.toastSvc.toast.info(`Colaborador ${target.fullName} eliminado`, 'Usuario Removido');
   }
 
   ensureTeamLeaderAndMembers(team: TeamSupervisionSummary): void {
@@ -67,8 +83,8 @@ export class SecurityUsersService {
     if (team.members && team.members.length > 0) {
       team.members.forEach((memName, idx) => {
         if (!memName || memName.toLowerCase() === team.leader.toLowerCase()) return;
-        const memberExists = current.some((u) => u.fullName.toLowerCase() === memName.toLowerCase());
-        if (!memberExists && !toAdd.some((u) => u.fullName.toLowerCase() === memName.toLowerCase())) {
+        const exists = current.some((u) => u.fullName.toLowerCase() === memName.toLowerCase());
+        if (!exists && !toAdd.some((u) => u.fullName.toLowerCase() === memName.toLowerCase())) {
           toAdd.push({
             id: 'usr-' + Date.now() + '-m' + idx,
             fullName: memName,
@@ -82,19 +98,15 @@ export class SecurityUsersService {
       });
     }
 
-    if (toAdd.length > 0) {
-      this.persist([...toAdd, ...current]);
-    }
+    if (toAdd.length > 0) this.persist([...toAdd, ...current]);
   }
 
   updateUserRole(userId: string, newRole: SystemRoleId): void {
     const prev = this.users();
     const target = prev.find((u) => u.id === userId);
     if (!target) return;
-
     const roleName = newRole === 'national_director' ? 'Director nacional' : newRole === 'team_leader' ? 'Líder equipo' : 'Usuario equipo';
-    const updated = prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
-    this.persist(updated);
+    this.persist(prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
     this.toastSvc.toast.success(`Rol de ${target.fullName} cambiado a ${roleName}`, 'Seguridad Actualizada');
   }
 

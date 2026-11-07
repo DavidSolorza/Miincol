@@ -318,3 +318,33 @@ graph TD
 - **Consecuencias:**
   - Plena visibilidad, seguridad institucional y trazabilidad inmutable de cambios para la dirección nacional.
   - 100% de cumplimiento del límite de 150 líneas por archivo.
+
+---
+
+### ADR-037: CRUD Completo de Personas y Contenedor con Scroll y Cabecera Sticky en Gestión de Roles
+- **Estado:** Aprobado e Implementado (`2026-11-06`).
+- **Contexto:** Dotar al Director Nacional de capacidades CRUD completas (Crear, Editar, Eliminar y Reasignar Rol) sobre los colaboradores del sistema en la vista de Roles, integrando un contenedor con desplazamiento vertical suave (`max-h-[480px] overflow-y-auto`) y cabecera pegajosa (`sticky top-0`) para optimizar la experiencia en tablas con gran volumen de registros.
+- **Decisión:**
+  1. **Contenedor con Scroll y Sticky Header (`SecurityUsersTableComponent`):**
+     - Envoltura de la tabla con `overflow-x-auto overflow-y-auto max-h-[480px] sidebar-scroll-smooth border border-stone-200/80 rounded-xl`.
+     - Cabecera de la tabla fija con `sticky top-0 z-10 bg-stone-50/95 backdrop-blur-xs shadow-2xs`.
+  2. **Acciones de Edición y Eliminación por Fila (`SecurityUsersTableRowComponent`):**
+     - Botón de edición (`edit-3`): abre `CreateUserModalComponent` precargado con la información existente del colaborador (`userToEdit`).
+     - Botón de eliminación (`trash-2`): dispara confirmación de seguridad reactiva mediante `ToastService.confirmAction()`.
+  3. **Operaciones CRUD en `SecurityUsersService`:**
+     - `createUser(dto)`: genera y persiste un nuevo colaborador.
+     - `updateUser(userId, updates)`: actualiza datos personales, rol o territorio y persiste en `misincol_system_users_v1`.
+     - `deleteUser(userId)`: remueve al colaborador del almacenamiento reactivo y emite notificación toast informativa.
+  4. **Sincronización Bidireccional de Equipos (`SecurityRolesViewComponent`):**
+     - Al guardar una nueva persona asignada a una misión, se añade automáticamente a la lista de miembros de `AdminDashboardService`.
+     - Al reasignar roles, se actualizan los permisos y visualización de forma inmediata.
+  5. **Modularización Estricta (`<= 150` líneas):**
+     - Extracción atómica de `SecurityUsersTableRowComponent` (`84` líneas).
+     - `SecurityUsersTableComponent` reducido a `147` líneas.
+     - `CreateUserModalComponent` (`131` líneas) con modo dual creación/edición.
+     - `SecurityUsersService` (`115` líneas).
+- **Consecuencias:**
+  - Ergonomía visual de nivel profesional con tabla navegable mediante scroll suave y cabeceras fijas.
+  - Autonomía completa para el Director Nacional en la gobernanza y mantenimiento de identidades misioneras.
+  - 100% de apego al límite de 150 líneas por archivo bajo la gobernanza técnica.
+

@@ -30,7 +30,8 @@ import type { CreateSystemUserDto } from '../domain/security-users.types';
           [users]="usersSvc.users()"
           [teams]="dashboardSvc.allTeams()"
           (roleChanged)="usersSvc.updateUserRole($event.userId, $event.newRole)"
-          (userCreated)="handleUserCreated($event)"
+          (userSaved)="handleUserSaved($event)"
+          (userDeleted)="handleUserDeleted($event)"
         />
       }
     </div>
@@ -42,13 +43,21 @@ export class SecurityRolesViewComponent {
   readonly dashboardSvc = inject(AdminDashboardService);
   readonly activeTab = signal<'matrix' | 'users'>('matrix');
 
-  handleUserCreated(dto: CreateSystemUserDto): void {
-    const user = this.usersSvc.createUser(dto);
-    if (dto.teamId && (dto.role === 'team_member' || dto.role === 'team_leader')) {
-      const team = this.dashboardSvc.allTeams().find((t) => t.id === dto.teamId);
+  handleUserSaved(payload: { id?: string; data: CreateSystemUserDto }): void {
+    if (payload.id) {
+      this.usersSvc.updateUser(payload.id, payload.data);
+      return;
+    }
+    const user = this.usersSvc.createUser(payload.data);
+    if (payload.data.teamId && (payload.data.role === 'team_member' || payload.data.role === 'team_leader')) {
+      const team = this.dashboardSvc.allTeams().find((t) => t.id === payload.data.teamId);
       if (team && !team.members.includes(user.fullName)) {
         this.dashboardSvc.handleUpdateTeam(team.id, { members: [...team.members, user.fullName] });
       }
     }
+  }
+
+  handleUserDeleted(userId: string): void {
+    this.usersSvc.deleteUser(userId);
   }
 }

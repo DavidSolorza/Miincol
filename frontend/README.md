@@ -111,6 +111,16 @@ frontend/src/
     - **Trazabilidad de Modificaciones (`AuditChangesTableComponent`)**: Bitácora cronológica con detalle de autor, territorio, fecha/hora y comparativa explícita de **Valor Anterior ➔ Valor Nuevo** en estados, objetivos y presupuestos.
     - **Historial de Inicios de Sesión (`AuditLoginsTableComponent`)**: Seguimiento de accesos por usuario, rol, IP y equipo.
 
+11. **CRUD Completo de Personas y Contenedor Scroll con Sticky Header en Roles**:
+    - Tabla de personas integrada en un contenedor con scroll vertical suave (`max-h-[480px] overflow-y-auto sidebar-scroll-smooth`) y cabecera pegajosa (`sticky top-0 z-10`).
+    - Operaciones CRUD completas para el Director Nacional:
+      - **Crear**: modal `CreateUserModalComponent` para registrar colaboradores con nombre, correo, rol y territorio.
+      - **Editar**: botón de lápiz (`edit-3`) en cada fila que abre el modal precargado y persiste las actualizaciones de identidad o misión.
+      - **Eliminar**: botón de papelera (`trash-2`) con confirmación modal de seguridad (`ToastService.confirmAction`) que remueve al colaborador de `SecurityUsersService` y de los miembros del equipo.
+      - **Reasignar Rol**: selector por botones en cada fila para cambiar entre `Usuario de equipo`, `Líder de equipo` y `Director nacional`.
+    - Componente atómico de fila `SecurityUsersTableRowComponent` para respetar el límite estricto de 150 líneas.
+
+
 ---
 
 ## 🛠️ 4. Comandos del Frontend

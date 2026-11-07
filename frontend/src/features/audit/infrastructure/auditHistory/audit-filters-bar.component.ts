@@ -54,3 +54,4 @@ export class AuditFiltersBarComponent {
   readonly searchChanged = output<string>();
   readonly teamChanged = output<string>();
 }
+

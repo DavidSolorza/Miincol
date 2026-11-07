@@ -1,6 +1,8 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, computed, inject } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { CreateUserModalComponent } from './create-user-modal.component';
+import { SecurityUsersTableRowComponent } from './security-users-table-row.component';
 import { USER_ROLE_OPTIONS, type SystemUser, type CreateSystemUserDto } from '../../domain/security-users.types';
 import type { SystemRoleId } from '../../domain/security.types';
 import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
@@ -10,7 +12,7 @@ const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, team_le
 @Component({
   selector: 'app-security-users-table',
   standalone: true,
-  imports: [AppIconComponent, CreateUserModalComponent],
+  imports: [AppIconComponent, CreateUserModalComponent, SecurityUsersTableRowComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bg-white/95 rounded-2xl border border-stone-200/90 shadow-2xs overflow-hidden select-none space-y-3 p-3.5 sm:p-4">
@@ -25,7 +27,7 @@ const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, team_le
         <div class="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            (click)="isCreateModalOpen.set(true)"
+            (click)="openCreate()"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs shadow-2xs transition cursor-pointer font-['Outfit'] active:scale-95"
             title="Registrar nueva persona en el sistema"
           >
@@ -39,18 +41,14 @@ const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, team_le
               (click)="selectedRole.set('all')"
               class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer font-['Outfit']"
               [class]="selectedRole() === 'all' ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
-            >
-              Todos ({{ users().length }})
-            </button>
+            >Todos ({{ users().length }})</button>
             @for (opt of roleOptions; track opt.id) {
               <button
                 type="button"
                 (click)="selectedRole.set(opt.id)"
                 class="px-2 py-1 rounded-lg text-[11px] font-bold transition cursor-pointer font-['Outfit']"
                 [class]="selectedRole() === opt.id ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
-              >
-                {{ opt.label }} ({{ countRole(opt.id) }})
-              </button>
+              >{{ opt.label }} ({{ countRole(opt.id) }})</button>
             }
           </div>
 
@@ -67,84 +65,83 @@ const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, team_le
         </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse min-w-[680px]">
-          <thead>
-            <tr class="bg-stone-50/80 text-stone-600 text-[10.5px] uppercase font-['Outfit'] tracking-wider border-b border-stone-200">
+      <div class="overflow-x-auto overflow-y-auto max-h-[480px] sidebar-scroll-smooth border border-stone-200/80 rounded-xl">
+        <table class="w-full text-left border-collapse min-w-[760px]">
+          <thead class="sticky top-0 z-10 bg-stone-50/95 backdrop-blur-xs text-stone-600 text-[10.5px] uppercase font-['Outfit'] tracking-wider border-b border-stone-200 shadow-2xs">
+            <tr>
               <th class="py-2.5 px-3 font-bold">Colaborador</th>
               <th class="py-2.5 px-3 font-bold">Territorio / Misión</th>
               <th class="py-2.5 px-3 font-bold">Rol Actual</th>
               <th class="py-2.5 px-3 font-bold text-center">Reasignar Rol</th>
+              <th class="py-2.5 px-3 font-bold text-center">Acciones</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-100 text-xs font-['Outfit']">
             @for (user of filteredUsers(); track user.id) {
-              <tr class="hover:bg-stone-50/60 transition-colors">
-                <td class="py-2.5 px-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-stone-100 text-stone-700 flex items-center justify-center font-bold text-xs border border-stone-200">
-                      {{ user.fullName.slice(0, 2).toUpperCase() }}
-                    </div>
-                    <div>
-                      <div class="font-bold text-stone-900 leading-tight">{{ user.fullName }}</div>
-                      <div class="text-[10.5px] text-stone-400">{{ user.email }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-2.5 px-3">
-                  <div class="text-stone-800 font-medium">{{ user.teamName }}</div>
-                  <div class="text-[10.5px] text-stone-500">{{ user.territory }}</div>
-                </td>
-                <td class="py-2.5 px-3">
-                  <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wider font-['Outfit']" [class]="getRoleBadge(user.role)">
-                    {{ getRoleLabel(user.role) }}
-                  </span>
-                </td>
-                <td class="py-2.5 px-3 text-center">
-                  <div class="inline-flex items-center p-0.5 rounded-xl bg-stone-100 border border-stone-200 gap-0.5">
-                    @for (opt of roleOptions; track opt.id) {
-                      <button
-                        type="button"
-                        (click)="roleChanged.emit({ userId: user.id, newRole: opt.id })"
-                        class="px-2 py-1 rounded-lg text-[10.5px] font-bold transition cursor-pointer font-['Outfit']"
-                        [class]="user.role === opt.id ? 'bg-stone-900 text-white shadow-2xs' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-200/60'"
-                        [title]="'Asignar rol: ' + opt.label"
-                      >{{ opt.label.replace(' ', '\n') }}</button>
-                    }
-                  </div>
-                </td>
-              </tr>
+              <tr
+                app-security-users-table-row
+                [user]="user"
+                [roleOptions]="roleOptions"
+                (roleChanged)="roleChanged.emit($event)"
+                (editClicked)="openEdit($event)"
+                (deleteClicked)="confirmDelete($event)"
+              ></tr>
             }
           </tbody>
         </table>
       </div>
     </div>
 
-    <app-create-user-modal [isOpen]="isCreateModalOpen()" [teams]="teams()" (closed)="isCreateModalOpen.set(false)" (created)="userCreated.emit($event)" />
+    <app-create-user-modal
+      [isOpen]="isCreateModalOpen()"
+      [userToEdit]="userToEdit()"
+      [teams]="teams()"
+      (closed)="closeModal()"
+      (saved)="userSaved.emit($event)"
+    />
   `,
 })
 export class SecurityUsersTableComponent {
+  private readonly toastSvc = inject(ToastService);
   readonly users = input.required<SystemUser[]>();
   readonly teams = input<TeamSupervisionSummary[]>([]);
   readonly roleChanged = output<{ userId: string; newRole: SystemRoleId }>();
-  readonly userCreated = output<CreateSystemUserDto>();
+  readonly userSaved = output<{ id?: string; data: CreateSystemUserDto }>();
+  readonly userDeleted = output<string>();
 
   readonly searchTerm = signal('');
   readonly selectedRole = signal<SystemRoleId | 'all'>('all');
   readonly isCreateModalOpen = signal(false);
+  readonly userToEdit = signal<SystemUser | null>(null);
 
-  readonly roleOptions = [USER_ROLE_OPTIONS.find((r) => r.id === 'national_director')!, USER_ROLE_OPTIONS.find((r) => r.id === 'team_leader')!, USER_ROLE_OPTIONS.find((r) => r.id === 'team_member')!];
+  readonly roleOptions = [
+    USER_ROLE_OPTIONS.find((r) => r.id === 'national_director')!,
+    USER_ROLE_OPTIONS.find((r) => r.id === 'team_leader')!,
+    USER_ROLE_OPTIONS.find((r) => r.id === 'team_member')!,
+  ];
 
   readonly filteredUsers = computed(() => {
-    const q = this.searchTerm().trim().toLowerCase();
-    const r = this.selectedRole();
+    const q = this.searchTerm().trim().toLowerCase(), r = this.selectedRole();
     let list = this.users();
     if (r !== 'all') list = list.filter((u) => u.role === r);
     if (q) list = list.filter((u) => u.fullName.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.teamName.toLowerCase().includes(q) || (u.territory && u.territory.toLowerCase().includes(q)));
     return [...list].sort((a, b) => (ROLE_ORDER[a.role] - ROLE_ORDER[b.role]) || a.fullName.localeCompare(b.fullName));
   });
 
+  openCreate(): void { this.userToEdit.set(null); this.isCreateModalOpen.set(true); }
+  openEdit(u: SystemUser): void { this.userToEdit.set(u); this.isCreateModalOpen.set(true); }
+  closeModal(): void { this.userToEdit.set(null); this.isCreateModalOpen.set(false); }
+
+  confirmDelete(u: SystemUser): void {
+    this.toastSvc.confirmAction({
+      title: 'Eliminar Colaborador',
+      message: `¿Deseas eliminar a "${u.fullName}" (${u.email}) del sistema?`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Cancelar',
+      variant: 'danger',
+      onConfirm: () => this.userDeleted.emit(u.id),
+    });
+  }
+
   countRole(roleId: SystemRoleId): number { return this.users().filter((u) => u.role === roleId).length; }
-  getRoleLabel(roleId: SystemRoleId): string { return this.roleOptions.find((r) => r.id === roleId)?.label || roleId; }
-  getRoleBadge(roleId: SystemRoleId): string { return this.roleOptions.find((r) => r.id === roleId)?.badgeClass || ''; }
 }

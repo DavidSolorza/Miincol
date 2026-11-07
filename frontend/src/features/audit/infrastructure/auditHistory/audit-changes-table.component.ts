@@ -82,3 +82,4 @@ export class AuditChangesTableComponent {
     return formatTimeHour(iso);
   }
 }
+

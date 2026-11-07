@@ -87,3 +87,4 @@ export class AuditHistoryViewComponent {
 
   readonly activeTab = signal<'changes' | 'logins'>('changes');
 }
+

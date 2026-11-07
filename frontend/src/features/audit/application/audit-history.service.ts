@@ -60,3 +60,4 @@ export class AuditHistoryService {
     this.logs.set(this.loadAllLogs());
   }
 }
+
