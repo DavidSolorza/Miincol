@@ -3,19 +3,25 @@ import { type PhasePlan, type Objective, type Activity, type EssentialArea, type
 import type { MissionaryTeam } from '../../auth/domain/auth.types';
 import { PlanService } from '../application/plan.service';
 import { AppSessionService } from '../../../app/auth/app-session.service';
+import { SpecialExpensesService } from '../application/special-expenses.service';
 import { PhaseHeaderBarComponent } from './phaseView/phase-header-bar.component';
 import { PhaseObjectiveCardsGridComponent } from './phaseView/phase-objective-cards-grid.component';
+import { ProgressiveExitBannerComponent } from './phaseView/progressive-exit-banner.component';
 import { ObjectiveCardComponent } from './objective-card.component';
-import { ActivityModalComponent } from './activity-modal.component';
-import { ObjectiveModalComponent } from './objective-modal.component';
+import { PhaseModalsComponent } from './phaseView/phase-modals.component';
 
 @Component({
   selector: 'app-phase-view',
   standalone: true,
-  imports: [PhaseHeaderBarComponent, PhaseObjectiveCardsGridComponent, ObjectiveCardComponent, ActivityModalComponent, ObjectiveModalComponent],
+  imports: [
+    PhaseHeaderBarComponent, PhaseObjectiveCardsGridComponent, ProgressiveExitBannerComponent,
+    ObjectiveCardComponent, PhaseModalsComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="w-full space-y-3.5 sm:space-y-4">
+      <app-progressive-exit-banner [isVisible]="isProgressiveExit()" />
+
       <div class="bg-white/95 p-3.5 sm:p-4 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between space-y-3">
         <app-phase-header-bar
           [phaseName]="plan().phaseName"
@@ -45,26 +51,23 @@ import { ObjectiveModalComponent } from './objective-modal.component';
           (activityUpdated)="activityUpdated.emit($event)"
           (activityDeleted)="activityDeleted.emit($event)"
           (openAddModal)="openActModal('create', null, $event)"
+          (openSpecialModal)="openSpecialModal($event)"
           (editObjective)="openObjModal('edit', $event)"
           (activityEdited)="openActModal('edit', $event, $any($event.objectiveNumber))"
         />
       }
 
-      <app-activity-modal
-        [isOpen]="isAddModalOpen()" [mode]="activityModalMode()" [activityToEdit]="editingActivity()"
-        [defaultObjectiveNumber]="modalDefaultObjective()" [currentPillarArea]="currentPillarArea()"
-        [defaultResponsible]="modalDefaultResponsible()" (closed)="closeActModal()"
-        (saved)="activityAdded.emit($event)" (updated)="activityUpdated.emit($event)"
-      />
-
-      <app-objective-modal
-        [isOpen]="isObjectiveModalOpen()" [mode]="objectiveModalMode()" [objectiveNumber]="$any(editingObjective()?.number)"
-        [initialTitle]="editingObjective()?.title || ''" [initialDescription]="editingObjective()?.description || ''"
-        [initialEssentialArea]="editingObjective()?.essentialArea || currentPillarArea()" [initialAreaLevel]="editingObjective()?.areaLevel"
-        [initialStage]="editingObjective()?.stage || ''" [initialShortTermGoal]="editingObjective()?.shortTermGoal || ''"
-        [initialMediumTermGoal]="editingObjective()?.mediumTermGoal || ''" [initialLongTermGoal]="editingObjective()?.longTermGoal || ''"
-        [totalObjectivesCount]="plan().objectives.length" (closed)="isObjectiveModalOpen.set(false)"
-        (saved)="handleSaveObjective($event)" (deleted)="objectiveDeleted.emit($event)"
+      <app-phase-modals
+        [isAddModalOpen]="isAddModalOpen()" [activityModalMode]="activityModalMode()" [editingActivity]="editingActivity()"
+        [modalDefaultObjective]="modalDefaultObjective()" [currentPillarArea]="currentPillarArea()"
+        [modalDefaultResponsible]="modalDefaultResponsible()" [isObjectiveModalOpen]="isObjectiveModalOpen()"
+        [objectiveModalMode]="objectiveModalMode()" [editingObjective]="editingObjective()"
+        [totalObjectivesCount]="plan().objectives.length" [isSpecialModalOpen]="isSpecialModalOpen()"
+        [specialModalObjective]="specialModalObjective()" [activeTeam]="activeTeam()"
+        (closeActModal)="closeActModal()" (closeObjModal)="isObjectiveModalOpen.set(false)"
+        (closeSpecialModal)="isSpecialModalOpen.set(false)" (activityAdded)="activityAdded.emit($event)"
+        (activityUpdated)="activityUpdated.emit($event)" (saveObjective)="handleSaveObjective($event)"
+        (objectiveDeleted)="objectiveDeleted.emit($event)" (saveSpecialExpense)="specialExpensesSvc.addExpense($event)"
       />
     </div>
   `,
@@ -85,6 +88,8 @@ export class PhaseViewComponent {
   readonly toggleMobileMenu = output<void>();
 
   readonly isAddModalOpen = signal(false);
+  readonly isSpecialModalOpen = signal(false);
+  readonly specialModalObjective = signal(1);
   readonly modalDefaultObjective = signal<1 | 2 | 3 | 4>(1);
   readonly modalDefaultResponsible = signal('');
   readonly activityModalMode = signal<'create' | 'edit'>('create');
@@ -95,46 +100,46 @@ export class PhaseViewComponent {
 
   private readonly planService = inject(PlanService);
   private readonly sessionSvc = inject(AppSessionService);
+  readonly specialExpensesSvc = inject(SpecialExpensesService);
 
-  readonly isMember = computed(() => this.sessionSvc.session()?.role === 'member');
-  readonly canEdit = computed(() => !this.isMember());
+  readonly isReadOnly = computed(() => ['member', 'director_general'].includes(this.sessionSvc.session()?.role || ''));
+  readonly canEdit = computed(() => !this.isReadOnly());
   readonly currentPillarArea = computed<EssentialArea>(() => PHASE_TO_AREA[this.plan().phaseId] || 'Investigación');
   readonly activeObjectiveIndex = computed(() => this.plan().objectives.findIndex((o) => o.number === this.activeObjectiveNumber()));
   readonly activeObjective = computed(() => this.plan().objectives.find((o) => o.number === this.activeObjectiveNumber()) || this.plan().objectives[0]);
+  readonly isProgressiveExit = computed(() => {
+    const s = (this.activeObjective()?.stage || '').toLowerCase();
+    return s.includes('salida') || s.includes('progresiv') || this.plan().phaseId === 'autocuidado';
+  });
 
   constructor() {
     effect(() => {
-      const assignee = this.planService.pendingAssignee();
-      if (assignee && !this.isMember()) {
-        this.openActModal('create', null, 1, assignee);
-        this.planService.pendingAssignee.set(null);
-      }
+      const a = this.planService.pendingAssignee();
+      if (a && !this.isReadOnly()) { this.openActModal('create', null, 1, a); this.planService.pendingAssignee.set(null); }
     }, { allowSignalWrites: true });
   }
 
-  openActModal(mode: 'create' | 'edit', act: Activity | null, objNum: 1 | 2 | 3 | 4, responsible = ''): void {
-    if (this.isMember()) return;
-    this.activityModalMode.set(mode);
-    this.editingActivity.set(act);
-    this.modalDefaultObjective.set(objNum);
-    this.modalDefaultResponsible.set(responsible);
-    this.isAddModalOpen.set(true);
+  openActModal(m: 'create' | 'edit', act: Activity | null, obj: 1 | 2 | 3 | 4, r = ''): void {
+    if (this.isReadOnly()) return;
+    this.activityModalMode.set(m); this.editingActivity.set(act); this.modalDefaultObjective.set(obj); this.modalDefaultResponsible.set(r); this.isAddModalOpen.set(true);
+  }
+
+  openSpecialModal(obj: 1 | 2 | 3 | 4): void {
+    if (this.isReadOnly()) return;
+    this.specialModalObjective.set(obj); this.isSpecialModalOpen.set(true);
   }
 
   closeActModal(): void { this.isAddModalOpen.set(false); this.editingActivity.set(null); this.modalDefaultResponsible.set(''); }
 
-  openObjModal(mode: 'create' | 'edit', obj: Objective | null): void {
-    if (this.isMember() || (mode === 'create' && this.plan().objectives.length >= 4)) return;
-    this.objectiveModalMode.set(mode); this.editingObjective.set(obj); this.isObjectiveModalOpen.set(true);
+  openObjModal(m: 'create' | 'edit', obj: Objective | null): void {
+    if (this.isReadOnly() || (m === 'create' && this.plan().objectives.length >= 4)) return;
+    this.objectiveModalMode.set(m); this.editingObjective.set(obj); this.isObjectiveModalOpen.set(true);
   }
 
-  handleSaveObjective(data: { title: string; description: string; number?: 1 | 2 | 3 | 4; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): void {
-    if (this.isMember()) return;
-    const payload = { ...data, essentialArea: data.essentialArea || this.currentPillarArea() };
-    if (this.objectiveModalMode() === 'create') {
-      this.objectiveAdded.emit(payload);
-    } else if (payload.number) {
-      this.objectiveUpdated.emit({ objectiveNumber: payload.number, updates: payload });
-    }
+  handleSaveObjective(d: { title: string; description: string; number?: 1 | 2 | 3 | 4; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; mediumTermGoal?: string; longTermGoal?: string }): void {
+    if (this.isReadOnly()) return;
+    const p = { ...d, essentialArea: d.essentialArea || this.currentPillarArea() };
+    if (this.objectiveModalMode() === 'create') this.objectiveAdded.emit(p);
+    else if (p.number) this.objectiveUpdated.emit({ objectiveNumber: p.number, updates: p });
   }
 }

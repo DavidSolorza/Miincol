@@ -1,4 +1,3 @@
-// Cuadrícula responsiva que renderiza las tarjetas resumen de cada equipo misionero filtrado
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { TeamOverviewCardComponent } from '../team-overview-card.component';
@@ -17,16 +16,17 @@ import { TeamOverviewCardComponent } from '../team-overview-card.component';
           (select)="selectTeamId.emit(team.id)"
           (inspectTeam)="inspectTeam.emit($event)"
           (editTeam)="editTeam.emit($event)"
+          (deleteTeam)="deleteTeam.emit($event)"
         />
       }
     </div>
   `,
 })
 export class SuperAdminTeamsGridComponent {
-  @Input() teams: TeamSupervisionSummary[] = []; // Lista de equipos a mostrar en la cuadrícula
-  @Input() selectedTeamId: string | null = null; // ID del equipo actualmente seleccionado
-  @Output() selectTeamId = new EventEmitter<string>(); // Emite el ID del equipo al seleccionarlo
-  @Output() inspectTeam = new EventEmitter<string>(); // Emite el ID del equipo para abrir su PDM en modo vista previa
-  @Output() editTeam = new EventEmitter<TeamSupervisionSummary>(); // Emite el equipo a editar en el modal
+  @Input() teams: TeamSupervisionSummary[] = [];
+  @Input() selectedTeamId: string | null = null;
+  @Output() selectTeamId = new EventEmitter<string>();
+  @Output() inspectTeam = new EventEmitter<string>();
+  @Output() editTeam = new EventEmitter<TeamSupervisionSummary>();
+  @Output() deleteTeam = new EventEmitter<TeamSupervisionSummary>();
 }
-

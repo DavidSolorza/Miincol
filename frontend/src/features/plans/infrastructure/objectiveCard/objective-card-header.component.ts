@@ -78,18 +78,34 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
           <span class="text-base sm:text-lg font-black text-[#8B251E] font-['Outfit'] mt-1 block tracking-tight">
             {{ formatCurrency(totalObjectiveBudget()) }}
           </span>
+          @if (specialBudget() > 0) {
+            <span class="text-[10px] text-amber-700 font-bold block mt-0.5" title="Gasto especial que no suma al total general">
+              + {{ formatCurrency(specialBudget()) }} (G. Especial)
+            </span>
+          }
         </div>
 
         @if (canEdit()) {
-          <button
-            type="button"
-            (click)="openAddModal.emit()"
-            class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl shadow-2xs hover:shadow-xs transition-all flex items-center gap-1.5 cursor-pointer font-['Outfit'] active:scale-95"
-          >
-            <app-icon name="plus" className="w-4 h-4 text-[#E67324]" />
-            <span class="hidden sm:inline">Nueva Actividad</span>
-            <span class="sm:hidden">Nueva</span>
-          </button>
+          <div class="flex flex-col gap-1.5 items-end">
+            <button
+              type="button"
+              (click)="openAddModal.emit()"
+              class="bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs px-3.5 sm:px-4 py-2 sm:py-2 rounded-xl shadow-2xs hover:shadow-xs transition-all flex items-center gap-1.5 cursor-pointer font-['Outfit'] active:scale-95"
+            >
+              <app-icon name="plus" className="w-4 h-4 text-[#E67324]" />
+              <span class="hidden sm:inline">Nueva Actividad</span>
+              <span class="sm:hidden">Nueva</span>
+            </button>
+            <button
+              type="button"
+              (click)="openSpecialModal.emit()"
+              class="bg-amber-100/90 hover:bg-amber-200 text-amber-950 font-bold text-[10.5px] px-2.5 py-1 rounded-lg border border-amber-300/80 transition-all flex items-center gap-1 cursor-pointer font-['Outfit'] shadow-2xs active:scale-95"
+              title="Planificar gasto especial diferenciado"
+            >
+              <app-icon name="sparkles" className="w-3.5 h-3.5 text-amber-600" />
+              <span>Gasto Especial</span>
+            </button>
+          </div>
         }
       </div>
     </div>
@@ -100,9 +116,11 @@ export class ObjectiveCardHeaderComponent {
   readonly index = input<number | undefined>(undefined);
   readonly completedCount = input.required<number>();
   readonly totalObjectiveBudget = input.required<number>();
+  readonly specialBudget = input<number>(0);
   readonly canEdit = input<boolean>(true);
   readonly editObjective = output<Objective>();
   readonly openAddModal = output<void>();
+  readonly openSpecialModal = output<void>();
 
   readonly displayIndex = computed(() => (this.index() !== undefined ? this.index()! + 1 : this.objective().number));
 

@@ -22,11 +22,13 @@ export interface CreateSystemUserDto {
   phone?: string;
 }
 
-export const USER_ROLE_OPTIONS: Array<{
+export interface RoleOption {
   id: SystemRoleId;
   label: string;
   badgeClass: string;
-}> = [
+}
+
+export const USER_ROLE_OPTIONS: RoleOption[] = [
   {
     id: 'team_member',
     label: 'Usuario equipo',
@@ -38,9 +40,13 @@ export const USER_ROLE_OPTIONS: Array<{
     badgeClass: 'bg-amber-50 text-amber-900 border-amber-300',
   },
   {
+    id: 'director_general',
+    label: 'Director general',
+    badgeClass: 'bg-blue-50 text-blue-900 border-blue-200',
+  },
+  {
     id: 'national_director',
     label: 'Director nacional',
     badgeClass: 'bg-stone-900 text-[#E67324] border-stone-800',
   },
 ];
-

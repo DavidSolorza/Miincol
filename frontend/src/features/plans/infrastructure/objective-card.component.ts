@@ -1,8 +1,10 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, computed, inject } from '@angular/core';
 import type { Objective, Activity } from '../domain/plan.types';
 import { ObjectiveCardHeaderComponent } from './objectiveCard/objective-card-header.component';
 import { ObjectiveFilterBarComponent } from './objectiveCard/objective-filter-bar.component';
 import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-activities-list.component';
+import { SpecialExpensesListComponent } from './specialExpense/special-expenses-list.component';
+import { SpecialExpensesService } from '../application/special-expenses.service';
 
 @Component({
   selector: 'app-objective-card',
@@ -11,6 +13,7 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
     ObjectiveCardHeaderComponent,
     ObjectiveFilterBarComponent,
     ObjectiveActivitiesListComponent,
+    SpecialExpensesListComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -21,9 +24,11 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
           [index]="index()"
           [completedCount]="completedCount()"
           [totalObjectiveBudget]="totalObjectiveBudget()"
+          [specialBudget]="specialExpensesBudget()"
           [canEdit]="canEdit()"
           (editObjective)="editObjective.emit($event)"
           (openAddModal)="openAddModal.emit(objectiveNumber())"
+          (openSpecialModal)="openSpecialModal.emit(objectiveNumber())"
         />
         <app-objective-filter-bar
           [filterState]="filterState()"
@@ -47,44 +52,58 @@ import { ObjectiveActivitiesListComponent } from './objectiveCard/objective-acti
           (openAddModal)="openAddModal.emit($event)"
           (activityEdited)="activityEdited.emit($event)"
         />
+
+        <div class="px-4 pb-4">
+          <app-special-expenses-list
+            [expenses]="objectiveSpecialExpenses()"
+            [canEdit]="canEdit()"
+            (deleteExpense)="specialExpensesSvc.deleteExpense($event)"
+          />
+        </div>
       </div>
     </div>
   `,
 })
-// Contenedor de detalle de un objetivo estratégico con cabecera, filtros y lista de actividades
 export class ObjectiveCardComponent {
-  readonly objective = input.required<Objective>(); // Objetivo estratégico que se visualiza
+  readonly specialExpensesSvc = inject(SpecialExpensesService);
+
+  readonly objective = input.required<Objective>();
   readonly index = input<number | undefined>(undefined);
   readonly canEdit = input<boolean>(true);
-  readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>(); // Emite actualizaciones de una actividad
-  readonly activityDeleted = output<string>(); // Emite el ID de la actividad eliminada
-  readonly openAddModal = output<1 | 2 | 3 | 4>(); // Solicita abrir el modal para agregar actividad en este objetivo
-  readonly editObjective = output<Objective>(); // Solicita abrir el modal de edición del objetivo
-  readonly activityEdited = output<Activity>(); // Solicita abrir el modal de edición para una actividad
+  readonly activityUpdated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
+  readonly activityDeleted = output<string>();
+  readonly openAddModal = output<1 | 2 | 3 | 4>();
+  readonly openSpecialModal = output<1 | 2 | 3 | 4>();
+  readonly editObjective = output<Objective>();
+  readonly activityEdited = output<Activity>();
 
-  readonly filterState = signal<string>('ALL'); // Estado seleccionado para filtrar actividades ('ALL' o estado específico)
-  readonly searchTerm = signal<string>(''); // Término de búsqueda textual para filtrar actividades
+  readonly filterState = signal<string>('ALL');
+  readonly searchTerm = signal<string>('');
 
-  // Número del objetivo tipado del 1 al 4
   readonly objectiveNumber = computed(() => (this.objective().number as 1 | 2 | 3 | 4) || 1);
-  // Suma total del presupuesto de todas las actividades del objetivo
+
+  readonly objectiveSpecialExpenses = computed(() =>
+    this.specialExpensesSvc.getExpensesForObjective(this.objectiveNumber())
+  );
+
+  readonly specialExpensesBudget = computed(() =>
+    this.objectiveSpecialExpenses().reduce((sum, e) => sum + (e.budget || 0), 0)
+  );
+
   readonly totalObjectiveBudget = computed(() =>
     this.objective().activities.reduce((acc, act) => acc + (act.totalBudget || 0), 0)
   );
-  // Cantidad de actividades en estado 'Completado'
+
   readonly completedCount = computed(() =>
     this.objective().activities.filter((act) => act.state === 'Completado').length
   );
-  // Cantidad de actividades en estado 'En Proceso'
   readonly inProgressCount = computed(() =>
     this.objective().activities.filter((act) => act.state === 'En Proceso').length
   );
-  // Cantidad de actividades en estado 'Pendiente'
   readonly pendingCount = computed(() =>
     this.objective().activities.filter((act) => act.state === 'Pendiente').length
   );
 
-  // Lista de actividades filtradas por estado y coincidencia de texto en descripción, responsable o etapa
   readonly filteredActivities = computed(() => {
     const fState = this.filterState();
     const query = this.searchTerm().toLowerCase();
@@ -98,4 +117,3 @@ export class ObjectiveCardComponent {
     });
   });
 }
-

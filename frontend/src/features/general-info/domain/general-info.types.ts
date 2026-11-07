@@ -1,8 +1,3 @@
-/**
- * Modelo de Dominio Puro para la Información General Macro de Equipos
- * Basado en la estructura oficial de la hoja de cálculo de campo.
- */
-
 export interface TeamMemberContact {
   id: string;
   name: string;
@@ -15,32 +10,46 @@ export interface TeamMemberContact {
 export interface GeneralTeamData {
   teamName: string;
   year: number;
+  isYearClosed?: boolean;
   population: string;
   territory: string;
   teamLeader: string;
+  leaderPhone?: string;
   evangelicalCongregationsCount: number;
   evangelicalBelieversCount: number;
   members: TeamMemberContact[];
 }
 
 export interface FieldMinistryMetrics {
-  firstTimeContactedCount: number; // Personas contactadas por 1ra vez
-  interestedInGospelCount: number; // Personas interesadas en el evangelio
-  heardGospelCount: number; // Personas que escucharon el evangelio
-  seekingGodCount: number; // Personas que están buscando a Dios
-  gospelResponseOpportunitiesCount: number; // Oportunidades de responder
-  newBelieversCount: number; // Creyentes que creyeron
-  baptizedCount: number; // Creyentes bautizados
-  regularBibleStudyParticipantsCount: number; // Personas en estudios bíblicos regulares
-  personalMentorshipCount: number; // Mentorías personales
-  newGroupsMeetingInYearCount: number; // Nuevos grupos reuniéndose
-  ministerialTrainingCount: number; // Entrenamiento ministerial
-  biblicalTrainingCount: number; // Entrenamiento bíblico
-  pastoralPracticalTrainingCount: number; // Entrenamiento pastoral práctico
-  otherAreasTrainingCount: number; // Entrenamiento en otras áreas
-  newGroupsWithChurchPerspectiveCount: number; // Nuevos grupos con perspectiva de iglesia
-  finalChurchesCount: number; // Número final de iglesias
-  churchGenerationsCount: number; // Generaciones de iglesias
+  firstTimeContactedCount: number;
+  interestedInGospelCount: number;
+  heardGospelCount: number;
+  seekingGodCount: number;
+  gospelResponseOpportunitiesCount: number;
+  newBelieversCount: number;
+  baptizedCount: number;
+  regularBibleStudyParticipantsCount: number;
+  personalMentorshipCount: number;
+  newGroupsMeetingInYearCount: number;
+}
+
+export interface MinisterialTrainingMetrics {
+  practicalMinisterialTrainingCount: number;
+  otherAreasTrainingCount: number;
+  pastoralPracticalTrainingCount: number;
+  biblicalTrainingCount: number;
+  newChurchesPlantingTrainingCount: number;
+}
+
+export interface ChurchDevelopmentMetrics {
+  groupsWithChurchPerspectiveCount: number;
+  finalChurchesCount: number;
+  firstGenChurchesCount: number;
+  secondGenChurchesCount: number;
+  thirdGenChurchesCount: number;
+  lostFirstGenChurchesCount: number;
+  lostSecondGenChurchesCount: number;
+  lostThirdGenChurchesCount: number;
 }
 
 export interface PillarBudgetBreakdown {
@@ -49,13 +58,21 @@ export interface PillarBudgetBreakdown {
   evangelizacionBudget: number;
   entrenamientoBudget: number;
   autocuidadoBudget: number;
+  executedTotalBudget?: number;
 }
 
 export interface TeamGeneralInfo {
   teamId: string;
   teamData: GeneralTeamData;
+  essentialsToDevelop: string[];
   fieldMetrics: FieldMinistryMetrics;
+  ministerialTraining: MinisterialTrainingMetrics;
+  churchDevelopment: ChurchDevelopmentMetrics;
   budgetBreakdown: PillarBudgetBreakdown;
+  annualMetricsHistory?: Record<number, {
+    fieldMetrics: FieldMinistryMetrics;
+    training: MinisterialTrainingMetrics;
+    church: ChurchDevelopmentMetrics;
+  }>;
   updatedAt: string;
 }
-

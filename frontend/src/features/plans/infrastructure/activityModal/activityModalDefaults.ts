@@ -1,6 +1,5 @@
 import { type Activity, type ActivityState, type EssentialArea, STAGES_BY_AREA } from '../../domain/plan.types';
 
-// Estado del formulario y funciones de inicialización y validación para el modal de actividad
 export interface ActivityFormState {
   objectiveNumber: 1 | 2 | 3 | 4;
   description: string;
@@ -17,11 +16,11 @@ export interface ActivityFormState {
   mediumTermGoal: string;
   longTermGoal: string;
   obstacles: string;
+  monthlyBudget?: Record<number, number>;
   essentialArea?: EssentialArea;
   areaLevel?: string;
 }
 
-// Genera los valores iniciales del formulario según si se está creando o editando una actividad
 export const getInitialFormValues = (
   mode: 'create' | 'edit',
   activityToEdit: Activity | null | undefined,
@@ -51,6 +50,7 @@ export const getInitialFormValues = (
       mediumTermGoal: activityToEdit.mediumTermGoal || '',
       longTermGoal: activityToEdit.longTermGoal || '',
       obstacles: activityToEdit.obstacles || '',
+      monthlyBudget: activityToEdit.monthlyBudget || {},
       essentialArea: area,
       areaLevel: activityToEdit.areaLevel,
     };
@@ -67,7 +67,7 @@ export const getInitialFormValues = (
     responsible: '',
     frequency: 'Mensual',
     timesPerYear: 12,
-    unitBudget: 300000,
+    unitBudget: 0,
     startDate: '2026-03-01',
     endDate: '2026-11-30',
     currentSituation: '',
@@ -75,11 +75,11 @@ export const getInitialFormValues = (
     mediumTermGoal: '',
     longTermGoal: '',
     obstacles: '',
+    monthlyBudget: {},
     essentialArea: initialArea,
   };
 };
 
-// Verifica que la descripción y el responsable de la actividad no estén vacíos
 export const validateActivityForm = (description: string, responsible: string): boolean => {
   return description.trim().length > 0 && responsible.trim().length > 0;
 };

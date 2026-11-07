@@ -1,4 +1,4 @@
-export type SystemRoleId = 'team_member' | 'team_leader' | 'national_director';
+export type SystemRoleId = 'team_member' | 'team_leader' | 'director_general' | 'national_director';
 
 export type PermissionKey =
   | 'pdm.view'
@@ -55,6 +55,14 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
     targetUser: 'Líder Pastoral',
   },
   {
+    id: 'director_general',
+    name: 'Director general',
+    badge: 'Supervisión',
+    badgeClass: 'bg-blue-100 text-blue-900 border-blue-200',
+    description: 'Supervisión pasiva de planes, notas y agenda territorial.',
+    targetUser: 'Director General',
+  },
+  {
     id: 'national_director',
     name: 'Director nacional',
     badge: 'Nacional',
@@ -65,71 +73,15 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
 ];
 
 export const SYSTEM_PERMISSIONS: PermissionDef[] = [
-  {
-    key: 'pdm.view',
-    label: 'Visualizar Planes PDM',
-    category: 'Planes PDM',
-    description: 'Acceso de lectura a las fases y objetivos de la misión.',
-  },
-  {
-    key: 'pdm.activities.edit',
-    label: 'Crear / Editar Iniciativas',
-    category: 'Planes PDM',
-    description: 'Modificación de metas, fechas y avance de actividades.',
-  },
-  {
-    key: 'pdm.activities.delete',
-    label: 'Eliminar Actividades',
-    category: 'Planes PDM',
-    description: 'Remover actividades existentes en la fase activa.',
-  },
-  {
-    key: 'pdm.objectives.manage',
-    label: 'Gestionar Objetivos (Máx 4)',
-    category: 'Planes PDM',
-    description: 'Creación, edición o eliminación directa de objetivos.',
-  },
-  {
-    key: 'team.tasks.assign',
-    label: 'Asignar Tareas a Integrantes',
-    category: 'Equipo y Tareas',
-    description: 'Vincular tareas a miembros específicos del equipo.',
-  },
-  {
-    key: 'team.members.manage',
-    label: 'Gestionar Integrantes (Crear / Eliminar)',
-    category: 'Equipo y Tareas',
-    description: 'Agregar o remover integrantes de la conformación de equipo.',
-  },
-  {
-    key: 'notes.manage',
-    label: 'Notas y Agenda Territorial',
-    category: 'Reportes y Notas',
-    description: 'Creación y fijación de apuntes, ideas y motivos de oración.',
-  },
-  {
-    key: 'reports.team.export',
-    label: 'Generar Informe Territorial PDM',
-    category: 'Reportes y Notas',
-    description: 'Exportación ejecutiva del plan del equipo local.',
-  },
-  {
-    key: 'reports.national.view',
-    label: 'Supervisión y KPIs Nacionales',
-    category: 'Reportes y Notas',
-    description: 'Monitoreo consolidado de todas las misiones del país.',
-  },
-  {
-    key: 'audit.history.view',
-    label: 'Historial de Ingresos y Auditoría',
-    category: 'Seguridad y Auditoría',
-    description: 'Consulta de bitácoras de acceso y telemetría por usuario.',
-  },
-  {
-    key: 'security.roles.manage',
-    label: 'Gestión de Roles y Matriz de Permisos',
-    category: 'Seguridad y Auditoría',
-    description: 'Administración de la matriz de seguridad del sistema.',
-  },
+  { key: 'pdm.view', label: 'Visualizar Planes PDM', category: 'Planes PDM', description: 'Acceso de lectura a las fases y objetivos de la misión.' },
+  { key: 'pdm.activities.edit', label: 'Crear / Editar Iniciativas', category: 'Planes PDM', description: 'Modificación de metas, fechas y avance de actividades.' },
+  { key: 'pdm.activities.delete', label: 'Eliminar Actividades', category: 'Planes PDM', description: 'Remover actividades existentes en la fase activa.' },
+  { key: 'pdm.objectives.manage', label: 'Gestionar Objetivos (Máx 4)', category: 'Planes PDM', description: 'Creación, edición o eliminación directa de objetivos.' },
+  { key: 'team.tasks.assign', label: 'Asignar Tareas a Integrantes', category: 'Equipo y Tareas', description: 'Vincular tareas a miembros específicos del equipo.' },
+  { key: 'team.members.manage', label: 'Gestionar Integrantes (Crear / Eliminar)', category: 'Equipo y Tareas', description: 'Agregar o remover integrantes de la conformación de equipo.' },
+  { key: 'notes.manage', label: 'Notas y Agenda Territorial', category: 'Reportes y Notas', description: 'Creación y fijación de apuntes, ideas y motivos de oración.' },
+  { key: 'reports.team.export', label: 'Generar Informe Territorial PDM', category: 'Reportes y Notas', description: 'Exportación ejecutiva del plan del equipo local.' },
+  { key: 'reports.national.view', label: 'Supervisión y KPIs Nacionales', category: 'Reportes y Notas', description: 'Monitoreo consolidado de todas las misiones del país.' },
+  { key: 'audit.history.view', label: 'Historial de Ingresos y Auditoría', category: 'Seguridad y Auditoría', description: 'Consulta de bitácoras de acceso y telemetría por usuario.' },
+  { key: 'security.roles.manage', label: 'Gestión de Roles y Matriz de Permisos', category: 'Seguridad y Auditoría', description: 'Administración de la matriz de seguridad del sistema.' },
 ];
-

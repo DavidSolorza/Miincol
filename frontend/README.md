@@ -120,6 +120,16 @@ frontend/src/
       - **Reasignar Rol**: selector por botones en cada fila para cambiar entre `Usuario de equipo`, `Líder de equipo` y `Director nacional`.
     - Componente atómico de fila `SecurityUsersTableRowComponent` para respetar el límite estricto de 150 líneas.
 
+12. **Suite de 16 Mejoras Integrales PDM, Información General Estilo Excel, Gastos Especiales y Rol Director General**:
+    - **Información General Estilo Excel**: Estructura fiel al Excel oficial (*PDM 2026 Pastos Vr1.xlsx*) con tabla multianual (`GeneralAnnualTableComponent`), presupuestos por pilar en cabecera con porcentaje de avance (`GeneralBudgetTopComponent`), 5 esenciales a desarrollar (`GeneralEssentialsComponent`), métricas grandes editables de entrenamiento ministerial y desarrollo eclesial (`GeneralMinisterialTrainingComponent`) y footer de equipo editable (`GeneralTeamFooterComponent`).
+    - **Gobernanza de Ciclo Anual**: Panel de control para que el Administrador ordene formalmente iniciar o cerrar el año ministerial (`GeneralYearCycleComponent`).
+    - **Rol Director General (`director_general`)**: Perfil pasivo de solo lectura (`director` / `director2026`) que puede consultar planes, notas y agenda sin permisos de mutación.
+    - **Gastos Especiales (`SpecialExpensesListComponent`, `SpecialExpenseModalComponent`)**: Botón "+ Gasto Especial" bajo "+ Nueva Actividad", con presupuesto independiente que no suma al PDM general.
+    - **Desglose Presupuestal Mensual**: Formulario de actividades con desglose de presupuesto de 12 meses (enero a diciembre).
+    - **Dashboard Nacional Mejorado**: Visualización de etapas activas y con objetivos, barra de porcentaje de ejecución presupuestal, "Avance de Plan" (sin alerta crítica) y botón de eliminar equipo con confirmación modal.
+    - **Equipos Nuevos Limpios**: Creación de equipos inicializada en blanco (0 objetivos).
+    - **Banner de Salida Progresiva**: Notificación informativa sobre la transición a liderazgo autóctono en la fase de salida progresiva.
+
 
 ---
 

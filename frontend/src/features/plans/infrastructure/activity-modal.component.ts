@@ -24,7 +24,7 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
     <app-modal
       [isOpen]="isOpen()"
       [title]="mode() === 'edit' ? 'Editar Actividad / Sub-Objetivo' : 'Nueva Iniciativa / Actividad Ministerial'"
-      [subtitle]="mode() === 'edit' ? 'Modifique área esencial, presupuesto, cronograma y dificultades' : 'Registre una acción en el Plan de Desarrollo Ministerial'"
+      [subtitle]="mode() === 'edit' ? 'Modifique área, presupuesto mensual y fechas' : 'Registre una acción en el Plan de Desarrollo Ministerial'"
       maxWidth="2xl"
       (closed)="closed.emit()"
     >
@@ -52,7 +52,9 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
           [calculatedTotal]="calculatedTotal()"
           [startDate]="form().startDate"
           [endDate]="form().endDate"
+          [monthlyBudget]="form().monthlyBudget || {}"
           (unitBudgetChanged)="patchField('unitBudget', $event)"
+          (monthlyBudgetChanged)="patchField('monthlyBudget', $event)"
           (startDateChanged)="patchField('startDate', $event)"
           (endDateChanged)="patchField('endDate', $event)"
         />
@@ -74,17 +76,8 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
         />
 
         <div class="sticky bottom-0 bg-white/95 backdrop-blur-xs flex items-center justify-end gap-2.5 pt-3 pb-1 border-t border-stone-200/60 z-10">
-          <button
-            type="button"
-            (click)="closed.emit()"
-            class="px-4 py-2 rounded-xl border border-stone-200/80 text-stone-600 hover:bg-stone-100 font-bold text-xs transition cursor-pointer"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="px-5 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']"
-          >
+          <button type="button" (click)="closed.emit()" class="px-4 py-2 rounded-xl border border-stone-200/80 text-stone-600 hover:bg-stone-100 font-bold text-xs transition cursor-pointer">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs transition flex items-center gap-2 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer font-['Outfit']">
             <app-icon [name]="mode() === 'edit' ? 'check' : 'plus-circle'" className="w-4 h-4 text-[#E67324]" />
             <span>{{ mode() === 'edit' ? 'Guardar Cambios' : 'Guardar Iniciativa' }}</span>
           </button>
@@ -105,7 +98,15 @@ export class ActivityModalComponent {
   readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
   readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
   readonly form = signal<ActivityFormState>(getInitialFormValues('create', null, 1));
-  readonly calculatedTotal = computed(() => (this.form().unitBudget || 0) * (this.form().timesPerYear || 0));
+
+  readonly calculatedTotal = computed(() => {
+    const mb = this.form().monthlyBudget;
+    if (mb && Object.keys(mb).length > 0) {
+      const sum = Object.values(mb).reduce((a, b) => a + (Number(b) || 0), 0);
+      if (sum > 0) return sum;
+    }
+    return (this.form().unitBudget || 0) * (this.form().timesPerYear || 0);
+  });
 
   constructor() {
     effect(() => {

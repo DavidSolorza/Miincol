@@ -7,7 +7,7 @@ import { USER_ROLE_OPTIONS, type SystemUser, type CreateSystemUserDto } from '..
 import type { SystemRoleId } from '../../domain/security.types';
 import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
 
-const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, team_leader: 2, team_member: 3 };
+const ROLE_ORDER: Record<SystemRoleId, number> = { national_director: 1, director_general: 2, team_leader: 3, team_member: 4 };
 
 @Component({
   selector: 'app-security-users-table',
@@ -114,11 +114,7 @@ export class SecurityUsersTableComponent {
   readonly isCreateModalOpen = signal(false);
   readonly userToEdit = signal<SystemUser | null>(null);
 
-  readonly roleOptions = [
-    USER_ROLE_OPTIONS.find((r) => r.id === 'national_director')!,
-    USER_ROLE_OPTIONS.find((r) => r.id === 'team_leader')!,
-    USER_ROLE_OPTIONS.find((r) => r.id === 'team_member')!,
-  ];
+  readonly roleOptions = USER_ROLE_OPTIONS;
 
   readonly filteredUsers = computed(() => {
     const q = this.searchTerm().trim().toLowerCase(), r = this.selectedRole();

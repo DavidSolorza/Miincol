@@ -1,45 +1,75 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, effect, computed } from '@angular/core';
 import { GeneralInfoService } from '../application/general-info.service';
-import { GeneralTeamCardComponent } from './components/general-team-card.component';
-import { GeneralFieldMetricsCardComponent } from './components/general-field-metrics-card.component';
-import { GeneralBudgetCardComponent } from './components/general-budget-card.component';
+import { AppSessionService } from '../../../app/auth/app-session.service';
+import { GeneralBudgetTopComponent } from './components/general-budget-top.component';
+import { GeneralYearCycleComponent } from './components/general-year-cycle.component';
+import { GeneralEssentialsComponent } from './components/general-essentials.component';
+import { GeneralAnnualTableComponent } from './components/general-annual-table.component';
+import { GeneralMinisterialTrainingComponent } from './components/general-ministerial-training.component';
+import { GeneralTeamFooterComponent } from './components/general-team-footer.component';
 import type { MissionaryTeam } from '../../auth/domain/auth.types';
 
 @Component({
   selector: 'app-general-info-view',
   standalone: true,
-  imports: [GeneralTeamCardComponent, GeneralFieldMetricsCardComponent, GeneralBudgetCardComponent],
+  imports: [
+    GeneralBudgetTopComponent,
+    GeneralYearCycleComponent,
+    GeneralEssentialsComponent,
+    GeneralAnnualTableComponent,
+    GeneralMinisterialTrainingComponent,
+    GeneralTeamFooterComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="w-full space-y-4 max-w-full overflow-x-hidden animate-fadeIn">
-      <div class="flex flex-wrap items-center justify-between gap-2 bg-white/90 p-3.5 sm:p-4 rounded-2xl border border-stone-200/90 shadow-2xs">
-        <div>
-          <span class="text-[10px] font-black uppercase text-[#E67324] tracking-widest block font-['Outfit']">MISINCOL • Vista Macro</span>
-          <h2 class="text-base sm:text-lg font-black text-stone-900 font-['Outfit'] leading-tight">
-            Información General: {{ activeTeam().name }}
-          </h2>
-        </div>
-        <div class="text-right text-xs text-stone-500">
-          <span>Actualizado: </span>
-          <strong class="text-stone-800">{{ (infoService.currentInfo().updatedAt || '').slice(0, 10) || '2026-11-06' }}</strong>
-        </div>
-      </div>
-
-      <app-general-team-card
-        [teamData]="infoService.currentInfo().teamData"
-        [isAdmin]="isAdmin()"
-        (removeMember)="infoService.removeMember($event)"
-        (addMember)="infoService.addMember($event)"
-        (assignTask)="assignTask.emit($event)"
-      />
-
-      <app-general-field-metrics-card
-        [metrics]="infoService.currentInfo().fieldMetrics"
-      />
-
-      <app-general-budget-card
+    <div class="w-full space-y-4 max-w-full overflow-x-hidden animate-fadeIn select-none font-['Outfit']">
+      <!-- 1. Presupuestos por Pilar en la parte Superior con Barra de % -->
+      <app-general-budget-top
         [budget]="infoService.currentInfo().budgetBreakdown"
         [totalBudget]="infoService.totalBudget()"
+        [budgetPercentage]="infoService.budgetExecutionPercentage()"
+      />
+
+      <!-- 2. Ciclo Anual (Cerrar / Iniciar nuevo año con autorización de Administrador) -->
+      <app-general-year-cycle
+        [currentYear]="infoService.currentInfo().teamData.year"
+        [isYearClosed]="infoService.currentInfo().teamData.isYearClosed || false"
+        [isAdmin]="isAdmin()"
+        (closeYear)="infoService.closeYear()"
+        (startNextYear)="infoService.startNewYear($event)"
+      />
+
+      <!-- 3. Esenciales a Desarrollar (1 a 5) -->
+      <app-general-essentials
+        [essentials]="infoService.currentInfo().essentialsToDevelop"
+        [canEdit]="canEdit()"
+        (essentialsChanged)="infoService.updateEssentials($event)"
+      />
+
+      <!-- 4. Vista General en Tabla Multianual (Modelo Excel Oficial) -->
+      <app-general-annual-table
+        [metrics]="infoService.currentInfo().fieldMetrics"
+        [teamData]="infoService.currentInfo().teamData"
+        [canEdit]="canEdit()"
+        (metricChanged)="infoService.updateFieldMetrics($event)"
+      />
+
+      <!-- 5. Entrenamiento Ministerial & Desarrollo Eclesial (Items Grandes y Editables) -->
+      <app-general-ministerial-training
+        [training]="infoService.currentInfo().ministerialTraining"
+        [church]="infoService.currentInfo().churchDevelopment"
+        [canEdit]="canEdit()"
+        (trainingChanged)="infoService.updateMinisterialTraining($event)"
+        (churchChanged)="infoService.updateChurchDevelopment($event)"
+      />
+
+      <!-- 6. Información de Campo y Datos de Equipo en la Parte Inferior (Editable Admin y Líder) -->
+      <app-general-team-footer
+        [teamData]="infoService.currentInfo().teamData"
+        [canEdit]="canEdit()"
+        (updateTeamData)="infoService.updateTeamData($event)"
+        (removeMember)="infoService.removeMember($event)"
+        (assignTask)="assignTask.emit($event)"
       />
     </div>
   `,
@@ -48,7 +78,14 @@ export class GeneralInfoViewComponent {
   readonly activeTeam = input.required<MissionaryTeam>();
   readonly isAdmin = input<boolean>(false);
   readonly assignTask = output<string>();
+
   readonly infoService = inject(GeneralInfoService);
+  private readonly sessionSvc = inject(AppSessionService);
+
+  readonly canEdit = computed(() => {
+    const role = this.sessionSvc.session()?.role;
+    return role === 'admin' || role === 'team';
+  });
 
   constructor() {
     effect(() => {
@@ -57,4 +94,3 @@ export class GeneralInfoViewComponent {
     }, { allowSignalWrites: true });
   }
 }
-

@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
-// Estructura de datos de una credencial rápida preconfigurada
 export interface QuickCredentialPayload {
   type: 'admin' | 'team';
   user: string;
@@ -9,9 +8,9 @@ export interface QuickCredentialPayload {
   chipKey: string;
 }
 
-// Catálogo de chips de acceso rápido para pruebas e ingreso en 1 clic
 const PREDEFINED_CHIPS = [
   { type: 'admin' as const, user: 'admin', pass: '210910624Dj', key: 'admin', label: 'admin (210910624Dj)', isSpecial: true, color: '' },
+  { type: 'admin' as const, user: 'director', pass: 'director2026', key: 'director', label: 'director [general] (director2026)', isSpecial: true, color: '#1E3A8A' },
   { type: 'team' as const, user: 'wayuu', pass: 'wayuu2026', key: 'wayuu', label: 'wayuu (wayuu2026)', isSpecial: false, color: '#8B251E' },
   { type: 'team' as const, user: 'nasa', pass: 'nasa2026', key: 'nasa', label: 'nasa (nasa2026)', isSpecial: false, color: '#047857' },
   { type: 'team' as const, user: 'aida', pass: 'aida2026', key: 'aida', label: 'aida [usuario] (aida2026)', isSpecial: false, color: '#059669' },
@@ -27,7 +26,7 @@ const PREDEFINED_CHIPS = [
   imports: [AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="space-y-1 pt-0.5">
+    <div class="space-y-1 pt-0.5 font-['Outfit'] select-none">
       <div class="relative my-1.5 pt-1">
         <div class="absolute inset-0 flex items-center">
           <div class="w-full border-t border-stone-200/80"></div>
@@ -65,35 +64,31 @@ const PREDEFINED_CHIPS = [
     </div>
   `,
 })
-// Matriz de botones de credenciales predefinidas para autocompletar el login
 export class LoginQuickAccessChipsComponent {
-  // Clave del chip activo y evento para autocompletar credenciales
-  @Input() selectedQuickChip = '';
+  @Input() selectedQuickChip = 'wayuu';
   @Output() fillCredentials = new EventEmitter<QuickCredentialPayload>();
 
   readonly chips = PREDEFINED_CHIPS;
 
-  // Verifica si el chip coincide con la misión o rol actualmente seleccionado
   isSelected(key: string): boolean {
-    return this.selectedQuickChip === key || this.selectedQuickChip === `team-${key}`;
+    return this.selectedQuickChip === key;
   }
 
-  // Calcula el color de fondo dinámico según la identidad del equipo
-  getBgColor(chip: typeof PREDEFINED_CHIPS[0]): string | null {
-    if (!chip.color) return null;
-    return this.isSelected(chip.key) ? chip.color : `${chip.color}15`;
+  getBgColor(chip: (typeof PREDEFINED_CHIPS)[0]): string {
+    if (this.isSelected(chip.key)) return '#1c1917';
+    if (chip.color && !chip.isSpecial) return `${chip.color}15`;
+    return '';
   }
 
-  // Obtiene el color del texto cuando el chip no está activo
-  getTextColor(chip: typeof PREDEFINED_CHIPS[0]): string | null {
-    if (!chip.color || this.isSelected(chip.key)) return null;
-    return chip.color;
+  getTextColor(chip: (typeof PREDEFINED_CHIPS)[0]): string {
+    if (this.isSelected(chip.key)) return '#ffffff';
+    if (chip.color && !chip.isSpecial) return chip.color;
+    return '';
   }
 
-  // Calcula el color del borde según el estado de selección del chip
-  getBorderColor(chip: typeof PREDEFINED_CHIPS[0]): string | null {
-    if (!chip.color) return null;
-    return this.isSelected(chip.key) ? chip.color : `${chip.color}30`;
+  getBorderColor(chip: (typeof PREDEFINED_CHIPS)[0]): string {
+    if (this.isSelected(chip.key)) return '#1c1917';
+    if (chip.color && !chip.isSpecial) return `${chip.color}40`;
+    return '';
   }
 }
-

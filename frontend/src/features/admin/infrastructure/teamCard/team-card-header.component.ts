@@ -1,8 +1,6 @@
-// Encabezado de la tarjeta de equipo: insignia de etnia, estado de salud, botones de acción y líder
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
-import type { IconName } from '../../../../shared/components/icon/icon.types';
 
 @Component({
   selector: 'app-team-card-header',
@@ -19,10 +17,9 @@ import type { IconName } from '../../../../shared/components/icon/icon.types';
           >
             {{ team.ethnicity }}
           </span>
-          <span [class]="'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ' + badgeConfig.bg">
-            <span [class]="'w-1.5 h-1.5 rounded-full ' + badgeConfig.dot"></span>
-            <app-icon [name]="badgeConfig.icon" className="w-3 h-3" />
-            <span>{{ badgeConfig.label }}</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border bg-stone-50 text-stone-700 border-stone-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span>{{ team.currentPhaseName }}</span>
           </span>
         </div>
 
@@ -34,6 +31,14 @@ import type { IconName } from '../../../../shared/components/icon/icon.types';
             title="Editar misión"
           >
             <app-icon name="pencil" className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            (click)="$event.stopPropagation(); delete.emit()"
+            class="p-1 rounded-md hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+            title="Eliminar equipo"
+          >
+            <app-icon name="trash-2" className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
@@ -70,19 +75,9 @@ import type { IconName } from '../../../../shared/components/icon/icon.types';
   `,
 })
 export class TeamCardHeaderComponent {
-  @Input({ required: true }) team!: TeamSupervisionSummary; // Resumen del equipo misionero
-  @Input() themeColor = '#8B251E'; // Color identitario de la misión
-  @Output() edit = new EventEmitter<void>(); // Emite al pulsar el botón de editar misión
-  @Output() inspect = new EventEmitter<void>(); // Emite al pulsar el botón de supervisar plan
-
-  // Resuelve los estilos, ícono y etiqueta según el estado de salud del equipo
-  get badgeConfig(): { bg: string; dot: string; icon: IconName; label: string } {
-    const map: Record<string, { bg: string; dot: string; icon: IconName; label: string }> = {
-      Optimo: { bg: 'bg-emerald-50 text-emerald-800 border-emerald-200', dot: 'bg-emerald-500', icon: 'shield-check', label: 'Operación Estable' },
-      Atención: { bg: 'bg-amber-50 text-amber-900 border-amber-200', dot: 'bg-amber-500', icon: 'alert-triangle', label: 'Requiere Atención' },
-      Crítico: { bg: 'bg-rose-50 text-rose-900 border-rose-200', dot: 'bg-rose-600', icon: 'alert-octagon', label: 'Alerta Territorial' },
-    };
-    return map[this.team.healthStatus] || map['Optimo'];
-  }
+  @Input({ required: true }) team!: TeamSupervisionSummary;
+  @Input() themeColor = '#8B251E';
+  @Output() edit = new EventEmitter<void>();
+  @Output() delete = new EventEmitter<void>();
+  @Output() inspect = new EventEmitter<void>();
 }
-

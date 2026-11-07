@@ -27,6 +27,19 @@ export const DEFAULT_ROLE_PERMISSIONS_MATRIX: RolePermissionsMatrix = {
     'audit.history.view': false,
     'security.roles.manage': false,
   },
+  director_general: {
+    'pdm.view': true,
+    'pdm.activities.edit': false,
+    'pdm.activities.delete': false,
+    'pdm.objectives.manage': false,
+    'team.tasks.assign': false,
+    'team.members.manage': false,
+    'notes.manage': true,
+    'reports.team.export': true,
+    'reports.national.view': false,
+    'audit.history.view': false,
+    'security.roles.manage': false,
+  },
   national_director: {
     'pdm.view': true,
     'pdm.activities.edit': true,
@@ -41,4 +54,3 @@ export const DEFAULT_ROLE_PERMISSIONS_MATRIX: RolePermissionsMatrix = {
     'security.roles.manage': true,
   },
 };
-

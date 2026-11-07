@@ -1,5 +1,5 @@
 export interface AuthSession {
-  role: 'admin' | 'team' | 'member';
+  role: 'admin' | 'director_general' | 'team' | 'member';
   teamId?: string;
   userName: string;
 }

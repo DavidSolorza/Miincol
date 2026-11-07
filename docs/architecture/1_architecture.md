@@ -348,3 +348,30 @@ graph TD
   - Autonomía completa para el Director Nacional en la gobernanza y mantenimiento de identidades misioneras.
   - 100% de apego al límite de 150 líneas por archivo bajo la gobernanza técnica.
 
+---
+
+### ADR-038: Suite de 16 Mejoras Integrales PDM, Información General Estilo Excel, Gastos Especiales y Rol Director General
+- **Estado:** Aprobado e Implementado (`2026-11-07`).
+- **Contexto:** Alineación integral del sistema con las directrices operativas ministeriales, el formato oficial Excel (*PDM 2026 Pastos Vr1.xlsx*) y las necesidades de gobernanza territorial del Director Nacional y Director General.
+- **Decisión:**
+  1. **Edición de Información de Campo y Contacto:** Accesible y editable para Administrador (`admin`) y Líder de equipo (`lider`).
+  2. **Entrenamiento Ministerial y Desarrollo Eclesial:** Componentes visuales prominentes con métricas editables para liderazgo práctico, bíblico, pastoral, plantación y desarrollo de iglesias por generación.
+  3. **Esenciales a Desarrollar (1 a 5):** Integración de los 5 compromisos esenciales del plan ministerial con guardado reactivo.
+  4. **Tabla Comparativa Multianual Estilo Excel (`GeneralAnnualTableComponent`):** Tabla que replica la estructura oficial de *Información General* del Excel para comparar avance por año.
+  5. **Gobernanza de Ciclo Anual:** El Administrador Nacional tiene control para cerrar formalmente el año en curso y habilitar el siguiente período.
+  6. **Reubicación de Presupuestos en Información General (`GeneralBudgetTopComponent`):** Presupuestos por pilar colocados en la parte superior con barra de progreso porcentual.
+  7. **Datos de Equipo en el Footer (`GeneralTeamFooterComponent`):** Información de misioneros y contactos ubicada al final de la página con gestión de integrantes.
+  8. **Banner Informativo de Salida Progresiva (`ProgressiveExitBannerComponent`):** Mensaje visual en la etapa de "Salida progresiva" destacando el traspaso de liderazgo a la comunidad indígena.
+  9. **Rol `director_general` (`ROLE_DIRECTOR_GENERAL`):** Perfil con credenciales `director` / `director2026`. Acceso pasivo de solo lectura para planes, notas y agenda; sin facultades de mutación ni administración.
+  10. **Depuración de Modal de Actividades (`ActivityBasicFieldsComponent`):** Eliminación de campos redundantes de fase actual y presupuesto estático.
+  11. **Optimización de Tarjetas del Dashboard:** Reemplazo de "Fase PDM" por "Avance de Plan", visualización de etapas activas y etapas con objetivos, y remoción de "Alerta Crítica".
+  12. **Equipos Nuevos en Blanco:** Inicialización limpia con 0 objetivos para llenar desde cero.
+  13. **Desglose Presupuestal Mensual (Ene-Dic):** Matriz de 12 meses por actividad para control financiero mensualizado.
+  14. **Barra de Porcentaje de Presupuesto:** Barra visual tanto en la tarjeta del dashboard como en Información General.
+  15. **Gastos Especiales (`SpecialExpenseModalComponent` & `SpecialExpensesListComponent`):** Botón "+ Gasto Especial" bajo "+ Nueva Actividad". Registra nombre, descripción, presupuesto y área; se visualiza de forma separada sin sumar al presupuesto general del PDM.
+  16. **Eliminación Segura de Equipos:** Botón de eliminación en tarjetas de dashboard con confirmación reactiva.
+- **Consecuencias:**
+  - Plena conformidad con el documento base y flujo de trabajo misionero.
+  - 100% de cumplimiento del límite estricto de 150 líneas por archivo en TypeScript.
+
+

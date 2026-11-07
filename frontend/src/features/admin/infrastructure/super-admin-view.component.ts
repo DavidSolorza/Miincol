@@ -1,4 +1,3 @@
-// Vista principal de Supervisión Nacional (Split-Screen: KPIs y listado de equipos + Mapa de Colombia)
 import { Component, ChangeDetectionStrategy, Output, EventEmitter, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import type { TeamSupervisionSummary, CreateTeamDto } from '../domain/admin.types';
 import { AdminDashboardService } from '../application/admin-dashboard.service';
@@ -36,6 +35,7 @@ import { TeamModalComponent } from './team-modal.component';
               (selectTeamId)="selectedTeamId.set($event)"
               (inspectTeam)="inspectTeam.emit($event)"
               (editTeam)="openEditModal($event)"
+              (deleteTeam)="handleDeleteTeam($event)"
             />
           </div>
         </div>
@@ -61,44 +61,39 @@ import { TeamModalComponent } from './team-modal.component';
   styles: [`:host { display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; }`],
 })
 export class SuperAdminViewComponent implements OnInit, OnDestroy {
-  readonly dashboard = inject(AdminDashboardService); // Servicio de estado nacional
-  private readonly toastSvc = inject(ToastService); // Servicio de notificaciones
+  readonly dashboard = inject(AdminDashboardService);
+  private readonly toastSvc = inject(ToastService);
 
-  @Output() inspectTeam = new EventEmitter<string>(); // Emite el ID del equipo a inspeccionar en su PDM
+  @Output() inspectTeam = new EventEmitter<string>();
 
-  readonly isModalOpen = signal(false); // Controla visibilidad del modal de creación/edición
-  readonly editingTeam = signal<TeamSupervisionSummary | null>(null); // Equipo en edición o null para nuevo
-  readonly selectedTeamId = signal<string | null>(null); // ID del equipo seleccionado entre lista y mapa
+  readonly isModalOpen = signal(false);
+  readonly editingTeam = signal<TeamSupervisionSummary | null>(null);
+  readonly selectedTeamId = signal<string | null>(null);
 
   private readonly openHandler = () => this.openCreateModal();
 
-  // Escucha el evento global para abrir el modal de nueva misión desde la cabecera
   ngOnInit() {
     if (typeof window !== 'undefined') {
       window.addEventListener('misincol:open-create-team', this.openHandler);
     }
   }
 
-  // Limpia el listener global al destruir el componente
   ngOnDestroy() {
     if (typeof window !== 'undefined') {
       window.removeEventListener('misincol:open-create-team', this.openHandler);
     }
   }
 
-  // Abre el modal en modo creación de misión
   openCreateModal() {
     this.editingTeam.set(null);
     this.isModalOpen.set(true);
   }
 
-  // Abre el modal cargando los datos de un equipo existente para edición
   openEditModal(team: TeamSupervisionSummary) {
     this.editingTeam.set(team);
     this.isModalOpen.set(true);
   }
 
-  // Procesa el guardado del formulario creando o actualizando la misión
   handleModalSubmit(dto: CreateTeamDto) {
     const editing = this.editingTeam();
     if (editing) {
@@ -109,5 +104,18 @@ export class SuperAdminViewComponent implements OnInit, OnDestroy {
       this.toastSvc.toast.success(`Misión "${dto.name}" creada`, 'Nueva Misión');
     }
   }
-}
 
+  handleDeleteTeam(team: TeamSupervisionSummary) {
+    this.toastSvc.confirmAction({
+      title: 'Eliminar Equipo Misionero',
+      message: `¿Estás seguro de eliminar el equipo "${team.name}" (${team.ethnicity})? Se eliminará su información y plan territorial.`,
+      confirmText: 'Sí, eliminar',
+      cancelText: 'Cancelar',
+      variant: 'danger',
+      onConfirm: () => {
+        this.dashboard.handleDeleteTeam(team.id);
+        this.toastSvc.toast.info(`Equipo "${team.name}" eliminado del sistema`, 'Equipo Eliminado');
+      },
+    });
+  }
+}

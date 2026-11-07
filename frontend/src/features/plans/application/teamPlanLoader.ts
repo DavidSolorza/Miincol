@@ -3,7 +3,6 @@ import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
 import { PASTOS_PLANS_BY_PHASE } from './pastosPlanData';
 
-// Mapa de nombres legibles por cada identificador de fase ministerial
 export const PHASE_NAMES_MAP: Record<PhaseType, string> = {
   investigacion: '1. Investigación',
   encarnacion: '2. Encarnación',
@@ -12,7 +11,7 @@ export const PHASE_NAMES_MAP: Record<PhaseType, string> = {
   autocuidado: '5. Autocuidado',
 };
 
-// Genera un conjunto de planes personalizados a partir de la plantilla base para un equipo nuevo
+// Genera un conjunto de planes en blanco para un equipo recién creado (0 objetivos para empezar a llenar)
 export const createCustomPlanForTeam = (
   teamId: string,
   teamData?: Partial<TeamSupervisionSummary>
@@ -23,8 +22,6 @@ export const createCustomPlanForTeam = (
     teamData?.members && teamData.members.length > 0
       ? teamData.members
       : [teamLeader, 'Obrero de campo'];
-  const ethnicity = teamData?.ethnicity || 'Indígena';
-  const region = teamData?.region || 'Territorio ancestral';
 
   const base: Record<string, PhasePlan> = JSON.parse(JSON.stringify(INITIAL_PLANS_BY_PHASE));
 
@@ -32,16 +29,12 @@ export const createCustomPlanForTeam = (
     base[key].teamName = teamName;
     base[key].teamLeader = teamLeader;
     base[key].teamMembers = teamMembers;
-
-    if (base[key].objectives && base[key].objectives[0]) {
-      base[key].objectives[0].description = `Diagnóstico situacional, inmersión y mapeo de comunidades en el pueblo ${ethnicity} en ${region}.`;
-    }
+    base[key].objectives = []; // PDM completamente limpio y en blanco para inicializar desde cero
   });
 
   return base;
 };
 
-// Obtiene los planes de un equipo desde localStorage o retorna su plantilla predeterminada
 export const getPlansForTeam = (
   teamId: string,
   teamData?: Partial<TeamSupervisionSummary>

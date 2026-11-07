@@ -1,25 +1,25 @@
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 
-// Parámetros de entrada y callbacks para la verificación de credenciales de acceso
 export interface VerifyAuthParams {
   activeTab: 'admin' | 'team';
   identifier: string;
   password: string;
   allTeams: TeamSupervisionSummary[];
   onAdminSuccess: () => void;
+  onDirectorGeneralSuccess?: () => void;
   onTeamSuccess: (team: TeamSupervisionSummary) => void;
   onMemberSuccess?: (team: TeamSupervisionSummary, memberName: string) => void;
   onError: (msg: string) => void;
   onDone: () => void;
 }
 
-// Valida las credenciales de Super Admin o Equipo Territorial y dispara el callback correspondiente
 export const verifyAuthCredentials = ({
   activeTab,
   identifier,
   password,
   allTeams,
   onAdminSuccess,
+  onDirectorGeneralSuccess,
   onTeamSuccess,
   onMemberSuccess,
   onError,
@@ -30,7 +30,18 @@ export const verifyAuthCredentials = ({
 
   setTimeout(() => {
     onDone();
-    if (activeTab === 'admin' || cleanUser === 'admin' || cleanUser === 'director') {
+
+    if (cleanUser === 'director' || cleanUser === 'directorgeneral' || cleanUser === 'director.general') {
+      if (cleanPass === 'director2026' || cleanPass === 'dg2026') {
+        if (onDirectorGeneralSuccess) onDirectorGeneralSuccess();
+        else onAdminSuccess();
+      } else {
+        onError('Contraseña de Director General incorrecta.');
+      }
+      return;
+    }
+
+    if (activeTab === 'admin' || cleanUser === 'admin') {
       if (cleanPass === '210910624Dj' || cleanPass === 'admin2026') {
         onAdminSuccess();
       } else {

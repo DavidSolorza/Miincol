@@ -6,7 +6,6 @@ import { LoginViewComponent } from '../features/auth/infrastructure/login-view.c
 import { AppWorkspaceComponent } from './ui/app-workspace.component';
 import type { MissionaryTeam } from '../features/auth/domain/auth.types';
 
-// Componente raíz (<app-root>): alterna entre la pantalla de Login y el área de trabajo principal
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -17,6 +16,7 @@ import type { MissionaryTeam } from '../features/auth/domain/auth.types';
       <app-login-view
         [allTeams]="dashboardService.allTeams()"
         (adminSuccess)="sessionService.handleAdminLogin()"
+        (directorGeneralSuccess)="sessionService.handleDirectorGeneralLogin()"
         (teamSuccess)="sessionService.handleTeamLogin($event)"
         (memberSuccess)="sessionService.handleMemberLogin($event.team, $event.memberName)"
       />
@@ -31,11 +31,9 @@ import type { MissionaryTeam } from '../features/auth/domain/auth.types';
   `,
 })
 export class AppComponent {
-  // Servicios globales de supervisión y sesión activa
   readonly dashboardService = inject(AdminDashboardService);
   readonly sessionService = inject(AppSessionService);
 
-  // Transforma el resumen de supervisión en el listado de equipos misioneros para selectores y vistas
   readonly mappedTeams = computed<MissionaryTeam[]>(() =>
     this.dashboardService.allTeams().map((t) => ({
       id: t.id,
@@ -49,14 +47,12 @@ export class AppComponent {
     }))
   );
 
-  // Obtiene el resumen de supervisión del equipo actualmente seleccionado
   readonly activeTeamSummary = computed(() => {
     const id = this.sessionService.activeTeamId();
     const teams = this.dashboardService.allTeams();
     return teams.find((t) => t.id === id || t.slug === id) || teams[0];
   });
 
-  // Resuelve la entidad completa del equipo activo con respaldo por defecto (Wayuu)
   readonly activeTeam = computed<MissionaryTeam>(() => {
     const id = this.sessionService.activeTeamId();
     const teams = this.mappedTeams();

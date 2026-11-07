@@ -1,10 +1,8 @@
-// Pie de tarjeta de equipo con presupuesto abreviado, hora de último acceso y alertas críticas
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
-// Formatea montos en notación compacta (ej. $ 14.9M o $ 500k)
 const formatCompactCOP = (amount: number): string => {
   if (amount >= 1_000_000) return `$ ${(amount / 1_000_000).toFixed(1)}M`;
   if (amount >= 1_000) return `$ ${(amount / 1_000).toFixed(0)}k`;
@@ -19,64 +17,48 @@ const formatCompactCOP = (amount: number): string => {
   template: `
     <div class="grid grid-cols-3 gap-2 pt-2.5 mt-1 border-t border-stone-100 text-left">
       <div class="min-w-0">
-        <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400">
-          Budget
+        <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+          Ejecutado
         </div>
-        <div class="font-black text-stone-900 text-sm sm:text-base font-mono truncate mt-0.5" [title]="fullBudget">
-          {{ formattedBudget }}
+        <div class="font-black text-stone-900 text-xs sm:text-sm font-mono truncate mt-0.5" [title]="fullExecuted">
+          {{ formattedExecuted }}
         </div>
       </div>
 
       <div class="min-w-0" (click)="$event.stopPropagation(); openAudit.emit()" title="Ver bitácora de actividad">
-        <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400">
-          Last Access
+        <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+          Último Acceso
         </div>
-        <div class="font-bold text-stone-800 text-xs sm:text-sm truncate mt-0.5 hover:text-[#E67324] cursor-pointer transition">
+        <div class="font-bold text-stone-800 text-xs truncate mt-0.5 hover:text-[#E67324] cursor-pointer transition">
           {{ displayTime }}
         </div>
       </div>
 
-      <div class="min-w-0 flex flex-col items-start">
-        <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400">
-          Critical Alerts
+      <div class="min-w-0">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+          Actividades
         </div>
-        <div class="mt-0.5 flex items-center">
-          @if (team.criticalAlert) {
-            <div class="inline-flex items-center text-rose-600" [title]="team.criticalAlert.message">
-              <app-icon name="alert-triangle" className="w-4.5 h-4.5 fill-rose-500 text-rose-500 shrink-0" />
-            </div>
-          } @else {
-            <span class="text-stone-300 font-bold text-xs">—</span>
-          }
+        <div class="font-bold text-stone-800 text-xs truncate mt-0.5">
+          {{ team.completedActivities }}/{{ team.totalActivities }} listas
         </div>
       </div>
     </div>
   `,
 })
 export class TeamCardBottomMetricsComponent {
-  @Input({ required: true }) team!: TeamSupervisionSummary; // Datos del equipo misionero
-  @Input() lastLoginTime?: string; // Texto con la hora del último ingreso registrado
-  @Output() openAudit = new EventEmitter<void>(); // Emite evento para abrir el modal de bitácora/auditoría
+  @Input({ required: true }) team!: TeamSupervisionSummary;
+  @Input() lastLoginTime?: string;
+  @Output() openAudit = new EventEmitter<void>();
 
-  // Calcula el presupuesto proporcional al avance o devuelve el presupuesto total
-  get targetBudget(): number {
-    const executed = this.team.totalBudget * (this.team.progressPercentage / 100);
-    return executed > 0 ? executed : this.team.totalBudget;
+  get formattedExecuted(): string {
+    return formatCompactCOP(this.team.executedBudget || 0);
   }
 
-  // Devuelve el presupuesto en formato compacto para la tarjeta
-  get formattedBudget(): string {
-    return formatCompactCOP(this.targetBudget);
+  get fullExecuted(): string {
+    return formatCurrencyCOP(this.team.executedBudget || 0);
   }
 
-  // Devuelve el presupuesto completo en COP para el atributo title
-  get fullBudget(): string {
-    return formatCurrencyCOP(this.targetBudget);
-  }
-
-  // Formatea la hora de último acceso eliminando el prefijo redundante
   get displayTime(): string {
     return this.lastLoginTime ? this.lastLoginTime.replace('Hoy, ', '') : (this.team.lastUpdate || '09:00');
   }
 }
-

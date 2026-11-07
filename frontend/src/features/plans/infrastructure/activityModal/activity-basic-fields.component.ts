@@ -11,23 +11,12 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
     <div class="bg-[#FAF7F2]/70 p-4 sm:p-5 rounded-2xl border border-stone-200/70 space-y-3.5">
       <div class="flex items-center gap-2 pb-1 border-b border-stone-200/60">
         <span class="w-6 h-6 rounded-lg bg-stone-100 border border-stone-200/80 text-stone-900 flex items-center justify-center font-black text-xs font-['Outfit']">1</span>
-        <h4 class="font-['Outfit'] font-extrabold text-sm text-stone-900 tracking-tight">Información Básica, Pilar &amp; Etapa</h4>
+        <h4 class="font-['Outfit'] font-extrabold text-sm text-stone-900 tracking-tight">Información de la Actividad &amp; Etapa</h4>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Pilar PDM</label>
-          <div class="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-100/70 text-xs font-bold text-stone-900 flex items-center justify-between">
-            <span class="flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-[#E67324]"></span>
-              {{ essentialArea() || 'Investigación' }}
-            </span>
-            <span class="text-[10px] font-semibold text-stone-500 bg-white px-2 py-0.5 rounded-md border border-stone-200/60">Fijo</span>
-          </div>
-        </div>
-
-        <div>
-          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Etapa del Pilar</label>
+          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Etapa de Enfoque</label>
           <select
             [value]="stage()"
             (change)="onStageChange($event)"
@@ -38,9 +27,7 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
             }
           </select>
         </div>
-      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="font-bold text-stone-700 block mb-1 text-[11px]">Objetivo Asociado</label>
           <select
@@ -54,38 +41,50 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
             <option [value]="4">Objetivo #4</option>
           </select>
         </div>
-
-        <div>
-          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Estado Actual</label>
-          <select
-            [value]="state()"
-            (change)="onStateChange($event)"
-            class="w-full p-2.5 rounded-xl border border-stone-200 bg-white font-bold text-xs text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
-          >
-            <option value="Pendiente">⏳ Pendiente</option>
-            <option value="En Proceso">🔄 En Proceso</option>
-            <option value="Completado">✅ Completado</option>
-          </select>
-        </div>
       </div>
 
       <div>
-        <label class="font-bold text-stone-700 block mb-1 text-[11px]">Descripción de la Actividad</label>
+        <label class="font-bold text-stone-700 block mb-1 text-[11px]">Descripción de la Actividad / Sub-Objetivo *</label>
         <textarea
           [value]="description()"
           (input)="onDescriptionInput($event)"
-          placeholder="¿Qué acción concreta se realizará en territorio con la comunidad?"
           rows="2"
-          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white text-xs resize-none focus:outline-hidden focus:ring-2 focus:ring-[#E67324]/20"
+          placeholder="¿Qué acción concreta se realizará en territorio?"
+          class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs resize-none"
           required
         ></textarea>
       </div>
 
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Responsable</label>
+          <input
+            type="text"
+            [value]="responsible()"
+            (input)="onResponsibleInput($event)"
+            placeholder="Pastor Líder / Obrero"
+            class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Estado Inicial</label>
+          <select
+            [value]="state()"
+            (change)="onStateChange($event)"
+            class="w-full p-2.5 rounded-xl border border-stone-200 bg-white text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-stone-200/50 focus:border-stone-400 cursor-pointer"
+          >
+            <option value="Pendiente">Pendiente</option>
+            <option value="En Proceso">En Proceso</option>
+            <option value="Completado">Completado</option>
+          </select>
+        </div>
+      </div>
+
       <app-activity-schedule-fields
-        [responsible]="responsible()"
         [frequency]="frequency()"
         [timesPerYear]="timesPerYear()"
-        (responsibleChanged)="responsibleChanged.emit($event)"
         (frequencyChanged)="frequencyChanged.emit($event)"
         (timesPerYearChanged)="timesPerYearChanged.emit($event)"
       />
@@ -93,14 +92,14 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
   `,
 })
 export class ActivityBasicFieldsComponent {
-  readonly objectiveNumber = input.required<1 | 2 | 3 | 4>();
+  readonly objectiveNumber = input.required<number>();
   readonly state = input.required<ActivityState>();
   readonly stage = input.required<string>();
+  readonly essentialArea = input<EssentialArea | undefined>(undefined);
   readonly description = input.required<string>();
   readonly responsible = input.required<string>();
   readonly frequency = input.required<string>();
   readonly timesPerYear = input.required<number>();
-  readonly essentialArea = input<EssentialArea | undefined>();
 
   readonly objectiveNumberChanged = output<1 | 2 | 3 | 4>();
   readonly stateChanged = output<ActivityState>();
@@ -109,12 +108,29 @@ export class ActivityBasicFieldsComponent {
   readonly responsibleChanged = output<string>();
   readonly frequencyChanged = output<string>();
   readonly timesPerYearChanged = output<number>();
-  readonly essentialAreaChanged = output<EssentialArea>();
 
-  readonly availableStages = computed(() => STAGES_BY_AREA[this.essentialArea() || 'Investigación'] || STAGES_BY_AREA.Investigación);
+  readonly availableStages = computed(() => {
+    const area = this.essentialArea() || 'Investigación';
+    return STAGES_BY_AREA[area] || ['Contacto', 'Comunicar'];
+  });
 
-  onObjectiveChange(event: Event): void { this.objectiveNumberChanged.emit(Number((event.target as HTMLSelectElement).value) as 1 | 2 | 3 | 4); }
-  onStateChange(event: Event): void { this.stateChanged.emit((event.target as HTMLSelectElement).value as ActivityState); }
-  onStageChange(event: Event): void { this.stageChanged.emit((event.target as HTMLSelectElement).value); }
-  onDescriptionInput(event: Event): void { this.descriptionChanged.emit((event.target as HTMLTextAreaElement).value); }
+  onObjectiveChange(event: Event): void {
+    this.objectiveNumberChanged.emit(Number((event.target as HTMLSelectElement).value) as 1 | 2 | 3 | 4);
+  }
+
+  onStateChange(event: Event): void {
+    this.stateChanged.emit((event.target as HTMLSelectElement).value as ActivityState);
+  }
+
+  onStageChange(event: Event): void {
+    this.stageChanged.emit((event.target as HTMLSelectElement).value);
+  }
+
+  onDescriptionInput(event: Event): void {
+    this.descriptionChanged.emit((event.target as HTMLTextAreaElement).value);
+  }
+
+  onResponsibleInput(event: Event): void {
+    this.responsibleChanged.emit((event.target as HTMLInputElement).value);
+  }
 }

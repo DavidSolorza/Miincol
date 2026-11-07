@@ -46,6 +46,7 @@ import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
                 <select [value]="role()" (change)="role.set($any($event.target).value)" class="w-full p-2 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-stone-400 font-medium">
                   <option value="team_member">Usuario equipo</option>
                   <option value="team_leader">Líder equipo</option>
+                  <option value="director_general">Director general</option>
                   <option value="national_director">Director nacional</option>
                 </select>
               </div>
