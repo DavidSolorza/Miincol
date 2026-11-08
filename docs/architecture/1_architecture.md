@@ -487,6 +487,29 @@ graph TD
   - Control financiero total en campo y a nivel nacional.
   - Cero riesgo de sobregiro presupuestal no autorizado.
 
+---
+
+### ADR-043: Validación de Límite Presupuestal por Pilar en Backend NestJS
+- **Estado:** Aprobado e Implementado (`2026-11-07`).
+- **Contexto:** Blindar el backend para garantizar que ningún pilar estratégico individualmente ni la suma total de los pilares exceda el presupuesto anual asignado a la misión territorial.
+- **Decisión:**
+  1. **Validador Centralizado de Presupuesto por Pilar (`validatePillarBudgets`):**
+     - Ubicado en `backend/src/teams/validators/pillar-budget.validator.ts`.
+     - Valida que para cada pilar: $\text{pillarBudget} \ge 0$ y $\text{pillarBudget} \le \text{totalBudget}$.
+     - Valida que la sumatoria: $\sum \text{pillarBudgets} \le \text{totalBudget}$.
+     - Lanza `BadRequestException` estructurada con mensaje explicativo en pesos colombianos (COP) ante cualquier intento de sobregiro.
+  2. **Integración en `TeamsService`:**
+     - En `TeamsService.update`, valida `targetTotalBudget` y `targetPillarBudgets` antes de aplicar mutaciones y persistir en `backend/data/teams.json`.
+  3. **Pruebas y Gobernanza:**
+     - Suite unitaria `pillar-budget.validator.spec.ts` (5 pruebas).
+     - Prueba de rechazo en `teams.service.spec.ts` (1 prueba adicional).
+     - Cobertura global de 50 pruebas automatizadas (27 backend + 23 frontend) 100% aprobadas.
+     - Cumplimiento riguroso del límite $\le 150$ líneas por archivo.
+- **Consecuencias:**
+  - Integridad presupuestal a nivel de persistencia y API REST.
+  - Detección inmediata de anomalías financieras.
+
+
 
 
 
