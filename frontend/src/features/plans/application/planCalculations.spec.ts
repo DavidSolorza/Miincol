@@ -72,3 +72,4 @@ describe('planCalculations (Frontend Unit Tests)', () => {
     expect(metrics.totalBudget).toBe(0);
   });
 });
+

@@ -18,6 +18,15 @@ export const pastosObj3And4: Objective[] = [
         unitBudget: 0, totalBudget: 0, state: 'En Proceso', obstacles: '',
       },
       {
+        id: 'act-pastos-25', objectiveNumber: 3, stage: 'Liderazgo',
+        description: 'Sostener reuniones de oración y estudio con un grupo de mujeres creyentes y no creyentes.',
+        currentSituation: 'Grupo de mujeres para discipulado y oración comunitaria.',
+        mediumTermGoal: '5 sesiones en el año.', longTermGoal: 'Mujeres firmes en la fe.',
+        responsible: 'Diana Viera', frequency: 'Bimestral', timesPerYear: 5,
+        startDate: '2026-02-10', endDate: '2026-12-02', totalWeeks: 42, remainingWeeks: 20,
+        unitBudget: 30000, totalBudget: 150000, state: 'Pendiente', obstacles: '',
+      },
+      {
         id: 'act-pastos-28', objectiveNumber: 3, stage: 'Liderazgo',
         description: 'PROYECTO ESPECIAL: Retiro familiar para fortalecer relaciones intrafamiliares y oxigenación.',
         currentSituation: 'Necesidad de renovación espiritual y descanso en comunidad.',

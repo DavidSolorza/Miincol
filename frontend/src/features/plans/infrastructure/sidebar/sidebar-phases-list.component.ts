@@ -88,15 +88,14 @@ export class SidebarPhasesListComponent {
 
   readonly phasesConfig = PHASES_CONFIG; // Referencia a los pilares configurados para la plantilla
 
-  // Calcula el total de actividades y cuántas están completadas en una fase específica
+  // Calcula el total de objetivos y cuántos están cumplidos en una fase específica
   getPhaseCounts(phaseId: PhaseType): { total: number; completed: number } {
     const phasePlan = this.allPlans()[phaseId];
-    if (!phasePlan) return { total: 0, completed: 0 };
-    const total = phasePlan.objectives.reduce((sum, o) => sum + o.activities.length, 0);
-    const completed = phasePlan.objectives.reduce(
-      (sum, o) => sum + o.activities.filter((a) => a.state === 'Completado').length,
-      0
-    );
+    if (!phasePlan || !phasePlan.objectives) return { total: 0, completed: 0 };
+    const total = phasePlan.objectives.length;
+    const completed = phasePlan.objectives.filter(
+      (o) => o.activities.length > 0 && o.activities.every((a) => a.state === 'Completado')
+    ).length;
     return { total, completed };
   }
 

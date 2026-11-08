@@ -72,6 +72,15 @@ export const pastosObj1And2: Objective[] = [
         startDate: '2026-02-10', endDate: '2026-12-02', totalWeeks: 42, remainingWeeks: 20,
         unitBudget: 300000, totalBudget: 3300000, state: 'Pendiente', obstacles: '',
       },
+      {
+        id: 'act-pastos-22', objectiveNumber: 2, stage: 'Liderazgo',
+        description: 'Reuniones especiales de integración como iglesia que faciliten mejorar relaciones y crear cohesión.',
+        currentSituation: 'Integración comunitaria para fortalecer la comunión.',
+        mediumTermGoal: 'Mejorar relaciones fraternas.', longTermGoal: 'Iglesia unida y cohesionada.',
+        responsible: 'Diana Viera', frequency: 'Bimestral', timesPerYear: 5,
+        startDate: '2026-02-10', endDate: '2026-12-02', totalWeeks: 42, remainingWeeks: 20,
+        unitBudget: 60000, totalBudget: 300000, state: 'Pendiente', obstacles: '',
+      },
     ],
   },
 ];

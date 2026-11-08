@@ -438,6 +438,32 @@ graph TD
   - Código fuente estrictamente `<= 150` líneas por archivo.
   - Cero dependencias comerciales externas opacas.
 
+---
+
+### ADR-041: Remoción de Tags de Etapa en Actividades, Contador de Objetivos en Pilares del Sidebar y Sincronización Presupuestal
+- **Estado:** Aprobado e Implementado (`2026-11-07`).
+- **Contexto:** Optimización de la experiencia de usuario y coherencia informativa en la visualización de planes PDM, suprimiendo tags redundantes en tarjetas de actividades, ajustando la métrica de los badges de pilares hacia objetivos completados y consolidando el cuadre exacto de presupuesto anual.
+- **Decisión:**
+  1. **Remoción de Tags de Etapa en Actividades:**
+     - En `ActivityHeaderTagsComponent`, se elimina el chip con el icono de capas (`layers`) y el texto de etapa (`stage`), eliminando la sobrecarga visual innecesaria en cada tarjeta de actividad.
+     - En `ActivityDetailsAccordionComponent`, se simplifica el display de áreas esenciales sin concatenar la etapa.
+  2. **Contador de Objetivos en Pilares del Menú Lateral (`SidebarPhasesListComponent`):**
+     - Se reemplaza la métrica previa de actividades por `objetivosTotales / objetivosCumplidos`.
+     - Un objetivo se calcula como cumplido si cuenta con actividades asignadas y todas se encuentran en estado `Completado`.
+  3. **Cuadre Exacto del Presupuesto Anual de Pastos a $11.210.000 COP:**
+     - Incorporación en el frontend de las actividades oficiales del Excel: *Reuniones especiales de integración* ($300.000 COP) y *Reuniones de oración y estudio con mujeres* ($150.000 COP).
+     - Tanto la barra lateral izquierda como la carátula superior de Información General reflejan de forma coherente y exacta $11.210.000 COP.
+  4. **Sanitización de Almacenamiento Local (`cleanStorage.ts`):**
+     - Elevación de versión a `2026.4.0-clean-v2` para recarga automática sin caché residual en los navegadores de los líderes.
+  5. **Pruebas y Límite de Líneas:**
+     - Inclusión de suite `sidebar-phases-list.component.spec.ts` elevando la cobertura a 20 pruebas en frontend y 41 pruebas totales (100% en verde).
+     - Cumplimiento estricto del límite $\le 150$ líneas por archivo.
+- **Consecuencias:**
+  - Interfaz de actividades más limpia y enfocada en lo ministerial.
+  - Métricas de avance de pilares intuitivas basadas en objetivos estratégicos.
+  - Coherencia financiera total.
+
+
 
 
 

@@ -60,3 +60,4 @@ describe('TeamCardMetricsComponent (Component Unit Tests)', () => {
     expect(comp.activeStages).toEqual(['Contacto', 'Comunicar']);
   });
 });
+

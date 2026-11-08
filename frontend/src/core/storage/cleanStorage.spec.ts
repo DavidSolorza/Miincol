@@ -32,3 +32,4 @@ describe('cleanStorage Utility (Unit Tests)', () => {
     expect(localStorage.getItem('misincol_storage_version')).toBeDefined();
   });
 });
+

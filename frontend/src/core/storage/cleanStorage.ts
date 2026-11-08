@@ -1,10 +1,12 @@
 const CLEAN_STORAGE_VERSION_KEY = 'misincol_storage_version';
-const CURRENT_CLEAN_VERSION = '2026.4.0-clean-v1';
+const CURRENT_CLEAN_VERSION = '2026.4.0-clean-v2';
 
 export const OBSOLETE_KEYS_PATTERN = [
   'misincol_temp_',
   'misincol_draft_',
   'misincol_legacy_',
+  'misincol_pdm_plans_',
+  'misincol_team_plans_',
 ];
 
 export function sanitizeClientStorage(forceReset = false): boolean {
@@ -36,7 +38,7 @@ export function resetAllStorageToCleanSeeds(): void {
     ];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (key.startsWith('misincol_team_plans_') || key.startsWith('misincol_general_info_') || key.startsWith('misincol_special_expenses_'))) {
+      if (key && (key.startsWith('misincol_team_plans_') || key.startsWith('misincol_pdm_plans_') || key.startsWith('misincol_general_info_') || key.startsWith('misincol_special_expenses_'))) {
         keysToPurge.push(key);
       }
     }

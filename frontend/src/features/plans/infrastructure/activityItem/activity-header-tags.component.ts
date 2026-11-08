@@ -47,11 +47,6 @@ const STATE_STYLES: Record<ActivityState, string> = {
         </span>
       }
 
-      <span class="inline-flex items-center gap-1.5 text-[10.5px] font-bold text-stone-700 bg-stone-100/80 px-2.5 py-1 rounded-xl border border-stone-200/60 shadow-2xs">
-        <app-icon name="layers" className="w-4 h-4 text-[#E67324]" />
-        {{ stage() || 'General' }}
-      </span>
-
       <span class="text-[11px] font-semibold text-stone-400">• {{ frequency() }}</span>
     </div>
   `,

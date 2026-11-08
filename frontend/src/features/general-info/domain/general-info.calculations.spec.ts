@@ -58,3 +58,4 @@ describe('GeneralInfo Domain & Calculations (Unit Tests)', () => {
     expect(essentials[0]).toBe('Oración');
   });
 });
+
