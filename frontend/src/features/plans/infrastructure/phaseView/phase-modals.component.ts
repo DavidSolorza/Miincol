@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
 import type { Activity, Objective, EssentialArea, AreaLevel, SpecialExpense } from '../../domain/plan.types';
 import type { MissionaryTeam } from '../../../auth/domain/auth.types';
+import { PlanService } from '../../application/plan.service';
 import { ActivityModalComponent } from '../activity-modal.component';
 import { ObjectiveModalComponent } from '../objective-modal.component';
 import { SpecialExpenseModalComponent } from '../specialExpense/special-expense-modal.component';
@@ -14,8 +15,9 @@ import { SpecialExpenseModalComponent } from '../specialExpense/special-expense-
     <app-activity-modal
       [isOpen]="isAddModalOpen()" [mode]="activityModalMode()" [activityToEdit]="editingActivity()"
       [defaultObjectiveNumber]="modalDefaultObjective()" [currentPillarArea]="currentPillarArea()"
-      [defaultResponsible]="modalDefaultResponsible()" (closed)="closeActModal.emit()"
-      (saved)="activityAdded.emit($event)" (updated)="activityUpdated.emit($event)"
+      [defaultResponsible]="modalDefaultResponsible()"
+      [maxAllowedBudget]="maxAllowedBudget() ?? planService.remainingTeamBudget()"
+      (closed)="closeActModal.emit()" (saved)="activityAdded.emit($event)" (updated)="activityUpdated.emit($event)"
     />
 
     <app-objective-modal
@@ -39,12 +41,14 @@ import { SpecialExpenseModalComponent } from '../specialExpense/special-expense-
   `,
 })
 export class PhaseModalsComponent {
+  readonly planService = inject(PlanService);
   readonly isAddModalOpen = input.required<boolean>();
   readonly activityModalMode = input.required<'create' | 'edit'>();
   readonly editingActivity = input<Activity | null>(null);
   readonly modalDefaultObjective = input.required<1 | 2 | 3 | 4>();
   readonly currentPillarArea = input.required<EssentialArea>();
   readonly modalDefaultResponsible = input<string>('');
+  readonly maxAllowedBudget = input<number | undefined>(undefined);
   readonly isObjectiveModalOpen = input.required<boolean>();
   readonly objectiveModalMode = input.required<'create' | 'edit'>();
   readonly editingObjective = input<Objective | null>(null);
@@ -62,4 +66,3 @@ export class PhaseModalsComponent {
   readonly objectiveDeleted = output<number>();
   readonly saveSpecialExpense = output<Omit<SpecialExpense, 'id' | 'createdAt'>>();
 }
-

@@ -15,8 +15,13 @@ const MONTH_NAMES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Se
           <h4 class="font-['Outfit'] font-extrabold text-sm text-stone-900 tracking-tight">Presupuesto Mensual &amp; Cronograma</h4>
         </div>
         <div class="text-right">
-          <span class="text-[10px] text-stone-400 font-bold uppercase tracking-wider block">Total Anual:</span>
+          <span class="text-[10px] text-stone-400 font-bold uppercase tracking-wider block">Total Actividad:</span>
           <span class="font-mono font-black text-stone-900 text-sm sm:text-base">{{ formatCurrency(calculatedTotal()) }}</span>
+          @if (maxAllowedBudget() !== undefined && calculatedTotal() > maxAllowedBudget()!) {
+            <span class="text-[10px] text-[#8B251E] font-bold block">⚠️ Supera el disponible (Máx: {{ formatCurrency(maxAllowedBudget()!) }})</span>
+          } @else if (maxAllowedBudget() !== undefined) {
+            <span class="text-[9.5px] text-emerald-700 font-semibold block">Disponible: {{ formatCurrency(maxAllowedBudget()! - calculatedTotal()) }}</span>
+          }
         </div>
       </div>
 
@@ -75,6 +80,7 @@ export class ActivityBudgetDatesFieldsComponent {
   readonly startDate = input.required<string>();
   readonly endDate = input.required<string>();
   readonly monthlyBudget = input<Record<number, number>>({});
+  readonly maxAllowedBudget = input<number | undefined>(undefined);
 
   readonly unitBudgetChanged = output<number>();
   readonly monthlyBudgetChanged = output<Record<number, number>>();

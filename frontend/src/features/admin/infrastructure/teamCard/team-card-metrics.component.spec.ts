@@ -46,6 +46,15 @@ describe('TeamCardMetricsComponent (Component Unit Tests)', () => {
     expect(comp.formattedBudget).toContain('11.210.000');
   });
 
+  it('debe calcular el saldo restante y formatearlo', () => {
+    const comp = new TeamCardMetricsComponent();
+    comp.team = { ...baseTeam, totalBudget: 11210000, executedBudget: 4200000 };
+
+    expect(comp.remainingBudget).toBe(7010000);
+    expect(comp.formattedRemaining).toContain('7.010.000');
+    expect(comp.progressColorClass).toBe('bg-emerald-600');
+  });
+
   it('debe extraer las etapas activas únicas de las iniciativas', () => {
     const comp = new TeamCardMetricsComponent();
     comp.team = baseTeam;
@@ -60,4 +69,3 @@ describe('TeamCardMetricsComponent (Component Unit Tests)', () => {
     expect(comp.activeStages).toEqual(['Contacto', 'Comunicar']);
   });
 });
-

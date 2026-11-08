@@ -28,6 +28,7 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
         [budget]="infoService.currentInfo().budgetBreakdown"
         [totalBudget]="infoService.totalBudget()"
         [budgetPercentage]="infoService.budgetExecutionPercentage()"
+        [executedBudget]="infoService.currentInfo().budgetBreakdown.executedTotalBudget || 0"
       />
 
       <!-- 2. Ciclo Anual (Cerrar / Iniciar nuevo año con autorización de Administrador) -->

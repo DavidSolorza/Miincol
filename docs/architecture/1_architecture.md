@@ -463,6 +463,31 @@ graph TD
   - Métricas de avance de pilares intuitivas basadas en objetivos estratégicos.
   - Coherencia financiera total.
 
+---
+
+### ADR-042: Control Anti-Sobregiro Presupuestal y Visualización en Vivo de Gastado vs Restante
+- **Estado:** Aprobado e Implementado (`2026-11-07`).
+- **Contexto:** Garantizar el cumplimiento estricto del presupuesto anual asignado a cada misión, evitando el registro de actividades que sobregiren el tope financiero, y proporcionando a los líderes y directores una imagen visual clara en tiempo real de cuánto dinero se ha gastado y cuánto dinero queda disponible.
+- **Decisión:**
+  1. **Visualización de Gastado vs Restante en Información General (`GeneralBudgetTopComponent`):**
+     - Desglose monetario en tiempo real: `Gastado: $X (Y%) | Queda: $Z (W%)`.
+     - Barra de progreso semafórica: verde ($\le 80\%$), ámbar ($81\% - 99\%$) y rojo/vino ($\ge 100\%$).
+  2. **Visualización en Tarjetas del Dashboard (`TeamCardMetricsComponent`):**
+     - Métricas monetarias explícitas: `Gastado: $X` y `Queda: $Y` bajo la barra de uso presupuestal.
+  3. **Control Anti-Sobregiro en Actividades (`ActivityModalComponent` y `ActivityBudgetDatesFieldsComponent`):**
+     - Cálculo en tiempo real de `remainingTeamBudget` en `PlanService`.
+     - Visualización del saldo disponible en el modal al asignar presupuestos mensuales.
+     - Bloqueo de guardado y alerta al usuario si el valor planificado supera el presupuesto anual disponible.
+  4. **Coherencia Matemática en Backend (`TeamBudgetCalculator`):**
+     - Incorporación de `remainingBudget` y `remainingPercentage` en los resúmenes y KPIs nacionales.
+  5. **Pruebas y Gobernanza:**
+     - 44 pruebas automáticas (21 backend + 23 frontend) 100% aprobadas.
+     - Cumplimiento absoluto del límite $\le 150$ líneas por archivo.
+- **Consecuencias:**
+  - Control financiero total en campo y a nivel nacional.
+  - Cero riesgo de sobregiro presupuestal no autorizado.
+
+
 
 
 

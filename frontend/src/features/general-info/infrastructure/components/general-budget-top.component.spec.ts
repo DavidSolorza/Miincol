@@ -51,4 +51,24 @@ describe('GeneralBudgetTopComponent (Component Unit Tests)', () => {
     (comp as unknown as { budget: () => Partial<PillarBudgetBreakdown> }).budget = () => ({});
     expect(comp.getBudgetAmount('investigacionBudget')).toBe(0);
   });
+
+  it('debe calcular correctamente el saldo restante y porcentaje disponible', () => {
+    const comp = createComponent();
+    (comp as unknown as { totalBudget: () => number }).totalBudget = () => 11210000;
+    (comp as unknown as { executedBudget: () => number }).executedBudget = () => 4200000;
+    (comp as unknown as { budgetPercentage: () => number }).budgetPercentage = () => 37;
+
+    expect(comp.remainingBudget).toBe(7010000);
+    expect(comp.remainingPercentage).toBe(63);
+    expect(comp.progressColorClass).toBe('bg-emerald-600');
+  });
+
+  it('debe alertar con color ámbar cuando el uso supera el 80% y rojo al 100%', () => {
+    const comp = createComponent();
+    (comp as unknown as { budgetPercentage: () => number }).budgetPercentage = () => 85;
+    expect(comp.progressColorClass).toBe('bg-amber-500');
+
+    (comp as unknown as { budgetPercentage: () => number }).budgetPercentage = () => 100;
+    expect(comp.progressColorClass).toBe('bg-[#8B251E]');
+  });
 });

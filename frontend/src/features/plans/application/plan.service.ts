@@ -25,11 +25,23 @@ export class PlanService {
 
   // Métricas calculadas automáticamente para el plan activo
   readonly metrics = computed<PlanMetrics>(() => calculatePlanMetrics(this.plan()));
+  readonly teamTotalBudget = signal<number>(11210000);
+
+  readonly remainingTeamBudget = computed(() => {
+    let planned = 0;
+    Object.values(this.allPlans()).forEach((p) => {
+      p.objectives.forEach((o) => {
+        o.activities.forEach((a) => { planned += a.totalBudget || 0; });
+      });
+    });
+    return Math.max(0, this.teamTotalBudget() - planned);
+  });
 
   // Carga los planes de un equipo específico en el estado reactivo
   loadTeamPlans(teamId: string, teamData?: Partial<TeamSupervisionSummary>): void {
     this.activeTeamId.set(teamId);
     this.activeLeader.set(teamData?.leader || 'Líder');
+    if (teamData?.totalBudget) this.teamTotalBudget.set(teamData.totalBudget);
     this.allPlans.set(getPlansForTeam(teamId, teamData));
   }
 

@@ -27,8 +27,8 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         </div>
       </div>
 
-      <!-- Barra de porcentaje de presupuesto general -->
-      <div class="bg-stone-50 p-3 rounded-xl border border-stone-200/80 space-y-1.5">
+      <!-- Barra de porcentaje y desglose monetario (Gastado vs Restante) -->
+      <div class="bg-stone-50 p-3 rounded-xl border border-stone-200/80 space-y-2">
         <div class="flex items-center justify-between text-xs">
           <span class="font-extrabold text-stone-700 text-[11px] uppercase tracking-wider">
             Ejecución Presupuestal Global
@@ -37,11 +37,22 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
             {{ budgetPercentage() }}% Ejecutado
           </span>
         </div>
+
         <div class="w-full bg-stone-200/70 rounded-full h-2.5 overflow-hidden">
           <div
-            class="h-full rounded-full bg-emerald-600 transition-all duration-500"
+            class="h-full rounded-full transition-all duration-500"
+            [class]="progressColorClass"
             [style.width.%]="budgetPercentage()"
           ></div>
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-stone-200/70">
+          <span class="text-stone-600 font-bold">
+            Gastado: <strong class="text-[#8B251E] font-extrabold">{{ formatCurrency(executedBudget()) }}</strong> ({{ budgetPercentage() }}%)
+          </span>
+          <span class="text-stone-600 font-bold">
+            Queda: <strong class="text-emerald-700 font-extrabold">{{ formatCurrency(remainingBudget) }}</strong> ({{ remainingPercentage }}%)
+          </span>
         </div>
       </div>
 
@@ -63,6 +74,7 @@ export class GeneralBudgetTopComponent {
   readonly budget = input.required<PillarBudgetBreakdown>();
   readonly totalBudget = input.required<number>();
   readonly budgetPercentage = input.required<number>();
+  readonly executedBudget = input<number>(0);
 
   readonly pillars = [
     { key: 'investigacionBudget' as const, label: '1. Investigación' },
@@ -72,6 +84,22 @@ export class GeneralBudgetTopComponent {
     { key: 'autocuidadoBudget' as const, label: '5. Auto Cuidado' },
   ];
 
+  get remainingBudget(): number {
+    const executed = this.executedBudget() || 0;
+    return Math.max(0, this.totalBudget() - executed);
+  }
+
+  get remainingPercentage(): number {
+    return Math.max(0, 100 - this.budgetPercentage());
+  }
+
+  get progressColorClass(): string {
+    const pct = this.budgetPercentage();
+    if (pct >= 100) return 'bg-[#8B251E]';
+    if (pct > 80) return 'bg-amber-500';
+    return 'bg-emerald-600';
+  }
+
   getBudgetAmount(key: keyof PillarBudgetBreakdown): number {
     return Number(this.budget()[key]) || 0;
   }
@@ -80,4 +108,3 @@ export class GeneralBudgetTopComponent {
     return formatCurrencyCOP(amount);
   }
 }
-

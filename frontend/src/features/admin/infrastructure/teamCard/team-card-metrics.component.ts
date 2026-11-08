@@ -27,7 +27,7 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
         </div>
       </div>
 
-      <!-- Barra de Presupuesto en Porcentaje -->
+      <!-- Barra de Presupuesto en Porcentaje con Gastado y Restante -->
       <div>
         <div class="flex items-center justify-between text-xs mb-1">
           <span class="text-[10px] font-black uppercase tracking-wider text-stone-500 font-['Outfit']">
@@ -39,9 +39,14 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
         </div>
         <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
           <div
-            class="h-full rounded-full bg-emerald-600 transition-all duration-500"
+            class="h-full rounded-full transition-all duration-500"
+            [class]="progressColorClass"
             [style.width.%]="budgetPercentage"
           ></div>
+        </div>
+        <div class="flex items-center justify-between text-[9.5px] font-mono text-stone-500 pt-1">
+          <span>Gastado: <strong class="text-[#8B251E] font-bold">{{ formattedExecuted }}</strong></span>
+          <span>Queda: <strong class="text-emerald-700 font-bold">{{ formattedRemaining }}</strong></span>
         </div>
       </div>
 
@@ -69,8 +74,26 @@ export class TeamCardMetricsComponent {
     return Math.min(100, Math.round((executed / this.team.totalBudget) * 100));
   }
 
+  get remainingBudget(): number {
+    return Math.max(0, (this.team.totalBudget || 0) - (this.team.executedBudget || 0));
+  }
+
   get formattedBudget(): string {
-    return formatCurrencyCOP(this.team.totalBudget);
+    return formatCurrencyCOP(this.team.totalBudget || 0);
+  }
+
+  get formattedExecuted(): string {
+    return formatCurrencyCOP(this.team.executedBudget || 0);
+  }
+
+  get formattedRemaining(): string {
+    return formatCurrencyCOP(this.remainingBudget);
+  }
+
+  get progressColorClass(): string {
+    if (this.budgetPercentage >= 100) return 'bg-[#8B251E]';
+    if (this.budgetPercentage > 80) return 'bg-amber-500';
+    return 'bg-emerald-600';
   }
 
   get activeStages(): string[] {

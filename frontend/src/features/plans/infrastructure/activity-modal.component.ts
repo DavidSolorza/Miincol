@@ -3,7 +3,7 @@ import { ModalComponent } from '../../../shared/components/modal.component';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import type { Activity, EssentialArea } from '../domain/plan.types';
-import { calculateWeeks } from '../../../shared/utils/formatters';
+import { calculateWeeks, formatCurrencyCOP } from '../../../shared/utils/formatters';
 import { getInitialFormValues, validateActivityForm } from './activityModal/activityModalDefaults';
 import { ActivityBasicFieldsComponent } from './activityModal/activity-basic-fields.component';
 import { ActivityBudgetDatesFieldsComponent } from './activityModal/activity-budget-dates-fields.component';
@@ -30,50 +30,30 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
     >
       <form (submit)="handleSubmit($event)" novalidate class="space-y-4 text-xs">
         <app-activity-basic-fields
-          [objectiveNumber]="form().objectiveNumber"
-          [state]="form().state"
-          [description]="form().description"
-          [responsible]="form().responsible"
-          [frequency]="form().frequency"
-          [timesPerYear]="form().timesPerYear"
-          [stage]="form().stage"
-          [essentialArea]="form().essentialArea"
-          (objectiveNumberChanged)="patchField('objectiveNumber', $event)"
-          (stateChanged)="patchField('state', $event)"
-          (stageChanged)="patchField('stage', $event)"
-          (descriptionChanged)="patchField('description', $event)"
-          (responsibleChanged)="patchField('responsible', $event)"
-          (frequencyChanged)="patchField('frequency', $event)"
+          [objectiveNumber]="form().objectiveNumber" [state]="form().state" [description]="form().description"
+          [responsible]="form().responsible" [frequency]="form().frequency" [timesPerYear]="form().timesPerYear"
+          [stage]="form().stage" [essentialArea]="form().essentialArea"
+          (objectiveNumberChanged)="patchField('objectiveNumber', $event)" (stateChanged)="patchField('state', $event)"
+          (stageChanged)="patchField('stage', $event)" (descriptionChanged)="patchField('description', $event)"
+          (responsibleChanged)="patchField('responsible', $event)" (frequencyChanged)="patchField('frequency', $event)"
           (timesPerYearChanged)="patchField('timesPerYear', $event)"
         />
 
         <app-activity-budget-dates-fields
-          [unitBudget]="form().unitBudget"
-          [calculatedTotal]="calculatedTotal()"
-          [startDate]="form().startDate"
-          [endDate]="form().endDate"
-          [monthlyBudget]="form().monthlyBudget || {}"
-          (unitBudgetChanged)="patchField('unitBudget', $event)"
-          (monthlyBudgetChanged)="patchField('monthlyBudget', $event)"
-          (startDateChanged)="patchField('startDate', $event)"
-          (endDateChanged)="patchField('endDate', $event)"
+          [unitBudget]="form().unitBudget" [calculatedTotal]="calculatedTotal()" [startDate]="form().startDate"
+          [endDate]="form().endDate" [monthlyBudget]="form().monthlyBudget || {}" [maxAllowedBudget]="maxAllowedBudget()"
+          (unitBudgetChanged)="patchField('unitBudget', $event)" (monthlyBudgetChanged)="patchField('monthlyBudget', $event)"
+          (startDateChanged)="patchField('startDate', $event)" (endDateChanged)="patchField('endDate', $event)"
         />
 
         <app-activity-goals-fields
-          [currentSituation]="form().currentSituation"
-          [shortTermGoal]="form().shortTermGoal"
-          [mediumTermGoal]="form().mediumTermGoal"
-          [longTermGoal]="form().longTermGoal"
-          (currentSituationChanged)="patchField('currentSituation', $event)"
-          (shortTermGoalChanged)="patchField('shortTermGoal', $event)"
-          (mediumTermGoalChanged)="patchField('mediumTermGoal', $event)"
-          (longTermGoalChanged)="patchField('longTermGoal', $event)"
+          [currentSituation]="form().currentSituation" [shortTermGoal]="form().shortTermGoal"
+          [mediumTermGoal]="form().mediumTermGoal" [longTermGoal]="form().longTermGoal"
+          (currentSituationChanged)="patchField('currentSituation', $event)" (shortTermGoalChanged)="patchField('shortTermGoal', $event)"
+          (mediumTermGoalChanged)="patchField('mediumTermGoal', $event)" (longTermGoalChanged)="patchField('longTermGoal', $event)"
         />
 
-        <app-activity-obstacles-fields
-          [obstacles]="form().obstacles"
-          (obstaclesChanged)="patchField('obstacles', $event)"
-        />
+        <app-activity-obstacles-fields [obstacles]="form().obstacles" (obstaclesChanged)="patchField('obstacles', $event)" />
 
         <div class="sticky bottom-0 bg-white/95 backdrop-blur-xs flex items-center justify-end gap-2.5 pt-3 pb-1 border-t border-stone-200/60 z-10">
           <button type="button" (click)="closed.emit()" class="px-4 py-2 rounded-xl border border-stone-200/80 text-stone-600 hover:bg-stone-100 font-bold text-xs transition cursor-pointer">Cancelar</button>
@@ -94,6 +74,7 @@ export class ActivityModalComponent {
   readonly defaultObjectiveNumber = input.required<1 | 2 | 3 | 4>();
   readonly currentPillarArea = input<EssentialArea>('Investigación');
   readonly defaultResponsible = input<string>('');
+  readonly maxAllowedBudget = input<number | undefined>(undefined);
   readonly closed = output<void>();
   readonly saved = output<{ objectiveNumber: 1 | 2 | 3 | 4; activity: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'> }>();
   readonly updated = output<{ activityId: string; updatedFields: Partial<Activity> }>();
@@ -127,6 +108,13 @@ export class ActivityModalComponent {
     const f = this.form();
     if (!validateActivityForm(f.description, f.responsible)) {
       this.toastService.toast.warning('Por favor complete la descripción y el responsable.', 'Campos Requeridos');
+      return;
+    }
+    if (this.maxAllowedBudget() !== undefined && this.calculatedTotal() > this.maxAllowedBudget()!) {
+      this.toastService.toast.error(
+        `El valor de la actividad (${formatCurrencyCOP(this.calculatedTotal())}) excede el presupuesto disponible (${formatCurrencyCOP(this.maxAllowedBudget()!)}).`,
+        'Límite Presupuestal Superado'
+      );
       return;
     }
     const { totalWeeks, remainingWeeks } = calculateWeeks(f.startDate, f.endDate);
