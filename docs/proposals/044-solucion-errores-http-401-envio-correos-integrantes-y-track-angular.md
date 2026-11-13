@@ -27,3 +27,4 @@
 - **Cumplimiento de Gobernanza**:
   - Todos los archivos modificados $\le 150$ líneas.
   - 100% pruebas pasando en backend y frontend.
+

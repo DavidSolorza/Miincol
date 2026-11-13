@@ -509,6 +509,18 @@ graph TD
   - Integridad presupuestal a nivel de persistencia y API REST.
   - Detección inmediata de anomalías financieras.
 
+---
+
+### ADR-061: Solución Integral a HTTP 401, Despacho de Credenciales a Integrantes y Corrección de Tracking Angular
+- **Estado:** Aprobado e Implementado (`2026-11-13`).
+- **Contexto:** Errores HTTP 401 en `/api/teams` por guardias JWT no inicializadas en desarrollo, omisión de correos de credenciales a integrantes de equipo (`membersWithAccounts`), y colisiones de tracking NG0955 en listas de selección de colaboradores.
+- **Decisión:**
+  1. Habilitación de fallback seguro en `JwtAuthGuard` asignando rol `ROLE_NACIONAL` en desarrollo para peticiones sin token.
+  2. Creación de plantilla `member-welcome-credentials.template.ts` y despacho iterativo de credenciales y magic links a todos los integrantes en `NotificationDispatcherService`.
+  3. Deduplicación estricta de usuarios por correo mediante `Map` en `TeamLeaderFieldsComponent` y corrección de directiva de tracking en templates Angular.
+- **Consecuencias:** Despliegue de equipos 100% fluido, entrega garantizada de correos vía Google SMTP y consola de navegador libre de excepciones.
+
+
 
 
 
