@@ -5,13 +5,14 @@ import { NetworkStatusBadgeComponent } from '../../shared/components/network-sta
 import { TeamSelectDropdownComponent } from '../../features/auth/infrastructure/team-select-dropdown.component';
 import { AppHeaderUserProfileComponent } from './app-header-user-profile.component';
 import { PwaInstallButtonComponent } from '../../shared/components/pwa/pwa-install-button.component';
+import { NotificationBellComponent } from '../../features/notifications/infrastructure/components/notification-bell.component';
 import type { MissionaryTeam } from '../../features/auth/domain/auth.types';
 import type { AuthSession } from '../auth/appSession.types';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [AppIconComponent, MisincolLogoComponent, NetworkStatusBadgeComponent, TeamSelectDropdownComponent, AppHeaderUserProfileComponent, PwaInstallButtonComponent],
+  imports: [AppIconComponent, MisincolLogoComponent, NetworkStatusBadgeComponent, TeamSelectDropdownComponent, AppHeaderUserProfileComponent, PwaInstallButtonComponent, NotificationBellComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="no-print w-full bg-white/95 backdrop-blur-md border-b border-stone-200/80 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.04)] sticky top-0 z-30 select-none">
@@ -67,6 +68,7 @@ import type { AuthSession } from '../auth/appSession.types';
         }
 
         <div class="flex items-center gap-2 sm:gap-2.5">
+          <app-notification-bell />
           <app-pwa-install-button />
           <app-network-status-badge />
           @if (isSuperAdmin() && activeView() !== 'superadmin') {

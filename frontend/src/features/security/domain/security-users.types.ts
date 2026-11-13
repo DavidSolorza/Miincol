@@ -46,7 +46,7 @@ export const USER_ROLE_OPTIONS: RoleOption[] = [
   },
   {
     id: 'national_director',
-    label: 'Director nacional',
+    label: 'Coordinador de equipos',
     badgeClass: 'bg-stone-900 text-[#E67324] border-stone-800',
   },
 ];

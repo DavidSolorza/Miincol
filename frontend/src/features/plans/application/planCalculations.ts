@@ -1,40 +1,12 @@
 import type { PhasePlan, PlanMetrics } from '../domain/plan.types';
+import { HierarchicalPlanCalculator } from '../domain/hierarchical-plan.calculator';
 
-// Calcula las métricas de presupuesto, avance y conteo de actividades de una fase
+// Delega el calculo de metricas consolidadas al calculador jerarquico (POO & DRY)
 export const calculatePlanMetrics = (plan: PhasePlan): PlanMetrics => {
-  let totalBudget = 0;
-  let totalActivities = 0;
-  let completedActivities = 0;
-  let inProgressActivities = 0;
-  let pendingActivities = 0;
-  let totalRemainingWeeks = 0;
+  return HierarchicalPlanCalculator.calculatePhaseMetrics(plan);
+};
 
-  plan.objectives.forEach((obj) => {
-    obj.activities.forEach((act) => {
-      totalActivities += 1;
-      totalBudget += act.totalBudget || 0;
-      totalRemainingWeeks += act.remainingWeeks || 0;
-
-      if (act.state === 'Completado') {
-        completedActivities += 1;
-      } else if (act.state === 'En Proceso') {
-        inProgressActivities += 1;
-      } else {
-        pendingActivities += 1;
-      }
-    });
-  });
-
-  const progressPercentage =
-    totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
-
-  return {
-    totalBudget,
-    totalActivities,
-    completedActivities,
-    inProgressActivities,
-    pendingActivities,
-    progressPercentage,
-    totalRemainingWeeks,
-  };
+// Calcula el presupuesto total planeado a traves de todos los pilares
+export const calculateTotalPlannedBudget = (allPlans: Record<string, PhasePlan>): number => {
+  return HierarchicalPlanCalculator.calculateGlobalPlannedBudget(allPlans);
 };

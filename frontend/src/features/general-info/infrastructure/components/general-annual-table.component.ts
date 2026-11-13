@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
-import type { FieldMinistryMetrics, GeneralTeamData } from '../../domain/general-info.types';
+import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
+import type { FieldMinistryMetrics, GeneralTeamData, AnnualHistoryRecord } from '../../domain/general-info.types';
+import { ANNUAL_TABLE_ROWS } from '../../domain/general-annual-table.rows';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
 @Component({
@@ -27,102 +28,49 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
             <tr class="bg-stone-50/90 text-stone-600 text-[10.5px] uppercase tracking-wider border-b border-stone-200">
               <th class="py-2.5 px-3.5 font-bold">Métrica Ministerial / Etapa</th>
               <th class="py-2.5 px-3 font-bold text-center">Año 2025</th>
-              <th class="py-2.5 px-3 font-bold text-center bg-amber-500/10 text-stone-900">Año 2026 (Activo)</th>
-              <th class="py-2.5 px-3 font-bold text-center">Año 2027</th>
+              @if (currentYear() > 2026) {
+                <th class="py-2.5 px-3 font-bold text-center text-stone-800">Año 2026</th>
+              }
+              <th class="py-2.5 px-3 font-bold text-center bg-amber-500/10 text-stone-900">
+                Año {{ currentYear() }} (Activo)
+              </th>
+              <th class="py-2.5 px-3 font-bold text-center">Año {{ currentYear() + 1 }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-100">
-            <!-- Sección: Contacto -->
-            <tr class="bg-stone-50/50 font-bold text-stone-700 text-[11px]"><td colspan="4" class="py-1 px-3.5 uppercase tracking-wide">1. Contacto Inicial</td></tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Personas contactadas por primera vez</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">10</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().firstTimeContactedCount" (change)="onMetricChange('firstTimeContactedCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().firstTimeContactedCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Personas interesadas en el evangelio</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">4</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().interestedInGospelCount" (change)="onMetricChange('interestedInGospelCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().interestedInGospelCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-
-            <!-- Sección: Comunicando -->
-            <tr class="bg-stone-50/50 font-bold text-stone-700 text-[11px]"><td colspan="4" class="py-1 px-3.5 uppercase tracking-wide">2. Comunicando</td></tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">De los que escucharon, ¿cuántos buscan a Dios?</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">1</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().seekingGodCount" (change)="onMetricChange('seekingGodCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().seekingGodCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Tuvieron la oportunidad de responder a Cristo</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">1</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().gospelResponseOpportunitiesCount" (change)="onMetricChange('gospelResponseOpportunitiesCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().gospelResponseOpportunitiesCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-
-            <!-- Sección: Respondiendo -->
-            <tr class="bg-stone-50/50 font-bold text-stone-700 text-[11px]"><td colspan="4" class="py-1 px-3.5 uppercase tracking-wide">3. Respondiendo</td></tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Creyeron el mensaje del Evangelio</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">1</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().newBelieversCount" (change)="onMetricChange('newBelieversCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().newBelieversCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Creyentes que fueron bautizados</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">0</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().baptizedCount" (change)="onMetricChange('baptizedCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().baptizedCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-
-            <!-- Sección: Consolidando -->
-            <tr class="bg-stone-50/50 font-bold text-stone-700 text-[11px]"><td colspan="4" class="py-1 px-3.5 uppercase tracking-wide">4. Consolidando</td></tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Personas en estudios bíblicos regulares</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">30</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().regularBibleStudyParticipantsCount" (change)="onMetricChange('regularBibleStudyParticipantsCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().regularBibleStudyParticipantsCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
-            <tr>
-              <td class="py-2 px-3.5 text-stone-700">Personas mentoreadas personalmente</td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">8</td>
-              <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
-                @if (canEdit()) {
-                  <input type="number" [value]="metrics().personalMentorshipCount" (change)="onMetricChange('personalMentorshipCount', $event)" class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold" />
-                } @else { {{ metrics().personalMentorshipCount }} }
-              </td>
-              <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
-            </tr>
+            @for (row of rows; track row.key) {
+              @if (row.section) {
+                <tr class="bg-stone-50/50 font-bold text-stone-700 text-[11px]">
+                  <td [attr.colspan]="currentYear() > 2026 ? 5 : 4" class="py-1 px-3.5 uppercase tracking-wide">
+                    {{ row.section }}
+                  </td>
+                </tr>
+              }
+              <tr>
+                <td class="py-2 px-3.5 text-stone-700">{{ row.label }}</td>
+                <td class="py-2 px-3 text-center text-stone-400 font-mono">
+                  {{ getPastValue(2025, row.key, row.default2025) }}
+                </td>
+                @if (currentYear() > 2026) {
+                  <td class="py-2 px-3 text-center text-stone-700 font-bold font-mono">
+                    {{ getPastValue(2026, row.key, row.default2025) }}
+                  </td>
+                }
+                <td class="py-2 px-3 text-center font-bold bg-amber-500/5 text-stone-900 font-mono">
+                  @if (canEdit()) {
+                    <input
+                      type="number"
+                      [value]="metrics()[row.key]"
+                      (change)="onMetricChange(row.key, $event)"
+                      class="w-16 text-center p-1 rounded-lg border border-stone-200 bg-white font-bold"
+                    />
+                  } @else {
+                    {{ metrics()[row.key] }}
+                  }
+                </td>
+                <td class="py-2 px-3 text-center text-stone-400 font-mono">—</td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
@@ -132,12 +80,23 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
 export class GeneralAnnualTableComponent {
   readonly metrics = input.required<FieldMinistryMetrics>();
   readonly teamData = input.required<GeneralTeamData>();
+  readonly history = input<Record<number, AnnualHistoryRecord>>();
   readonly canEdit = input<boolean>(false);
   readonly metricChanged = output<Partial<FieldMinistryMetrics>>();
+
+  readonly rows = ANNUAL_TABLE_ROWS;
+  readonly currentYear = computed(() => this.teamData().year);
+
+  getPastValue(year: number, key: keyof FieldMinistryMetrics, fallback: number): number | string {
+    const hist = this.history();
+    if (hist && hist[year]?.fieldMetrics?.[key] !== undefined) {
+      return hist[year].fieldMetrics[key];
+    }
+    return year === 2025 ? fallback : '—';
+  }
 
   onMetricChange(field: keyof FieldMinistryMetrics, event: Event): void {
     const val = Number((event.target as HTMLInputElement).value) || 0;
     this.metricChanged.emit({ [field]: val });
   }
 }
-

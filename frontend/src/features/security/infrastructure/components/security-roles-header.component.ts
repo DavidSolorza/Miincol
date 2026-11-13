@@ -49,12 +49,33 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
           @if (activeTab() === 'matrix') {
             <button
               type="button"
+              (click)="saveMatrix.emit()"
+              [disabled]="isSaving()"
+              class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#721F19] text-white text-xs font-bold transition cursor-pointer shadow-xs font-['Outfit'] active:scale-95 disabled:opacity-50"
+              title="Guardar matriz de permisos en base de datos"
+            >
+              <app-icon name="check" className="w-3.5 h-3.5 text-white" />
+              <span>{{ isSaving() ? 'Guardando...' : 'Guardar Matriz' }}</span>
+            </button>
+            <button
+              type="button"
               (click)="resetDefaults.emit()"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-bold transition cursor-pointer shadow-2xs font-['Outfit'] active:scale-95"
               title="Restablecer matriz por defecto"
             >
               <app-icon name="rotate-ccw" className="w-3.5 h-3.5 text-stone-500" />
               <span class="hidden sm:inline">Restablecer</span>
+            </button>
+          } @else {
+            <button
+              type="button"
+              (click)="saveUsers.emit()"
+              [disabled]="isSaving()"
+              class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#8B251E] hover:bg-[#721F19] text-white text-xs font-bold transition cursor-pointer shadow-xs font-['Outfit'] active:scale-95 disabled:opacity-50"
+              title="Guardar usuarios y asignaciones en el servidor"
+            >
+              <app-icon name="check" className="w-3.5 h-3.5 text-white" />
+              <span>{{ isSaving() ? 'Guardando...' : 'Guardar Roles' }}</span>
             </button>
           }
         </div>
@@ -86,6 +107,9 @@ import { SYSTEM_ROLES } from '../../domain/security.types';
 export class SecurityRolesHeaderComponent {
   readonly roles = SYSTEM_ROLES;
   readonly activeTab = input<'matrix' | 'users'>('matrix');
+  readonly isSaving = input<boolean>(false);
   readonly tabChanged = output<'matrix' | 'users'>();
+  readonly saveMatrix = output<void>();
+  readonly saveUsers = output<void>();
   readonly resetDefaults = output<void>();
 }

@@ -64,8 +64,8 @@ export const SYSTEM_ROLES: SystemRoleDef[] = [
   },
   {
     id: 'national_director',
-    name: 'Director nacional',
-    badge: 'Nacional',
+    name: 'Coordinador de equipos',
+    badge: 'Coordinador',
     badgeClass: 'bg-stone-900 text-stone-100 border-stone-800',
     description: 'Coordinador general con acceso a supervisión y seguridad.',
     targetUser: 'Administrador / Director',

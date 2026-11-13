@@ -37,6 +37,7 @@ export interface AppEventMap {
   };
   'network:status': { isOnline: boolean; effectiveType?: string };
   'sync:status': { isSyncing: boolean; message?: string };
+  'cycle:year_changed': { teamId: string; closingYear: number; nextYear: number };
 }
 
 export type EventTopic = keyof AppEventMap;

@@ -111,8 +111,8 @@ export class TeamNotesModalComponent {
     };
     this.saveNotes([newNote, ...this.notes()]);
     const logPayload = {
-      teamId: team.id, userName: author, actionType: 'note_add' as const,
-      title: 'Nota en agenda territorial', detail: `Agregó: "${draft.title.trim().slice(0, 30)}" (${draft.category})`,
+      teamId: team.id, teamName: team.name, userName: author, userEmail: team.leaderEmail, actionType: 'note_add' as const,
+      title: `Nota en agenda: ${draft.title.trim().slice(0, 30)}`, detail: `[${draft.category}] ${draft.content.trim().slice(0, 80)}`,
     };
     appendAuditLog(team.id, logPayload, author);
     serviceBus.publish('audit:log', logPayload);

@@ -47,7 +47,7 @@ import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
                   <option value="team_member">Usuario equipo</option>
                   <option value="team_leader">Líder equipo</option>
                   <option value="director_general">Director general</option>
-                  <option value="national_director">Director nacional</option>
+                  <option value="national_director">Coordinador de equipos</option>
                 </select>
               </div>
 

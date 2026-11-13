@@ -1,0 +1,9 @@
+tunnel: plan-ministerial-tunnel
+credentials-file: /ruta/segura/plan-ministerial-tunnel.json
+
+ingress:
+  - hostname: app.planministerial.local
+    service: http://localhost:5173
+  - hostname: api.planministerial.local
+    service: http://localhost:3000
+  - service: http_status:404

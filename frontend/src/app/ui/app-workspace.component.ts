@@ -29,8 +29,8 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
   template: `
     <div
       class="min-h-screen bg-[#FAF7F2] flex font-sans text-stone-900 selection:bg-stone-900 selection:text-white"
-      [class.lg:h-screen]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit'"
-      [class.lg:overflow-hidden]="sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit'"
+      [class.lg:h-screen]="sessionSvc.activeView() === 'superadmin'"
+      [class.lg:overflow-hidden]="sessionSvc.activeView() === 'superadmin'"
     >
       @if (shouldShowSidebar()) {
         <app-plan-sidebar
@@ -55,7 +55,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
           (goToAudit)="onGoToAudit()" (logout)="sessionSvc.handleLogout()" (openReportModal)="isReportModalOpen.set(true)"
         />
 
-        <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' || sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : 'max-w-[1600px] py-3.5 sm:py-4')">
+        <main [class]="'flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 ' + (sessionSvc.activeView() === 'superadmin' ? 'flex flex-col min-h-0 max-w-[1680px] py-2 sm:py-2.5' : (sessionSvc.activeView() === 'security' || sessionSvc.activeView() === 'audit' ? 'max-w-[1680px] py-2.5 sm:py-3 pb-24' : 'max-w-[1600px] py-3.5 sm:py-4 pb-16'))">
           @if (sessionSvc.activeView() === 'superadmin' && isSuperAdmin()) {
             <app-super-admin-view (inspectTeam)="onInspectTeam($event)" (openReportModal)="isReportModalOpen.set(true)" />
           } @else if (sessionSvc.activeView() === 'security' && isSuperAdmin()) {

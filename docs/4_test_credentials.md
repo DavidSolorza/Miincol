@@ -10,7 +10,7 @@
 
 El sistema implementa una arquitectura de autenticación y aislamiento estricto basada en dos roles de usuario:
 
-1. **Super Administrador (Director Nacional Misincol)**:
+1. **Super Administrador (Coordinador de Equipos Misincol)**:
    - Acceso irrestricto al **Tablero Central de Misiones Indígenas**.
    - Supervisión consolidada de KPIs nacionales, presupuestos de todas las etnias y alertas territoriales.
    - Creación, edición y eliminación de equipos territoriales con asignación de color temático (`themeColor`) y contraseñas.

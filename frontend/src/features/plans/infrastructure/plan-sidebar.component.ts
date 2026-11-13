@@ -38,7 +38,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
         (closeMobile)="closeMobile.emit()"
       />
 
-        @if (isAdminPreview()) {
+        @if (isAdminPreview() || userRole() === 'admin') {
           <div class="px-2.5 pt-0.5 pb-1 select-none">
             <button
               type="button"

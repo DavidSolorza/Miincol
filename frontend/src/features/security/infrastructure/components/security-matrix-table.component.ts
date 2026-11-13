@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
-import { SYSTEM_PERMISSIONS, SYSTEM_ROLES, type PermissionDef, type RolePermissionsMatrix, type SystemRoleId, type PermissionKey } from '../../domain/security.types';
+import { SYSTEM_PERMISSIONS, SYSTEM_ROLES, type RolePermissionsMatrix, type SystemRoleId, type PermissionKey } from '../../domain/security.types';
+import { getRolePermissionConstraint, type PermissionConstraintResult } from '../../domain/security-constraints.helper';
 
 @Component({
   selector: 'app-security-matrix-table',
@@ -9,13 +10,19 @@ import { SYSTEM_PERMISSIONS, SYSTEM_ROLES, type PermissionDef, type RolePermissi
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="bg-white/95 rounded-2xl border border-stone-200/90 shadow-2xs overflow-hidden select-none">
+      <div class="px-4 py-3 bg-stone-50/70 border-b border-stone-200 flex flex-wrap items-center justify-between gap-2 text-[11px] font-['Outfit']">
+        <span class="font-bold text-stone-700">Gobernanza RBAC: Generalidades vs Restricciones Específicas</span>
+        <div class="flex items-center gap-3 text-stone-600">
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span> Concedido</span>
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-stone-900 border border-stone-700 inline-block"></span> Protegido</span>
+          <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-stone-200 inline-block"></span> Restringido</span>
+        </div>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse min-w-[640px]">
           <thead>
             <tr class="bg-stone-50 border-b border-stone-200 text-stone-700 text-xs font-['Outfit']">
-              <th class="py-3 px-4 font-black uppercase tracking-wider text-[11px] w-1/2">
-                Acción / Privilegio del Sistema
-              </th>
+              <th class="py-3 px-4 font-black uppercase tracking-wider text-[11px] w-1/2">Acción / Privilegio del Sistema</th>
               @for (role of roles; track role.id) {
                 <th class="py-3 px-3 text-center font-black uppercase tracking-wider text-[11px]">
                   <div class="inline-flex flex-col items-center">
@@ -45,21 +52,16 @@ import { SYSTEM_PERMISSIONS, SYSTEM_ROLES, type PermissionDef, type RolePermissi
                   </div>
                 </td>
                 @for (role of roles; track role.id) {
-                  @let isGranted = !!matrix()?.[role.id]?.[perm.key];
-                  @let isLocked = role.id === 'national_director' && (perm.key === 'security.roles.manage' || perm.key === 'audit.history.view');
+                  @let c = getConstraint(role.id, perm.key);
                   <td class="py-2.5 px-3 text-center">
                     <button
                       type="button"
-                      [disabled]="isLocked"
-                      (click)="toggle.emit({ role: role.id, perm: perm.key })"
-                      [class]="'w-8 h-8 rounded-xl inline-flex items-center justify-center transition shadow-2xs ' +
-                        (isGranted
-                          ? (isLocked ? 'bg-stone-800 text-white cursor-not-allowed opacity-90' : 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer active:scale-95')
-                          : 'bg-stone-100 hover:bg-stone-200 text-stone-400 hover:text-stone-600 border border-stone-200 cursor-pointer active:scale-95')
-                      "
-                      [title]="(isGranted ? 'Permitido' : 'Denegado') + ' para ' + role.name + (isLocked ? ' (Protegido)' : '')"
+                      [disabled]="c.type !== 'configurable'"
+                      (click)="c.type === 'configurable' && toggle.emit({ role: role.id, perm: perm.key })"
+                      [class]="getCellClass(c)"
+                      [title]="getCellTitle(role.name, c)"
                     >
-                      <app-icon [name]="isGranted ? 'check' : 'x'" className="w-4 h-4 stroke-[2.5]" />
+                      <app-icon [name]="c.effectiveValue ? 'check' : 'x'" className="w-4 h-4 stroke-[2.5]" />
                     </button>
                   </td>
                 }
@@ -76,5 +78,33 @@ export class SecurityMatrixTableComponent {
   readonly roles = SYSTEM_ROLES;
   readonly permissions = SYSTEM_PERMISSIONS;
   readonly toggle = output<{ role: SystemRoleId; perm: PermissionKey }>();
-}
 
+  getConstraint(roleId: SystemRoleId, permKey: PermissionKey): PermissionConstraintResult {
+    const configured = !!this.matrix()?.[roleId]?.[permKey];
+    return getRolePermissionConstraint(roleId, permKey, configured);
+  }
+
+  getCellClass(c: PermissionConstraintResult): string {
+    const base = 'w-8 h-8 rounded-xl inline-flex items-center justify-center transition shadow-2xs ';
+    if (c.type === 'protected') {
+      return base + 'bg-stone-900 text-[#E67324] border border-stone-800 cursor-not-allowed shadow-inner';
+    }
+    if (c.type === 'restricted') {
+      return base + 'bg-stone-100 text-stone-300 border border-stone-200 cursor-not-allowed opacity-60';
+    }
+    if (c.effectiveValue) {
+      return base + 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer active:scale-95';
+    }
+    return base + 'bg-stone-100 hover:bg-stone-200 text-stone-400 hover:text-stone-600 border border-stone-200 cursor-pointer active:scale-95';
+  }
+
+  getCellTitle(roleName: string, c: PermissionConstraintResult): string {
+    if (c.type === 'protected') {
+      return `[PROTEGIDO] Obligatorio para ${roleName}: ${c.reason || 'Privilegio raíz del sistema.'}`;
+    }
+    if (c.type === 'restricted') {
+      return `[RESTRINGIDO] No disponible para ${roleName}: ${c.reason || 'Restricción de perfil de seguridad.'}`;
+    }
+    return `${c.effectiveValue ? 'Permitido' : 'Denegado'} para ${roleName} (Generalidad configurable: clic para alternar)`;
+  }
+}

@@ -21,8 +21,10 @@ export interface TeamSupervisionSummary { // Resumen consolidado de supervisión
   department: string;
   leader: string;
   leaderPhone: string;
+  leaderEmail?: string;
   membersCount: number;
   members?: string[];
+  membersWithAccounts?: TeamMemberAccount[];
   currentPhaseId: PhaseType;
   currentPhaseName: string;
   progressPercentage: number;
@@ -45,6 +47,12 @@ export interface TeamSupervisionSummary { // Resumen consolidado de supervisión
   accessPin?: string;
 }
 
+export interface TeamMemberAccount { // Integrante con cuenta y credencial de acceso directo
+  fullName: string;
+  email: string;
+  roleInTeam?: string;
+}
+
 export interface CreateTeamDto { // DTO para registrar o actualizar una misión territorial
   name: string;
   ethnicity: string;
@@ -52,7 +60,9 @@ export interface CreateTeamDto { // DTO para registrar o actualizar una misión 
   department: string;
   leader: string;
   leaderPhone: string;
+  leaderEmail?: string;
   members?: string[];
+  membersWithAccounts?: TeamMemberAccount[];
   currentPhaseId: PhaseType;
   totalBudget: number;
   themeColor: string;

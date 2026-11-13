@@ -57,72 +57,72 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
 })
 export class LoginViewComponent implements OnInit, OnDestroy {
   @Input() allTeams: TeamSupervisionSummary[] = [];
-  @Output() adminSuccess = new EventEmitter<void>();
+  @Output() adminSuccess = new EventEmitter<TeamSupervisionSummary | undefined>();
   @Output() directorGeneralSuccess = new EventEmitter<void>();
-  @Output() teamSuccess = new EventEmitter<TeamSupervisionSummary>();
+  @Output() teamSuccess = new EventEmitter<{ team: TeamSupervisionSummary; isNationalAdmin?: boolean }>();
   @Output() memberSuccess = new EventEmitter<{ team: TeamSupervisionSummary; memberName: string }>();
 
-  readonly activeTab = signal<'admin' | 'team'>('team');
-  readonly identifier = signal('team-wayuu');
-  readonly password = signal('wayuu2026');
+  readonly activeTab = signal<'admin' | 'team'>('admin');
+  readonly identifier = signal('director@misincol.org');
+  readonly password = signal('director2026');
   readonly showPassword = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
-  readonly selectedQuickChip = signal('wayuu');
+  readonly selectedQuickChip = signal('director');
 
   ngOnInit() {
     if (typeof document !== 'undefined') { document.body.style.overflow = 'hidden'; document.documentElement.style.overflow = 'hidden'; }
-    const initial = this.allTeams[0];
-    if (initial) {
-      this.identifier.set(initial.slug || initial.id);
-      this.password.set(initial.accessPin || 'wayuu2026');
-      this.selectedQuickChip.set((initial.slug || initial.id).replace(/^team-/, '').toLowerCase());
-    }
+    this.checkAutoLoginFromUrl();
   }
 
   ngOnDestroy() {
     if (typeof document !== 'undefined') { document.body.style.overflow = ''; document.documentElement.style.overflow = ''; }
   }
 
+  private checkAutoLoginFromUrl(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const u = p.get('user') || p.get('u'), pin = p.get('pin') || p.get('p'), tab = p.get('tab') as 'admin' | 'team' | null, auto = p.get('auto') === 'true';
+      if (u) {
+        this.identifier.set(u.trim());
+        this.activeTab.set(tab === 'admin' ? 'admin' : 'team');
+      }
+      if (pin) this.password.set(pin.trim());
+      if (u && pin && auto) setTimeout(() => this.handleSubmit(), 200);
+    } catch { /* ignore */ }
+  }
+
   handleSelectTab(tab: 'admin' | 'team') {
     this.activeTab.set(tab); this.error.set(null);
     if (tab === 'team') {
-      const t = this.allTeams[0];
-      const tSlug = t ? t.slug || t.id : 'team-wayuu';
-      this.identifier.set(tSlug); this.password.set(t?.accessPin || 'wayuu2026');
-      this.selectedQuickChip.set(tSlug.replace(/^team-/, '').toLowerCase());
+      this.identifier.set('pastos@misincol.org'); this.password.set('pastos2026');
+      this.selectedQuickChip.set('pastos');
     } else {
-      this.identifier.set('admin'); this.password.set('210910624Dj'); this.selectedQuickChip.set('admin');
+      this.identifier.set('director@misincol.org'); this.password.set('director2026');
+      this.selectedQuickChip.set('director');
     }
   }
 
   handleTeamSelect(val: string) {
     this.identifier.set(val); this.selectedQuickChip.set(val.replace(/^team-/, '').toLowerCase());
-    const sel = this.allTeams.find((t) => t.slug === val || t.id === val);
-    if (sel) this.password.set(sel.accessPin || `${(sel.slug || sel.id).replace(/^team-/, '')}2026`);
   }
 
   fillCredentials(p: QuickCredentialPayload) {
-    this.activeTab.set(p.type); this.selectedQuickChip.set(p.chipKey); this.error.set(null); this.password.set(p.pass);
-    if (p.type === 'team') {
-      const target = p.user.trim().toLowerCase();
-      const m = this.allTeams.find((t) => t.slug?.toLowerCase() === target || t.id.toLowerCase() === target || t.ethnicity.toLowerCase().includes(target));
-      this.identifier.set(m ? m.slug || m.id : p.user);
-      if (m?.accessPin) this.password.set(m.accessPin);
-    } else {
-      this.identifier.set(p.user);
-    }
+    this.activeTab.set(p.type); this.selectedQuickChip.set(p.chipKey); this.error.set(null);
+    this.identifier.set(p.user); this.password.set(p.pass);
   }
 
   handleSubmit() {
-    this.error.set(null); this.loading.set(true);
+    this.loading.set(true); this.error.set(null);
     verifyAuthCredentials({
       activeTab: this.activeTab(), identifier: this.identifier(), password: this.password(), allTeams: this.allTeams,
-      onAdminSuccess: () => this.adminSuccess.emit(),
+      onAdminSuccess: (ctx) => this.adminSuccess.emit(ctx),
       onDirectorGeneralSuccess: () => this.directorGeneralSuccess.emit(),
-      onTeamSuccess: (team) => this.teamSuccess.emit(team),
-      onMemberSuccess: (team, memberName) => this.memberSuccess.emit({ team, memberName }),
-      onError: (msg) => this.error.set(msg), onDone: () => this.loading.set(false),
+      onTeamSuccess: (team, isNat) => this.teamSuccess.emit({ team, isNationalAdmin: isNat }),
+      onMemberSuccess: (team, mem) => this.memberSuccess.emit({ team, memberName: mem }),
+      onError: (msg) => this.error.set(msg),
+      onDone: () => this.loading.set(false),
     });
   }
 }

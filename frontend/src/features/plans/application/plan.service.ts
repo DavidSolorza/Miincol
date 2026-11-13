@@ -2,11 +2,13 @@ import { Injectable, signal, computed } from '@angular/core';
 import type { PhasePlan, Activity, PhaseType, PlanMetrics, Objective, EssentialArea, AreaLevel } from '../domain/plan.types';
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
-import { calculatePlanMetrics } from './planCalculations';
+import { calculatePlanMetrics, calculateTotalPlannedBudget } from './planCalculations';
 import { applyUpdateActivity, applyAddActivity, applyDeleteActivity } from './planActivityActions';
 import { applyUpdateObjective, applyAddObjective, applyDeleteObjective } from './planObjectiveActions';
 import { getPlansForTeam } from './teamPhaseMetrics';
 import { logPlanAudit, logActivityUpdateAudit } from './planAuditHelper';
+import { cleanPlansForNewYear } from './planCycleReset';
+import { serviceBus } from '../../../core/bus';
 
 // Servicio de aplicación que gestiona el estado reactivo de planes, objetivos y actividades PDM
 @Injectable({ providedIn: 'root' })
@@ -16,6 +18,14 @@ export class PlanService {
   readonly activeLeader = signal<string>('Líder'); // Nombre del líder del equipo activo
   readonly pendingAssignee = signal<string | null>(null); // Integrante preseleccionado al asignar tarea desde Información General
   readonly allPlans = signal<Record<string, PhasePlan>>(getPlansForTeam('team-wayuu')); // Mapa de planes por fase
+
+  constructor() {
+    serviceBus.subscribe('cycle:year_changed', (evt) => {
+      if (evt.teamId === this.activeTeamId()) {
+        this.persistPlans(cleanPlansForNewYear(this.allPlans()));
+      }
+    });
+  }
 
   // Plan correspondiente a la fase activa seleccionada
   readonly plan = computed<PhasePlan>(() => {
@@ -27,15 +37,9 @@ export class PlanService {
   readonly metrics = computed<PlanMetrics>(() => calculatePlanMetrics(this.plan()));
   readonly teamTotalBudget = signal<number>(11210000);
 
-  readonly remainingTeamBudget = computed(() => {
-    let planned = 0;
-    Object.values(this.allPlans()).forEach((p) => {
-      p.objectives.forEach((o) => {
-        o.activities.forEach((a) => { planned += a.totalBudget || 0; });
-      });
-    });
-    return Math.max(0, this.teamTotalBudget() - planned);
-  });
+  readonly remainingTeamBudget = computed(() =>
+    Math.max(0, this.teamTotalBudget() - calculateTotalPlannedBudget(this.allPlans()))
+  );
 
   // Carga los planes de un equipo específico en el estado reactivo
   loadTeamPlans(teamId: string, teamData?: Partial<TeamSupervisionSummary>): void {

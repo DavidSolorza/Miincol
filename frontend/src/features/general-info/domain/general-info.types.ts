@@ -61,6 +61,16 @@ export interface PillarBudgetBreakdown {
   executedTotalBudget?: number;
 }
 
+export interface AnnualHistoryRecord {
+  year: number;
+  closedAt: string;
+  fieldMetrics: FieldMinistryMetrics;
+  training: MinisterialTrainingMetrics;
+  church: ChurchDevelopmentMetrics;
+  budgetBreakdown: PillarBudgetBreakdown;
+  essentialsToDevelop: string[];
+}
+
 export interface TeamGeneralInfo {
   teamId: string;
   teamData: GeneralTeamData;
@@ -69,10 +79,6 @@ export interface TeamGeneralInfo {
   ministerialTraining: MinisterialTrainingMetrics;
   churchDevelopment: ChurchDevelopmentMetrics;
   budgetBreakdown: PillarBudgetBreakdown;
-  annualMetricsHistory?: Record<number, {
-    fieldMetrics: FieldMinistryMetrics;
-    training: MinisterialTrainingMetrics;
-    church: ChurchDevelopmentMetrics;
-  }>;
+  annualMetricsHistory?: Record<number, AnnualHistoryRecord>;
   updatedAt: string;
 }

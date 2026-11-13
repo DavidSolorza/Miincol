@@ -13,7 +13,7 @@ export class AppSessionService {
   readonly activeTeamId = signal<string>(this.session()?.teamId || 'team-wayuu');
   readonly isAdminPreview = signal<boolean>(false);
   readonly activeView = signal<'plans' | 'general' | 'superadmin' | 'security' | 'audit'>(
-    this.session()?.role === 'admin' ? 'superadmin' : 'plans'
+    this.session()?.role === 'admin' ? 'superadmin' : 'general'
   );
 
   constructor() {
@@ -38,34 +38,45 @@ export class AppSessionService {
     try {
       const s = localStorage.getItem(STORAGE_KEY_AUTH);
       if (!s) return null;
-      const parsed: AuthSession = JSON.parse(s);
-      if (parsed.role === 'admin') parsed.userName = 'Coordinador de Equipos';
-      return parsed;
+      return JSON.parse(s);
     } catch {
       return null;
     }
   }
 
-  handleAdminLogin(): void {
-    const newSession: AuthSession = { role: 'admin', userName: 'Coordinador de Equipos' };
+  handleAdminLogin(teamContext?: TeamSupervisionSummary): void {
+    const newSession: AuthSession = {
+      role: 'admin',
+      teamId: teamContext?.id,
+      userName: teamContext ? `${teamContext.leader} (Coordinador y Líder)` : 'Coordinador de Equipos',
+    };
     this.session.set(newSession);
     try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }
+    if (teamContext?.id) this.activeTeamId.set(teamContext.id);
     this.activeView.set('superadmin');
     this.isAdminPreview.set(false);
-    this.toastService.toast.success('Sesión iniciada como Coordinador de Equipos', 'Bienvenido');
+    this.toastService.toast.success(
+      teamContext ? `Bienvenido ${teamContext.leader} (Acceso Nacional)` : 'Sesión iniciada como Coordinador de Equipos',
+      'Bienvenido'
+    );
   }
 
   handleDirectorGeneralLogin(name = 'Director General'): void {
     const newSession: AuthSession = { role: 'director_general', userName: name };
     this.session.set(newSession);
     try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }
-    this.activeView.set('plans');
+    this.activeView.set('general');
     this.isAdminPreview.set(false);
     this.toastService.toast.success(`Bienvenido ${name} (Director General)`, 'Sesión Iniciada');
   }
 
-  handleTeamLogin(team: TeamSupervisionSummary): void {
-    const newSession: AuthSession = { role: 'team', teamId: team.id, userName: team.leader };
+  handleTeamLogin(team: TeamSupervisionSummary, isNationalAdmin = false): void {
+    const role = isNationalAdmin ? 'admin' : 'team';
+    const newSession: AuthSession = {
+      role,
+      teamId: team.id,
+      userName: isNationalAdmin ? `${team.leader} (Coordinador y Líder)` : team.leader,
+    };
     this.session.set(newSession);
     try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }
     const logPayload = {
@@ -73,14 +84,17 @@ export class AppSessionService {
       userName: team.leader,
       actionType: 'login' as const,
       title: 'Ingreso al portal',
-      detail: `Inicio de sesión territorial de ${team.leader}`,
+      detail: `Inicio de sesión territorial de ${team.leader}${isNationalAdmin ? ' (Rol Nacional)' : ''}`,
     };
     appendAuditLog(team.id, logPayload, team.leader);
     serviceBus.publish('audit:log', logPayload);
     this.activeTeamId.set(team.id);
-    this.activeView.set('plans');
+    this.activeView.set('general');
     this.isAdminPreview.set(false);
-    this.toastService.toast.success(`Bienvenido equipo ${team.name}`, 'Sesión Iniciada');
+    this.toastService.toast.success(
+      isNationalAdmin ? `Bienvenido ${team.leader} (Misión ${team.name} • Rol Nacional)` : `Bienvenido equipo ${team.name}`,
+      'Sesión Iniciada'
+    );
   }
 
   handleMemberLogin(team: TeamSupervisionSummary, memberName: string): void {
@@ -88,7 +102,7 @@ export class AppSessionService {
     this.session.set(newSession);
     try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }
     this.activeTeamId.set(team.id);
-    this.activeView.set('plans');
+    this.activeView.set('general');
     this.isAdminPreview.set(false);
     this.toastService.toast.success(`Bienvenido(a) ${memberName} (Usuario de Equipo)`, 'Sesión Iniciada');
   }
@@ -103,7 +117,7 @@ export class AppSessionService {
   handleInspectTeamFromAdmin(teamId: string, allTeams: TeamSupervisionSummary[]): void {
     this.activeTeamId.set(teamId);
     this.isAdminPreview.set(true);
-    this.activeView.set('plans');
+    this.activeView.set('general');
     const targetTeam = allTeams.find((t) => t.id === teamId || t.slug === teamId);
     this.toastService.toast.info(`Supervisando misión: ${targetTeam?.name || 'Equipo'}`, 'Modo Supervisión');
   }

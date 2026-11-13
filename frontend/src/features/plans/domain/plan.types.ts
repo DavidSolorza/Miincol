@@ -4,17 +4,22 @@ export type EssentialArea = 'Investigación' | 'Encarnación' | 'Evangelización
 export type AreaLevel = string;
 
 export type ActivityStage =
-  | 'Contacto' | 'Comunicar' | 'Respuesta' | 'Reunirse' | 'Consolidar' | 'Liderazgo' | 'Desarrollo eclesial'
-  | 'Auto-cuidado' | 'Contacto primeros oyentes' | 'Comunicar el evangelio' | 'Respuesta al evangelio'
-  | 'Guiamos a reunirse' | 'Consolidamos' | 'Desarrollo Eclesial' | 'Auto Cuidado del Misionero'
-  | 'ADN Multiplicador' | 'Salida progresiva' | 'General';
+  | 'Contacto'
+  | 'Comunicar'
+  | 'Respuesta'
+  | 'Reunirse'
+  | 'Consolidar'
+  | 'Liderazgo'
+  | 'Desarrollo eclesial'
+  | 'Auto-cuidado'
+  | 'General';
 
 export const STAGES_BY_AREA: Record<EssentialArea, readonly ActivityStage[]> = {
   Investigación: ['Contacto'],
   Encarnación: ['Contacto', 'Comunicar', 'Respuesta'],
   Evangelización: ['Respuesta', 'Reunirse', 'Consolidar'],
   Entrenamiento: ['Consolidar', 'Liderazgo', 'Desarrollo eclesial'],
-  Autocuidado: ['Auto-cuidado', 'Auto Cuidado del Misionero', 'ADN Multiplicador', 'Salida progresiva'],
+  Autocuidado: ['Auto-cuidado'],
 };
 
 export const PHASE_TO_AREA: Record<PhaseType, EssentialArea> = {

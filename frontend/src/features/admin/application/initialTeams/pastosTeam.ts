@@ -8,6 +8,7 @@ export const pastosTeam: TeamSupervisionSummary = {
   region: 'Cumbal, Chiles y Panán',
   department: 'Nariño (Andina/Sur)',
   leader: 'Pr. Hugo Solorza',
+  leaderEmail: 'hudisapastos@misincol.org',
   leaderPhone: '+57 315 889 4521',
   membersCount: 2,
   members: ['Hugo Solorza', 'Diana Viera'],
@@ -48,16 +49,9 @@ export const pastosTeam: TeamSupervisionSummary = {
     {
       title: 'Plan de trabajo evangelístico para iniciar al menos 4 nuevos grupos',
       responsible: 'Hugo Solorza',
-      state: 'Pendiente',
+      state: 'En Proceso',
       objectiveNumber: 4,
-      stage: 'Liderazgo',
+      stage: 'Evangelización',
     },
   ],
-  criticalAlert: {
-    type: 'Logística',
-    message: 'Recorridos en moto a veredas lejanas de Chiles y Panán afectados por clima frío y lluvias.',
-    reportedAt: 'Hoy, 07:30 AM',
-  },
-  healthStatus: 'Optimo',
-  lastUpdate: 'Hoy, 08:00 AM',
 };

@@ -77,8 +77,8 @@ frontend/src/
    - Los accesos de **Notas y Agenda**, **Informe PDM** y **Contacto Líder** permanecen visibles tanto en las fases del PDM como en la vista de **Información General**.
 
 4. **Gestor de Roles y Matriz de Permisos (`src/features/security/`)**:
-   - Acceso exclusivo desde el header superior para el Director Nacional / Administrador (`Roles y Permisos`).
-   - Matriz interactiva de doble entrada que cruza los roles (`Usuario equipo`, `Líder equipo`, `Director nacional`) con 10 permisos organizados en 4 categorías operativas.
+   - Acceso exclusivo desde el header superior para el Coordinador de Equipos / Administrador (`Roles y Permisos`).
+   - Matriz interactiva de doble entrada que cruza los roles (`Usuario equipo`, `Líder equipo`, `Coordinador de equipos`) con 10 permisos organizados en 4 categorías operativas.
    - Conteo reactivo de permisos activos por rol e indicador de estado ("Personalizada" vs "Predeterminada") con opción de restablecer valores por defecto.
    - Pestaña de **Asignación de Roles por Persona (`SecurityUsersTableComponent`)** para reasignar el rol de directores, líderes y colaboradores con persistencia reactiva en `SecurityUsersService`.
    - Botón superior de la cabecera renombrado a **"Volver al Dashboard"** con icono `arrow-left` para un retorno ágil al mapa split-screen nacional.
@@ -107,17 +107,17 @@ frontend/src/
    - Sincronización automática en `AdminDashboardService`: al crear o actualizar cualquier equipo misionero, su pastor líder y miembros aparecen inmediatamente en la tabla de asignación de roles.
 
 10. **Historial de Ingresos y Auditoría de Cambios (`activeView: 'audit'`)**:
-    - Acceso exclusivo en el sidebar (`PlanSidebarComponent`) y cabecera (`AppHeaderComponent`) únicamente visible para el rol Administrador / Director Nacional (`ROLE_NACIONAL`).
+    - Acceso exclusivo en el sidebar (`PlanSidebarComponent`) y cabecera (`AppHeaderComponent`) únicamente visible para el rol Administrador / Coordinador de Equipos (`ROLE_NACIONAL`).
     - **Trazabilidad de Modificaciones (`AuditChangesTableComponent`)**: Bitácora cronológica con detalle de autor, territorio, fecha/hora y comparativa explícita de **Valor Anterior ➔ Valor Nuevo** en estados, objetivos y presupuestos.
     - **Historial de Inicios de Sesión (`AuditLoginsTableComponent`)**: Seguimiento de accesos por usuario, rol, IP y equipo.
 
 11. **CRUD Completo de Personas y Contenedor Scroll con Sticky Header en Roles**:
     - Tabla de personas integrada en un contenedor con scroll vertical suave (`max-h-[480px] overflow-y-auto sidebar-scroll-smooth`) y cabecera pegajosa (`sticky top-0 z-10`).
-    - Operaciones CRUD completas para el Director Nacional:
+    - Operaciones CRUD completas para el Coordinador de Equipos:
       - **Crear**: modal `CreateUserModalComponent` para registrar colaboradores con nombre, correo, rol y territorio.
       - **Editar**: botón de lápiz (`edit-3`) en cada fila que abre el modal precargado y persiste las actualizaciones de identidad o misión.
       - **Eliminar**: botón de papelera (`trash-2`) con confirmación modal de seguridad (`ToastService.confirmAction`) que remueve al colaborador de `SecurityUsersService` y de los miembros del equipo.
-      - **Reasignar Rol**: selector por botones en cada fila para cambiar entre `Usuario de equipo`, `Líder de equipo` y `Director nacional`.
+      - **Reasignar Rol**: selector por botones en cada fila para cambiar entre `Usuario de equipo`, `Líder de equipo` y `Coordinador de equipos`.
     - Componente atómico de fila `SecurityUsersTableRowComponent` para respetar el límite estricto de 150 líneas.
 
 12. **Suite de 16 Mejoras Integrales PDM, Información General Estilo Excel, Gastos Especiales y Rol Director General**:

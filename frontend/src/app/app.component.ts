@@ -15,9 +15,9 @@ import type { MissionaryTeam } from '../features/auth/domain/auth.types';
     @if (!sessionService.session()) {
       <app-login-view
         [allTeams]="dashboardService.allTeams()"
-        (adminSuccess)="sessionService.handleAdminLogin()"
+        (adminSuccess)="sessionService.handleAdminLogin($event)"
         (directorGeneralSuccess)="sessionService.handleDirectorGeneralLogin()"
-        (teamSuccess)="sessionService.handleTeamLogin($event)"
+        (teamSuccess)="sessionService.handleTeamLogin($event.team, $event.isNationalAdmin)"
         (memberSuccess)="sessionService.handleMemberLogin($event.team, $event.memberName)"
       />
     } @else {

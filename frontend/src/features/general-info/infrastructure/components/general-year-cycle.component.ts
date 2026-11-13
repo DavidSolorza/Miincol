@@ -30,7 +30,33 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
       </div>
 
       @if (isAdmin()) {
-        <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+        <div class="flex flex-wrap items-center gap-2 shrink-0 self-end sm:self-center">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-stone-100 border border-stone-200 text-xs">
+            <span class="text-stone-500 text-[11px] font-semibold hidden md:inline">Año:</span>
+            <select
+              [value]="currentYear()"
+              (change)="handleSelectYear($any($event.target).value)"
+              class="bg-transparent text-stone-800 font-bold text-xs focus:outline-hidden cursor-pointer"
+              title="Seleccionar año activo de la misión"
+            >
+              @for (y of availableYears; track y) {
+                <option [value]="y">{{ y }} {{ y === 2026 ? '(Oficial)' : '' }}</option>
+              }
+            </select>
+          </div>
+
+          @if (currentYear() !== 2026) {
+            <button
+              type="button"
+              (click)="changeYear.emit(2026)"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 border border-amber-300 font-bold text-xs transition cursor-pointer active:scale-95 shadow-2xs"
+              title="Fijar año oficial en curso (2026)"
+            >
+              <app-icon name="rotate-ccw" className="w-3.5 h-3.5 text-amber-700" />
+              <span>Fijar Año 2026</span>
+            </button>
+          }
+
           @if (!isYearClosed()) {
             <button
               type="button"
@@ -63,8 +89,24 @@ export class GeneralYearCycleComponent {
   readonly isYearClosed = input<boolean>(false);
   readonly isAdmin = input<boolean>(false);
 
+  readonly availableYears = [2025, 2026, 2027, 2028, 2029, 2030];
+
   readonly closeYear = output<void>();
   readonly startNextYear = output<number>();
+  readonly changeYear = output<number>();
+
+  handleSelectYear(value: string | number): void {
+    const yr = Number(value);
+    if (!yr || yr === this.currentYear()) return;
+    this.toastSvc.confirmAction({
+      title: 'Cambiar Año Ministerial',
+      message: `¿Desea cambiar el ciclo activo al año ${yr}? Las métricas y planes reflejarán este período.`,
+      confirmText: `Cambiar a ${yr}`,
+      cancelText: 'Cancelar',
+      variant: 'default',
+      onConfirm: () => this.changeYear.emit(yr),
+    });
+  }
 
   confirmCloseYear(): void {
     this.toastSvc.confirmAction({
@@ -89,4 +131,3 @@ export class GeneralYearCycleComponent {
     });
   }
 }
-

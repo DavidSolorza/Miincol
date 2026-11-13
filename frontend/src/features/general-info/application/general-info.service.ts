@@ -1,50 +1,15 @@
 import { Injectable, signal, computed } from '@angular/core';
-import type { TeamGeneralInfo, TeamMemberContact, GeneralTeamData, FieldMinistryMetrics, MinisterialTrainingMetrics, ChurchDevelopmentMetrics, PillarBudgetBreakdown } from '../domain/general-info.types';
+import type {
+  TeamGeneralInfo, TeamMemberContact, GeneralTeamData, FieldMinistryMetrics,
+  MinisterialTrainingMetrics, ChurchDevelopmentMetrics, PillarBudgetBreakdown,
+} from '../domain/general-info.types';
+import { createDefaultGeneralInfo } from '../domain/general-info-defaults';
+import { archiveYearCycle, backupPdmPlansSnapshot } from '../domain/general-info-history.helper';
+import { createCleanCycleState } from '../domain/general-info-reset.helper';
+import { syncGlobalMinisterialYear } from '../domain/general-info-year.helper';
 import { serviceBus } from '../../../core/bus';
 
 const STORAGE_PREFIX = 'misincol_general_info_v3_';
-
-function buildDefaultMembers(leader: string, teamMembers?: string[]): TeamMemberContact[] {
-  const clean = leader.replace(/^(pr\.|pastor|hna\.|hno\.)\s+/i, '').trim().toLowerCase();
-  const list = teamMembers && teamMembers.length > 0 ? teamMembers : [leader, 'Aída Secue', 'Santiago Ramos'];
-  return list.map((name, i) => ({
-    id: `m_${i + 1}`,
-    name: (name.toLowerCase().includes(clean) || clean.includes(name.toLowerCase())) ? leader : name,
-    role: i === 0 ? 'Líder Pastoral' : (i === 1 ? 'Obrera Misionera / Salud' : 'Evangelista / Discipulado'),
-    phone: `+57 31${i} 450 ${1000 + i * 111}`,
-  }));
-}
-
-function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Territorial', leader = 'Líder en Campo', teamMembers?: string[]): TeamGeneralInfo {
-  return {
-    teamId,
-    teamData: {
-      teamName, year: 2026, isYearClosed: false, population: '120.000', territory: 'Cumbal, Nariño',
-      teamLeader: leader, leaderPhone: '+57 312 450 1234', evangelicalCongregationsCount: 4, evangelicalBelieversCount: 400,
-      members: buildDefaultMembers(leader, teamMembers),
-    },
-    essentialsToDevelop: ['1. Liderazgo', '2. Desarrollo Eclesial'],
-    fieldMetrics: {
-      firstTimeContactedCount: 15, interestedInGospelCount: 6, heardGospelCount: 4, seekingGodCount: 2,
-      gospelResponseOpportunitiesCount: 2, newBelieversCount: 2, baptizedCount: 0,
-      regularBibleStudyParticipantsCount: 45, personalMentorshipCount: 12, newGroupsMeetingInYearCount: 1,
-    },
-    ministerialTraining: {
-      practicalMinisterialTrainingCount: 10, otherAreasTrainingCount: 0, pastoralPracticalTrainingCount: 3,
-      biblicalTrainingCount: 9, newChurchesPlantingTrainingCount: 0,
-    },
-    churchDevelopment: {
-      groupsWithChurchPerspectiveCount: 1, finalChurchesCount: 1, firstGenChurchesCount: 1,
-      secondGenChurchesCount: 0, thirdGenChurchesCount: 0, lostFirstGenChurchesCount: 0,
-      lostSecondGenChurchesCount: 0, lostThirdGenChurchesCount: 0,
-    },
-    budgetBreakdown: {
-      investigacionBudget: 0, encarnacionBudget: 0, evangelizacionBudget: 0,
-      entrenamientoBudget: 11210000, autocuidadoBudget: 0, executedTotalBudget: 4500000,
-    },
-    updatedAt: new Date().toISOString(),
-  };
-}
 
 @Injectable({ providedIn: 'root' })
 export class GeneralInfoService {
@@ -56,8 +21,7 @@ export class GeneralInfoService {
   });
 
   readonly budgetExecutionPercentage = computed(() => {
-    const tot = this.totalBudget();
-    const exec = this.currentInfo().budgetBreakdown.executedTotalBudget || 0;
+    const tot = this.totalBudget(), exec = this.currentInfo().budgetBreakdown.executedTotalBudget || 0;
     return tot > 0 ? Math.min(100, Math.round((exec / tot) * 100)) : 0;
   });
 
@@ -66,7 +30,11 @@ export class GeneralInfoService {
     try {
       const saved = localStorage.getItem(key);
       if (saved) {
-        this.currentInfo.set(JSON.parse(saved));
+        const parsed = JSON.parse(saved) as TeamGeneralInfo;
+        if (!parsed.annualMetricsHistory) {
+          parsed.annualMetricsHistory = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers).annualMetricsHistory;
+        }
+        this.currentInfo.set(parsed);
         return;
       }
     } catch { /* ignore */ }
@@ -99,23 +67,63 @@ export class GeneralInfoService {
     this.updateAndPersist({ budgetBreakdown: { ...this.currentInfo().budgetBreakdown, ...budget } });
   }
 
+  setActiveYear(year: number): void {
+    const cur = this.currentInfo();
+    this.updateAndPersist({ teamData: { ...cur.teamData, year, isYearClosed: false } });
+    serviceBus.publish('ui:toast', {
+      title: `Año Ministerial Ajustado a ${year}`,
+      message: `El ciclo activo de la misión ahora es ${year}.`,
+      type: 'info',
+      duration: 3000,
+    });
+  }
+
+  setGlobalActiveYear(year: number): void {
+    syncGlobalMinisterialYear(STORAGE_PREFIX, year);
+    this.setActiveYear(year);
+  }
+
   closeYear(): void {
-    this.updateTeamData({ isYearClosed: true });
+    const cur = this.currentInfo();
+    const history = archiveYearCycle(cur);
+    backupPdmPlansSnapshot(cur.teamId, cur.teamData.year);
+    this.updateAndPersist({ teamData: { ...cur.teamData, isYearClosed: true }, annualMetricsHistory: history });
+    serviceBus.publish('ui:toast', {
+      title: `Año ${cur.teamData.year} Cerrado`,
+      message: 'Datos y planes archivados exitosamente.',
+      type: 'success',
+      duration: 3000,
+    });
   }
 
   startNewYear(nextYear: number): void {
-    this.updateTeamData({ year: nextYear, isYearClosed: false });
+    const cur = this.currentInfo();
+    const history = archiveYearCycle(cur);
+    backupPdmPlansSnapshot(cur.teamId, cur.teamData.year);
+    const cleanState = createCleanCycleState(nextYear, cur);
+    this.updateAndPersist({ ...cleanState, annualMetricsHistory: history });
+    serviceBus.publish('cycle:year_changed', { teamId: cur.teamId, closingYear: cur.teamData.year, nextYear });
+    serviceBus.publish('ui:toast', {
+      title: `Ciclo ${nextYear} Inicializado`,
+      message: 'Período limpio listo para nueva planificación.',
+      type: 'success',
+      duration: 3000,
+    });
   }
 
   addMember(member: Omit<TeamMemberContact, 'id'>): void {
-    const id = `m_${Date.now()}`;
-    const members = [...this.currentInfo().teamData.members, { ...member, id }];
+    const members = [...this.currentInfo().teamData.members, { ...member, id: `m_${Date.now()}` }];
     this.updateTeamData({ members });
   }
 
   removeMember(memberId: string): void {
     const members = this.currentInfo().teamData.members.filter((m) => m.id !== memberId);
     this.updateTeamData({ members });
+  }
+
+  saveCurrentInfo(): void {
+    const cur = this.currentInfo();
+    this.persist(cur.teamId, cur);
   }
 
   private updateAndPersist(partial: Partial<TeamGeneralInfo>): void {
@@ -129,7 +137,6 @@ export class GeneralInfoService {
   private persist(teamId: string, info: TeamGeneralInfo): void {
     try {
       localStorage.setItem(`${STORAGE_PREFIX}${teamId}`, JSON.stringify(info));
-      serviceBus.publish('ui:toast', { title: 'Información General Guardada', message: 'Datos sincronizados.', type: 'success', duration: 2000 });
     } catch { /* ignore */ }
   }
 }

@@ -1,22 +1,22 @@
-import { Component, ChangeDetectionStrategy, Output, EventEmitter, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, EventEmitter, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import type { TeamSupervisionSummary, CreateTeamDto } from '../domain/admin.types';
 import { AdminDashboardService } from '../application/admin-dashboard.service';
+import { GeneralInfoService } from '../../general-info/application/general-info.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { SuperAdminKpisGridComponent } from './superAdmin/super-admin-kpis-grid.component';
 import { SuperAdminFiltersComponent } from './superAdmin/super-admin-filters.component';
 import { SuperAdminTeamsGridComponent } from './superAdmin/super-admin-teams-grid.component';
 import { ColombiaMapCardComponent } from './map/colombia-map-card.component';
 import { TeamModalComponent } from './team-modal.component';
+import { TestMailModalComponent } from './testMail/test-mail-modal.component';
 
 @Component({
   selector: 'app-super-admin-view',
   standalone: true,
   imports: [
-    SuperAdminKpisGridComponent,
-    SuperAdminFiltersComponent,
-    SuperAdminTeamsGridComponent,
-    ColombiaMapCardComponent,
-    TeamModalComponent,
+    SuperAdminKpisGridComponent, SuperAdminFiltersComponent,
+    SuperAdminTeamsGridComponent, ColombiaMapCardComponent,
+    TeamModalComponent, TestMailModalComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -26,7 +26,11 @@ import { TeamModalComponent } from './team-modal.component';
           <app-super-admin-kpis-grid [kpis]="dashboard.nationalKpis()" />
           <app-super-admin-filters
             [searchTerm]="dashboard.searchTerm()"
+            [activeYear]="activeMinisterialYear()"
             (searchTermChange)="dashboard.searchTerm.set($event)"
+            (openMailDiagnostic)="isMailModalOpen.set(true)"
+            (yearChanged)="handleYearChange($event)"
+            (resetTo2026)="handleYearChange(2026)"
           />
           <div class="flex-1 min-h-0 overflow-y-auto pr-1 pb-1 custom-scrollbar">
             <app-super-admin-teams-grid
@@ -56,19 +60,28 @@ import { TeamModalComponent } from './team-modal.component';
         (submitTeam)="handleModalSubmit($event)"
         [initialData]="editingTeam()"
       />
+
+      <app-test-mail-modal
+        [isOpen]="isMailModalOpen()"
+        (close)="isMailModalOpen.set(false)"
+      />
     </div>
   `,
   styles: [`:host { display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; }`],
 })
 export class SuperAdminViewComponent implements OnInit, OnDestroy {
   readonly dashboard = inject(AdminDashboardService);
+  readonly generalInfoSvc = inject(GeneralInfoService);
   private readonly toastSvc = inject(ToastService);
 
   @Output() inspectTeam = new EventEmitter<string>();
 
   readonly isModalOpen = signal(false);
+  readonly isMailModalOpen = signal(false);
   readonly editingTeam = signal<TeamSupervisionSummary | null>(null);
   readonly selectedTeamId = signal<string | null>(null);
+
+  readonly activeMinisterialYear = computed(() => this.generalInfoSvc.currentInfo().teamData.year);
 
   private readonly openHandler = () => this.openCreateModal();
 
@@ -84,15 +97,22 @@ export class SuperAdminViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  openCreateModal() {
-    this.editingTeam.set(null);
-    this.isModalOpen.set(true);
+  handleYearChange(year: number): void {
+    this.toastSvc.confirmAction({
+      title: 'Año Ministerial Nacional',
+      message: `¿Desea establecer el ciclo activo de todas las misiones en el año ${year}?`,
+      confirmText: `Fijar Año ${year}`,
+      cancelText: 'Cancelar',
+      variant: 'default',
+      onConfirm: () => {
+        this.generalInfoSvc.setGlobalActiveYear(year);
+        this.toastSvc.toast.success(`Año ministerial nacional establecido en ${year}`, 'Ciclo Actualizado');
+      },
+    });
   }
 
-  openEditModal(team: TeamSupervisionSummary) {
-    this.editingTeam.set(team);
-    this.isModalOpen.set(true);
-  }
+  openCreateModal() { this.editingTeam.set(null); this.isModalOpen.set(true); }
+  openEditModal(team: TeamSupervisionSummary) { this.editingTeam.set(team); this.isModalOpen.set(true); }
 
   handleModalSubmit(dto: CreateTeamDto) {
     const editing = this.editingTeam();
@@ -107,14 +127,14 @@ export class SuperAdminViewComponent implements OnInit, OnDestroy {
 
   handleDeleteTeam(team: TeamSupervisionSummary) {
     this.toastSvc.confirmAction({
-      title: 'Eliminar Equipo Misionero',
-      message: `¿Estás seguro de eliminar el equipo "${team.name}" (${team.ethnicity})? Se eliminará su información y plan territorial.`,
+      title: 'Eliminar Misión',
+      message: `¿Confirma que desea eliminar la misión "${team.name}"?`,
       confirmText: 'Sí, eliminar',
       cancelText: 'Cancelar',
       variant: 'danger',
       onConfirm: () => {
         this.dashboard.handleDeleteTeam(team.id);
-        this.toastSvc.toast.info(`Equipo "${team.name}" eliminado del sistema`, 'Equipo Eliminado');
+        this.toastSvc.toast.info(`Misión "${team.name}" eliminada`, 'Supervisión');
       },
     });
   }

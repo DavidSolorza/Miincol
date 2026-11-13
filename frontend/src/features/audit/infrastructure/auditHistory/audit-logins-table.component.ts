@@ -82,7 +82,7 @@ export class AuditLoginsTableComponent {
   }
 
   getRoleBadge(role?: string): string {
-    if (role === 'Director nacional' || role === 'ROLE_NACIONAL') return 'bg-stone-900 text-[#E67324] border-stone-800';
+    if (role === 'Coordinador de equipos' || role === 'Director de equipo' || role === 'Director nacional' || role === 'ROLE_NACIONAL') return 'bg-stone-900 text-[#E67324] border-stone-800';
     if (role === 'Líder equipo' || role === 'ROLE_LIDER') return 'bg-amber-50 text-amber-900 border-amber-300';
     return 'bg-emerald-50 text-emerald-800 border-emerald-200';
   }

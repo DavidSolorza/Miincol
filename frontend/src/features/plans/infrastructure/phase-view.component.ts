@@ -6,22 +6,20 @@ import { AppSessionService } from '../../../app/auth/app-session.service';
 import { SpecialExpensesService } from '../application/special-expenses.service';
 import { PhaseHeaderBarComponent } from './phaseView/phase-header-bar.component';
 import { PhaseObjectiveCardsGridComponent } from './phaseView/phase-objective-cards-grid.component';
-import { ProgressiveExitBannerComponent } from './phaseView/progressive-exit-banner.component';
 import { ObjectiveCardComponent } from './objective-card.component';
 import { PhaseModalsComponent } from './phaseView/phase-modals.component';
+import { PhaseEmptyObjectivesComponent } from './phaseView/phase-empty-objectives.component';
 
 @Component({
   selector: 'app-phase-view',
   standalone: true,
   imports: [
-    PhaseHeaderBarComponent, PhaseObjectiveCardsGridComponent, ProgressiveExitBannerComponent,
-    ObjectiveCardComponent, PhaseModalsComponent,
+    PhaseHeaderBarComponent, PhaseObjectiveCardsGridComponent,
+    ObjectiveCardComponent, PhaseModalsComponent, PhaseEmptyObjectivesComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="w-full space-y-3.5 sm:space-y-4">
-      <app-progressive-exit-banner [isVisible]="isProgressiveExit()" />
-
       <div class="bg-white/95 p-3.5 sm:p-4 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between space-y-3">
         <app-phase-header-bar
           [phaseName]="plan().phaseName"
@@ -54,6 +52,11 @@ import { PhaseModalsComponent } from './phaseView/phase-modals.component';
           (openSpecialModal)="openSpecialModal($event)"
           (editObjective)="openObjModal('edit', $event)"
           (activityEdited)="openActModal('edit', $event, $any($event.objectiveNumber))"
+        />
+      } @else {
+        <app-phase-empty-objectives
+          [canEdit]="canEdit()"
+          (createObjective)="openObjModal('create', null)"
         />
       }
 
@@ -107,10 +110,6 @@ export class PhaseViewComponent {
   readonly currentPillarArea = computed<EssentialArea>(() => PHASE_TO_AREA[this.plan().phaseId] || 'Investigación');
   readonly activeObjectiveIndex = computed(() => this.plan().objectives.findIndex((o) => o.number === this.activeObjectiveNumber()));
   readonly activeObjective = computed(() => this.plan().objectives.find((o) => o.number === this.activeObjectiveNumber()) || this.plan().objectives[0]);
-  readonly isProgressiveExit = computed(() => {
-    const s = (this.activeObjective()?.stage || '').toLowerCase();
-    return s.includes('salida') || s.includes('progresiv') || this.plan().phaseId === 'autocuidado';
-  });
 
   constructor() {
     effect(() => {

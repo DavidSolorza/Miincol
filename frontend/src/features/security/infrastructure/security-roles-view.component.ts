@@ -13,10 +13,13 @@ import type { CreateSystemUserDto } from '../domain/security-users.types';
   imports: [SecurityRolesHeaderComponent, SecurityMatrixTableComponent, SecurityUsersTableComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="w-full space-y-4 max-w-full overflow-x-hidden animate-fadeIn select-none">
+    <div class="w-full space-y-4 max-w-full pb-20 animate-fadeIn select-none">
       <app-security-roles-header
         [activeTab]="activeTab()"
+        [isSaving]="securitySvc.isSaving() || usersSvc.isSaving()"
         (tabChanged)="activeTab.set($event)"
+        (saveMatrix)="securitySvc.saveMatrixToBackend()"
+        (saveUsers)="usersSvc.saveUsersToBackend()"
         (resetDefaults)="securitySvc.resetToDefaults()"
       />
 

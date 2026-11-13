@@ -32,6 +32,10 @@ export const createCustomPlanForTeam = (
     base[key].objectives = []; // PDM completamente limpio y en blanco para inicializar desde cero
   });
 
+  try {
+    localStorage.setItem(`misincol_pdm_plans_${teamId}`, JSON.stringify(base));
+  } catch { /* ignore */ }
+
   return base;
 };
 

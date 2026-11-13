@@ -1,28 +1,25 @@
-// Servicio reactivo de supervisión nacional: gestiona equipos, filtros, KPIs y persistencia local
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import type { TeamSupervisionSummary, CreateTeamDto, TeamHealthStatus } from '../domain/admin.types';
+import type { TeamSupervisionSummary, TeamHealthStatus, CreateTeamDto } from '../domain/admin.types';
 import type { PhaseType } from '../../plans/domain/plan.types';
-import { getTeamPhaseMetrics, PHASE_NAMES_MAP } from '../../plans/application/teamPhaseMetrics';
 import { INITIAL_NATIONAL_TEAMS } from './initialTeams';
 import { calculateNationalKpis } from './adminKpiCalculations';
+import { getTeamPhaseMetrics, PHASE_NAMES_MAP, createCustomPlanForTeam } from '../../plans/application/teamPhaseMetrics';
 import { SecurityUsersService } from '../../security/application/security-users.service';
+import { syncTeamCreatedToBackend, syncTeamDeletedToBackend } from './admin-teams-sync.helper';
 
-const STORAGE_KEY = 'misincol_teams_v2';
+const STORAGE_KEY = 'misincol_admin_teams';
+
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
   private readonly securityUsersSvc = inject(SecurityUsersService);
   readonly allTeams = signal<TeamSupervisionSummary[]>(this.loadInitialTeams());
   readonly searchTerm = signal('');
-  readonly phaseFilter = signal('ALL');
-  readonly statusFilter = signal('ALL');
-  readonly departmentFilter = signal('ALL');
+  readonly phaseFilter = signal<string>('ALL');
+  readonly statusFilter = signal<string>('ALL');
+  readonly departmentFilter = signal<string>('ALL');
 
   readonly teams = computed(() => {
-    const s = this.searchTerm().toLowerCase();
-    const pf = this.phaseFilter();
-    const sf = this.statusFilter();
-    const df = this.departmentFilter();
-
+    const s = this.searchTerm().toLowerCase(), pf = this.phaseFilter(), sf = this.statusFilter(), df = this.departmentFilter();
     return this.allTeams().filter((t) => {
       const matchSearch = t.name.toLowerCase().includes(s) || t.leader.toLowerCase().includes(s) || t.ethnicity.toLowerCase().includes(s) || t.region.toLowerCase().includes(s) || t.department.toLowerCase().includes(s);
       return matchSearch && (pf === 'ALL' || t.currentPhaseId === pf) && (sf === 'ALL' || t.healthStatus === sf) && (df === 'ALL' || t.department.toLowerCase().includes(df.toLowerCase()));
@@ -62,48 +59,34 @@ export class AdminDashboardService {
   }
 
   handleCreateTeam(dto: CreateTeamDto): TeamSupervisionSummary {
-    const slug = dto.slug?.trim() || 'team-' + dto.ethnicity.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const members = dto.members && dto.members.length > 0 ? dto.members : [dto.leader];
+    const slug = dto.slug?.trim() || `team-${dto.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
     const newTeam: TeamSupervisionSummary = {
-      id: slug,
-      slug,
-      name: dto.name,
-      ethnicity: dto.ethnicity,
-      region: dto.region,
-      department: dto.department,
-      leader: dto.leader,
-      leaderPhone: dto.leaderPhone,
-      membersCount: members.length,
-      members,
-      currentPhaseId: dto.currentPhaseId,
+      id: slug, slug, name: dto.name, ethnicity: dto.ethnicity, region: dto.region, department: dto.department,
+      leader: dto.leader, leaderPhone: dto.leaderPhone, leaderEmail: dto.leaderEmail,
+      membersCount: dto.members ? dto.members.length : 1, members: dto.members || [dto.leader],
+      membersWithAccounts: dto.membersWithAccounts || [], currentPhaseId: dto.currentPhaseId,
       currentPhaseName: PHASE_NAMES_MAP[dto.currentPhaseId] || '1. Investigación',
-      progressPercentage: 0,
-      totalBudget: dto.totalBudget,
-      executedBudget: 0,
-      totalActivities: 4,
-      completedActivities: 0,
-      inProgressActivities: 1,
-      pendingActivities: 3,
-      themeColor: dto.themeColor || '#8B251E',
-      accessPin: dto.accessPin?.trim() || `${slug.replace(/^team-/, '')}2026`,
-      healthStatus: dto.healthStatus || 'Optimo',
-      lastUpdate: 'Justo ahora',
-      activeInitiatives: [{ title: `Diagnóstico inicial con pueblo ${dto.ethnicity}`, responsible: dto.leader, state: 'En Proceso' }],
+      progressPercentage: 0, totalBudget: dto.totalBudget, executedBudget: 0,
+      totalActivities: 0, completedActivities: 0, inProgressActivities: 0, pendingActivities: 0,
+      themeColor: dto.themeColor || '#8B251E', accessPin: dto.accessPin?.trim() || `${slug.replace(/^team-/, '')}2026`,
+      healthStatus: dto.healthStatus || 'Optimo', lastUpdate: 'Justo ahora', activeInitiatives: [],
       criticalAlert: dto.criticalAlertMessage ? { type: dto.criticalAlertType || 'Logística', message: dto.criticalAlertMessage, reportedAt: 'Reportada hoy' } : undefined,
     };
+    createCustomPlanForTeam(newTeam.id, newTeam);
     this.allTeams.update((prev) => [newTeam, ...prev]);
-    this.securityUsersSvc.ensureTeamLeaderAndMembers(newTeam);
+    this.securityUsersSvc.ensureTeamLeaderAndMembers(newTeam, dto);
+    syncTeamCreatedToBackend(newTeam, dto);
     return newTeam;
   }
 
-  handleUpdateTeam(teamId: string, updates: Partial<TeamSupervisionSummary>) {
+  handleUpdateTeam(teamId: string, updates: Partial<TeamSupervisionSummary> & Partial<CreateTeamDto>) {
     this.allTeams.update((prev) =>
       prev.map((t) => {
         if (t.id === teamId || t.slug === teamId) {
           const merged = { ...t, ...updates, lastUpdate: 'Justo ahora' };
           if (updates.currentPhaseId) merged.currentPhaseName = PHASE_NAMES_MAP[updates.currentPhaseId] || merged.currentPhaseName;
           if (updates.members) merged.membersCount = updates.members.length;
-          if (updates.leader || updates.members) this.securityUsersSvc.ensureTeamLeaderAndMembers(merged);
+          this.securityUsersSvc.ensureTeamLeaderAndMembers(merged, updates as CreateTeamDto);
           return merged;
         }
         return t;
@@ -112,7 +95,9 @@ export class AdminDashboardService {
   }
 
   handleDeleteTeam(teamId: string) {
+    const target = this.allTeams().find((t) => t.id === teamId || t.slug === teamId);
     this.allTeams.update((prev) => prev.filter((t) => t.id !== teamId && t.slug !== teamId));
+    if (target) syncTeamDeletedToBackend(target);
   }
 
   handlePhaseChange(id: string, phase: PhaseType) {
