@@ -90,8 +90,13 @@ export class NativeHttpClient {
   }
 
   private buildUrl(path: string, queryParams?: Record<string, string | number | boolean | undefined>): string {
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
-    const fullUrl = new URL(`${this.baseUrl}${cleanPath}`, window.location.origin);
+    let cleanPath = path.startsWith('/') ? path : `/${path}`;
+    if (this.baseUrl.endsWith('/api') && cleanPath.startsWith('/api/')) {
+      cleanPath = cleanPath.slice(4);
+    }
+    const fullUrl = this.baseUrl.startsWith('http://') || this.baseUrl.startsWith('https://')
+      ? new URL(`${this.baseUrl}${cleanPath}`)
+      : new URL(`${this.baseUrl}${cleanPath}`, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');
     if (queryParams) {
       Object.entries(queryParams).forEach(([k, v]) => {
         if (v !== undefined) fullUrl.searchParams.set(k, String(v));

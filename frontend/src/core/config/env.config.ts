@@ -14,7 +14,7 @@ export interface AppConfig {
 export const ENV: AppConfig = {
   appName: 'MISINCOL PDM',
   appVersion: '2026.4.0',
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'https://misincol-api.servidor.blog/api',
   isProduction: import.meta.env.PROD || false,
   requestTimeoutMs: 15000,
 };

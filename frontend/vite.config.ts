@@ -13,8 +13,9 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: process.env.VITE_API_PROXY_TARGET || 'https://misincol-api.servidor.blog',
         changeOrigin: true,
+        secure: false,
       },
     },
   },

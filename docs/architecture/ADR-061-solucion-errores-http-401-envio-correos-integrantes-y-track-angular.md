@@ -25,3 +25,4 @@ Durante el despliegue de nuevos equipos territoriales, se detectaron tres incide
 - Despliegue de equipos 100% libre de advertencias y errores en consola de desarrollo.
 - Notificaciones completas a todas las partes interesadas: Coordinador, Líder e Integrantes de campo.
 - Código completamente auditado bajo el límite estricto de 150 líneas por archivo.
+
