@@ -59,3 +59,4 @@ Informes de supervisión generados localmente.
 Agenda pastoral y notas territoriales.
 * **KeyPath:** `id` (string)
 * **Índices:** `by_teamId`: `teamId`
+

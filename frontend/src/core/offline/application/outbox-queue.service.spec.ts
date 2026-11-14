@@ -82,3 +82,4 @@ describe('OutboxQueueService (Unit Tests)', () => {
     expect(stored?.errorMessage).toBe('Timeout de conexión');
   });
 });
+

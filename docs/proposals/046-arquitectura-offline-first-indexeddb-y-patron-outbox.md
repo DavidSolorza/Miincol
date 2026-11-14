@@ -23,3 +23,4 @@ La propuesta formaliza una arquitectura **Offline-First** compuesta por:
 * Cero latencia en interfaces de campo (escritura optimista).
 * Resiliencia ante caídas de red o cortes de energía en zonas rurales.
 * Cero dependencias comerciales pesadas (cumplimiento de gobernanza y límite de 150 líneas).
+

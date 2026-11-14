@@ -68,3 +68,4 @@ describe('SyncCoordinatorService (Unit Tests)', () => {
     expect(markFailedSpy).toHaveBeenCalledWith('outbox-1', 'Network error 503');
   });
 });
+

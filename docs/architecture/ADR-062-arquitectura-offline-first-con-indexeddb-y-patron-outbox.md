@@ -25,3 +25,4 @@ El uso de SQLite WASM añade una sobrecarga de más de 1.5MB al bundle y requier
 * Rendimiento instantáneo para el usuario final.
 * Garantía de entrega eventual de datos sin colisión de claves primarias.
 * Código 100% tipado en TypeScript respetando el límite estricto de 150 líneas por archivo.
+

@@ -29,3 +29,4 @@ export interface SyncStatusState {
   lastSyncedAt?: string;
   error?: string;
 }
+

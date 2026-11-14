@@ -54,3 +54,4 @@ export class SyncStatusBadgeComponent {
     return 'bg-stone-50 text-stone-600 border-stone-200';
   }
 }
+

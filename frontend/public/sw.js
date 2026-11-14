@@ -5,6 +5,7 @@ const CRITICAL_ASSETS = [
   '/manifest.webmanifest',
   '/img/misincol.png',
   '/favicon.svg',
+  '/favicon.ico',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
 ];
