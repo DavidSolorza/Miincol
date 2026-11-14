@@ -1,4 +1,4 @@
-const CACHE_NAME = 'misincol-pdm-cache-v3';
+const CACHE_NAME = 'misincol-pdm-cache-v4';
 const CRITICAL_ASSETS = [
   '/',
   '/index.html',

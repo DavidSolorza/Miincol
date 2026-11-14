@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import type { PhasePlan, Activity, PhaseType, PlanMetrics, Objective, EssentialArea, AreaLevel } from '../domain/plan.types';
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { INITIAL_PLANS_BY_PHASE } from './mockPlanData';
@@ -9,39 +9,29 @@ import { getPlansForTeam } from './teamPhaseMetrics';
 import { logPlanAudit, logActivityUpdateAudit } from './planAuditHelper';
 import { cleanPlansForNewYear } from './planCycleReset';
 import { serviceBus } from '../../../core/bus';
+import { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
+import { queueActivityMutation, queueObjectiveMutation } from './plan-outbox.helper';
 
-// Servicio de aplicación que gestiona el estado reactivo de planes, objetivos y actividades PDM
 @Injectable({ providedIn: 'root' })
 export class PlanService {
-  readonly activePhaseId = signal<PhaseType>('investigacion'); // Fase ministerial activa actualmente
-  readonly activeTeamId = signal<string>('team-wayuu'); // Identificador del equipo misionero activo
-  readonly activeLeader = signal<string>('Líder'); // Nombre del líder del equipo activo
-  readonly pendingAssignee = signal<string | null>(null); // Integrante preseleccionado al asignar tarea desde Información General
-  readonly allPlans = signal<Record<string, PhasePlan>>(getPlansForTeam('team-wayuu')); // Mapa de planes por fase
+  private readonly outbox = inject(OutboxQueueService);
+  readonly activePhaseId = signal<PhaseType>('investigacion');
+  readonly activeTeamId = signal<string>('team-wayuu');
+  readonly activeLeader = signal<string>('Líder');
+  readonly pendingAssignee = signal<string | null>(null);
+  readonly allPlans = signal<Record<string, PhasePlan>>(getPlansForTeam('team-wayuu'));
 
   constructor() {
     serviceBus.subscribe('cycle:year_changed', (evt) => {
-      if (evt.teamId === this.activeTeamId()) {
-        this.persistPlans(cleanPlansForNewYear(this.allPlans()));
-      }
+      if (evt.teamId === this.activeTeamId()) this.persistPlans(cleanPlansForNewYear(this.allPlans()));
     });
   }
 
-  // Plan correspondiente a la fase activa seleccionada
-  readonly plan = computed<PhasePlan>(() => {
-    const phaseId = this.activePhaseId();
-    return this.allPlans()[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
-  });
-
-  // Métricas calculadas automáticamente para el plan activo
+  readonly plan = computed<PhasePlan>(() => this.allPlans()[this.activePhaseId()] || INITIAL_PLANS_BY_PHASE[this.activePhaseId()]);
   readonly metrics = computed<PlanMetrics>(() => calculatePlanMetrics(this.plan()));
   readonly teamTotalBudget = signal<number>(11210000);
+  readonly remainingTeamBudget = computed(() => Math.max(0, this.teamTotalBudget() - calculateTotalPlannedBudget(this.allPlans())));
 
-  readonly remainingTeamBudget = computed(() =>
-    Math.max(0, this.teamTotalBudget() - calculateTotalPlannedBudget(this.allPlans()))
-  );
-
-  // Carga los planes de un equipo específico en el estado reactivo
   loadTeamPlans(teamId: string, teamData?: Partial<TeamSupervisionSummary>): void {
     this.activeTeamId.set(teamId);
     this.activeLeader.set(teamData?.leader || 'Líder');
@@ -49,98 +39,66 @@ export class PlanService {
     this.allPlans.set(getPlansForTeam(teamId, teamData));
   }
 
-  // Persiste los planes actualizados en memoria y en localStorage
   private persistPlans(updated: Record<string, PhasePlan>): void {
     this.allPlans.set(updated);
-    const storageKey = `misincol_pdm_plans_${this.activeTeamId()}`;
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(updated));
-    } catch (e) {
-      console.warn('No se pudo guardar en almacenamiento local:', e);
-    }
+    try { localStorage.setItem(`misincol_pdm_plans_${this.activeTeamId()}`, JSON.stringify(updated)); }
+    catch (e) { console.warn('Error al guardar planes localmente:', e); }
   }
 
-  // Cambia la fase activa del plan ministerial
-  switchPhase(phaseId: PhaseType): void {
-    this.activePhaseId.set(phaseId);
-  }
+  switchPhase(phaseId: PhaseType): void { this.activePhaseId.set(phaseId); }
 
-  // Actualiza los campos de una actividad existente y registra auditoría
   updateActivity(activityId: string, updatedFields: Partial<Activity>): void {
-    const phaseId = this.activePhaseId();
-    const prev = this.allPlans();
-    const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
-    this.persistPlans({
-      ...prev,
-      [phaseId]: applyUpdateActivity(cur, activityId, updatedFields),
-    });
+    const phaseId = this.activePhaseId(), prev = this.allPlans(), cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
+    this.persistPlans({ ...prev, [phaseId]: applyUpdateActivity(cur, activityId, updatedFields) });
+    queueActivityMutation(this.outbox, 'UPDATE', activityId, this.activeTeamId(), phaseId, updatedFields);
     logActivityUpdateAudit(this.activeTeamId(), this.activeLeader(), updatedFields, phaseId);
   }
 
-  // Agrega una nueva actividad al objetivo indicado y registra auditoría
   addActivity(objNum: 1 | 2 | 3 | 4, newAct: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>): void {
-    const phaseId = this.activePhaseId();
-    const prev = this.allPlans();
-    const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
-    this.persistPlans({
-      ...prev,
-      [phaseId]: applyAddActivity(cur, objNum, newAct),
-    });
+    const phaseId = this.activePhaseId(), prev = this.allPlans(), cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
+    const updatedPlan = applyAddActivity(cur, objNum, newAct);
+    this.persistPlans({ ...prev, [phaseId]: updatedPlan });
+    const createdAct = updatedPlan.objectives.find((o) => o.number === objNum)?.activities[0];
+    queueActivityMutation(this.outbox, 'CREATE', createdAct?.id || `act-${Date.now()}`, this.activeTeamId(), phaseId, createdAct);
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'activity_add', 'Agregó nueva actividad', newAct.description.slice(0, 40), phaseId);
   }
 
-  // Elimina una actividad de la fase actual y registra auditoría
   deleteActivity(activityId: string): void {
-    const phaseId = this.activePhaseId();
-    const prev = this.allPlans();
-    const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
-    this.persistPlans({
-      ...prev,
-      [phaseId]: applyDeleteActivity(cur, activityId),
-    });
+    const phaseId = this.activePhaseId(), prev = this.allPlans(), cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
+    this.persistPlans({ ...prev, [phaseId]: applyDeleteActivity(cur, activityId) });
+    queueActivityMutation(this.outbox, 'DELETE', activityId, this.activeTeamId(), phaseId);
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'activity_delete', 'Eliminó actividad', `Actividad eliminada de fase ${phaseId}`, phaseId);
   }
 
-  // Actualiza título o descripción de un objetivo estratégico y registra auditoría
   updateObjective(objNum: number, updates: Partial<Objective>): void {
-    const phaseId = this.activePhaseId();
-    const prev = this.allPlans();
-    const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
-    this.persistPlans({
-      ...prev,
-      [phaseId]: applyUpdateObjective(cur, objNum, updates),
-    });
+    const phaseId = this.activePhaseId(), prev = this.allPlans(), cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
+    this.persistPlans({ ...prev, [phaseId]: applyUpdateObjective(cur, objNum, updates) });
+    queueObjectiveMutation(this.outbox, 'UPDATE', objNum, this.activeTeamId(), phaseId, updates);
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'objective_update', 'Modificó objetivo PDM', updates.title || `Objetivo ${objNum}`, phaseId);
   }
 
-  // Crea un nuevo objetivo estratégico en la fase actual (máximo 4)
   addObjective(newObj: { title: string; description: string; essentialArea?: EssentialArea; areaLevel?: AreaLevel; stage?: string; shortTermGoal?: string; mediumTermGoal?: string; longTermGoal?: string }): 1 | 2 | 3 | 4 | null {
-    const phaseId = this.activePhaseId();
-    const prev = this.allPlans();
-    const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
+    const phaseId = this.activePhaseId(), prev = this.allPlans(), cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
     const result = applyAddObjective(cur, newObj);
     if (!result) return null;
     this.persistPlans({ ...prev, [phaseId]: result.updatedPlan });
+    queueObjectiveMutation(this.outbox, 'CREATE', result.nextNumber, this.activeTeamId(), phaseId, newObj);
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'objective_add', 'Agregó objetivo PDM', newObj.title, phaseId);
     return result.nextNumber;
   }
 
-  // Elimina un objetivo estratégico si existe más de uno en la fase
   deleteObjective(objNum: number): boolean {
-    const phaseId = this.activePhaseId();
-    const prev = this.allPlans();
-    const cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
+    const phaseId = this.activePhaseId(), prev = this.allPlans(), cur = prev[phaseId] || INITIAL_PLANS_BY_PHASE[phaseId];
     const updated = applyDeleteObjective(cur, objNum);
     if (!updated) return false;
     this.persistPlans({ ...prev, [phaseId]: updated });
+    queueObjectiveMutation(this.outbox, 'DELETE', objNum, this.activeTeamId(), phaseId);
     return true;
   }
 
-  // Restablece los planes del equipo activo a sus valores predeterminados
   resetToDefaults(teamData?: Partial<TeamSupervisionSummary>): void {
     const teamId = this.activeTeamId();
     localStorage.removeItem(`misincol_pdm_plans_${teamId}`);
     this.allPlans.set(getPlansForTeam(teamId, teamData));
   }
 }
-

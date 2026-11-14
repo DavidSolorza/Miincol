@@ -73,7 +73,7 @@ export const applyAddActivity = (
   const times = Number(newActivity.timesPerYear) || 1;
   const createdActivity: Activity = {
     ...newActivity,
-    id: `act-${Date.now()}`,
+    id: `act-${typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now()}`,
     objectiveNumber,
     unitBudget: unit,
     timesPerYear: times,
