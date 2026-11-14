@@ -1,4 +1,4 @@
-// Catálogo semilla con las 6 misiones indígenas iniciales a nivel nacional
+// Catálogo de equipos iniciales (vacío en producción para cargar desde base de datos)
 import { wayuuTeam } from './wayuuTeam';
 import { nasaTeam } from './nasaTeam';
 import { pastosTeam } from './pastosTeam';
@@ -7,7 +7,9 @@ import { arhuacoTeam } from './arhuacoTeam';
 import { nukakTeam } from './nukakTeam';
 import type { TeamSupervisionSummary } from '../../domain/admin.types';
 
-export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [ // Lista inicial de equipos para hidratar el sistema
+export const INITIAL_NATIONAL_TEAMS: TeamSupervisionSummary[] = [];
+
+export const FIXTURE_NATIONAL_TEAMS: TeamSupervisionSummary[] = [
   wayuuTeam,
   nasaTeam,
   pastosTeam,

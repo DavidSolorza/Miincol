@@ -59,12 +59,12 @@ export class AppComponent {
     return (
       teams.find((t) => t.id === id) ||
       teams[0] || {
-        id: 'team-wayuu',
-        name: 'Misión Wayuu - Alta Guajira',
-        ethnicity: 'Wayuu',
-        region: 'La Guajira',
-        leader: 'Pr. David Morales',
-        members: ['David Morales'],
+        id: '',
+        name: 'Coordinación Nacional',
+        ethnicity: 'Nacional',
+        region: 'Colombia',
+        leader: 'Hugo Solorza',
+        members: ['Hugo Solorza'],
         themeColor: '#8B251E',
       }
     );

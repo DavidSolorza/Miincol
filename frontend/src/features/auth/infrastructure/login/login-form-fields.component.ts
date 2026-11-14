@@ -21,16 +21,12 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
             list="login-emails-list"
             [value]="identifier"
             (input)="identifierChange.emit($any($event.target).value)"
-            placeholder="ej. director@misincol.org o tu.correo@misincol.org"
+            placeholder="ej. hudisapastos@misincol.org o tu.correo@misincol.org"
             class="w-full pl-3.5 pr-10 py-2.5 rounded-xl text-xs sm:text-sm border border-stone-200 bg-stone-50/50 hover:border-stone-300 focus:bg-white focus:outline-hidden focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 text-stone-900 transition font-medium"
             required
           />
           <datalist id="login-emails-list">
-            <option value="director@misincol.org">👑 Coordinador de Equipos (Supervisión General)</option>
-            <option value="pastos@misincol.org">🌄 Líder Misión Pastos - Cumbal</option>
-            <option value="wayuu@misincol.org">🏜️ Líder Misión Wayúu - Guajira</option>
-            <option value="marcos.chocue@misincol.org">🌿 Líder Misión Nasa - Tierradentro</option>
-            <option value="aida.secue@misincol.org">🤝 Misionera Aída Secue (Nasa)</option>
+            <option value="hudisapastos@misincol.org">👑 Pr. Hugo Solorza (Coordinación Nacional)</option>
             @for (t of allTeams; track t.id) {
               @if (t.leaderEmail) {
                 <option [value]="t.leaderEmail">{{ t.name }} — Líder: {{ t.leader }}</option>

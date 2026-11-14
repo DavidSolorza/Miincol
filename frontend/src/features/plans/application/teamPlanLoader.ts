@@ -51,7 +51,5 @@ export const getPlansForTeam = (
     console.warn('Error al leer planes para equipo:', teamId, e);
   }
 
-  if (teamId === 'team-wayuu') return INITIAL_PLANS_BY_PHASE;
-  if (teamId === 'team-pastos') return PASTOS_PLANS_BY_PHASE;
   return createCustomPlanForTeam(teamId, teamData);
 };

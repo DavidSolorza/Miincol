@@ -1,5 +1,5 @@
 const CLEAN_STORAGE_VERSION_KEY = 'misincol_storage_version';
-const CURRENT_CLEAN_VERSION = '2026.4.0-clean-v2';
+const CURRENT_CLEAN_VERSION = '2026.4.0-clean-v3';
 
 export const OBSOLETE_KEYS_PATTERN = [
   'misincol_temp_',
@@ -7,6 +7,11 @@ export const OBSOLETE_KEYS_PATTERN = [
   'misincol_legacy_',
   'misincol_pdm_plans_',
   'misincol_team_plans_',
+  'misincol_admin_teams',
+  'misincol_system_users_v1',
+  'misincol_security_matrix_v1',
+  'misincol_general_info_',
+  'misincol_special_expenses_',
 ];
 
 export function sanitizeClientStorage(forceReset = false): boolean {

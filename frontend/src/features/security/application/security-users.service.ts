@@ -28,7 +28,16 @@ export class SecurityUsersService {
 
   private async syncFromBackend(): Promise<void> {
     try {
-      await httpClient.get<SystemUser[]>('/audit/logins');
+      const res = await httpClient.get<any[]>('/users');
+      if (Array.isArray(res) && res.length > 0) {
+        const mapped: SystemUser[] = res.map((u: any) => ({
+          id: u.id || `usr-${Date.now()}`, fullName: u.fullName || u.name || 'Usuario', email: u.email,
+          role: u.role === 'ROLE_NACIONAL' ? 'national_director' : u.role === 'ROLE_LIDER' ? 'team_leader' : 'team_member',
+          teamId: u.teamId || undefined, teamName: u.teamName || undefined,
+          territory: u.territory || (u.role === 'ROLE_NACIONAL' ? 'Nacional • Colombia' : ''), phone: u.phone || '',
+        }));
+        this.persist(mapped);
+      }
     } catch { /* Usar respaldo de localStorage */ }
   }
 

@@ -1,11 +1,11 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import type { TeamSupervisionSummary, TeamHealthStatus, CreateTeamDto } from '../domain/admin.types';
 import type { PhaseType } from '../../plans/domain/plan.types';
-import { INITIAL_NATIONAL_TEAMS } from './initialTeams';
 import { calculateNationalKpis } from './adminKpiCalculations';
 import { getTeamPhaseMetrics, PHASE_NAMES_MAP, createCustomPlanForTeam } from '../../plans/application/teamPhaseMetrics';
 import { SecurityUsersService } from '../../security/application/security-users.service';
 import { syncTeamCreatedToBackend, syncTeamDeletedToBackend } from './admin-teams-sync.helper';
+import { httpClient } from '../../../core/http/httpClient';
 
 const STORAGE_KEY = 'misincol_admin_teams';
 
@@ -36,7 +36,22 @@ export class AdminDashboardService {
         console.warn('Error al persistir equipos:', e);
       }
     });
-    this.allTeams().forEach((t) => this.securityUsersSvc.ensureTeamLeaderAndMembers(t));
+    this.syncFromBackend();
+  }
+
+  private async syncFromBackend(): Promise<void> {
+    try {
+      const teams = await httpClient.get<TeamSupervisionSummary[]>('/teams');
+      if (Array.isArray(teams)) {
+        const mapped = teams.map((t) => ({
+          ...t,
+          members: t.members && t.members.length > 0 ? t.members : [t.leader],
+          ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t),
+        }));
+        this.allTeams.set(mapped);
+        mapped.forEach((t) => this.securityUsersSvc.ensureTeamLeaderAndMembers(t));
+      }
+    } catch { /* Usar estado local si el backend no responde */ }
   }
 
   private loadInitialTeams(): TeamSupervisionSummary[] {
@@ -44,18 +59,18 @@ export class AdminDashboardService {
       const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
       if (stored) {
         const parsed: TeamSupervisionSummary[] = JSON.parse(stored);
-        const hasPastos = parsed.some((t) => t.id === 'team-pastos' || t.slug === 'team-pastos');
-        const list = hasPastos ? parsed : [...parsed, INITIAL_NATIONAL_TEAMS.find((t) => t.id === 'team-pastos')!];
-        return list.map((t) => {
-          const init = INITIAL_NATIONAL_TEAMS.find((it) => it.id === t.id || it.slug === t.slug);
-          const mem = (t.members && t.members.length > 0) ? t.members : (init?.members || [t.leader]);
-          return { ...t, coordinates: t.coordinates || init?.coordinates, members: mem, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) };
-        });
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((t) => ({
+            ...t,
+            members: (t.members && t.members.length > 0) ? t.members : [t.leader],
+            ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t),
+          }));
+        }
       }
     } catch (e) {
       console.warn('Error al cargar equipos:', e);
     }
-    return INITIAL_NATIONAL_TEAMS.map((t) => ({ ...t, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) }));
+    return [];
   }
 
   handleCreateTeam(dto: CreateTeamDto): TeamSupervisionSummary {

@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { calculateNationalKpis } from './adminKpiCalculations';
-import { INITIAL_NATIONAL_TEAMS } from './initialTeams/index';
+import { FIXTURE_NATIONAL_TEAMS } from './initialTeams/index';
 
 describe('adminKpiCalculations (Frontend Unit Tests)', () => {
   it('debe calcular exactamente los KPIs nacionales con los 6 equipos territoriales', () => {
-    const kpis = calculateNationalKpis(INITIAL_NATIONAL_TEAMS);
+    const kpis = calculateNationalKpis(FIXTURE_NATIONAL_TEAMS);
 
     expect(kpis.totalTeams).toBe(6);
     expect(kpis.totalNationalBudget).toBe(94610000);

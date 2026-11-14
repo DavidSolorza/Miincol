@@ -97,8 +97,10 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   handleSelectTab(tab: 'admin' | 'team') {
     this.activeTab.set(tab); this.error.set(null);
     if (tab === 'team') {
-      this.identifier.set('pastos@misincol.org'); this.password.set('pastos2026');
-      this.selectedQuickChip.set('pastos');
+      const firstTeam = this.allTeams[0];
+      this.identifier.set(firstTeam?.leaderEmail || '');
+      this.password.set(firstTeam?.accessPin || '');
+      this.selectedQuickChip.set(firstTeam?.slug || '');
     } else {
       this.identifier.set('hudisapastos@misincol.org'); this.password.set('admin2026');
       this.selectedQuickChip.set('director');

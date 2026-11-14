@@ -10,11 +10,6 @@ export interface QuickCredentialPayload {
 
 const PREDEFINED_CHIPS = [
   { type: 'admin' as const, user: 'hudisapastos@misincol.org', pass: 'admin2026', key: 'director', label: '👑 Pr. Hugo Solorza', roleBadge: 'admin2026', isSpecial: true, color: '#8B251E' },
-  { type: 'team' as const, user: 'pastos@misincol.org', pass: 'pastos2026', key: 'pastos', label: '🌄 Líder Pastos', roleBadge: 'pastos2026', isSpecial: false, color: '#1D4ED8' },
-  { type: 'team' as const, user: 'wayuu@misincol.org', pass: 'wayuu2026', key: 'wayuu', label: '🏜️ Líder Wayúu', roleBadge: 'wayuu2026', isSpecial: false, color: '#B45309' },
-  { type: 'team' as const, user: 'marcos.chocue@misincol.org', pass: 'nasa2026', key: 'nasa', label: '🌿 Líder Nasa', roleBadge: 'nasa2026', isSpecial: false, color: '#047857' },
-  { type: 'team' as const, user: 'aida.secue@misincol.org', pass: 'nasa2026', key: 'aida', label: '🤝 Misionera Aída', roleBadge: 'nasa2026', isSpecial: false, color: '#059669' },
-  { type: 'team' as const, user: 'embera@misincol.org', pass: 'embera2026', key: 'embera', label: '🌴 Líder Émbera', roleBadge: 'embera2026', isSpecial: false, color: '#7E22CE' },
 ];
 
 @Component({
@@ -59,7 +54,7 @@ const PREDEFINED_CHIPS = [
   `,
 })
 export class LoginQuickAccessChipsComponent {
-  @Input() selectedQuickChip = 'wayuu';
+  @Input() selectedQuickChip = 'director';
   @Output() fillCredentials = new EventEmitter<QuickCredentialPayload>();
 
   readonly chips = PREDEFINED_CHIPS;
