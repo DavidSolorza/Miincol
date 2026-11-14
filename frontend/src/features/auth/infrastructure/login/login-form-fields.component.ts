@@ -1,4 +1,4 @@
-// Formulario de inicio de sesión centrado en tema claro con botón pill de alto contraste
+// Formulario de inicio de sesión unificado con botón institucional estándar
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
@@ -47,14 +47,14 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
       <button
         type="submit"
         [disabled]="loading"
-        class="h-12 sm:h-13 w-full py-3 px-6 rounded-full bg-slate-900 hover:bg-black text-white font-extrabold text-xs sm:text-sm uppercase tracking-widest shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 active:scale-[0.98] mt-4"
+        class="h-12 sm:h-13 w-full py-3 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 active:scale-[0.99] mt-4 font-['Outfit']"
       >
         @if (loading) {
           <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
           <span>Verificando credenciales...</span>
         } @else {
-          <span>INGRESAR A LA PLATAFORMA</span>
-          <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-xs"></span>
+          <span>Ingresar a la Plataforma</span>
+          <app-icon name="arrow-right" className="w-4 h-4" />
         }
       </button>
     </form>
