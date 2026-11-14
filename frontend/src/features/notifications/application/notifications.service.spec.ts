@@ -2,12 +2,16 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createEnvironmentInjector, runInInjectionContext, type EnvironmentInjector } from '@angular/core';
 import { NotificationsService } from './notifications.service';
 import { ToastService } from '../../../shared/components/toast/toast.service';
+import { httpClient } from '../../../core/http/httpClient';
 
 describe('NotificationsService (Frontend In-App Notifications)', () => {
   let service: NotificationsService;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(httpClient, 'get').mockRejectedValue(new Error('test mock'));
+    vi.spyOn(httpClient, 'post').mockResolvedValue({});
+    vi.spyOn(httpClient, 'patch').mockResolvedValue({});
     const injector = createEnvironmentInjector([ToastService], null as unknown as EnvironmentInjector);
     service = runInInjectionContext(injector, () => new NotificationsService());
   });

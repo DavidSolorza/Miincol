@@ -9,7 +9,7 @@ export interface QuickCredentialPayload {
 }
 
 const PREDEFINED_CHIPS = [
-  { type: 'admin' as const, user: 'director@misincol.org', pass: 'director2026', key: 'director', label: '👑 Coordinador de Equipos', roleBadge: 'director2026', isSpecial: true, color: '#8B251E' },
+  { type: 'admin' as const, user: 'hudisapastos@misincol.org', pass: 'admin2026', key: 'director', label: '👑 Pr. Hugo Solorza', roleBadge: 'admin2026', isSpecial: true, color: '#8B251E' },
   { type: 'team' as const, user: 'pastos@misincol.org', pass: 'pastos2026', key: 'pastos', label: '🌄 Líder Pastos', roleBadge: 'pastos2026', isSpecial: false, color: '#1D4ED8' },
   { type: 'team' as const, user: 'wayuu@misincol.org', pass: 'wayuu2026', key: 'wayuu', label: '🏜️ Líder Wayúu', roleBadge: 'wayuu2026', isSpecial: false, color: '#B45309' },
   { type: 'team' as const, user: 'marcos.chocue@misincol.org', pass: 'nasa2026', key: 'nasa', label: '🌿 Líder Nasa', roleBadge: 'nasa2026', isSpecial: false, color: '#047857' },

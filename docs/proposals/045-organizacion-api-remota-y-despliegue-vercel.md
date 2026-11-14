@@ -23,3 +23,4 @@
    - Integración nativa con `ENV.apiBaseUrl` y transmisión de credenciales para todas las altas y bajas de misión.
 5. **Proxy de Desarrollo Vite (`vite.config.ts`)**:
    - Proxy local redirigido hacia `https://misincol-api.servidor.blog`.
+

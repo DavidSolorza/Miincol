@@ -39,6 +39,14 @@ export class NativeHttpClient {
     });
   }
 
+  public async patch<T>(path: string, body?: unknown, options?: HttpRequestOptions): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: 'PATCH',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  }
+
   public async delete<T>(path: string, options?: HttpRequestOptions): Promise<T> {
     return this.request<T>(path, { ...options, method: 'DELETE' });
   }

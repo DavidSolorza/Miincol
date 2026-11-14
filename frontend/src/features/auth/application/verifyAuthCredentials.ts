@@ -36,8 +36,8 @@ export const verifyAuthCredentials = ({
       return;
     }
 
-    const isAdminEmail = ['director@misincol.org', 'admin@misincol.org', 'director', 'admin'].includes(cleanUser);
-    const isAdminPass = ['director2026', 'admin2026', '210910624Dj'].includes(cleanPass);
+    const isAdminEmail = ['director@misincol.org', 'admin@misincol.org', 'hudisapastos@misincol.org', 'director', 'admin'].includes(cleanUser);
+    const isAdminPass = ['director2026', 'admin2026', 'pastos2026', 'misincol2026', '210910624Dj'].includes(cleanPass);
 
     if (isAdminEmail) {
       if (isAdminPass) { onAdminSuccess(); return; }

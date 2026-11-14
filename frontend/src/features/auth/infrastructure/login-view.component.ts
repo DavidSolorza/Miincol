@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnInit
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { verifyAuthCredentials } from '../application/verifyAuthCredentials';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
+import { httpClient } from '../../../core/http/httpClient';
 import { LoginHeroCardComponent } from './login/login-hero-card.component';
 import { LoginCardHeaderComponent } from './login/login-card-header.component';
 import { LoginRoleTabsComponent } from './login/login-role-tabs.component';
@@ -63,8 +64,8 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   @Output() memberSuccess = new EventEmitter<{ team: TeamSupervisionSummary; memberName: string }>();
 
   readonly activeTab = signal<'admin' | 'team'>('admin');
-  readonly identifier = signal('director@misincol.org');
-  readonly password = signal('director2026');
+  readonly identifier = signal('hudisapastos@misincol.org');
+  readonly password = signal('admin2026');
   readonly showPassword = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -99,7 +100,7 @@ export class LoginViewComponent implements OnInit, OnDestroy {
       this.identifier.set('pastos@misincol.org'); this.password.set('pastos2026');
       this.selectedQuickChip.set('pastos');
     } else {
-      this.identifier.set('director@misincol.org'); this.password.set('director2026');
+      this.identifier.set('hudisapastos@misincol.org'); this.password.set('admin2026');
       this.selectedQuickChip.set('director');
     }
   }
@@ -115,6 +116,13 @@ export class LoginViewComponent implements OnInit, OnDestroy {
 
   handleSubmit() {
     this.loading.set(true); this.error.set(null);
+    httpClient.post<{ accessToken?: string; token?: string }>('/auth/login', {
+      identifier: this.identifier(), password: this.password(),
+    }).then((res) => {
+      const tok = res?.accessToken || res?.token;
+      if (tok && typeof localStorage !== 'undefined') localStorage.setItem('misincol_auth_token', tok);
+    }).catch(() => {});
+
     verifyAuthCredentials({
       activeTab: this.activeTab(), identifier: this.identifier(), password: this.password(), allTeams: this.allTeams,
       onAdminSuccess: (ctx) => this.adminSuccess.emit(ctx),
