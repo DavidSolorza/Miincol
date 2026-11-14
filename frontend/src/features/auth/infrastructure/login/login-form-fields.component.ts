@@ -18,21 +18,13 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
         <div class="relative">
           <input
             type="text"
-            list="login-emails-list"
+            
             [value]="identifier"
             (input)="identifierChange.emit($any($event.target).value)"
-            placeholder="ej. hudisapastos@misincol.org o tu.correo@misincol.org"
+            placeholder="Correo Electronico"
             class="h-12 sm:h-13 w-full pl-4 pr-11 rounded-xl text-sm sm:text-base border border-slate-200 bg-slate-50/50 hover:bg-slate-50 focus:bg-white focus:outline-hidden focus:border-slate-800 focus:ring-2 focus:ring-slate-900/10 text-slate-900 font-medium placeholder-slate-400 transition"
             required
           />
-          <datalist id="login-emails-list">
-            <option value="hudisapastos@misincol.org">👑 Pr. Hugo Solorza (Coordinación Nacional)</option>
-            @for (t of allTeams; track t.id) {
-              @if (t.leaderEmail) {
-                <option [value]="t.leaderEmail">{{ t.name }} — Líder: {{ t.leader }}</option>
-              }
-            }
-          </datalist>
           <app-icon name="mail" className="w-4.5 h-4.5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
@@ -61,7 +53,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
   `,
 })
 export class LoginFormFieldsComponent {
-  @Input({ required: true }) activeTab!: 'admin' | 'team';
+  @Input() activeTab?: 'admin' | 'team';
   @Input({ required: true }) identifier!: string;
   @Input({ required: true }) password!: string;
   @Input() showPassword = false;

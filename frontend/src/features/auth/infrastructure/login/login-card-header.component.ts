@@ -16,9 +16,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
         />
       </div>
       <div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Acceso al Sistema
-        </h2>
         <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed">
           Ingresa tus credenciales para acceder a la gestión y supervisión ministerial.
         </p>

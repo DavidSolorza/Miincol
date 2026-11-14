@@ -4,7 +4,6 @@ import { verifyAuthCredentials } from '../application/verifyAuthCredentials';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import { httpClient } from '../../../core/http/httpClient';
 import { LoginCardHeaderComponent } from './login/login-card-header.component';
-import { LoginRoleTabsComponent } from './login/login-role-tabs.component';
 import { LoginFormFieldsComponent } from './login/login-form-fields.component';
 import { LoginSupportFooterComponent } from './login/login-support-footer.component';
 
@@ -13,7 +12,7 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
   standalone: true,
   imports: [
     AppIconComponent, LoginCardHeaderComponent,
-    LoginRoleTabsComponent, LoginFormFieldsComponent, LoginSupportFooterComponent,
+    LoginFormFieldsComponent, LoginSupportFooterComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -25,7 +24,6 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
       <!-- Tarjeta Central de Acceso con Buen Tamaño y Proporción -->
       <div class="w-full max-w-md sm:max-w-lg bg-white rounded-3xl sm:rounded-[32px] shadow-xl shadow-slate-900/5 border border-slate-200/90 p-6 sm:p-8 lg:p-10 space-y-6 sm:space-y-7 relative z-10">
         <app-login-card-header />
-        <app-login-role-tabs [activeTab]="activeTab()" (selectTab)="handleSelectTab($event)" />
 
         @if (error()) {
           <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-medium flex items-start gap-2.5 animate-fadeIn">
@@ -35,7 +33,7 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
         }
 
         <app-login-form-fields
-          [activeTab]="activeTab()" [identifier]="identifier()" (identifierChange)="identifier.set($event)"
+          [identifier]="identifier()" (identifierChange)="identifier.set($event)"
           [password]="password()" (passwordChange)="password.set($event)" [showPassword]="showPassword()"
           (showPasswordChange)="showPassword.set($event)" [loading]="loading()" [allTeams]="allTeams"
           (teamSelect)="handleTeamSelect($event)" (submitForm)="handleSubmit()"
@@ -53,7 +51,6 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   @Output() teamSuccess = new EventEmitter<{ team: TeamSupervisionSummary; isNationalAdmin?: boolean }>();
   @Output() memberSuccess = new EventEmitter<{ team: TeamSupervisionSummary; memberName: string }>();
 
-  readonly activeTab = signal<'admin' | 'team'>('admin');
   readonly identifier = signal('hudisapastos@misincol.org');
   readonly password = signal('admin2026');
   readonly showPassword = signal(false);
@@ -73,25 +70,11 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     if (typeof window === 'undefined') return;
     try {
       const p = new URLSearchParams(window.location.search);
-      const u = p.get('user') || p.get('u'), pin = p.get('pin') || p.get('p'), tab = p.get('tab') as 'admin' | 'team' | null, auto = p.get('auto') === 'true';
-      if (u) {
-        this.identifier.set(u.trim());
-        this.activeTab.set(tab === 'admin' ? 'admin' : 'team');
-      }
+      const u = p.get('user') || p.get('u'), pin = p.get('pin') || p.get('p'), auto = p.get('auto') === 'true';
+      if (u) this.identifier.set(u.trim());
       if (pin) this.password.set(pin.trim());
       if (u && pin && auto) setTimeout(() => this.handleSubmit(), 200);
     } catch { /* ignore */ }
-  }
-
-  handleSelectTab(tab: 'admin' | 'team') {
-    this.activeTab.set(tab); this.error.set(null);
-    if (tab === 'team') {
-      const firstTeam = this.allTeams[0];
-      this.identifier.set(firstTeam?.leaderEmail || '');
-      this.password.set(firstTeam?.accessPin || '');
-    } else {
-      this.identifier.set('hudisapastos@misincol.org'); this.password.set('admin2026');
-    }
   }
 
   handleTeamSelect(val: string) {
@@ -107,8 +90,14 @@ export class LoginViewComponent implements OnInit, OnDestroy {
       if (tok && typeof localStorage !== 'undefined') localStorage.setItem('misincol_auth_token', tok);
     }).catch(() => {});
 
+    const cleanUser = this.identifier().trim().toLowerCase();
+    const isAdmin = ['director@misincol.org', 'admin@misincol.org', 'hudisapastos@misincol.org', 'director', 'admin'].includes(cleanUser);
+
     verifyAuthCredentials({
-      activeTab: this.activeTab(), identifier: this.identifier(), password: this.password(), allTeams: this.allTeams,
+      activeTab: isAdmin ? 'admin' : 'team',
+      identifier: this.identifier(),
+      password: this.password(),
+      allTeams: this.allTeams,
       onAdminSuccess: (ctx) => this.adminSuccess.emit(ctx),
       onDirectorGeneralSuccess: () => this.directorGeneralSuccess.emit(),
       onTeamSuccess: (team, isNat) => this.teamSuccess.emit({ team, isNationalAdmin: isNat }),
