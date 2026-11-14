@@ -1,4 +1,4 @@
-// Formulario de inicio de sesión unificado por correo institucional y contraseña
+// Formulario de inicio de sesión dark minimalista con botón pill de alto contraste
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../../admin/domain/admin.types';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
@@ -10,9 +10,9 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
   imports: [AppIconComponent, PasswordInputFieldComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <form (submit)="onSubmit($event)" class="space-y-3 sm:space-y-3.5 font-['Outfit']">
+    <form (submit)="onSubmit($event)" class="space-y-4 font-['Outfit']">
       <div>
-        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">
           Correo Electrónico (Institucional o de Campo)
         </label>
         <div class="relative">
@@ -22,7 +22,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
             [value]="identifier"
             (input)="identifierChange.emit($any($event.target).value)"
             placeholder="ej. hudisapastos@misincol.org o tu.correo@misincol.org"
-            class="h-12 w-full pl-4 pr-11 rounded-xl text-sm border border-slate-200 bg-slate-50/50 hover:bg-slate-50 focus:bg-white focus:outline-hidden focus:border-slate-800 focus:ring-2 focus:ring-slate-900/10 text-slate-900 font-medium transition"
+            class="h-12 w-full pl-4 pr-11 rounded-xl text-sm border border-slate-800 bg-slate-900/80 hover:border-slate-700 focus:bg-slate-900 focus:outline-hidden focus:border-slate-400 focus:ring-2 focus:ring-slate-400/20 text-white font-medium placeholder-slate-500 transition"
             required
           />
           <datalist id="login-emails-list">
@@ -33,7 +33,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
               }
             }
           </datalist>
-          <app-icon name="mail" className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <app-icon name="mail" className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 
@@ -47,14 +47,14 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
       <button
         type="submit"
         [disabled]="loading"
-        class="h-12 w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 active:scale-[0.99] mt-2"
+        class="h-12 w-full py-3 px-6 rounded-full bg-white hover:bg-slate-100 text-slate-950 font-extrabold text-xs uppercase tracking-widest shadow-lg shadow-white/10 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:scale-[0.98] mt-4"
       >
         @if (loading) {
-          <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          <span>Verificando credenciales...</span>
+          <div class="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin"></div>
+          <span>Verificando...</span>
         } @else {
           <span>Ingresar a la Plataforma</span>
-          <app-icon name="arrow-right" className="w-4 h-4" />
+          <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
         }
       </button>
     </form>

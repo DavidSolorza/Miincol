@@ -1,26 +1,26 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-// Encabezado del formulario de login con el logotipo institucional de MISINCOL y subtítulo
+// Encabezado del formulario de login en modo Dark Minimalista con identidad MISINCOL
 @Component({
   selector: 'app-login-card-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="space-y-2.5 sm:space-y-3 font-['Outfit']">
-      <div class="flex items-center justify-center">
+    <div class="space-y-3 font-['Outfit'] text-center sm:text-left">
+      <div class="flex items-center justify-center sm:justify-start">
         <img
           src="/img/misincol.png"
           alt="MISINCOL - Misiones Indígenas en Colombia"
-          class="h-14 sm:h-16 lg:h-18 w-auto max-w-[240px] sm:max-w-[300px] object-contain drop-shadow-xs select-none transition-transform hover:scale-102"
+          class="h-14 sm:h-16 w-auto max-w-[240px] sm:max-w-[280px] object-contain drop-shadow-md select-none transition-transform hover:scale-102"
           loading="eager"
         />
       </div>
       <div>
-        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           Acceso al Sistema
         </h2>
-        <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-relaxed">
-          Selecciona tu misión o rol de supervisión para ingresar al plan de desarrollo ministerial.
+        <p class="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
+          Ingresa tus credenciales para acceder a la gestión y supervisión ministerial.
         </p>
       </div>
     </div>
