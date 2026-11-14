@@ -7,7 +7,6 @@ import { LoginHeroCardComponent } from './login/login-hero-card.component';
 import { LoginCardHeaderComponent } from './login/login-card-header.component';
 import { LoginRoleTabsComponent } from './login/login-role-tabs.component';
 import { LoginFormFieldsComponent } from './login/login-form-fields.component';
-import { LoginQuickAccessChipsComponent, type QuickCredentialPayload } from './login/login-quick-access-chips.component';
 import { LoginSupportFooterComponent } from './login/login-support-footer.component';
 
 @Component({
@@ -15,21 +14,20 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
   standalone: true,
   imports: [
     AppIconComponent, LoginHeroCardComponent, LoginCardHeaderComponent,
-    LoginRoleTabsComponent, LoginFormFieldsComponent, LoginQuickAccessChipsComponent,
-    LoginSupportFooterComponent,
+    LoginRoleTabsComponent, LoginFormFieldsComponent, LoginSupportFooterComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-[#F6F4EF] flex items-center justify-center p-3 sm:p-5 lg:p-8 relative overflow-x-hidden selection:bg-[#E67324]/20 selection:text-[#8B251E]">
-      <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-[#8B251E]/10 rounded-full blur-[100px] pointer-events-none gpu-layer transform-gpu"></div>
-      <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#E67324]/12 rounded-full blur-[100px] pointer-events-none gpu-layer transform-gpu"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none gpu-layer transform-gpu"></div>
+    <div class="min-h-screen bg-slate-50 flex items-center justify-center p-3 sm:p-5 lg:p-8 relative overflow-x-hidden selection:bg-slate-900 selection:text-white font-['Outfit']">
+      <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-slate-900/5 rounded-full blur-[100px] pointer-events-none transform-gpu"></div>
+      <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-blue-900/5 rounded-full blur-[100px] pointer-events-none transform-gpu"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none transform-gpu"></div>
 
-      <div class="w-full max-w-5xl bg-white rounded-[28px] sm:rounded-[36px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] border border-stone-200/80 p-3 sm:p-4 lg:p-5 flex flex-col md:flex-row gap-5 lg:gap-8 items-stretch relative z-10" style="zoom: 0.85;">
+      <div class="w-full max-w-5xl bg-white rounded-3xl sm:rounded-[32px] shadow-xl shadow-slate-900/5 border border-slate-200/90 p-4 sm:p-6 lg:p-8 flex flex-col md:flex-row gap-6 lg:gap-8 items-stretch relative z-10">
         <app-login-hero-card />
 
-        <div class="flex-1 p-3 sm:p-5 lg:p-7 flex flex-col justify-between">
-          <div class="space-y-5">
+        <div class="flex-1 p-2 sm:p-4 lg:p-6 flex flex-col justify-between">
+          <div class="space-y-4 sm:space-y-5">
             <app-login-card-header />
             <app-login-role-tabs [activeTab]="activeTab()" (selectTab)="handleSelectTab($event)" />
 
@@ -46,8 +44,6 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
               (showPasswordChange)="showPassword.set($event)" [loading]="loading()" [allTeams]="allTeams"
               (teamSelect)="handleTeamSelect($event)" (submitForm)="handleSubmit()"
             />
-
-            <app-login-quick-access-chips [selectedQuickChip]="selectedQuickChip()" (fillCredentials)="fillCredentials($event)" />
           </div>
 
           <app-login-support-footer />
@@ -69,7 +65,6 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   readonly showPassword = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
-  readonly selectedQuickChip = signal('director');
 
   ngOnInit() {
     if (typeof document !== 'undefined') { document.body.style.overflow = 'hidden'; document.documentElement.style.overflow = 'hidden'; }
@@ -100,20 +95,13 @@ export class LoginViewComponent implements OnInit, OnDestroy {
       const firstTeam = this.allTeams[0];
       this.identifier.set(firstTeam?.leaderEmail || '');
       this.password.set(firstTeam?.accessPin || '');
-      this.selectedQuickChip.set(firstTeam?.slug || '');
     } else {
       this.identifier.set('hudisapastos@misincol.org'); this.password.set('admin2026');
-      this.selectedQuickChip.set('director');
     }
   }
 
   handleTeamSelect(val: string) {
-    this.identifier.set(val); this.selectedQuickChip.set(val.replace(/^team-/, '').toLowerCase());
-  }
-
-  fillCredentials(p: QuickCredentialPayload) {
-    this.activeTab.set(p.type); this.selectedQuickChip.set(p.chipKey); this.error.set(null);
-    this.identifier.set(p.user); this.password.set(p.pass);
+    this.identifier.set(val);
   }
 
   handleSubmit() {

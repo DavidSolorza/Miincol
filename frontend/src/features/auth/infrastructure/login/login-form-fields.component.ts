@@ -10,9 +10,9 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
   imports: [AppIconComponent, PasswordInputFieldComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <form (submit)="onSubmit($event)" class="space-y-2.5 sm:space-y-3 font-['Outfit']">
+    <form (submit)="onSubmit($event)" class="space-y-3 sm:space-y-3.5 font-['Outfit']">
       <div>
-        <label class="block text-xs font-semibold text-stone-600 mb-1">
+        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
           Correo Electrónico (Institucional o de Campo)
         </label>
         <div class="relative">
@@ -22,7 +22,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
             [value]="identifier"
             (input)="identifierChange.emit($any($event.target).value)"
             placeholder="ej. hudisapastos@misincol.org o tu.correo@misincol.org"
-            class="w-full pl-3.5 pr-10 py-2.5 rounded-xl text-xs sm:text-sm border border-stone-200 bg-stone-50/50 hover:border-stone-300 focus:bg-white focus:outline-hidden focus:border-stone-400 focus:ring-2 focus:ring-stone-200/50 text-stone-900 transition font-medium"
+            class="h-12 w-full pl-4 pr-11 rounded-xl text-sm border border-slate-200 bg-slate-50/50 hover:bg-slate-50 focus:bg-white focus:outline-hidden focus:border-slate-800 focus:ring-2 focus:ring-slate-900/10 text-slate-900 font-medium transition"
             required
           />
           <datalist id="login-emails-list">
@@ -33,7 +33,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
               }
             }
           </datalist>
-          <app-icon name="mail" className="w-4 h-4 text-stone-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <app-icon name="mail" className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </div>
 
@@ -47,7 +47,7 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
       <button
         type="submit"
         [disabled]="loading"
-        class="w-full py-2.5 sm:py-3 px-4 rounded-xl bg-[#18181b] hover:bg-black text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 active:scale-[0.99] mt-1"
+        class="h-12 w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-sm shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 active:scale-[0.99] mt-2"
       >
         @if (loading) {
           <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
