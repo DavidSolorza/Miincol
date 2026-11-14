@@ -101,10 +101,7 @@ export class AppWorkspaceComponent {
 
   readonly isSuperAdmin = computed(() => this.sessionSvc.session()?.role === 'admin');
   readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || (this.sessionSvc.activeView() !== 'superadmin' && this.sessionSvc.activeView() !== 'security' && this.sessionSvc.activeView() !== 'audit'));
-  readonly whatsappUrl = computed(() => {
-    const clean = (this.activeTeam().leaderPhone || '').replace(/[^\d]/g, '');
-    return clean ? `https://wa.me/${clean}?text=${encodeURIComponent(`Hola ${this.activeTeam().leader}, te contacto de la Coordinación de Equipos de Misincol.`)}` : null;
-  });
+  readonly whatsappUrl = computed(() => null);
 
   constructor() {
     effect(() => {

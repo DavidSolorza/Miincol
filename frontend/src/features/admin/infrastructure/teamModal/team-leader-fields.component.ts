@@ -10,7 +10,7 @@ import { TeamMemberInputRowComponent } from './team-member-input-row.component';
   imports: [TeamMemberInputRowComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="space-y-3 pt-2 border-t border-stone-100">
+    <div class="space-y-3 pt-2 border-t border-stone-100 font-['Outfit']">
       <h4 class="text-xs font-bold text-stone-700 uppercase tracking-wider">Liderazgo y Acceso Pastoral</h4>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
@@ -25,21 +25,7 @@ import { TeamMemberInputRowComponent } from './team-member-input-row.component';
           />
         </div>
         <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">Teléfono Móvil (WhatsApp) *</label>
-          <input
-            type="text"
-            [value]="formData.leaderPhone"
-            (input)="updateChange.emit({ leaderPhone: $any($event.target).value })"
-            placeholder="+57 312 458 9201"
-            class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-stone-400 text-stone-800"
-            required
-          />
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">Correo de Acceso del Líder</label>
+          <label class="block text-xs font-bold text-stone-600 mb-1">Correo de Acceso del Líder *</label>
           <input
             type="email"
             list="leader-users-datalist"
@@ -47,6 +33,7 @@ import { TeamMemberInputRowComponent } from './team-member-input-row.component';
             (input)="onLeaderEmailChange($any($event.target).value)"
             placeholder="pastor@misincol.org"
             class="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:outline-hidden focus:border-stone-400 text-stone-800"
+            required
           />
           <datalist id="leader-users-datalist">
             @for (u of availableUsers(); track (u.email + '-' + $index)) {
@@ -54,9 +41,10 @@ import { TeamMemberInputRowComponent } from './team-member-input-row.component';
             }
           </datalist>
         </div>
-        <div class="flex items-center text-[11px] text-stone-500 bg-stone-100/60 p-2.5 rounded-xl border border-stone-200/60">
-          <span>El líder y los integrantes ingresan con su propio correo y la contraseña compartida del equipo.</span>
-        </div>
+      </div>
+
+      <div class="text-[11px] text-stone-500 bg-stone-100/60 p-2.5 rounded-xl border border-stone-200/60">
+        <span>El pastor líder y los integrantes ingresan a la plataforma utilizando su correo institucional y la clave compartida de su equipo.</span>
       </div>
 
       <div class="pt-2 border-t border-stone-100 space-y-2">

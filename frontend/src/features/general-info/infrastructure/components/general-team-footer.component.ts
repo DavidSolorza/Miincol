@@ -64,11 +64,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         </div>
 
         <div class="p-2.5 rounded-xl bg-stone-50/70 border border-stone-200/70">
-          <span class="text-[10px] uppercase font-bold text-stone-400 block">Contacto WhatsApp</span>
+          <span class="text-[10px] uppercase font-bold text-stone-400 block">Correo Institucional</span>
           @if (isEditingField()) {
-            <input type="text" [value]="teamData().leaderPhone || '+57 312 450 1234'" (change)="onFieldChange('leaderPhone', $event)" class="w-full bg-white font-bold p-1 rounded-lg border border-stone-200 mt-1" />
+            <input type="email" [value]="teamData().leaderEmail || 'pastor@misincol.org'" (change)="onFieldChange('leaderEmail', $event)" class="w-full bg-white font-bold p-1 rounded-lg border border-stone-200 mt-1" />
           } @else {
-            <span class="font-extrabold text-emerald-800 text-xs sm:text-sm block mt-0.5 truncate font-mono">{{ teamData().leaderPhone || '+57 312 450 1234' }}</span>
+            <span class="font-extrabold text-stone-800 text-xs sm:text-sm block mt-0.5 truncate">{{ teamData().leaderEmail || 'pastor@misincol.org' }}</span>
           }
         </div>
       </div>

@@ -74,7 +74,7 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
               />
               <input
                 type="text"
-                placeholder="Teléfono móvil (WhatsApp)"
+                placeholder="Correo Electrónico"
                 [value]="newPhone()"
                 (input)="newPhone.set($any($event.target).value)"
                 class="px-3 py-1.5 rounded-lg border border-stone-200 bg-white text-xs focus:outline-hidden focus:border-stone-400 focus:ring-1 focus:ring-stone-300"
@@ -98,7 +98,7 @@ import type { GeneralTeamData } from '../../domain/general-info.types';
             <div class="p-2.5 rounded-xl border border-stone-200/80 bg-white flex items-center justify-between gap-2 shadow-2xs">
               <div class="min-w-0">
                 <span class="text-xs font-bold text-stone-900 block truncate">{{ m.name }}</span>
-                <span class="text-[10px] text-stone-500 block truncate">{{ m.role }} • {{ m.phone }}</span>
+                <span class="text-[10px] text-stone-500 block truncate">{{ m.role }}</span>
               </div>
               <div class="flex items-center gap-1.5 shrink-0">
                 <button

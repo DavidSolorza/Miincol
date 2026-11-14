@@ -14,6 +14,7 @@ export interface GeneralTeamData {
   population: string;
   territory: string;
   teamLeader: string;
+  leaderEmail?: string;
   leaderPhone?: string;
   evangelicalCongregationsCount: number;
   evangelicalBelieversCount: number;

@@ -9,7 +9,7 @@ import { TeamSettingsFieldsComponent } from './teamModal/team-settings-fields.co
 
 // Valores iniciales por defecto para el registro de una nueva misión
 const DEFAULT_FORM: CreateTeamDto = {
-  name: '', ethnicity: '', region: '', department: '', leader: '', leaderPhone: '+57 ',
+  name: '', ethnicity: '', region: '', department: '', leader: '', leaderPhone: '',
   leaderEmail: '', members: [], membersWithAccounts: [],
   currentPhaseId: 'investigacion', totalBudget: 15000000, themeColor: '#8B251E',
   healthStatus: 'Optimo', slug: '', accessPin: '', criticalAlertMessage: '', criticalAlertType: 'Logística',
@@ -100,7 +100,7 @@ export class TeamModalComponent implements OnChanges {
         region,
         department,
         leader: this.initialData.leader || '',
-        leaderPhone: this.initialData.leaderPhone || '+57 ',
+        leaderPhone: this.initialData.leaderPhone || '',
         leaderEmail: this.initialData.leaderEmail || '',
         members: this.initialData.members || [],
         membersWithAccounts: this.initialData.membersWithAccounts || [],
