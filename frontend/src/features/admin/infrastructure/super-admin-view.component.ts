@@ -28,7 +28,6 @@ import { TestMailModalComponent } from './testMail/test-mail-modal.component';
             [searchTerm]="dashboard.searchTerm()"
             [activeYear]="activeMinisterialYear()"
             (searchTermChange)="dashboard.searchTerm.set($event)"
-            (openMailDiagnostic)="isMailModalOpen.set(true)"
             (yearChanged)="handleYearChange($event)"
             (resetTo2026)="handleYearChange(2026)"
           />
@@ -81,7 +80,7 @@ export class SuperAdminViewComponent implements OnInit, OnDestroy {
   readonly editingTeam = signal<TeamSupervisionSummary | null>(null);
   readonly selectedTeamId = signal<string | null>(null);
 
-  readonly activeMinisterialYear = computed(() => this.generalInfoSvc.currentInfo().teamData.year);
+  readonly activeMinisterialYear = computed(() => this.generalInfoSvc.activeGlobalYear());
 
   private readonly openHandler = () => this.openCreateModal();
 
@@ -98,17 +97,8 @@ export class SuperAdminViewComponent implements OnInit, OnDestroy {
   }
 
   handleYearChange(year: number): void {
-    this.toastSvc.confirmAction({
-      title: 'Año Ministerial Nacional',
-      message: `¿Desea establecer el ciclo activo de todas las misiones en el año ${year}?`,
-      confirmText: `Fijar Año ${year}`,
-      cancelText: 'Cancelar',
-      variant: 'default',
-      onConfirm: () => {
-        this.generalInfoSvc.setGlobalActiveYear(year);
-        this.toastSvc.toast.success(`Año ministerial nacional establecido en ${year}`, 'Ciclo Actualizado');
-      },
-    });
+    this.generalInfoSvc.setGlobalActiveYear(year);
+    this.toastSvc.toast.success(`Año ministerial establecido en ${year}`, 'Ciclo Actualizado');
   }
 
   openCreateModal() { this.editingTeam.set(null); this.isModalOpen.set(true); }

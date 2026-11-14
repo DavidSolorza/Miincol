@@ -19,10 +19,17 @@ export class AdminDashboardService {
   readonly departmentFilter = signal<string>('ALL');
 
   readonly teams = computed(() => {
-    const s = this.searchTerm().toLowerCase(), pf = this.phaseFilter(), sf = this.statusFilter(), df = this.departmentFilter();
+    const s = this.searchTerm().trim().toLowerCase(), pf = this.phaseFilter(), sf = this.statusFilter(), df = this.departmentFilter();
     return this.allTeams().filter((t) => {
-      const matchSearch = t.name.toLowerCase().includes(s) || t.leader.toLowerCase().includes(s) || t.ethnicity.toLowerCase().includes(s) || t.region.toLowerCase().includes(s) || t.department.toLowerCase().includes(s);
-      return matchSearch && (pf === 'ALL' || t.currentPhaseId === pf) && (sf === 'ALL' || t.healthStatus === sf) && (df === 'ALL' || t.department.toLowerCase().includes(df.toLowerCase()));
+      const matchSearch = !s || (t.name || '').toLowerCase().includes(s) ||
+        (t.leader || '').toLowerCase().includes(s) ||
+        (t.ethnicity || '').toLowerCase().includes(s) ||
+        (t.region || '').toLowerCase().includes(s) ||
+        (t.department || '').toLowerCase().includes(s) ||
+        (t.leaderEmail || '').toLowerCase().includes(s) ||
+        (t.slug || '').toLowerCase().includes(s) ||
+        (t.members || []).some((m) => (m || '').toLowerCase().includes(s));
+      return matchSearch && (pf === 'ALL' || t.currentPhaseId === pf) && (sf === 'ALL' || t.healthStatus === sf) && (df === 'ALL' || (t.department || '').toLowerCase().includes(df.toLowerCase()));
     });
   });
 

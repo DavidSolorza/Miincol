@@ -40,7 +40,7 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
               title="Seleccionar año activo de la misión"
             >
               @for (y of availableYears; track y) {
-                <option [value]="y">{{ y }} {{ y === 2026 ? '(Oficial)' : '' }}</option>
+                <option [value]="y" [selected]="y === currentYear()">{{ y }} {{ y === 2026 ? '(Oficial)' : '' }}</option>
               }
             </select>
           </div>
@@ -89,7 +89,7 @@ export class GeneralYearCycleComponent {
   readonly isYearClosed = input<boolean>(false);
   readonly isAdmin = input<boolean>(false);
 
-  readonly availableYears = [2025, 2026, 2027, 2028, 2029, 2030];
+  readonly availableYears = [2026, 2025, 2027, 2028, 2029, 2030];
 
   readonly closeYear = output<void>();
   readonly startNextYear = output<number>();

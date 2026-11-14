@@ -1,4 +1,4 @@
-// Barra de búsqueda, control de ciclo anual ministerial y diagnóstico de correo
+// Barra de búsqueda y control de ciclo anual ministerial
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
@@ -40,7 +40,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           title="Seleccionar año ministerial para todas las misiones"
         >
           @for (y of availableYears; track y) {
-            <option [value]="y">{{ y }} {{ y === 2026 ? '(Oficial)' : '' }}</option>
+            <option [value]="y" [selected]="y === activeYear">{{ y }} {{ y === 2026 ? '(Oficial)' : '' }}</option>
           }
         </select>
         @if (activeYear !== 2026) {
@@ -54,16 +54,6 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           </button>
         }
       </div>
-
-      <button
-        type="button"
-        (click)="openMailDiagnostic.emit()"
-        class="shrink-0 flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium rounded-2xl bg-white border border-stone-200/90 shadow-2xs text-stone-700 hover:text-amber-800 hover:border-amber-200 hover:bg-amber-50/50 transition cursor-pointer"
-        title="Diagnóstico de Notificaciones y Correo Google"
-      >
-        <app-icon name="mail" className="w-4 h-4 text-amber-700" />
-        <span class="hidden lg:inline">Diagnóstico Correo</span>
-      </button>
     </div>
   `,
 })
@@ -71,11 +61,10 @@ export class SuperAdminFiltersComponent {
   @Input() searchTerm = '';
   @Input() activeYear = 2026;
   @Output() searchTermChange = new EventEmitter<string>();
-  @Output() openMailDiagnostic = new EventEmitter<void>();
   @Output() yearChanged = new EventEmitter<number>();
   @Output() resetTo2026 = new EventEmitter<void>();
 
-  readonly availableYears = [2025, 2026, 2027, 2028, 2029, 2030];
+  readonly availableYears = [2026, 2025, 2027, 2028, 2029, 2030];
 
   onYearSelect(val: string | number): void {
     const yr = Number(val);
