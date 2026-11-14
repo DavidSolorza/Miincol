@@ -25,3 +25,27 @@ export interface UserSession {
   role: 'Líder Ministerial' | 'Misionero en Campo' | 'Coordinador Nacional';
   activeTeamId: string;
 }
+
+// Tipos de acceso y vista devueltos por el backend
+export type BackendLoginAccessType = 'COORDINADOR' | 'LIDER';
+export type BackendLoginView = 'ADMIN_DASHBOARD' | 'TEAM_VIEW';
+
+export interface BackendLoginResponse {
+  success: boolean;
+  token?: string;
+  accessToken?: string;
+  accessType?: BackendLoginAccessType;
+  view?: BackendLoginView;
+  user?: {
+    id: string;
+    email: string;
+    fullName: string;
+    role: string;
+    accessType?: BackendLoginAccessType;
+    view?: BackendLoginView;
+    teamId?: string | null;
+    isCoordinator?: boolean;
+    loginMode?: string;
+  };
+}
+

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnInit, OnDestroy, signal } from '@angular/core';
 import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
+import type { BackendLoginResponse } from '../domain/auth.types';
 import { verifyAuthCredentials } from '../application/verifyAuthCredentials';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import { httpClient } from '../../../core/http/httpClient';
@@ -81,22 +82,55 @@ export class LoginViewComponent implements OnInit, OnDestroy {
     this.identifier.set(val);
   }
 
-  handleSubmit() {
-    this.loading.set(true); this.error.set(null);
-    httpClient.post<{ accessToken?: string; token?: string }>('/auth/login', {
-      identifier: this.identifier(), password: this.password(),
-    }).then((res) => {
-      const tok = res?.accessToken || res?.token;
-      if (tok && typeof localStorage !== 'undefined') localStorage.setItem('misincol_auth_token', tok);
-    }).catch(() => {});
+  async handleSubmit(): Promise<void> {
+    this.loading.set(true);
+    this.error.set(null);
+    const identifier = this.identifier().trim();
+    const password = this.password().trim();
 
-    const cleanUser = this.identifier().trim().toLowerCase();
-    const isAdmin = ['director@misincol.org', 'admin@misincol.org', 'hudisapastos@misincol.org', 'director', 'admin'].includes(cleanUser);
+    try {
+      const res = await httpClient.post<BackendLoginResponse>('/auth/login', { identifier, password });
+      if (res?.success) {
+        const tok = res.accessToken || res.token;
+        if (tok && typeof localStorage !== 'undefined') localStorage.setItem('misincol_auth_token', tok);
 
+        if (res.view === 'ADMIN_DASHBOARD') {
+          const matched = res.user?.teamId
+            ? this.allTeams.find((t) => t.id === res.user?.teamId || t.slug === res.user?.teamId)
+            : undefined;
+          this.adminSuccess.emit(matched);
+          this.loading.set(false);
+          return;
+        }
+
+        if (res.view === 'TEAM_VIEW') {
+          const teamId = res.user?.teamId;
+          const cleanUser = identifier.toLowerCase();
+          const matched = this.allTeams.find((t) => t.id === teamId || t.slug === teamId) ||
+            this.allTeams.find((t) => t.leaderEmail?.toLowerCase() === cleanUser) ||
+            this.allTeams[0];
+          this.teamSuccess.emit({ team: matched, isNationalAdmin: false });
+          this.loading.set(false);
+          return;
+        }
+      }
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 400) {
+        this.error.set(err.message || 'Credenciales incorrectas. Verifique el usuario y el PIN de acceso.');
+        this.loading.set(false);
+        return;
+      }
+    }
+
+    this.runOfflineAuthFallback(identifier, password);
+  }
+
+  private runOfflineAuthFallback(identifier: string, password: string): void {
+    const isPureAdmin = ['director@misincol.org', 'admin@misincol.org', 'director', 'admin'].includes(identifier.trim().toLowerCase());
     verifyAuthCredentials({
-      activeTab: isAdmin ? 'admin' : 'team',
-      identifier: this.identifier(),
-      password: this.password(),
+      activeTab: isPureAdmin ? 'admin' : 'team',
+      identifier,
+      password,
       allTeams: this.allTeams,
       onAdminSuccess: (ctx) => this.adminSuccess.emit(ctx),
       onDirectorGeneralSuccess: () => this.directorGeneralSuccess.emit(),

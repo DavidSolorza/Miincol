@@ -36,10 +36,10 @@ export const verifyAuthCredentials = ({
       return;
     }
 
-    const isAdminEmail = ['director@misincol.org', 'admin@misincol.org', 'hudisapastos@misincol.org', 'director', 'admin'].includes(cleanUser);
-    const isAdminPass = ['director2026', 'admin2026', 'pastos2026', 'misincol2026', '210910624Dj'].includes(cleanPass);
+    const isPureAdminEmail = ['director@misincol.org', 'admin@misincol.org', 'director', 'admin'].includes(cleanUser);
+    const isAdminPass = ['director2026', 'admin2026', 'misincol2026', '210910624Dj'].includes(cleanPass);
 
-    if (isAdminEmail) {
+    if (isPureAdminEmail) {
       if (isAdminPass) { onAdminSuccess(); return; }
       onError('Contraseña incorrecta para la Dirección Nacional.');
       return;
@@ -92,14 +92,14 @@ export const verifyAuthCredentials = ({
         (u.teamId && u.teamId === matched.id)
       ));
 
-    const expectedPin = matched.accessPin || `${(matched.slug || matched.id).replace(/^team-/, '')}2026`;
-    const isTeamPass = cleanPass === expectedPin || cleanPass === `${matched.id}2026`;
+    const expectedPin = (matched.accessPin || `${(matched.slug || matched.id).replace(/^team-/, '')}2026`).toLowerCase();
+    const isTeamPass = cleanPass.toLowerCase() === expectedPin || cleanPass.toLowerCase() === `${matched.id}2026`.toLowerCase();
 
     if (isLeaderDualAdmin && (isAdminPass || isTeamPass)) {
-      if (activeTab === 'admin' || (isAdminPass && !isTeamPass)) {
-        onAdminSuccess(matched);
+      if (isTeamPass) {
+        onTeamSuccess(matched, false);
       } else {
-        onTeamSuccess(matched, true);
+        onAdminSuccess(matched);
       }
       return;
     }

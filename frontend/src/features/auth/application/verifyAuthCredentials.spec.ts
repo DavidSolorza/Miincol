@@ -86,6 +86,18 @@ describe('verifyAuthCredentials (Email Login & Strict Validation)', () => {
     vi.useRealTimers();
   });
 
+  it('debe autenticar al líder de equipo con PIN sin distinguir mayúsculas y minúsculas', () => {
+    vi.useFakeTimers();
+    const onTeamSuccess = vi.fn();
+    verifyAuthCredentials({
+      activeTab: 'team', identifier: 'carlos.mosquera@misincol.org', password: 'Embera2026',
+      allTeams: mockTeams, onAdminSuccess: vi.fn(), onTeamSuccess, onError: vi.fn(), onDone: vi.fn(),
+    });
+    vi.runAllTimers();
+    expect(onTeamSuccess).toHaveBeenCalledWith(team);
+    vi.useRealTimers();
+  });
+
   it('debe permitir autenticación bivalente a un líder territorial promovido a Coordinador Nacional', () => {
     localStorage.setItem(
       'misincol_system_users_v1',
