@@ -3,7 +3,6 @@ import type { TeamSupervisionSummary } from '../../admin/domain/admin.types';
 import { verifyAuthCredentials } from '../application/verifyAuthCredentials';
 import { AppIconComponent } from '../../../shared/components/icon/app-icon.component';
 import { httpClient } from '../../../core/http/httpClient';
-import { LoginHeroCardComponent } from './login/login-hero-card.component';
 import { LoginCardHeaderComponent } from './login/login-card-header.component';
 import { LoginRoleTabsComponent } from './login/login-role-tabs.component';
 import { LoginFormFieldsComponent } from './login/login-form-fields.component';
@@ -13,41 +12,36 @@ import { LoginSupportFooterComponent } from './login/login-support-footer.compon
   selector: 'app-login-view',
   standalone: true,
   imports: [
-    AppIconComponent, LoginHeroCardComponent, LoginCardHeaderComponent,
+    AppIconComponent, LoginCardHeaderComponent,
     LoginRoleTabsComponent, LoginFormFieldsComponent, LoginSupportFooterComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen w-full bg-[#080C14] flex flex-col md:flex-row items-stretch overflow-x-hidden selection:bg-slate-800 selection:text-white font-['Outfit']">
-      <!-- Columna Izquierda: Hero 50% Full-Height -->
-      <div class="w-full md:w-1/2 flex flex-col">
-        <app-login-hero-card />
-      </div>
+    <div class="min-h-screen w-full bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-x-hidden selection:bg-slate-900 selection:text-white font-['Outfit']">
+      <!-- Resplandores ambientales tenues que enriquecen el fondo claro -->
+      <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-slate-200/50 rounded-full blur-[100px] pointer-events-none"></div>
+      <div class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-blue-100/40 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <!-- Columna Derecha: Formulario 50% Full-Height -->
-      <div class="w-full md:w-1/2 min-h-screen bg-[#0D111D] flex items-center justify-center p-6 sm:p-10 lg:p-16 relative overflow-hidden">
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] h-[460px] bg-slate-800/15 rounded-full blur-[110px] pointer-events-none"></div>
+      <!-- Tarjeta Central de Acceso con Buen Tamaño y Proporción -->
+      <div class="w-full max-w-md sm:max-w-lg bg-white rounded-3xl sm:rounded-[32px] shadow-xl shadow-slate-900/5 border border-slate-200/90 p-6 sm:p-8 lg:p-10 space-y-6 sm:space-y-7 relative z-10">
+        <app-login-card-header />
+        <app-login-role-tabs [activeTab]="activeTab()" (selectTab)="handleSelectTab($event)" />
 
-        <div class="w-full max-w-md space-y-6 sm:space-y-7 relative z-10">
-          <app-login-card-header />
-          <app-login-role-tabs [activeTab]="activeTab()" (selectTab)="handleSelectTab($event)" />
+        @if (error()) {
+          <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-medium flex items-start gap-2.5 animate-fadeIn">
+            <app-icon name="alert-circle" className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <span class="flex-1">{{ error() }}</span>
+          </div>
+        }
 
-          @if (error()) {
-            <div class="p-3.5 rounded-xl bg-rose-950/50 border border-rose-800/60 text-rose-200 text-xs font-medium flex items-start gap-2.5 animate-fadeIn">
-              <app-icon name="alert-circle" className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-              <span class="flex-1">{{ error() }}</span>
-            </div>
-          }
+        <app-login-form-fields
+          [activeTab]="activeTab()" [identifier]="identifier()" (identifierChange)="identifier.set($event)"
+          [password]="password()" (passwordChange)="password.set($event)" [showPassword]="showPassword()"
+          (showPasswordChange)="showPassword.set($event)" [loading]="loading()" [allTeams]="allTeams"
+          (teamSelect)="handleTeamSelect($event)" (submitForm)="handleSubmit()"
+        />
 
-          <app-login-form-fields
-            [activeTab]="activeTab()" [identifier]="identifier()" (identifierChange)="identifier.set($event)"
-            [password]="password()" (passwordChange)="password.set($event)" [showPassword]="showPassword()"
-            (showPasswordChange)="showPassword.set($event)" [loading]="loading()" [allTeams]="allTeams"
-            (teamSelect)="handleTeamSelect($event)" (submitForm)="handleSubmit()"
-          />
-
-          <app-login-support-footer />
-        </div>
+        <app-login-support-footer />
       </div>
     </div>
   `,
