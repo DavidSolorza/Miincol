@@ -84,18 +84,28 @@ export class TeamModalComponent implements OnChanges {
   // Sincroniza el formulario cuando cambia el equipo seleccionado para editar
   ngOnChanges() {
     if (this.initialData) {
+      const derivedEthnicity = this.initialData.ethnicity || this.initialData.name.replace(/^Misi[oó]n\s+/i, '').trim();
+      const [deptCandidate, regCandidate] = (this.initialData.department || '').includes(' - ')
+        ? this.initialData.department.split(/\s*-\s*/)
+        : [this.initialData.department, this.initialData.region];
+      const department = deptCandidate || this.initialData.department || '';
+      const region = this.initialData.region || regCandidate || '';
+      const totalBudget = (this.initialData.totalBudget !== undefined && Number(this.initialData.totalBudget) > 0)
+        ? Number(this.initialData.totalBudget)
+        : 15000000;
+
       this.formData.set({
         name: this.initialData.name || '',
-        ethnicity: this.initialData.ethnicity || '',
-        region: this.initialData.region || '',
-        department: this.initialData.department || '',
+        ethnicity: derivedEthnicity,
+        region,
+        department,
         leader: this.initialData.leader || '',
         leaderPhone: this.initialData.leaderPhone || '+57 ',
         leaderEmail: this.initialData.leaderEmail || '',
         members: this.initialData.members || [],
         membersWithAccounts: this.initialData.membersWithAccounts || [],
         currentPhaseId: this.initialData.currentPhaseId || 'investigacion',
-        totalBudget: this.initialData.totalBudget || 15000000,
+        totalBudget,
         themeColor: this.initialData.themeColor || '#8B251E',
         healthStatus: this.initialData.healthStatus || 'Optimo',
         slug: this.initialData.slug || this.initialData.id || '',

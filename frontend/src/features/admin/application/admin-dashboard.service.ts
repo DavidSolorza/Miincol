@@ -4,7 +4,7 @@ import type { PhaseType } from '../../plans/domain/plan.types';
 import { calculateNationalKpis } from './adminKpiCalculations';
 import { getTeamPhaseMetrics, PHASE_NAMES_MAP, createCustomPlanForTeam } from '../../plans/application/teamPhaseMetrics';
 import { SecurityUsersService } from '../../security/application/security-users.service';
-import { syncTeamCreatedToBackend, syncTeamDeletedToBackend } from './admin-teams-sync.helper';
+import { syncTeamCreatedToBackend, syncTeamUpdatedToBackend, syncTeamDeletedToBackend } from './admin-teams-sync.helper';
 import { httpClient } from '../../../core/http/httpClient';
 
 const STORAGE_KEY = 'misincol_admin_teams';
@@ -22,12 +22,9 @@ export class AdminDashboardService {
     const s = this.searchTerm().trim().toLowerCase(), pf = this.phaseFilter(), sf = this.statusFilter(), df = this.departmentFilter();
     return this.allTeams().filter((t) => {
       const matchSearch = !s || (t.name || '').toLowerCase().includes(s) ||
-        (t.leader || '').toLowerCase().includes(s) ||
-        (t.ethnicity || '').toLowerCase().includes(s) ||
-        (t.region || '').toLowerCase().includes(s) ||
-        (t.department || '').toLowerCase().includes(s) ||
-        (t.leaderEmail || '').toLowerCase().includes(s) ||
-        (t.slug || '').toLowerCase().includes(s) ||
+        (t.leader || '').toLowerCase().includes(s) || (t.ethnicity || '').toLowerCase().includes(s) ||
+        (t.region || '').toLowerCase().includes(s) || (t.department || '').toLowerCase().includes(s) ||
+        (t.leaderEmail || '').toLowerCase().includes(s) || (t.slug || '').toLowerCase().includes(s) ||
         (t.members || []).some((m) => (m || '').toLowerCase().includes(s));
       return matchSearch && (pf === 'ALL' || t.currentPhaseId === pf) && (sf === 'ALL' || t.healthStatus === sf) && (df === 'ALL' || (t.department || '').toLowerCase().includes(df.toLowerCase()));
     });
@@ -37,11 +34,8 @@ export class AdminDashboardService {
 
   constructor() {
     effect(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.allTeams()));
-      } catch (e) {
-        console.warn('Error al persistir equipos:', e);
-      }
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(this.allTeams())); }
+      catch (e) { console.warn('Error al persistir equipos:', e); }
     });
     this.syncFromBackend();
   }
@@ -50,11 +44,25 @@ export class AdminDashboardService {
     try {
       const teams = await httpClient.get<TeamSupervisionSummary[]>('/teams');
       if (Array.isArray(teams)) {
-        const mapped = teams.map((t) => ({
-          ...t,
-          members: t.members && t.members.length > 0 ? t.members : [t.leader],
-          ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t),
-        }));
+        const currentList = this.allTeams();
+        const mapped = teams.map((t) => {
+          const existing = currentList.find((x) => x.id === t.id || x.slug === t.id || x.id === t.slug || x.name === t.name);
+          const [locDept, locReg] = (t.location || '').split(/\s*-\s*|\s*•\s*/);
+          const phaseMetrics = getTeamPhaseMetrics(t.id, t.currentPhaseId, t);
+          const totalBudget = (t.totalBudget && Number(t.totalBudget) > 0) ? Number(t.totalBudget)
+            : (existing?.totalBudget && Number(existing.totalBudget) > 0 ? Number(existing.totalBudget) : 15000000);
+          return {
+            ...t,
+            department: t.department || existing?.department || locDept || '',
+            region: t.region || existing?.region || locReg || '',
+            ethnicity: t.ethnicity || existing?.ethnicity || t.name.replace(/^Misi[oó]n\s+/i, '') || '',
+            leaderPhone: t.leaderPhone || existing?.leaderPhone || '+57 ',
+            themeColor: t.themeColor || existing?.themeColor || '#8B251E',
+            members: t.members && t.members.length > 0 ? t.members : (existing?.members || [t.leader]),
+            ...phaseMetrics,
+            totalBudget,
+          };
+        });
         this.allTeams.set(mapped);
         mapped.forEach((t) => this.securityUsersSvc.ensureTeamLeaderAndMembers(t));
       }
@@ -67,16 +75,18 @@ export class AdminDashboardService {
       if (stored) {
         const parsed: TeamSupervisionSummary[] = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((t) => ({
-            ...t,
-            members: (t.members && t.members.length > 0) ? t.members : [t.leader],
-            ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t),
-          }));
+          return parsed.map((t) => {
+            const phaseMetrics = getTeamPhaseMetrics(t.id, t.currentPhaseId, t);
+            return {
+              ...t,
+              members: (t.members && t.members.length > 0) ? t.members : [t.leader],
+              ...phaseMetrics,
+              totalBudget: (t.totalBudget && Number(t.totalBudget) > 0) ? Number(t.totalBudget) : (phaseMetrics.totalBudget || 15000000),
+            };
+          });
         }
       }
-    } catch (e) {
-      console.warn('Error al cargar equipos:', e);
-    }
+    } catch { /* ignore */ }
     return [];
   }
 
@@ -88,7 +98,7 @@ export class AdminDashboardService {
       membersCount: dto.members ? dto.members.length : 1, members: dto.members || [dto.leader],
       membersWithAccounts: dto.membersWithAccounts || [], currentPhaseId: dto.currentPhaseId,
       currentPhaseName: PHASE_NAMES_MAP[dto.currentPhaseId] || '1. Investigación',
-      progressPercentage: 0, totalBudget: dto.totalBudget, executedBudget: 0,
+      progressPercentage: 0, totalBudget: dto.totalBudget || 15000000, executedBudget: 0,
       totalActivities: 0, completedActivities: 0, inProgressActivities: 0, pendingActivities: 0,
       themeColor: dto.themeColor || '#8B251E', accessPin: dto.accessPin?.trim() || `${slug.replace(/^team-/, '')}2026`,
       healthStatus: dto.healthStatus || 'Optimo', lastUpdate: 'Justo ahora', activeInitiatives: [],
@@ -109,6 +119,7 @@ export class AdminDashboardService {
           if (updates.currentPhaseId) merged.currentPhaseName = PHASE_NAMES_MAP[updates.currentPhaseId] || merged.currentPhaseName;
           if (updates.members) merged.membersCount = updates.members.length;
           this.securityUsersSvc.ensureTeamLeaderAndMembers(merged, updates as CreateTeamDto);
+          syncTeamUpdatedToBackend(teamId, updates);
           return merged;
         }
         return t;
