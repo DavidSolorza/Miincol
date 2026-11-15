@@ -21,22 +21,22 @@ export function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Ter
     },
     essentialsToDevelop: ['1. Liderazgo', '2. Desarrollo Eclesial'],
     fieldMetrics: {
-      firstTimeContactedCount: 15, interestedInGospelCount: 6, heardGospelCount: 4, seekingGodCount: 2,
-      gospelResponseOpportunitiesCount: 2, newBelieversCount: 2, baptizedCount: 0,
-      regularBibleStudyParticipantsCount: 45, personalMentorshipCount: 12, newGroupsMeetingInYearCount: 1,
+      firstTimeContactedCount: 0, interestedInGospelCount: 0, heardGospelCount: 0, seekingGodCount: 0,
+      gospelResponseOpportunitiesCount: 0, newBelieversCount: 0, baptizedCount: 0,
+      regularBibleStudyParticipantsCount: 0, personalMentorshipCount: 0, newGroupsMeetingInYearCount: 0,
     },
     ministerialTraining: {
-      practicalMinisterialTrainingCount: 10, otherAreasTrainingCount: 0, pastoralPracticalTrainingCount: 3,
-      biblicalTrainingCount: 9, newChurchesPlantingTrainingCount: 0,
+      practicalMinisterialTrainingCount: 0, otherAreasTrainingCount: 0, pastoralPracticalTrainingCount: 0,
+      biblicalTrainingCount: 0, newChurchesPlantingTrainingCount: 0,
     },
     churchDevelopment: {
-      groupsWithChurchPerspectiveCount: 1, finalChurchesCount: 1, firstGenChurchesCount: 1,
+      groupsWithChurchPerspectiveCount: 0, finalChurchesCount: 0, firstGenChurchesCount: 0,
       secondGenChurchesCount: 0, thirdGenChurchesCount: 0, lostFirstGenChurchesCount: 0,
       lostSecondGenChurchesCount: 0, lostThirdGenChurchesCount: 0,
     },
     budgetBreakdown: {
       investigacionBudget: 0, encarnacionBudget: 0, evangelizacionBudget: 0,
-      entrenamientoBudget: 11210000, autocuidadoBudget: 0, executedTotalBudget: 4500000,
+      entrenamientoBudget: 0, autocuidadoBudget: 0, executedTotalBudget: 0,
     },
     annualMetricsHistory: {
       2025: {
@@ -49,7 +49,7 @@ export function createDefaultGeneralInfo(teamId: string, teamName = 'Misión Ter
         },
         training: { practicalMinisterialTrainingCount: 6, otherAreasTrainingCount: 0, pastoralPracticalTrainingCount: 2, biblicalTrainingCount: 5, newChurchesPlantingTrainingCount: 0 },
         church: { groupsWithChurchPerspectiveCount: 0, finalChurchesCount: 1, firstGenChurchesCount: 1, secondGenChurchesCount: 0, thirdGenChurchesCount: 0, lostFirstGenChurchesCount: 0, lostSecondGenChurchesCount: 0, lostThirdGenChurchesCount: 0 },
-        budgetBreakdown: { investigacionBudget: 0, encarnacionBudget: 0, evangelizacionBudget: 0, entrenamientoBudget: 10000000, autocuidadoBudget: 0, executedTotalBudget: 9800000 },
+        budgetBreakdown: { investigacionBudget: 0, encarnacionBudget: 0, evangelizacionBudget: 0, entrenamientoBudget: 0, autocuidadoBudget: 0, executedTotalBudget: 0 },
         essentialsToDevelop: ['1. Liderazgo'],
       },
     },

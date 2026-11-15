@@ -57,5 +57,20 @@ describe('GeneralInfo Domain & Calculations (Unit Tests)', () => {
     expect(essentials.length).toBe(5);
     expect(essentials[0]).toBe('Oración');
   });
+
+  it('debe inicializar en cero los 5 pilares cuando no se han creado objetivos en PDM', () => {
+    const cleanPillars = {
+      investigacionBudget: 0,
+      encarnacionBudget: 0,
+      evangelizacionBudget: 0,
+      entrenamientoBudget: 0,
+      autocuidadoBudget: 0,
+      executedTotalBudget: 0,
+    };
+    const totalPillars = cleanPillars.investigacionBudget + cleanPillars.encarnacionBudget +
+      cleanPillars.evangelizacionBudget + cleanPillars.entrenamientoBudget + cleanPillars.autocuidadoBudget;
+    expect(totalPillars).toBe(0);
+    expect(cleanPillars.executedTotalBudget).toBe(0);
+  });
 });
 

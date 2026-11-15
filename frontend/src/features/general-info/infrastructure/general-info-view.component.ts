@@ -9,6 +9,7 @@ import { GeneralEssentialsComponent } from './components/general-essentials.comp
 import { GeneralAnnualTableComponent } from './components/general-annual-table.component';
 import { GeneralMinisterialTrainingComponent } from './components/general-ministerial-training.component';
 import { GeneralTeamFooterComponent } from './components/general-team-footer.component';
+import { AdminDashboardService } from '../../admin/application/admin-dashboard.service';
 import type { MissionaryTeam } from '../../auth/domain/auth.types';
 
 @Component({
@@ -44,8 +45,8 @@ import type { MissionaryTeam } from '../../auth/domain/auth.types';
 
       <app-general-budget-top
         [budget]="infoService.currentInfo().budgetBreakdown"
-        [totalBudget]="infoService.totalBudget()"
-        [budgetPercentage]="infoService.budgetExecutionPercentage()"
+        [totalBudget]="displayTotalBudget()"
+        [budgetPercentage]="displayExecutionPercentage()"
         [executedBudget]="infoService.currentInfo().budgetBreakdown.executedTotalBudget || 0"
       />
 
@@ -98,6 +99,24 @@ export class GeneralInfoViewComponent {
   readonly infoService = inject(GeneralInfoService);
   private readonly sessionSvc = inject(AppSessionService);
   private readonly toastSvc = inject(ToastService);
+  private readonly dashboardSvc = inject(AdminDashboardService);
+
+  readonly teamSummary = computed(() => {
+    const id = this.activeTeam().id;
+    return this.dashboardSvc.allTeams().find((t) => t.id === id || t.slug === id);
+  });
+
+  readonly displayTotalBudget = computed(() => {
+    const assigned = this.teamSummary()?.totalBudget;
+    if (assigned && Number(assigned) > 0) return Number(assigned);
+    return this.infoService.totalBudget();
+  });
+
+  readonly displayExecutionPercentage = computed(() => {
+    const tot = this.displayTotalBudget();
+    const exec = this.infoService.currentInfo().budgetBreakdown.executedTotalBudget || 0;
+    return tot > 0 ? Math.min(100, Math.round((exec / tot) * 100)) : 0;
+  });
 
   readonly canEdit = computed(() => {
     const role = this.sessionSvc.session()?.role;

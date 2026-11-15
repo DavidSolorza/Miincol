@@ -7,6 +7,7 @@ import { createDefaultGeneralInfo } from '../domain/general-info-defaults';
 import { archiveYearCycle, backupPdmPlansSnapshot } from '../domain/general-info-history.helper';
 import { createCleanCycleState } from '../domain/general-info-reset.helper';
 import { syncGlobalMinisterialYear } from '../domain/general-info-year.helper';
+import { computePillarBudgetsFromPlans } from '../domain/general-pillar-budget.helper';
 import { serviceBus } from '../../../core/bus';
 
 const STORAGE_PREFIX = 'misincol_general_info_v3_';
@@ -46,6 +47,7 @@ export class GeneralInfoService {
 
   loadTeamInfo(teamId: string, teamName?: string, leader?: string, teamMembers?: string[]): void {
     const key = `${STORAGE_PREFIX}${teamId}`;
+    const dynamicBudget = computePillarBudgetsFromPlans(teamId);
     try {
       const saved = localStorage.getItem(key);
       if (saved) {
@@ -54,12 +56,15 @@ export class GeneralInfoService {
           parsed.annualMetricsHistory = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers).annualMetricsHistory;
         }
         if (!parsed.teamData?.year) parsed.teamData.year = this.activeGlobalYear();
+        parsed.budgetBreakdown = dynamicBudget;
         this.currentInfo.set(parsed);
+        this.persist(teamId, parsed);
         return;
       }
     } catch { /* ignore */ }
     const fresh = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers);
     fresh.teamData.year = this.activeGlobalYear();
+    fresh.budgetBreakdown = dynamicBudget;
     this.currentInfo.set(fresh);
     this.persist(teamId, fresh);
   }
