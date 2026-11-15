@@ -24,11 +24,17 @@ export class SyncCoordinatorService {
       this.syncNow().catch(() => {});
     });
 
+    serviceBus.subscribe('pdm:plan_persisted', () => {
+      if (this.network.isOnline() && !this.isSyncing()) {
+        setTimeout(() => this.syncNow().catch(() => {}), 150);
+      }
+    });
+
     setInterval(() => {
       if (this.network.isOnline() && this.outbox.pendingCount() > 0 && !this.isSyncing()) {
         this.syncNow().catch(() => {});
       }
-    }, 45000);
+    }, 5000);
   }
 
   async syncNow(): Promise<number> {

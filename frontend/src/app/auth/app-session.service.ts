@@ -17,6 +17,12 @@ export class AppSessionService {
   );
 
   constructor() {
+    serviceBus.subscribe('auth:logout', () => {
+      if (this.session()) {
+        this.handleLogout();
+        this.toastService.toast.warning('Tu sesión expiró o las claves del servidor cambiaron. Inicia sesión nuevamente.', 'Sesión Expirada');
+      }
+    });
     serviceBus.subscribe('team:select', ({ teamId }) => this.activeTeamId.set(teamId));
     serviceBus.subscribe('ui:view_change', ({ view }) => {
       if (view === 'dashboard' || view === 'supervision') {

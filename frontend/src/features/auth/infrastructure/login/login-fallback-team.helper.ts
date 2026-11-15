@@ -39,3 +39,4 @@ export function buildFallbackTeam(
     lastUpdate: 'Hoy',
   };
 }
+

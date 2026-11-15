@@ -6,6 +6,7 @@
 
 import { ENV } from '../config/env.config';
 import { HttpError } from '../errors/app.error';
+import { serviceBus } from '../bus';
 
 export interface HttpRequestOptions extends RequestInit {
   timeoutMs?: number;
@@ -88,6 +89,16 @@ export class NativeHttpClient {
         } catch {
           // Fallback to default message if body is not JSON
         }
+
+        if (response.status === 401 && !url.includes('/auth/login')) {
+          try {
+            if (typeof localStorage !== 'undefined') {
+              localStorage.removeItem('misincol_auth_token');
+            }
+            serviceBus.publish('auth:logout', undefined);
+          } catch { /* ignore */ }
+        }
+
         throw new HttpError(response.status, errMessage, { url, status: response.status });
       }
 

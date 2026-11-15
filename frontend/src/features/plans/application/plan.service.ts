@@ -43,6 +43,7 @@ export class PlanService {
     this.allPlans.set(updated);
     try { localStorage.setItem(`misincol_pdm_plans_${this.activeTeamId()}`, JSON.stringify(updated)); }
     catch (e) { console.warn('Error al guardar planes localmente:', e); }
+    serviceBus.publish('pdm:plan_persisted', { teamId: this.activeTeamId(), phaseId: this.activePhaseId() });
   }
 
   switchPhase(phaseId: PhaseType): void { this.activePhaseId.set(phaseId); }
