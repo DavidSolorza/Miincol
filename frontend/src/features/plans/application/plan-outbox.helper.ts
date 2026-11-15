@@ -12,13 +12,41 @@ export function queueActivityMutation(
   const method = action === 'CREATE' ? 'POST' : action === 'UPDATE' ? 'PATCH' : 'DELETE';
   const endpoint = action === 'CREATE' ? '/activities' : `/activities/${activityId}`;
 
+  const payload: Record<string, any> = {};
+  if (action === 'CREATE') {
+    payload.objectiveId = `team-${teamId}-phase-${phaseId}-obj-1`;
+    payload.description = data?.description || 'Nueva actividad';
+    payload.status = data?.status || 'Pendiente';
+    payload.essentialArea = data?.essentialArea || 'Investigación';
+    payload.stage = data?.stage || 'Investigación Territorial';
+    payload.areaLevel = data?.areaLevel || 'Pionera';
+    payload.unitBudget = Number(data?.unitBudget) || 0;
+    payload.timesPerYear = Number(data?.timesPerYear) || 1;
+    payload.startDate = data?.startDate || '2026-01-01';
+    payload.endDate = data?.endDate || '2026-12-31';
+    payload.responsible = data?.responsible || 'Líder Pastoral';
+    if (data?.frequency) payload.frequency = data.frequency;
+    if (data?.currentSituation) payload.currentSituation = data.currentSituation;
+  } else if (action === 'UPDATE' && data) {
+    if (data.description !== undefined) payload.description = data.description;
+    if (data.status !== undefined) payload.status = data.status;
+    if (data.essentialArea !== undefined) payload.essentialArea = data.essentialArea;
+    if (data.stage !== undefined) payload.stage = data.stage;
+    if (data.areaLevel !== undefined) payload.areaLevel = data.areaLevel;
+    if (data.unitBudget !== undefined) payload.unitBudget = Number(data.unitBudget);
+    if (data.timesPerYear !== undefined) payload.timesPerYear = Number(data.timesPerYear);
+    if (data.startDate !== undefined) payload.startDate = data.startDate;
+    if (data.endDate !== undefined) payload.endDate = data.endDate;
+    if (data.responsible !== undefined) payload.responsible = data.responsible;
+  }
+
   outbox.enqueue({
     entityType: 'activity',
     entityId: activityId,
     action,
     endpoint,
     method,
-    payload: { ...(data || {}), id: activityId, teamId, phaseId },
+    payload,
   }).catch(() => {});
 }
 
@@ -33,13 +61,35 @@ export function queueObjectiveMutation(
   const method = action === 'CREATE' ? 'POST' : action === 'UPDATE' ? 'PATCH' : 'DELETE';
   const endpoint = action === 'CREATE' ? '/objectives' : `/objectives/team-${teamId}-phase-${phaseId}-obj-${objNum}`;
 
+  const payload: Record<string, any> = {};
+  if (action === 'CREATE') {
+    payload.teamId = teamId;
+    payload.pillarId = phaseId;
+    payload.title = data?.title || `Objetivo Estratégico #${objNum}`;
+    payload.description = data?.description || 'Descripción del objetivo';
+    payload.essentialArea = data?.essentialArea || 'Investigación';
+    payload.stage = data?.stage || 'Investigación Territorial';
+    if (data?.areaLevel) payload.level = data.areaLevel;
+    if (data?.shortTermGoal) payload.shortTermGoal = data.shortTermGoal;
+    if (data?.mediumTermGoal) payload.mediumTermGoal = data.mediumTermGoal;
+    if (data?.longTermGoal) payload.longTermGoal = data.longTermGoal;
+  } else if (action === 'UPDATE' && data) {
+    if (data.title !== undefined) payload.title = data.title;
+    if (data.description !== undefined) payload.description = data.description;
+    if (data.essentialArea !== undefined) payload.essentialArea = data.essentialArea;
+    if (data.stage !== undefined) payload.stage = data.stage;
+    if (data.areaLevel !== undefined) payload.level = data.areaLevel;
+    if (data.shortTermGoal !== undefined) payload.shortTermGoal = data.shortTermGoal;
+    if (data.mediumTermGoal !== undefined) payload.mediumTermGoal = data.mediumTermGoal;
+    if (data.longTermGoal !== undefined) payload.longTermGoal = data.longTermGoal;
+  }
+
   outbox.enqueue({
     entityType: 'objective',
     entityId: `obj-${teamId}-${phaseId}-${objNum}`,
     action,
     endpoint,
     method,
-    payload: { ...(data || {}), objectiveNumber: objNum, teamId, phaseId },
+    payload,
   }).catch(() => {});
 }
-
