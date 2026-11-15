@@ -70,7 +70,8 @@ export class AppSessionService {
     this.toastService.toast.success(`Bienvenido ${name} (Director General)`, 'Sesión Iniciada');
   }
 
-  handleTeamLogin(team: TeamSupervisionSummary, isNationalAdmin = false): void {
+  handleTeamLogin(team?: TeamSupervisionSummary, isNationalAdmin = false): void {
+    if (!team) return;
     const role = isNationalAdmin ? 'admin' : 'team';
     const newSession: AuthSession = {
       role,
@@ -97,7 +98,8 @@ export class AppSessionService {
     );
   }
 
-  handleMemberLogin(team: TeamSupervisionSummary, memberName: string): void {
+  handleMemberLogin(team?: TeamSupervisionSummary, memberName = 'Usuario'): void {
+    if (!team) return;
     const newSession: AuthSession = { role: 'member', teamId: team.id, userName: memberName };
     this.session.set(newSession);
     try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }

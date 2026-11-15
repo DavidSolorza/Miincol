@@ -40,7 +40,7 @@ export class AdminDashboardService {
     this.syncFromBackend();
   }
 
-  private async syncFromBackend(): Promise<void> {
+  public async syncFromBackend(): Promise<void> {
     try {
       const teams = await httpClient.get<TeamSupervisionSummary[]>('/teams');
       if (Array.isArray(teams)) {

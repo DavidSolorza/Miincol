@@ -58,6 +58,14 @@ export class NativeHttpClient {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+    const authHeaders: Record<string, string> = {};
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const tok = localStorage.getItem('misincol_auth_token');
+        if (tok) authHeaders['Authorization'] = `Bearer ${tok}`;
+      } catch { /* ignore */ }
+    }
+
     try {
       const response = await fetch(url, {
         ...rest,
@@ -65,6 +73,7 @@ export class NativeHttpClient {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          ...authHeaders,
           ...headers,
         },
       });

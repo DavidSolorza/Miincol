@@ -81,4 +81,8 @@ describe('AppSessionService (Default View Tests)', () => {
     expect(service.activeView()).toBe('superadmin');
     expect(service.isAdminPreview()).toBe(false);
   });
+
+  it('no debe lanzar excepción si handleTeamLogin recibe undefined', () => {
+    expect(() => service.handleTeamLogin(undefined)).not.toThrow();
+  });
 });

@@ -15,9 +15,9 @@ import type { MissionaryTeam } from '../features/auth/domain/auth.types';
     @if (!sessionService.session()) {
       <app-login-view
         [allTeams]="dashboardService.allTeams()"
-        (adminSuccess)="sessionService.handleAdminLogin($event)"
+        (adminSuccess)="onAdminLogin($event)"
         (directorGeneralSuccess)="sessionService.handleDirectorGeneralLogin()"
-        (teamSuccess)="sessionService.handleTeamLogin($event.team, $event.isNationalAdmin)"
+        (teamSuccess)="onTeamLogin($event)"
         (memberSuccess)="sessionService.handleMemberLogin($event.team, $event.memberName)"
       />
     } @else {
@@ -69,4 +69,14 @@ export class AppComponent {
       }
     );
   });
+
+  onAdminLogin(teamContext?: TeamSupervisionSummary): void {
+    this.sessionService.handleAdminLogin(teamContext);
+    this.dashboardService.syncFromBackend();
+  }
+
+  onTeamLogin(event: { team: TeamSupervisionSummary; isNationalAdmin?: boolean }): void {
+    this.sessionService.handleTeamLogin(event.team, event.isNationalAdmin);
+    this.dashboardService.syncFromBackend();
+  }
 }

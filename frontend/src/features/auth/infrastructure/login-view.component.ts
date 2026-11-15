@@ -7,6 +7,7 @@ import { httpClient } from '../../../core/http/httpClient';
 import { LoginCardHeaderComponent } from './login/login-card-header.component';
 import { LoginFormFieldsComponent } from './login/login-form-fields.component';
 import { LoginSupportFooterComponent } from './login/login-support-footer.component';
+import { buildFallbackTeam } from './login/login-fallback-team.helper';
 
 @Component({
   selector: 'app-login-view',
@@ -104,11 +105,11 @@ export class LoginViewComponent implements OnInit, OnDestroy {
         }
 
         if (res.view === 'TEAM_VIEW') {
-          const teamId = res.user?.teamId;
+          const teamId = res.user?.teamId || 'team-pastos';
           const cleanUser = identifier.toLowerCase();
           const matched = this.allTeams.find((t) => t.id === teamId || t.slug === teamId) ||
             this.allTeams.find((t) => t.leaderEmail?.toLowerCase() === cleanUser) ||
-            this.allTeams[0];
+            this.allTeams[0] || buildFallbackTeam(teamId, res.user, identifier);
           this.teamSuccess.emit({ team: matched, isNationalAdmin: false });
           this.loading.set(false);
           return;
