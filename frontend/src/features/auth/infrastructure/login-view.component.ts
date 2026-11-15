@@ -53,8 +53,8 @@ export class LoginViewComponent implements OnInit, OnDestroy {
   @Output() teamSuccess = new EventEmitter<{ team: TeamSupervisionSummary; isNationalAdmin?: boolean }>();
   @Output() memberSuccess = new EventEmitter<{ team: TeamSupervisionSummary; memberName: string }>();
 
-  readonly identifier = signal('hudisapastos@misincol.org');
-  readonly password = signal('admin2026');
+  readonly identifier = signal('');
+  readonly password = signal('');
   readonly showPassword = signal(false);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);

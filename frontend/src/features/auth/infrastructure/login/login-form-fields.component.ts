@@ -36,6 +36,16 @@ import { PasswordInputFieldComponent } from './password-input-field.component';
         (showPasswordChange)="showPasswordChange.emit($event)"
       />
 
+      @if (isDualCoordinator) {
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200/90 text-[11px] sm:text-xs text-amber-900 flex items-start gap-2.5 animate-fadeIn">
+          <app-icon name="info" className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <div class="leading-relaxed">
+            <span class="font-bold">Acceso Bivalente (Coordinador y Líder):</span>
+            Escribe tu clave de coordinador para el <strong>Panel Nacional</strong>, o el PIN de tu equipo para la <strong>Vista de Misión</strong>.
+          </div>
+        </div>
+      }
+
       <button
         type="submit"
         [disabled]="loading"
@@ -65,6 +75,11 @@ export class LoginFormFieldsComponent {
   @Output() showPasswordChange = new EventEmitter<boolean>();
   @Output() teamSelect = new EventEmitter<string>();
   @Output() submitForm = new EventEmitter<Event>();
+
+  get isDualCoordinator(): boolean {
+    const id = this.identifier?.toLowerCase().trim() || '';
+    return id.includes('hudisapastos') || id.includes('hugo') || id.includes('pastos');
+  }
 
   onSubmit(e: Event) {
     e.preventDefault();
