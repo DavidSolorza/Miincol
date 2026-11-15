@@ -1,4 +1,4 @@
-const CACHE_NAME = 'misincol-pdm-cache-v4';
+const CACHE_NAME = 'misincol-pdm-cache-v5';
 const CRITICAL_ASSETS = [
   '/',
   '/index.html',
@@ -30,11 +30,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Bypass inmediato en desarrollo local para evitar intercepción de módulos dinámicos de Vite
+  // Bypass inmediato para desarrollo, métodos no GET, protocolos especiales y llamadas a API backend
   if (
     self.location.hostname === 'localhost' ||
     self.location.hostname === '127.0.0.1' ||
     event.request.method !== 'GET' ||
+    url.origin !== self.location.origin ||
+    url.pathname.includes('/api/') ||
+    url.pathname.startsWith('/api') ||
     url.protocol === 'ws:' ||
     url.protocol === 'wss:' ||
     url.protocol === 'chrome-extension:'
@@ -97,8 +100,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Estrategia por defecto: Red con fallback a caché
+  // 3. Estrategia por defecto para recursos del mismo origen: Red con fallback a caché
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    fetch(event.request).catch(async () => {
+      const match = await caches.match(event.request);
+      return match || (await caches.match('/index.html')) || new Response('', { status: 200 });
+    })
   );
 });
