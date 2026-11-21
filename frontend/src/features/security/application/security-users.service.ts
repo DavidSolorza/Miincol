@@ -5,6 +5,7 @@ import type { TeamSupervisionSummary, CreateTeamDto } from '../../admin/domain/a
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { INITIAL_SYSTEM_USERS } from './security-users.helpers';
 import { resolveTeamUsersToProvision } from './security-users-provision.helper';
+import { mapBackendRoleToSystem, syncUserCreateToBackend, syncUserRoleToBackend } from './security-users-sync.helper';
 import { httpClient } from '../../../core/http/httpClient';
 import { serviceBus } from '../../../core/bus';
 
@@ -30,13 +31,14 @@ export class SecurityUsersService {
     try {
       const res = await httpClient.get<any[]>('/users');
       if (Array.isArray(res) && res.length > 0) {
-        const mapped: SystemUser[] = res.map((u: any) => ({
-          id: u.id || `usr-${Date.now()}`, fullName: u.fullName || u.name || 'Usuario', email: u.email,
-          role: u.role === 'ROLE_NACIONAL' ? 'national_director' : u.role === 'ROLE_LIDER' ? 'team_leader' : 'team_member',
-          teamId: u.teamId || undefined, teamName: u.teamName || undefined,
+        const remote: SystemUser[] = res.map((u: any) => ({
+          id: u.id || `usr-${Date.now()}`, fullName: u.fullName || u.name || 'Usuario', email: u.email?.trim().toLowerCase(),
+          role: mapBackendRoleToSystem(u.role), teamId: u.teamId || undefined, teamName: u.teamName || undefined,
           territory: u.territory || (u.role === 'ROLE_NACIONAL' ? 'Nacional • Colombia' : ''), phone: u.phone || '',
         }));
-        this.persist(mapped);
+        const merged = [...remote];
+        this.users().forEach((loc) => { if (!merged.some((r) => r.email === loc.email)) merged.push(loc); });
+        this.persist(merged);
       }
     } catch { /* Usar respaldo de localStorage */ }
   }
@@ -64,9 +66,7 @@ export class SecurityUsersService {
 
   private persist(users: SystemUser[]): void {
     this.users.set(users);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    } catch { /* ignore */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(users)); } catch { /* ignore */ }
   }
 
   createUser(dto: CreateSystemUserDto): SystemUser {
@@ -78,6 +78,12 @@ export class SecurityUsersService {
     };
     this.persist([newUser, ...this.users()]);
     this.toastSvc.toast.success(`Colaborador ${newUser.fullName} registrado`, 'Usuario Creado');
+    syncUserCreateToBackend(dto).then((backendId) => {
+      if (backendId) {
+        this.users.update((curr) => curr.map((u) => (u.email === newUser.email ? { ...u, id: backendId } : u)));
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(this.users())); } catch { /* ignore */ }
+      }
+    });
     return newUser;
   }
 
@@ -100,8 +106,7 @@ export class SecurityUsersService {
   }
 
   ensureTeamLeaderAndMembers(team: TeamSupervisionSummary, dto?: CreateTeamDto): void {
-    const updated = resolveTeamUsersToProvision(team, this.users(), dto);
-    this.persist(updated);
+    this.persist(resolveTeamUsersToProvision(team, this.users(), dto));
   }
 
   updateUserRole(userId: string, newRole: SystemRoleId): void {
@@ -109,16 +114,12 @@ export class SecurityUsersService {
     const target = prev.find((u) => u.id === userId);
     if (!target) return;
     const roleName = ROLE_NAMES[newRole] || newRole;
-    const updated = prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u));
-    this.persist(updated);
+    this.persist(prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
     this.toastSvc.toast.success(`Rol de ${target.fullName} establecido en ${roleName}`, 'Seguridad');
-    this.saveUsersToBackend().catch(() => {});
+    syncUserRoleToBackend(userId, newRole).catch(() => {});
     serviceBus.publish('audit:log', {
-      actionType: 'role_assigned',
-      userName: target.fullName,
-      userEmail: target.email,
-      teamId: target.teamId,
-      teamName: target.teamName,
+      actionType: 'role_assigned', userName: target.fullName, userEmail: target.email,
+      teamId: target.teamId, teamName: target.teamName,
       detail: `El rol de ${target.fullName} ha sido establecido en "${roleName}" por la Coordinación Nacional.`,
     });
   }
@@ -130,11 +131,7 @@ export class SecurityUsersService {
       await httpClient.post('/security/users/sync', { users: this.users() });
       this.toastSvc.toast.success('Usuarios y roles sincronizados en el servidor', 'Seguridad');
       return true;
-    } catch {
-      return false;
-    } finally {
-      this.isSaving.set(false);
-    }
+    } catch { return false; } finally { this.isSaving.set(false); }
   }
 
   resetUsers(): void {
