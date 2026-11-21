@@ -8,6 +8,7 @@ import { archiveYearCycle, backupPdmPlansSnapshot } from '../domain/general-info
 import { createCleanCycleState } from '../domain/general-info-reset.helper';
 import { syncGlobalMinisterialYear } from '../domain/general-info-year.helper';
 import { computePillarBudgetsFromPlans } from '../domain/general-pillar-budget.helper';
+import { syncGeneralInfoToBackend } from './general-info-sync.helper';
 import { serviceBus } from '../../../core/bus';
 
 const STORAGE_PREFIX = 'misincol_general_info_v3_';
@@ -123,7 +124,11 @@ export class GeneralInfoService {
     this.updateTeamData({ members });
   }
 
-  saveCurrentInfo(): void { const cur = this.currentInfo(); this.persist(cur.teamId, cur); }
+  saveCurrentInfo(): void {
+    const cur = this.currentInfo();
+    this.persist(cur.teamId, cur);
+    syncGeneralInfoToBackend(cur).catch(() => {});
+  }
 
   private updateAndPersist(partial: Partial<TeamGeneralInfo>): void {
     this.currentInfo.update((prev) => {

@@ -1,6 +1,21 @@
 import type { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
 import type { Activity, Objective, PhaseType } from '../domain/plan.types';
 
+const VALID_STAGES_BY_AREA: Record<string, string[]> = {
+  Investigación: ['Contacto'],
+  Encarnación: ['Contacto', 'Comunicar', 'Respuesta'],
+  Evangelización: ['Respuesta', 'Reunirse', 'Consolidar'],
+  Entrenamiento: ['Consolidar', 'Liderazgo', 'Desarrollo eclesial'],
+  Autocuidado: ['Auto-cuidado'],
+  'Auto-cuidado': ['Auto-cuidado'],
+};
+
+export function resolveValidStage(area: string, stage?: string): string {
+  const allowed = VALID_STAGES_BY_AREA[area] || ['Contacto'];
+  if (stage && allowed.includes(stage)) return stage;
+  return allowed[0] || 'Contacto';
+}
+
 export function queueActivityMutation(
   outbox: OutboxQueueService,
   action: 'CREATE' | 'UPDATE' | 'DELETE',
@@ -14,11 +29,12 @@ export function queueActivityMutation(
 
   const payload: Record<string, any> = {};
   if (action === 'CREATE') {
+    const area = data?.essentialArea || 'Investigación';
     payload.objectiveId = `team-${teamId}-phase-${phaseId}-obj-1`;
     payload.description = data?.description || 'Nueva actividad';
     payload.status = data?.status || 'Pendiente';
-    payload.essentialArea = data?.essentialArea || 'Investigación';
-    payload.stage = data?.stage || 'Investigación Territorial';
+    payload.essentialArea = area;
+    payload.stage = resolveValidStage(area, data?.stage);
     payload.areaLevel = data?.areaLevel || 'Pionera';
     payload.unitBudget = Number(data?.unitBudget) || 0;
     payload.timesPerYear = Number(data?.timesPerYear) || 1;
@@ -31,7 +47,10 @@ export function queueActivityMutation(
     if (data.description !== undefined) payload.description = data.description;
     if (data.status !== undefined) payload.status = data.status;
     if (data.essentialArea !== undefined) payload.essentialArea = data.essentialArea;
-    if (data.stage !== undefined) payload.stage = data.stage;
+    if (data.stage !== undefined || data.essentialArea !== undefined) {
+      const area = data.essentialArea || 'Investigación';
+      payload.stage = resolveValidStage(area, data.stage);
+    }
     if (data.areaLevel !== undefined) payload.areaLevel = data.areaLevel;
     if (data.unitBudget !== undefined) payload.unitBudget = Number(data.unitBudget);
     if (data.timesPerYear !== undefined) payload.timesPerYear = Number(data.timesPerYear);
@@ -63,12 +82,13 @@ export function queueObjectiveMutation(
 
   const payload: Record<string, any> = {};
   if (action === 'CREATE') {
+    const area = data?.essentialArea || 'Investigación';
     payload.teamId = teamId;
     payload.pillarId = phaseId;
     payload.title = data?.title || `Objetivo Estratégico #${objNum}`;
     payload.description = data?.description || 'Descripción del objetivo';
-    payload.essentialArea = data?.essentialArea || 'Investigación';
-    payload.stage = data?.stage || 'Investigación Territorial';
+    payload.essentialArea = area;
+    payload.stage = resolveValidStage(area, data?.stage);
     if (data?.areaLevel) payload.level = data.areaLevel;
     if (data?.shortTermGoal) payload.shortTermGoal = data.shortTermGoal;
     if (data?.mediumTermGoal) payload.mediumTermGoal = data.mediumTermGoal;
@@ -77,7 +97,10 @@ export function queueObjectiveMutation(
     if (data.title !== undefined) payload.title = data.title;
     if (data.description !== undefined) payload.description = data.description;
     if (data.essentialArea !== undefined) payload.essentialArea = data.essentialArea;
-    if (data.stage !== undefined) payload.stage = data.stage;
+    if (data.stage !== undefined || data.essentialArea !== undefined) {
+      const area = data.essentialArea || 'Investigación';
+      payload.stage = resolveValidStage(area, data.stage);
+    }
     if (data.areaLevel !== undefined) payload.level = data.areaLevel;
     if (data.shortTermGoal !== undefined) payload.shortTermGoal = data.shortTermGoal;
     if (data.mediumTermGoal !== undefined) payload.mediumTermGoal = data.mediumTermGoal;

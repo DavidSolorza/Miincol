@@ -45,9 +45,11 @@ export class SyncCoordinatorService {
     try {
       const pending = await this.outbox.getPending();
       for (const mutation of pending) {
-        const success = await this.dispatchMutation(mutation);
-        if (success) {
+        const result = await this.dispatchMutation(mutation);
+        if (result === 'SUCCESS') {
           syncedCount++;
+        } else if (result === 'DEAD_LETTER') {
+          continue;
         } else {
           break; // Detener lote para preservar orden FIFO si hay fallo de red
         }
@@ -67,7 +69,7 @@ export class SyncCoordinatorService {
     return syncedCount;
   }
 
-  private async dispatchMutation(mutation: OutboxMutation): Promise<boolean> {
+  private async dispatchMutation(mutation: OutboxMutation): Promise<'SUCCESS' | 'DEAD_LETTER' | 'NETWORK_ERROR'> {
     await this.outbox.markSyncing(mutation.id);
     try {
       if (mutation.method === 'POST') {
@@ -80,11 +82,17 @@ export class SyncCoordinatorService {
         await httpClient.delete(mutation.endpoint);
       }
       await this.outbox.markSuccess(mutation.id);
-      return true;
+      return 'SUCCESS';
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error de sincronización';
-      await this.outbox.markFailed(mutation.id, message);
-      return false;
+      const statusCode = (err as any)?.statusCode || (err as any)?.status;
+      const isPermanent = typeof statusCode === 'number' && statusCode >= 400 && statusCode < 500 && statusCode !== 408 && statusCode !== 429;
+      if (isPermanent) {
+        await this.outbox.markFailed(mutation.id, message, true);
+      } else {
+        await this.outbox.markFailed(mutation.id, message);
+      }
+      return isPermanent ? 'DEAD_LETTER' : 'NETWORK_ERROR';
     }
   }
 }

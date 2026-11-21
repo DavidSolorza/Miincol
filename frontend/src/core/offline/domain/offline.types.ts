@@ -1,7 +1,7 @@
 // Contratos de tipos para el motor Offline-First y Patrón Outbox
 export type OutboxAction = 'CREATE' | 'UPDATE' | 'DELETE';
 
-export type OutboxStatus = 'pending' | 'syncing' | 'failed' | 'conflict';
+export type OutboxStatus = 'pending' | 'syncing' | 'failed' | 'conflict' | 'dead_letter';
 
 export type OutboxEntityType = 'team' | 'objective' | 'activity' | 'report' | 'note' | 'user';
 

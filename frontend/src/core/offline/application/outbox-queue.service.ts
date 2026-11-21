@@ -41,7 +41,7 @@ export class OutboxQueueService {
     try {
       const all = await this.db.getAll<OutboxMutation>('outbox');
       return all
-        .filter((m) => m.status === 'pending' || m.status === 'failed')
+        .filter((m) => m.status === 'pending' || (m.status === 'failed' && m.attempts < 3))
         .sort((a, b) => new Date(a.clientCreatedAt).getTime() - new Date(b.clientCreatedAt).getTime());
     } catch {
       return [];
@@ -61,13 +61,13 @@ export class OutboxQueueService {
     await this.refreshPendingCount();
   }
 
-  async markFailed(id: string, error: string): Promise<void> {
+  async markFailed(id: string, error: string, isPermanent = false): Promise<void> {
     const mutation = await this.db.get<OutboxMutation>('outbox', id);
     if (!mutation) return;
-    mutation.status = 'failed';
     mutation.attempts += 1;
     mutation.errorMessage = error;
     mutation.lastAttemptAt = new Date().toISOString();
+    mutation.status = (isPermanent || mutation.attempts >= 3) ? 'dead_letter' : 'failed';
     await this.db.put('outbox', mutation);
     await this.refreshPendingCount();
   }
