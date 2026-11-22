@@ -78,11 +78,14 @@ export class AppSessionService {
 
   handleTeamLogin(team?: TeamSupervisionSummary, isNationalAdmin = false): void {
     if (!team) return;
-    const role = isNationalAdmin ? 'admin' : 'team';
+    const isHugo = (team.leaderEmail || '').toLowerCase().includes('hudisapastos') ||
+      (team.leader || '').toLowerCase().includes('hugo');
+    const isDual = isNationalAdmin || isHugo;
+    const role = isDual ? 'admin' : 'team';
     const newSession: AuthSession = {
       role,
       teamId: team.id,
-      userName: isNationalAdmin ? `${team.leader} (Coordinador y Líder)` : team.leader,
+      userName: isDual ? `${team.leader} (Coordinador y Líder)` : team.leader,
     };
     this.session.set(newSession);
     try { localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(newSession)); } catch { /* ignore */ }

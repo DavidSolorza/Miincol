@@ -110,7 +110,8 @@ export class LoginViewComponent implements OnInit, OnDestroy {
           const matched = this.allTeams.find((t) => t.id === teamId || t.slug === teamId) ||
             this.allTeams.find((t) => t.leaderEmail?.toLowerCase() === cleanUser) ||
             this.allTeams[0] || buildFallbackTeam(teamId, res.user, identifier);
-          this.teamSuccess.emit({ team: matched, isNationalAdmin: false });
+          const isNat = cleanUser.includes('hudisapastos') || cleanUser.includes('hugo');
+          this.teamSuccess.emit({ team: matched, isNationalAdmin: isNat });
           this.loading.set(false);
           return;
         }
