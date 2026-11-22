@@ -42,9 +42,26 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
             <input type="number" [disabled]="!canEdit()" [value]="training().newChurchesPlantingTrainingCount" (change)="onTrainingChange('newChurchesPlantingTrainingCount', $event)" class="text-lg sm:text-xl font-black text-stone-900 font-mono w-full bg-transparent mt-1 border-b border-blue-200 focus:border-blue-500 outline-none" />
           </div>
 
-          <div class="p-3 rounded-xl bg-blue-50/50 border border-blue-100/80">
-            <span class="text-[10px] uppercase font-bold text-blue-800 block">Otras Áreas</span>
-            <input type="number" [disabled]="!canEdit()" [value]="training().otherAreasTrainingCount" (change)="onTrainingChange('otherAreasTrainingCount', $event)" class="text-lg sm:text-xl font-black text-stone-900 font-mono w-full bg-transparent mt-1 border-b border-blue-200 focus:border-blue-500 outline-none" />
+          <div class="p-3 rounded-xl bg-blue-50/50 border border-blue-100/80 sm:col-span-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[10px] uppercase font-bold text-blue-800 block">Otras Áreas / Especialidades</span>
+              <span class="text-[9.5px] font-semibold text-blue-600">Cant. capacitada</span>
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <input
+                type="text"
+                placeholder="ej. Taller de oficios, alfabetización..."
+                class="w-full text-xs font-semibold text-stone-800 bg-white/70 px-2 py-1 rounded-lg border border-blue-200 focus:bg-white focus:outline-none"
+              />
+              <input
+                type="number"
+                [disabled]="!canEdit()"
+                [value]="training().otherAreasTrainingCount"
+                (change)="onTrainingChange('otherAreasTrainingCount', $event)"
+                class="text-lg sm:text-xl font-black text-stone-900 font-mono w-16 text-center bg-transparent border-b border-blue-200 focus:border-blue-500 outline-none"
+                title="Cantidad en otras áreas"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -63,13 +80,8 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
 
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
           <div class="p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/80">
-            <span class="text-[10px] uppercase font-bold text-emerald-800 block">Perspectiva Iglesia</span>
+            <span class="text-[10px] uppercase font-bold text-emerald-800 block">Iglesia en perspectiva</span>
             <input type="number" [disabled]="!canEdit()" [value]="church().groupsWithChurchPerspectiveCount" (change)="onChurchChange('groupsWithChurchPerspectiveCount', $event)" class="text-lg sm:text-xl font-black text-stone-900 font-mono w-full bg-transparent mt-1 border-b border-emerald-200 focus:border-emerald-500 outline-none" />
-          </div>
-
-          <div class="p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/80">
-            <span class="text-[10px] uppercase font-bold text-emerald-800 block">Total Iglesias Período</span>
-            <input type="number" [disabled]="!canEdit()" [value]="church().finalChurchesCount" (change)="onChurchChange('finalChurchesCount', $event)" class="text-lg sm:text-xl font-black text-stone-900 font-mono w-full bg-transparent mt-1 border-b border-emerald-200 focus:border-emerald-500 outline-none" />
           </div>
 
           <div class="p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/80">
@@ -90,6 +102,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           <div class="p-3 rounded-xl bg-rose-50/40 border border-rose-100/70">
             <span class="text-[10px] uppercase font-bold text-rose-800 block">Iglesias Perdidas</span>
             <input type="number" [disabled]="!canEdit()" [value]="church().lostFirstGenChurchesCount" (change)="onChurchChange('lostFirstGenChurchesCount', $event)" class="text-lg sm:text-xl font-black text-rose-900 font-mono w-full bg-transparent mt-1 border-b border-rose-200 focus:border-rose-500 outline-none" />
+          </div>
+
+          <div class="p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/80">
+            <span class="text-[10px] uppercase font-bold text-emerald-800 block">Total Iglesias Período</span>
+            <input type="number" [disabled]="!canEdit()" [value]="church().finalChurchesCount" (change)="onChurchChange('finalChurchesCount', $event)" class="text-lg sm:text-xl font-black text-stone-900 font-mono w-full bg-transparent mt-1 border-b border-emerald-200 focus:border-emerald-500 outline-none" />
           </div>
         </div>
       </div>

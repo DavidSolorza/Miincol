@@ -16,6 +16,7 @@ import { AuditHistoryViewComponent } from '../../features/audit/infrastructure/a
 import { ReportModalComponent } from '../../features/reports/infrastructure/report-modal.component';
 import { TeamNotesModalComponent } from '../../features/notes/infrastructure/team-notes-modal.component';
 import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-selector.component';
+import { ReferenceDocumentsModalComponent } from '../../features/documents/infrastructure/reference-documents-modal.component';
 
 @Component({
   selector: 'app-workspace',
@@ -24,6 +25,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
     PlanSidebarComponent, AppHeaderSectionComponent, SuperAdminViewComponent,
     PhaseViewComponent, GeneralInfoViewComponent, ReportModalComponent,
     TeamNotesModalComponent, TeamSelectorComponent, SecurityRolesViewComponent, AuditHistoryViewComponent,
+    ReferenceDocumentsModalComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -39,7 +41,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
           [isCollapsed]="isSidebarCollapsed()" [isOpenMobile]="isMobileSidebarOpen()" [userRole]="sessionSvc.session()!.role"
           [isAdminPreview]="sessionSvc.isAdminPreview()" [whatsappUrl]="whatsappUrl()"
           (selectPhase)="onSelectPhase($event)" (openReportModal)="isReportModalOpen.set(true)"
-          (openNotesModal)="isNotesModalOpen.set(true)" (changeView)="sessionSvc.activeView.set($event)"
+          (openNotesModal)="isNotesModalOpen.set(true)" (openDocsModal)="isDocsModalOpen.set(true)" (changeView)="sessionSvc.activeView.set($event)"
           (toggleCollapse)="isSidebarCollapsed.set(!isSidebarCollapsed())" (closeMobile)="isMobileSidebarOpen.set(false)"
           (logout)="sessionSvc.handleLogout()" (backToAdmin)="sessionSvc.handleBackToAdmin()"
         />
@@ -79,6 +81,7 @@ import { TeamSelectorComponent } from '../../features/auth/infrastructure/team-s
 
       <app-report-modal [isOpen]="isReportModalOpen()" [plan]="planService.plan()" (closed)="isReportModalOpen.set(false)" />
       <app-team-notes-modal [isOpen]="isNotesModalOpen()" [activeTeam]="activeTeam()" (closed)="isNotesModalOpen.set(false)" />
+      <app-reference-documents-modal [isOpen]="isDocsModalOpen()" (closed)="isDocsModalOpen.set(false)" />
       @if (isSuperAdmin()) {
         <app-team-selector [isOpen]="isTeamModalOpen()" [teams]="mappedTeams()" [activeTeamId]="activeTeam().id" (close)="isTeamModalOpen.set(false)" (selectTeam)="onModalSelectTeam($event)" />
       }
@@ -96,8 +99,12 @@ export class AppWorkspaceComponent {
   readonly mappedTeams = input.required<MissionaryTeam[]>();
 
   readonly activeObjectiveNumber = signal(1);
-  readonly isReportModalOpen = signal(false); readonly isNotesModalOpen = signal(false);
-  readonly isTeamModalOpen = signal(false); readonly isSidebarCollapsed = signal(false); readonly isMobileSidebarOpen = signal(false);
+  readonly isReportModalOpen = signal(false);
+  readonly isNotesModalOpen = signal(false);
+  readonly isDocsModalOpen = signal(false);
+  readonly isTeamModalOpen = signal(false);
+  readonly isSidebarCollapsed = signal(false);
+  readonly isMobileSidebarOpen = signal(false);
 
   readonly isSuperAdmin = computed(() => this.sessionSvc.session()?.role === 'admin');
   readonly shouldShowSidebar = computed(() => !this.isSuperAdmin() || (this.sessionSvc.activeView() !== 'superadmin' && this.sessionSvc.activeView() !== 'security' && this.sessionSvc.activeView() !== 'audit'));

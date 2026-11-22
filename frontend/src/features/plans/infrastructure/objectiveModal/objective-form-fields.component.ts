@@ -41,7 +41,7 @@ import { ObjectiveGoalsFieldsComponent } from './objective-goals-fields.componen
 
       <div class="space-y-1">
         <label class="font-bold text-stone-700 block text-xs">
-          Título del Objetivo Estratégico <span class="text-rose-600">*</span>
+          Objetivo Estratégico <span class="text-rose-600">*</span>
         </label>
         <div class="relative">
           <div class="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
@@ -60,7 +60,7 @@ import { ObjectiveGoalsFieldsComponent } from './objective-goals-fields.componen
 
       <div class="space-y-1">
         <label class="font-bold text-stone-700 block text-xs">
-          Descripción y Enfoque <span class="text-rose-600">*</span>
+          Descripción y Enfoque del Objetivo <span class="text-rose-600">*</span>
         </label>
         <textarea
           [value]="description()"

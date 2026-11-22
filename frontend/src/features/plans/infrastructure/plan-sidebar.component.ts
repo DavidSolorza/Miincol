@@ -44,19 +44,16 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
               type="button"
               (click)="backToAdmin.emit()"
               class="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-amber-100/90 hover:bg-amber-200 text-amber-950 border border-amber-300/80 text-[10.5px] font-bold font-['Outfit'] transition shadow-2xs cursor-pointer active:scale-95"
-              title="Regresar al Tablero de Supervisión Nacional"
+              title="Regresar al Tablero de Acompañamiento Nacional"
             >
               <app-icon name="arrow-left" className="w-3.5 h-3.5 text-amber-900 shrink-0" />
-              @if (!isCollapsed()) { <span class="truncate">Volver a Supervisión</span> }
+              @if (!isCollapsed()) { <span class="truncate">Volver al Tablero</span> }
             </button>
           </div>
         }
 
       <div class="space-y-1">
-        <app-sidebar-segmented-control
-          [isCollapsed]="isCollapsed()"
-          (viewChanged)="changeView.emit($event)"
-        />
+        <app-sidebar-segmented-control [isCollapsed]="isCollapsed()" (viewChanged)="changeView.emit($event)" />
 
         @if (userRole() === 'admin') {
           <div [class]="isCollapsed() ? 'px-2 flex justify-center' : 'px-2.5'">
@@ -70,9 +67,7 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
               title="Historial de Ingresos y Auditoría de Cambios"
             >
               <app-icon name="clock" className="w-3.5 h-3.5 text-[#E67324] shrink-0" />
-              @if (!isCollapsed()) {
-                <span class="truncate">Historial</span>
-              }
+              @if (!isCollapsed()) { <span class="truncate">Historial</span> }
             </button>
           </div>
         }
@@ -81,13 +76,9 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
       <div class="flex-1 overflow-y-auto px-2.5 py-1.5 space-y-2 sidebar-scroll-smooth">
         @if (activeView() !== 'superadmin' && activeView() !== 'audit') {
           <app-sidebar-phases-list
-            [allPlans]="allPlans()"
-            [activePhaseId]="activePhaseId()"
-            [activeView]="activeView()"
-            [isCollapsed]="isCollapsed()"
-            [activeTeam]="activeTeam()"
-            (phaseSelected)="selectPhase.emit($event)"
-            (viewChanged)="changeView.emit($event)"
+            [allPlans]="allPlans()" [activePhaseId]="activePhaseId()" [activeView]="activeView()"
+            [isCollapsed]="isCollapsed()" [activeTeam]="activeTeam()"
+            (phaseSelected)="selectPhase.emit($event)" (viewChanged)="changeView.emit($event)"
           />
         }
 
@@ -96,30 +87,17 @@ import { SidebarUserProfileCardComponent } from './sidebar/sidebar-user-profile-
         }
 
         <app-sidebar-footer-actions
-          [activeView]="activeView()"
-          [isTeamRestricted]="userRole() === 'team' || userRole() === 'member'"
-          [isCollapsed]="isCollapsed()"
-          [isOpenMobile]="isOpenMobile()"
-          [whatsappUrl]="whatsappUrl()"
-          (closeMobile)="closeMobile.emit()"
-          (openReportModal)="openReportModal.emit()"
-          (openNotesModal)="openNotesModal.emit()"
+          [activeView]="activeView()" [isTeamRestricted]="userRole() === 'team' || userRole() === 'member'"
+          [isCollapsed]="isCollapsed()" [isOpenMobile]="isOpenMobile()" [whatsappUrl]="whatsappUrl()"
+          (closeMobile)="closeMobile.emit()" (openReportModal)="openReportModal.emit()" (openDocsModal)="openDocsModal.emit()"
         />
 
         @if (activeView() !== 'superadmin' && activeView() !== 'audit') {
-          <app-sidebar-reminders-card
-            [isCollapsed]="isCollapsed()"
-            (openNotesModal)="openNotesModal.emit()"
-          />
+          <app-sidebar-reminders-card [isCollapsed]="isCollapsed()" [activeTeam]="activeTeam()" (openNotesModal)="openNotesModal.emit()" />
         }
       </div>
 
-      <app-sidebar-user-profile-card
-        [activeTeam]="activeTeam()"
-        [isCollapsed]="isCollapsed()"
-        [isAdminPreview]="isAdminPreview()"
-        (loggedOut)="logout.emit()"
-      />
+      <app-sidebar-user-profile-card [activeTeam]="activeTeam()" [isCollapsed]="isCollapsed()" [isAdminPreview]="isAdminPreview()" (loggedOut)="logout.emit()" />
     </aside>
   `,
 })
@@ -138,6 +116,7 @@ export class PlanSidebarComponent {
   readonly selectPhase = output<PhaseType>();
   readonly openReportModal = output<void>();
   readonly openNotesModal = output<void>();
+  readonly openDocsModal = output<void>();
   readonly changeView = output<'plans' | 'general' | 'superadmin' | 'security' | 'audit'>();
   readonly toggleCollapse = output<void>();
   readonly closeMobile = output<void>();

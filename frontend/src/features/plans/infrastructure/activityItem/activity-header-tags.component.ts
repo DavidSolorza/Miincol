@@ -4,6 +4,7 @@ import type { ActivityState, EssentialArea } from '../../domain/plan.types';
 
 const STATE_STYLES: Record<ActivityState, string> = {
   Pendiente: 'bg-amber-50/90 text-amber-900 border-amber-200/80 shadow-2xs',
+  Iniciado: 'bg-sky-50/90 text-sky-900 border-sky-200/80 shadow-2xs',
   'En Proceso': 'bg-orange-50/90 text-orange-900 border-orange-200/80 shadow-2xs',
   Completado: 'bg-emerald-50/90 text-emerald-900 border-emerald-200/80 shadow-2xs',
 };
@@ -25,6 +26,7 @@ const STATE_STYLES: Record<ActivityState, string> = {
             title="Cambiar estado de mi actividad"
           >
             <option value="Pendiente">⏳ Pendiente</option>
+            <option value="Iniciado">🚀 Iniciado</option>
             <option value="En Proceso">🔄 En Proceso</option>
             <option value="Completado">✅ Completado</option>
           </select>
@@ -38,6 +40,13 @@ const STATE_STYLES: Record<ActivityState, string> = {
         >
           <app-icon name="lock" className="w-3.5 h-3.5 text-stone-400" />
           {{ stateLabel(state()) }}
+        </span>
+      }
+
+      @if (stage()) {
+        <span class="inline-flex items-center gap-1 text-[10.5px] font-bold text-stone-800 bg-stone-100/90 px-2 py-0.5 rounded-lg border border-stone-200/80 font-['Outfit']">
+          <app-icon name="compass" className="w-3 h-3 text-[#E67324]" />
+          {{ stage() }}
         </span>
       }
 
@@ -66,6 +75,7 @@ export class ActivityHeaderTagsComponent {
   stateLabel(state: ActivityState): string {
     switch (state) {
       case 'Pendiente': return '⏳ Pendiente';
+      case 'Iniciado': return '🚀 Iniciado';
       case 'En Proceso': return '🔄 En Proceso';
       case 'Completado': return '✅ Completado';
       default: return state;

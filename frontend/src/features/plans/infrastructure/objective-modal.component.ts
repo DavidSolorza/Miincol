@@ -86,7 +86,7 @@ export class ObjectiveModalComponent {
       if (this.isOpen()) {
         this.title.set(this.initialTitle()); this.description.set(this.initialDescription());
         this.essentialArea.set(this.initialEssentialArea() || 'Investigación');
-        this.stage.set(this.initialStage() || ''); this.shortTermGoal.set(this.initialShortTermGoal() || '');
+        this.stage.set(this.initialStage() || 'Contacto'); this.shortTermGoal.set(this.initialShortTermGoal() || '');
         this.mediumTermGoal.set(this.initialMediumTermGoal() || '');
         this.longTermGoal.set(this.initialLongTermGoal() || '');
         this.error.set(null); this.confirmDelete.set(false);
@@ -113,7 +113,7 @@ export class ObjectiveModalComponent {
       description: this.description().trim(),
       number: this.objectiveNumber(),
       essentialArea: this.essentialArea(),
-      stage: this.stage().trim() || undefined,
+      stage: this.stage().trim() || 'Contacto',
       shortTermGoal: this.shortTermGoal().trim(),
       mediumTermGoal: this.mediumTermGoal().trim(),
       longTermGoal: this.longTermGoal().trim(),

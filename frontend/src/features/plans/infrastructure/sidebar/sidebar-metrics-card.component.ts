@@ -16,15 +16,6 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
           {{ metrics().progressPercentage }}%
         </span>
       </div>
-
-      <div class="flex items-center justify-between text-stone-900 font-['Outfit']">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-          Presupuesto
-        </span>
-        <span class="text-xs font-extrabold text-stone-900">
-          {{ formatCurrency(metrics().totalBudget) }}
-        </span>
-      </div>
     </div>
   `,
 })

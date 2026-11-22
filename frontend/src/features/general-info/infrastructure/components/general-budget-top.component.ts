@@ -22,7 +22,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         </div>
 
         <div class="text-right bg-[#FAF7F2] px-3.5 py-1.5 rounded-xl border border-stone-200/80">
-          <span class="text-[10px] uppercase font-bold tracking-wider text-stone-400 block">Presupuesto Total Plan</span>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-stone-400 block">Presupuesto Inicial Asignado</span>
           <span class="text-base sm:text-lg font-black text-[#8B251E] font-mono">{{ formatCurrency(totalBudget()) }}</span>
         </div>
       </div>
@@ -48,10 +48,10 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
 
         <div class="flex items-center justify-between text-[11px] font-mono pt-1 border-t border-stone-200/70">
           <span class="text-stone-600 font-bold">
-            Gastado: <strong class="text-[#8B251E] font-extrabold">{{ formatCurrency(executedBudget()) }}</strong> ({{ budgetPercentage() }}%)
+            Monto Usado: <strong class="text-[#8B251E] font-extrabold">{{ formatCurrency(executedBudget()) }}</strong> ({{ budgetPercentage() }}%)
           </span>
           <span class="text-stone-600 font-bold">
-            Queda: <strong class="text-emerald-700 font-extrabold">{{ formatCurrency(remainingBudget) }}</strong> ({{ remainingPercentage }}%)
+            Saldo Disponible: <strong class="text-emerald-700 font-extrabold">{{ formatCurrency(remainingBudget) }}</strong> ({{ remainingPercentage }}%)
           </span>
         </div>
       </div>
@@ -77,11 +77,11 @@ export class GeneralBudgetTopComponent {
   readonly executedBudget = input<number>(0);
 
   readonly pillars = [
-    { key: 'investigacionBudget' as const, label: '1. Investigación' },
-    { key: 'encarnacionBudget' as const, label: '2. Encarnación' },
+    { key: 'investigacionBudget' as const, label: '1. Inv. y Diagnóstico' },
+    { key: 'encarnacionBudget' as const, label: '2. Encarnación y Convivencia' },
     { key: 'evangelizacionBudget' as const, label: '3. Evangelización' },
     { key: 'entrenamientoBudget' as const, label: '4. Entrenamiento' },
-    { key: 'autocuidadoBudget' as const, label: '5. Auto Cuidado' },
+    { key: 'autocuidadoBudget' as const, label: '5. Autocuidado Obrero' },
   ];
 
   get remainingBudget(): number {

@@ -19,15 +19,6 @@ export interface NoteDraftPayload {
     <form (submit)="handleSubmit($event)" class="p-3.5 sm:p-4 rounded-xl bg-stone-50/80 border border-stone-200/90 space-y-3">
       <div class="flex items-center justify-between">
         <span class="text-xs font-bold text-stone-800">Nueva Nota / Idea de Campo</span>
-        <label class="flex items-center gap-1.5 text-xs text-stone-600 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            [checked]="isPinned()"
-            (change)="onPinChange($event)"
-            class="w-3.5 h-3.5 rounded text-stone-900 focus:ring-stone-900"
-          />
-          <span class="text-[11px] font-semibold">Fijar al inicio</span>
-        </label>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">

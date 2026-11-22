@@ -28,11 +28,11 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
         <div class="p-2.5 rounded-xl border border-stone-200/80 bg-stone-50/60">
-          <span class="text-[10px] font-bold text-stone-500 block uppercase">1. Investigación</span>
+          <span class="text-[10px] font-bold text-stone-500 block uppercase">1. Investigación y Diagnóstico</span>
           <span class="text-xs sm:text-sm font-black text-stone-900 mt-1 block font-['Outfit']">{{ formatMoney(budget().investigacionBudget) }}</span>
         </div>
         <div class="p-2.5 rounded-xl border border-stone-200/80 bg-stone-50/60">
-          <span class="text-[10px] font-bold text-stone-500 block uppercase">2. Encarnación</span>
+          <span class="text-[10px] font-bold text-stone-500 block uppercase">2. Encarnación y Convivencia</span>
           <span class="text-xs sm:text-sm font-black text-stone-900 mt-1 block font-['Outfit']">{{ formatMoney(budget().encarnacionBudget) }}</span>
         </div>
         <div class="p-2.5 rounded-xl border border-stone-200/80 bg-stone-50/60">
@@ -40,11 +40,11 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
           <span class="text-xs sm:text-sm font-black text-stone-900 mt-1 block font-['Outfit']">{{ formatMoney(budget().evangelizacionBudget) }}</span>
         </div>
         <div class="p-2.5 rounded-xl border border-stone-200/80 bg-stone-50/60">
-          <span class="text-[10px] font-bold text-stone-500 block uppercase">4. Entrenamiento</span>
+          <span class="text-[10px] font-bold text-stone-500 block uppercase">4. Entrenamiento Ministerial</span>
           <span class="text-xs sm:text-sm font-black text-stone-900 mt-1 block font-['Outfit']">{{ formatMoney(budget().entrenamientoBudget) }}</span>
         </div>
         <div class="p-2.5 rounded-xl border border-stone-200/80 bg-stone-50/60">
-          <span class="text-[10px] font-bold text-stone-500 block uppercase">5. Autocuidado</span>
+          <span class="text-[10px] font-bold text-stone-500 block uppercase">5. Autocuidado del Obrero</span>
           <span class="text-xs sm:text-sm font-black text-stone-900 mt-1 block font-['Outfit']">{{ formatMoney(budget().autocuidadoBudget) }}</span>
         </div>
       </div>

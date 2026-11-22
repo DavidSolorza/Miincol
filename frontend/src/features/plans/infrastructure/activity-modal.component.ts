@@ -23,7 +23,7 @@ type ActivityFormState = ReturnType<typeof getInitialFormValues>;
   template: `
     <app-modal
       [isOpen]="isOpen()"
-      [title]="mode() === 'edit' ? 'Editar Actividad / Sub-Objetivo' : 'Nueva Iniciativa / Actividad Ministerial'"
+      [title]="mode() === 'edit' ? 'Editar Actividad Ministerial' : 'Nueva Iniciativa / Actividad Ministerial'"
       [subtitle]="mode() === 'edit' ? 'Modifique área, presupuesto mensual y fechas' : 'Registre una acción en el Plan de Desarrollo Ministerial'"
       maxWidth="2xl"
       (closed)="closed.emit()"

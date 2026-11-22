@@ -13,7 +13,7 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
   imports: [AppIconComponent, ActivityHeaderTagsComponent, ActivityBudgetQuickEditComponent, ActivityDetailsAccordionComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-white rounded-2xl border border-stone-200/70 hover:border-stone-300 hover:shadow-xs transition-all duration-200 overflow-hidden" [class.ring-1]="isMember() && isAssigned()" [class.ring-emerald-400/50]="isMember() && isAssigned()">
+    <div class="bg-white rounded-2xl border border-stone-200/80 border-l-4 border-l-[#E67324] ml-0.5 sm:ml-2.5 hover:border-stone-300 hover:border-l-[#8B251E] hover:shadow-xs transition-all duration-200 overflow-hidden" [class.ring-1]="isMember() && isAssigned()" [class.ring-emerald-400/50]="isMember() && isAssigned()">
       <div class="p-4 sm:p-4.5 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2.5">
           <app-activity-header-tags

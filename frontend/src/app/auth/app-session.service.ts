@@ -130,12 +130,12 @@ export class AppSessionService {
     this.isAdminPreview.set(true);
     this.activeView.set('general');
     const targetTeam = allTeams.find((t) => t.id === teamId || t.slug === teamId);
-    this.toastService.toast.info(`Supervisando misión: ${targetTeam?.name || 'Equipo'}`, 'Modo Supervisión');
+    this.toastService.toast.info(`Acompañando misión: ${targetTeam?.name || 'Equipo'}`, 'Modo Acompañamiento');
   }
 
   handleBackToAdmin(): void {
     this.isAdminPreview.set(false);
     this.activeView.set('superadmin');
-    this.toastService.toast.info('Regresando al Tablero de Supervisión Nacional', 'Supervisión');
+    this.toastService.toast.info('Regresando al Tablero de Acompañamiento Nacional', 'Acompañamiento');
   }
 }

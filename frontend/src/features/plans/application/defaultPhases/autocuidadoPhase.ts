@@ -3,7 +3,7 @@ import type { PhasePlan } from '../../domain/plan.types';
 // Configuración inicial del plan y objetivos para la fase de Autocuidado Integral del Obrero
 export const autocuidadoPhase: PhasePlan = {
   phaseId: 'autocuidado',
-  phaseName: 'Autocuidado Integral y Sostenibilidad del Obrero',
+  phaseName: 'Autocuidado Integral del Misionero',
   startDate: '2026-03-01',
   teamName: 'Misión Wayuu - Alta Guajira',
   teamLeader: 'Pr. David Morales',

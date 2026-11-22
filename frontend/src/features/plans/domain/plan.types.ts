@@ -1,5 +1,5 @@
 export type PhaseType = 'investigacion' | 'encarnacion' | 'evangelizacion' | 'entrenamiento' | 'autocuidado';
-export type ActivityState = 'Pendiente' | 'En Proceso' | 'Completado';
+export type ActivityState = 'Pendiente' | 'Iniciado' | 'En Proceso' | 'Completado';
 export type EssentialArea = 'Investigación' | 'Encarnación' | 'Evangelización' | 'Entrenamiento' | 'Autocuidado';
 export type AreaLevel = string;
 

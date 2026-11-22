@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
+import type { MissionaryTeam } from '../../../auth/domain/auth.types';
 
 @Component({
   selector: 'app-sidebar-reminders-card',
@@ -29,33 +30,37 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
             </span>
           </div>
           <span class="text-[8.5px] font-bold uppercase text-[#8B251E] bg-[#8B251E]/10 px-1.5 py-0.5 rounded-md font-['Outfit']">
-            Supervisión
+            Acompañamiento
           </span>
         </div>
 
-        <div class="p-1.5 rounded-lg bg-[#FAF7F2] border border-[#EBDDCF]/70 space-y-0.5">
-          <div class="flex items-center gap-1">
-            <app-icon name="calendar" className="w-2.5 h-2.5 text-[#8B251E] shrink-0" />
-            <span class="text-[9.5px] font-bold text-[#8B251E] uppercase font-['Outfit']">
-              Jueves • 7:00 PM
-            </span>
+        @if (activeNotes().length > 0) {
+          @for (n of activeNotes(); track n.id) {
+            <div class="p-1.5 rounded-lg bg-[#FAF7F2] border border-[#EBDDCF]/70 space-y-0.5">
+              <div class="flex items-center gap-1">
+                <app-icon name="calendar" className="w-2.5 h-2.5 text-[#8B251E] shrink-0" />
+                <span class="text-[9.5px] font-bold text-[#8B251E] uppercase font-['Outfit'] truncate">
+                  {{ n.title }}
+                </span>
+              </div>
+              <p class="text-[10px] font-semibold text-stone-800 leading-tight font-['Outfit'] line-clamp-2">
+                {{ n.content }}
+              </p>
+            </div>
+          }
+        } @else {
+          <div class="p-1.5 rounded-lg bg-[#FAF7F2] border border-[#EBDDCF]/70 space-y-0.5">
+            <div class="flex items-center gap-1">
+              <app-icon name="calendar" className="w-2.5 h-2.5 text-[#8B251E] shrink-0" />
+              <span class="text-[9.5px] font-bold text-[#8B251E] uppercase font-['Outfit']">
+                Jueves • 7:00 PM
+              </span>
+            </div>
+            <p class="text-[10.5px] font-semibold text-stone-800 leading-tight font-['Outfit']">
+              Reunión de Enlace Territorial
+            </p>
           </div>
-          <p class="text-[10.5px] font-semibold text-stone-800 leading-tight font-['Outfit']">
-            Reunión de Enlace Territorial
-          </p>
-        </div>
-
-        <div class="p-1.5 rounded-lg bg-amber-50/40 border border-amber-200/50 space-y-0.5">
-          <div class="flex items-center gap-1">
-            <app-icon name="shield-check" className="w-2.5 h-2.5 text-[#E67324] shrink-0" />
-            <span class="text-[9px] font-bold text-stone-600 font-['Outfit']">
-              Coordinación de Equipos
-            </span>
-          </div>
-          <p class="text-[10px] text-stone-600 leading-snug">
-            Completar evidencias del pilar antes del cierre mensual.
-          </p>
-        </div>
+        }
 
         <button
           type="button"
@@ -69,9 +74,23 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     }
   `,
 })
-// Tarjeta de avisos y recordatorios ministeriales ubicada en la barra lateral
+// Tarjeta de avisos y recordatorios ministeriales sincronizada con las notas activas
 export class SidebarRemindersCardComponent {
-  readonly isCollapsed = input.required<boolean>(); // Indica si la barra lateral está en modo compacto
-  readonly openNotesModal = output<void>(); // Emite para abrir el modal de notas y agenda territorial
+  readonly isCollapsed = input.required<boolean>();
+  readonly activeTeam = input<MissionaryTeam | undefined>(undefined);
+  readonly openNotesModal = output<void>();
+
+  readonly activeNotes = computed(() => {
+    const team = this.activeTeam();
+    if (!team) return [];
+    try {
+      const saved = localStorage.getItem('misincol_notes_' + team.id);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed.slice(0, 2);
+      }
+    } catch {}
+    return [];
+  });
 }
 

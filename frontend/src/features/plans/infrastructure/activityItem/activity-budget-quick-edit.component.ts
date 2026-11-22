@@ -43,8 +43,9 @@ import { formatCurrencyCOP } from '../../../../shared/utils/formatters';
       } @else {
         <div class="flex items-center gap-2">
           <div class="bg-stone-50/90 px-3 py-1.5 rounded-xl border border-stone-200/70 text-right shadow-2xs">
-            <span class="text-sm font-black text-stone-900 font-['Outfit'] block leading-none">{{ formatCurrency(totalBudget()) }}</span>
-            <span class="text-[9.5px] text-stone-400 font-semibold block mt-0.5">({{ formatCurrency(unitBudget()) }} × {{ timesPerYear() }}/año)</span>
+            <span class="text-[9px] text-stone-500 font-bold uppercase tracking-wider block leading-tight">Presupuesto</span>
+            <span class="text-sm font-black text-stone-900 font-['Outfit'] block leading-none mt-0.5">{{ formatCurrency(totalBudget()) }}</span>
+            <span class="text-[9.5px] text-stone-500 font-medium block mt-0.5">{{ formatCurrency(unitBudget()) }} × {{ timesPerYear() }}/año</span>
           </div>
           @if (canEdit()) {
             <button

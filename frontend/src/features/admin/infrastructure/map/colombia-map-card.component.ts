@@ -29,6 +29,7 @@ import { ColombiaMapTooltipComponent } from './colombia-map-tooltip.component';
         [selectedEthnicity]="selectedEthnicity()"
         (selectEthnicity)="selectedEthnicity.set($event)"
         [departments]="departments"
+        [ethnicities]="ethnicities"
       />
 
       <div class="flex-1 min-h-0 relative flex items-center justify-center p-2 sm:p-4 overflow-hidden bg-gradient-to-b from-[#FFFDF9] via-white to-[#FAF8F5]">
@@ -77,6 +78,12 @@ export class ColombiaMapCardComponent {
   // Obtiene la lista ordenada de departamentos únicos con presencia misionera
   get departments(): string[] {
     const list = Array.from(new Set(this.teams.map((t) => resolveTeamLocation(t).departmentName))).filter(Boolean);
+    return list.sort();
+  }
+
+  // Obtiene la lista ordenada de etnias únicas de los equipos registrados
+  get ethnicities(): string[] {
+    const list = Array.from(new Set(this.teams.map((t) => t.ethnicity))).filter(Boolean);
     return list.sort();
   }
 

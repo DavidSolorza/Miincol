@@ -12,11 +12,11 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         <div class="space-y-1.5 pt-1 flex flex-col items-center">
           <button
             type="button"
-            (click)="handleOpenNotes()"
-            class="w-9 h-9 rounded-xl bg-white border border-orange-200 text-[#8B251E] hover:bg-orange-50 flex items-center justify-center shadow-xs transition cursor-pointer"
-            title="Notas y Agenda"
+            (click)="handleOpenDocs()"
+            class="w-9 h-9 rounded-xl bg-white border border-stone-200 text-[#8B251E] hover:bg-orange-50 flex items-center justify-center shadow-xs transition cursor-pointer"
+            title="Documentos Base PDF"
           >
-            <app-icon name="notebook-pen" className="w-5 h-5 text-[#8B251E]" />
+            <app-icon name="book-open" className="w-5 h-5 text-[#8B251E]" />
           </button>
           <button
             type="button"
@@ -31,13 +31,13 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
         <div class="space-y-1.5 pt-0.5 select-none">
           <button
             type="button"
-            (click)="handleOpenNotes()"
+            (click)="handleOpenDocs()"
             class="w-full py-1.5 px-3 rounded-xl bg-white/90 hover:bg-stone-50 border border-stone-200/80 hover:border-stone-300 text-stone-700 hover:text-stone-900 shadow-2xs transition-all duration-200 ease-out flex items-center justify-center gap-2 cursor-pointer font-['Outfit'] group"
-            title="Notas y Agenda Territorial"
+            title="Manual PDM y Documentos Base PDF"
           >
-            <app-icon name="notebook-pen" className="w-3.5 h-3.5 text-stone-500 group-hover:text-stone-800 transition-colors shrink-0" />
+            <app-icon name="book-open" className="w-3.5 h-3.5 text-stone-500 group-hover:text-stone-800 transition-colors shrink-0" />
             <span class="font-semibold text-xs text-stone-700 group-hover:text-stone-900 transition-colors">
-              Notas y Agenda
+              Documentos Base
             </span>
           </button>
 
@@ -57,7 +57,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
     }
   `,
 })
-// Botones de acción en la barra lateral para abrir notas e informe ejecutivo
+// Botones de acción en la barra lateral para abrir documentos de referencia e informe ejecutivo
 export class SidebarFooterActionsComponent {
   readonly activeView = input.required<'plans' | 'general' | 'superadmin'>();
   readonly isTeamRestricted = input.required<boolean>();
@@ -67,10 +67,10 @@ export class SidebarFooterActionsComponent {
 
   readonly closeMobile = output<void>();
   readonly openReportModal = output<void>();
-  readonly openNotesModal = output<void>();
+  readonly openDocsModal = output<void>();
 
-  handleOpenNotes(): void {
-    this.openNotesModal.emit();
+  handleOpenDocs(): void {
+    this.openDocsModal.emit();
     if (this.isOpenMobile()) this.closeMobile.emit();
   }
 

@@ -17,7 +17,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       </div>
       <div>
         <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-sm mx-auto leading-relaxed">
-          Ingresa tus credenciales para acceder a la gestión y supervisión ministerial.
+          Ingresa tus credenciales para acceder a la gestión y acompañamiento ministerial.
         </p>
       </div>
     </div>

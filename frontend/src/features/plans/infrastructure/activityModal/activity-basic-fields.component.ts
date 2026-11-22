@@ -44,7 +44,7 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
       </div>
 
       <div>
-        <label class="font-bold text-stone-700 block mb-1 text-[11px]">Descripción de la Actividad / Sub-Objetivo *</label>
+        <label class="font-bold text-stone-700 block mb-1 text-[11px]">Descripción de la Actividad *</label>
         <textarea
           [value]="description()"
           (input)="onDescriptionInput($event)"
@@ -57,18 +57,6 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="font-bold text-stone-700 block mb-1 text-[11px]">Responsable</label>
-          <input
-            type="text"
-            [value]="responsible()"
-            (input)="onResponsibleInput($event)"
-            placeholder="Pastor Líder / Obrero"
-            class="w-full p-2.5 rounded-xl border border-stone-200 bg-white hover:border-stone-300 focus:border-[#E67324] focus:ring-2 focus:ring-[#E67324]/20 focus:outline-hidden transition-all text-xs"
-            required
-          />
-        </div>
-
-        <div>
           <label class="font-bold text-stone-700 block mb-1 text-[11px]">Estado Inicial</label>
           <select
             [value]="state()"
@@ -76,6 +64,7 @@ import { ActivityScheduleFieldsComponent } from './activity-schedule-fields.comp
             class="w-full p-2.5 rounded-xl border border-stone-200 bg-white text-xs font-semibold text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-stone-200/50 focus:border-stone-400 cursor-pointer"
           >
             <option value="Pendiente">Pendiente</option>
+            <option value="Iniciado">Iniciado</option>
             <option value="En Proceso">En Proceso</option>
             <option value="Completado">Completado</option>
           </select>

@@ -6,11 +6,11 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
 
 // Configuración estática de los 5 pilares ministeriales del PDM con su icono y etiqueta
 const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
-  { id: 'investigacion', label: 'Investigación', icon: 'compass' },
-  { id: 'encarnacion', label: 'Encarnación', icon: 'users' },
+  { id: 'investigacion', label: 'Investigación y Diagnóstico', icon: 'compass' },
+  { id: 'encarnacion', label: 'Encarnación y Convivencia', icon: 'users' },
   { id: 'evangelizacion', label: 'Evangelización', icon: 'flame' },
-  { id: 'entrenamiento', label: 'Entrenamiento', icon: 'graduation-cap' },
-  { id: 'autocuidado', label: 'Autocuidado', icon: 'heart' },
+  { id: 'entrenamiento', label: 'Entrenamiento Ministerial', icon: 'graduation-cap' },
+  { id: 'autocuidado', label: 'Autocuidado del Obrero', icon: 'heart' },
 ];
 
 @Component({

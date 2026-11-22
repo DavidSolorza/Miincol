@@ -16,7 +16,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
             <app-icon name="table" className="w-4 h-4 text-[#E67324]" />
           </div>
           <div>
-            <h3 class="text-xs sm:text-sm font-black text-stone-900 tracking-tight">Seguimiento Multianual de Campo (Modelo Excel)</h3>
+            <h3 class="text-xs sm:text-sm font-black text-stone-900 tracking-tight">Seguimiento Multianual de Campo</h3>
             <p class="text-[10.5px] text-stone-500">Métricas comparativas por año ministerial de la misión</p>
           </div>
         </div>

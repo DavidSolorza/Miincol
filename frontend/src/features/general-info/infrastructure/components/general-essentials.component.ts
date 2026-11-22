@@ -1,14 +1,14 @@
 import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
 import { AppIconComponent } from '../../../../shared/components/icon/app-icon.component';
 
-const CATALOG_ESSENTIALS = [
-  'Liderazgo Indígena',
+const CATALOG_STAGES = [
+  'Contacto',
+  'Comunicar / Evangelismo',
+  'Respuesta',
+  'Congregarse / Reunirse',
+  'Consolidar / Discipulado',
+  'Liderazgo',
   'Desarrollo Eclesial',
-  'Discipulado Bíblico',
-  'Oración & Intercesión',
-  'Plantación de Iglesias',
-  'Autonomía Territorial',
-  'Salud y Familia Pastoral',
 ];
 
 @Component({
@@ -24,8 +24,8 @@ const CATALOG_ESSENTIALS = [
             <app-icon name="target" className="w-4 h-4 text-amber-600" />
           </div>
           <div>
-            <h3 class="text-xs sm:text-sm font-black text-stone-900 tracking-tight">Esenciales a Desarrollar (Hasta 5)</h3>
-            <p class="text-[10.5px] text-stone-500">Áreas estratégicas clave priorizadas para esta misión</p>
+            <h3 class="text-xs sm:text-sm font-black text-stone-900 tracking-tight">Etapas a Desarrollar</h3>
+            <p class="text-[10.5px] text-stone-500">Etapas estratégicas clave priorizadas para esta misión</p>
           </div>
         </div>
 
@@ -42,7 +42,7 @@ const CATALOG_ESSENTIALS = [
         }
       </div>
 
-      <!-- Lista activa de esenciales -->
+      <!-- Lista activa de etapas -->
       <div class="flex flex-wrap gap-2 pt-1">
         @for (item of essentials(); track item; let idx = $index) {
           <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 font-bold text-xs shadow-2xs">
@@ -56,19 +56,19 @@ const CATALOG_ESSENTIALS = [
           </div>
         }
         @if (essentials().length === 0) {
-          <span class="text-xs text-stone-400 italic">No se han definido esenciales aún.</span>
+          <span class="text-xs text-stone-400 italic">No se han definido etapas aún.</span>
         }
       </div>
 
       <!-- Catálogo de selección rápida cuando está en modo edición -->
       @if (isEditing()) {
         <div class="mt-2 p-2.5 rounded-xl bg-stone-50 border border-stone-200/80 space-y-1.5 animate-fadeIn">
-          <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Agregar área esencial del catálogo:</span>
+          <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Agregar etapa del catálogo:</span>
           <div class="flex flex-wrap gap-1.5">
             @for (cat of catalog; track cat) {
               <button
                 type="button"
-                [disabled]="essentials().includes(cat) || essentials().length >= 5"
+                [disabled]="essentials().includes(cat)"
                 (click)="addItem(cat)"
                 class="px-2 py-1 rounded-lg text-[11px] font-medium border transition cursor-pointer"
                 [class]="essentials().includes(cat) ? 'bg-stone-200 text-stone-400 border-stone-200 cursor-not-allowed' : 'bg-white text-stone-800 border-stone-200 hover:border-amber-400 hover:bg-amber-50/50'"
@@ -88,10 +88,10 @@ export class GeneralEssentialsComponent {
   readonly essentialsChanged = output<string[]>();
 
   readonly isEditing = signal(false);
-  readonly catalog = CATALOG_ESSENTIALS;
+  readonly catalog = CATALOG_STAGES;
 
   addItem(item: string): void {
-    if (this.essentials().includes(item) || this.essentials().length >= 5) return;
+    if (this.essentials().includes(item)) return;
     this.essentialsChanged.emit([...this.essentials(), item]);
   }
 

@@ -21,9 +21,9 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
             type="button"
             (click)="handleLogoutClick()"
             [title]="displayName() + ' • Click para cerrar sesión'"
-            class="w-9 h-9 rounded-xl bg-white hover:bg-stone-100 text-stone-700 border border-stone-200/80 flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+            class="w-9 h-9 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 flex items-center justify-center transition-all shadow-2xs cursor-pointer"
           >
-            <app-icon name="users" className="w-4 h-4 text-stone-700" />
+            <app-icon name="log-out" className="w-4 h-4 text-rose-700" />
           </button>
         }
       </div>
@@ -51,13 +51,14 @@ import type { MissionaryTeam } from '../../../auth/domain/auth.types';
               type="button"
               (click)="handleLogoutClick()"
               title="Cerrar sesión"
-              class="text-stone-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-lg transition-colors duration-200 cursor-pointer shrink-0"
+              class="flex items-center gap-1 text-[10.5px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 px-2 py-1 rounded-xl transition-all duration-200 cursor-pointer shrink-0 shadow-2xs"
             >
-              <app-icon name="log-out" className="w-3.5 h-3.5" />
+              <app-icon name="log-out" className="w-3.5 h-3.5 text-rose-600" />
+              <span>Salir</span>
             </button>
           } @else {
             <span class="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-md bg-stone-100 text-stone-600 border border-stone-200/80 font-['Outfit'] shrink-0 select-none">
-              Supervisión
+              Acompañamiento
             </span>
           }
         </div>

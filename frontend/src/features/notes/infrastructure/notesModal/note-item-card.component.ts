@@ -8,14 +8,7 @@ import { type TeamNote, NOTE_CATEGORIES } from '../../domain/notes.types';
   imports: [AppIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div
-      [class]="
-        'p-3.5 sm:p-4 rounded-xl border transition-all duration-200 bg-white relative flex flex-col justify-between space-y-2.5 ' +
-        (note().isPinned
-          ? 'border-amber-300 shadow-sm ring-1 ring-amber-300/40'
-          : 'border-stone-200/80 hover:border-stone-300 shadow-2xs')
-      "
-    >
+    <div class="p-3.5 sm:p-4 rounded-xl border border-stone-200/80 hover:border-stone-300 shadow-2xs transition-all duration-200 bg-white relative flex flex-col justify-between space-y-2.5">
       <div class="space-y-1.5">
         <div class="flex items-center justify-between gap-2">
           <span [class]="'px-2 py-0.5 rounded-md text-[10px] font-bold border ' + cat().bgClass + ' ' + cat().textClass + ' ' + cat().borderClass">
@@ -23,20 +16,6 @@ import { type TeamNote, NOTE_CATEGORIES } from '../../domain/notes.types';
           </span>
 
           <div class="flex items-center gap-1">
-            <button
-              type="button"
-              (click)="togglePin.emit(note().id)"
-              [class]="
-                'p-1.5 rounded-lg transition cursor-pointer ' +
-                (note().isPinned
-                  ? 'bg-amber-100 text-amber-700'
-                  : 'text-stone-300 hover:text-stone-600 hover:bg-stone-100')
-              "
-              [title]="note().isPinned ? 'Desfijar nota' : 'Fijar nota arriba'"
-            >
-              <app-icon name="pin" [className]="'w-3.5 h-3.5 ' + (note().isPinned ? 'fill-amber-600' : '')" />
-            </button>
-
             <button
               type="button"
               (click)="deleted.emit(note().id)"

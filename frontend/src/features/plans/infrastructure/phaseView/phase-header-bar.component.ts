@@ -23,9 +23,6 @@ import { ToastService } from '../../../../shared/components/toast/toast.service'
           <span class="text-[11px] font-black uppercase tracking-wider text-stone-900 bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200/80 font-['Outfit'] shadow-2xs">
             {{ phaseName() }}
           </span>
-          <span class="text-xs font-semibold text-stone-400 hidden sm:inline">
-            • {{ objectivesCount() }}/4 Objetivos Estratégicos
-          </span>
         </div>
       </div>
 

@@ -20,7 +20,7 @@ import { ReportActivitiesDetailComponent } from './reportModal/report-activities
     <app-modal
       [isOpen]="isOpen()"
       title="Informe Ejecutivo - Plan de Desarrollo Ministerial"
-      subtitle="Documento consolidado de avance operativo, metas y presupuesto para supervisión nacional"
+      subtitle="Documento consolidado de avance operativo, metas y presupuesto para acompañamiento ministerial"
       maxWidth="4xl"
       (close)="closed.emit()"
     >

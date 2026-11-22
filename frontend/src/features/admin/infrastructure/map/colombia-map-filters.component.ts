@@ -46,12 +46,9 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
           [class]="selectBaseClass(selectedEthnicity !== 'ALL')"
         >
           <option value="ALL" [selected]="selectedEthnicity === 'ALL'">Etnia / Pueblo</option>
-          <option value="Wayuu" [selected]="selectedEthnicity === 'Wayuu'">Wayuu</option>
-          <option value="Nasa" [selected]="selectedEthnicity === 'Nasa'">Nasa</option>
-          <option value="Emberá" [selected]="selectedEthnicity === 'Emberá'">Emberá</option>
-          <option value="Nukak" [selected]="selectedEthnicity === 'Nukak'">Nukak</option>
-          <option value="Pastos" [selected]="selectedEthnicity === 'Pastos'">Pastos</option>
-          <option value="Arhuaco" [selected]="selectedEthnicity === 'Arhuaco'">Arhuaco</option>
+          @for (eth of allEthnicities; track eth) {
+            <option [value]="eth" [selected]="selectedEthnicity === eth">{{ eth }}</option>
+          }
         </select>
         <app-icon name="chevron-down" className="w-3 h-3 text-[#E67324] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
       </div>
@@ -78,6 +75,12 @@ export class ColombiaMapFiltersComponent {
   @Input() selectedPhase = 'ALL'; // Fase del PDM seleccionada
   @Input() selectedEthnicity = 'ALL'; // Etnia seleccionada
   @Input() departments: string[] = []; // Opciones de departamentos disponibles
+  @Input() ethnicities: string[] = []; // Opciones de etnias dinámicas
+
+  get allEthnicities(): string[] {
+    const defaults = ['Wayuu', 'Nasa', 'Emberá', 'Nukak', 'Pastos', 'Arhuaco', 'Barí', 'Baudó'];
+    return Array.from(new Set([...defaults, ...this.ethnicities])).filter(Boolean).sort();
+  }
 
   @Output() selectDept = new EventEmitter<string>(); // Emite cambio de departamento
   @Output() selectStatus = new EventEmitter<string>(); // Emite cambio de estado de salud
