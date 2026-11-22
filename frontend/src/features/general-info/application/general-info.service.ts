@@ -8,7 +8,7 @@ import { archiveYearCycle, backupPdmPlansSnapshot } from '../domain/general-info
 import { createCleanCycleState } from '../domain/general-info-reset.helper';
 import { syncGlobalMinisterialYear } from '../domain/general-info-year.helper';
 import { computePillarBudgetsFromPlans } from '../domain/general-pillar-budget.helper';
-import { syncGeneralInfoToBackend } from './general-info-sync.helper';
+import { syncGeneralInfoToBackend, fetchRemoteGeneralInfo } from './general-info-sync.helper';
 import { serviceBus } from '../../../core/bus';
 
 const STORAGE_PREFIX = 'misincol_general_info_v3_';
@@ -47,27 +47,28 @@ export class GeneralInfoService {
   });
 
   loadTeamInfo(teamId: string, teamName?: string, leader?: string, teamMembers?: string[]): void {
-    const key = `${STORAGE_PREFIX}${teamId}`;
-    const dynamicBudget = computePillarBudgetsFromPlans(teamId);
+    const key = `${STORAGE_PREFIX}${teamId}`, dynamicBudget = computePillarBudgetsFromPlans(teamId);
+    let initial: TeamGeneralInfo;
     try {
       const saved = localStorage.getItem(key);
       if (saved) {
-        const parsed = JSON.parse(saved) as TeamGeneralInfo;
-        if (!parsed.annualMetricsHistory) {
-          parsed.annualMetricsHistory = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers).annualMetricsHistory;
-        }
-        if (!parsed.teamData?.year) parsed.teamData.year = this.activeGlobalYear();
-        parsed.budgetBreakdown = dynamicBudget;
-        this.currentInfo.set(parsed);
-        this.persist(teamId, parsed);
-        return;
+        initial = JSON.parse(saved) as TeamGeneralInfo;
+        if (!initial.annualMetricsHistory) initial.annualMetricsHistory = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers).annualMetricsHistory;
+        if (!initial.teamData?.year) initial.teamData.year = this.activeGlobalYear();
+      } else {
+        initial = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers);
+        initial.teamData.year = this.activeGlobalYear();
       }
-    } catch { /* ignore */ }
-    const fresh = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers);
-    fresh.teamData.year = this.activeGlobalYear();
-    fresh.budgetBreakdown = dynamicBudget;
-    this.currentInfo.set(fresh);
-    this.persist(teamId, fresh);
+    } catch {
+      initial = createDefaultGeneralInfo(teamId, teamName, leader, teamMembers);
+      initial.teamData.year = this.activeGlobalYear();
+    }
+    initial.budgetBreakdown = dynamicBudget;
+    this.currentInfo.set(initial);
+    this.persist(teamId, initial);
+    fetchRemoteGeneralInfo(teamId, this.activeGlobalYear()).then((r) => {
+      if (r && this.currentInfo().teamId === teamId) this.updateAndPersist(r);
+    }).catch(() => {});
   }
 
   updateTeamData(data: Partial<GeneralTeamData>): void { this.updateAndPersist({ teamData: { ...this.currentInfo().teamData, ...data } }); }

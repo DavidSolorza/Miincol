@@ -11,6 +11,7 @@ import { cleanPlansForNewYear } from './planCycleReset';
 import { serviceBus } from '../../../core/bus';
 import { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
 import { queueActivityMutation, queueObjectiveMutation } from './plan-outbox.helper';
+import { fetchRemotePlansForTeam } from './plan-remote-sync.helper';
 
 @Injectable({ providedIn: 'root' })
 export class PlanService {
@@ -36,7 +37,14 @@ export class PlanService {
     this.activeTeamId.set(teamId);
     this.activeLeader.set(teamData?.leader || 'Líder');
     if (teamData?.totalBudget) this.teamTotalBudget.set(teamData.totalBudget);
-    this.allPlans.set(getPlansForTeam(teamId, teamData));
+    const initial = getPlansForTeam(teamId, teamData);
+    this.allPlans.set(initial);
+
+    fetchRemotePlansForTeam(teamId, initial).then((remote) => {
+      if (remote && this.activeTeamId() === teamId) {
+        this.persistPlans(remote);
+      }
+    }).catch(() => {});
   }
 
   private persistPlans(updated: Record<string, PhasePlan>): void {

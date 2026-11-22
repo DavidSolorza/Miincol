@@ -72,3 +72,54 @@ export async function syncGeneralInfoToBackend(info: TeamGeneralInfo): Promise<v
     // Si el usuario no tiene rol nacional, el servidor retornará 403 lo cual es esperado para líderes
   }
 }
+
+export async function fetchRemoteGeneralInfo(
+  teamId: string,
+  year: number
+): Promise<Partial<TeamGeneralInfo> | null> {
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('misincol_auth_token') : null;
+  if (!token) return null;
+
+  try {
+    const reports = await httpClient.get<RemoteFieldReport[]>('/reports', {
+      queryParams: { teamId, year },
+    }).catch(() => [] as RemoteFieldReport[]);
+
+    if (!Array.isArray(reports) || reports.length === 0 || !reports[0]) return null;
+    const r = reports[0];
+
+    return {
+      fieldMetrics: {
+        firstTimeContactedCount: r.firstTimeContacts || 0,
+        interestedInGospelCount: r.interestedPeople || 0,
+        heardGospelCount: r.heardGospel || 0,
+        seekingGodCount: r.seekingGodPeople || 0,
+        gospelResponseOpportunitiesCount: r.gospelResponseOpportunities || 0,
+        newBelieversCount: r.believersCount || 0,
+        baptizedCount: r.baptizedCount || 0,
+        regularBibleStudyParticipantsCount: r.activeBibleStudies || 0,
+        personalMentorshipCount: r.personalMentorships || 0,
+        newGroupsMeetingInYearCount: r.newGroupsMeetingInYear || 0,
+      },
+      churchDevelopment: {
+        groupsWithChurchPerspectiveCount: r.churchPerspectiveGroups || 0,
+        finalChurchesCount: r.finalChurchesCount || 0,
+        firstGenChurchesCount: r.churchGenerations || 0,
+        secondGenChurchesCount: 0,
+        thirdGenChurchesCount: 0,
+        lostFirstGenChurchesCount: 0,
+        lostSecondGenChurchesCount: 0,
+        lostThirdGenChurchesCount: 0,
+      },
+      ministerialTraining: {
+        practicalMinisterialTrainingCount: r.ministerialTrainingCount || 0,
+        otherAreasTrainingCount: 0,
+        pastoralPracticalTrainingCount: 0,
+        biblicalTrainingCount: 0,
+        newChurchesPlantingTrainingCount: 0,
+      },
+    };
+  } catch {
+    return null;
+  }
+}
