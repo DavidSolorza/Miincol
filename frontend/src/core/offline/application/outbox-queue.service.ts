@@ -82,5 +82,14 @@ export class OutboxQueueService {
       return 0;
     }
   }
+
+  async getPendingEntityIds(entityType: OutboxMutation['entityType']): Promise<Set<string>> {
+    try {
+      const pending = await this.getPending();
+      return new Set(pending.filter((m) => m.entityType === entityType).map((m) => m.entityId));
+    } catch {
+      return new Set();
+    }
+  }
 }
 

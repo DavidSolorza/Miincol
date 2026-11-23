@@ -13,52 +13,58 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
   imports: [AppIconComponent, ActivityHeaderTagsComponent, ActivityBudgetQuickEditComponent, ActivityDetailsAccordionComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="bg-white rounded-2xl border border-stone-200/80 border-l-4 border-l-[#E67324] ml-0.5 sm:ml-2.5 hover:border-stone-300 hover:border-l-[#8B251E] hover:shadow-xs transition-all duration-200 overflow-hidden" [class.ring-1]="isMember() && isAssigned()" [class.ring-emerald-400/50]="isMember() && isAssigned()">
-      <div class="p-4 sm:p-4.5 space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-2.5">
-          <app-activity-header-tags
-            [state]="activity().state"
-            [stage]="activity().stage"
-            [frequency]="activity().frequency"
-            [essentialArea]="activity().essentialArea"
-            [canEditState]="canEditState()"
-            (stateChanged)="onStateChange($event)"
-          />
-          <app-activity-budget-quick-edit
-            [totalBudget]="activity().totalBudget"
-            [unitBudget]="activity().unitBudget"
-            [timesPerYear]="activity().timesPerYear"
-            [isEditingBudget]="isEditingBudget()"
-            [unitBudgetInput]="unitBudgetInput()"
-            [timesPerYearInput]="timesPerYearInput()"
-            [canEdit]="canEditFull()"
-            (editingBudgetToggled)="isEditingBudget.set($event)"
-            (unitBudgetChanged)="unitBudgetInput.set($event)"
-            (timesPerYearChanged)="timesPerYearInput.set($event)"
-            (budgetSaved)="handleSaveBudget()"
-            (deleted)="deleted.emit(activity().id)"
-            (edited)="edited.emit(activity())"
-          />
+    <div
+      class="bg-white rounded-2xl border border-stone-200/90 border-t-[3.5px] border-t-[#E67324] hover:border-t-[#8B251E] hover:border-stone-300 hover:shadow-md transition-all duration-200 flex flex-col justify-between overflow-hidden group h-full"
+      [class.ring-1]="isMember() && isAssigned()"
+      [class.ring-emerald-400/50]="isMember() && isAssigned()"
+    >
+      <div class="p-4 sm:p-4.5 space-y-3 flex-1 flex flex-col justify-between">
+        <div class="space-y-2.5">
+          <div class="flex items-start justify-between gap-2">
+            <app-activity-header-tags
+              [state]="activity().state"
+              [stage]="activity().stage"
+              [frequency]="activity().frequency"
+              [essentialArea]="activity().essentialArea"
+              [canEditState]="canEditState()"
+              (stateChanged)="onStateChange($event)"
+            />
+            <app-activity-budget-quick-edit
+              [totalBudget]="activity().totalBudget"
+              [unitBudget]="activity().unitBudget"
+              [timesPerYear]="activity().timesPerYear"
+              [isEditingBudget]="isEditingBudget()"
+              [unitBudgetInput]="unitBudgetInput()"
+              [timesPerYearInput]="timesPerYearInput()"
+              [canEdit]="canEditFull()"
+              (editingBudgetToggled)="isEditingBudget.set($event)"
+              (unitBudgetChanged)="unitBudgetInput.set($event)"
+              (timesPerYearChanged)="timesPerYearInput.set($event)"
+              (budgetSaved)="handleSaveBudget()"
+              (deleted)="deleted.emit(activity().id)"
+              (edited)="edited.emit(activity())"
+            />
+          </div>
+
+          <h3 class="text-xs sm:text-sm font-extrabold text-stone-900 leading-snug font-['Outfit'] tracking-tight">
+            {{ activity().description }}
+          </h3>
         </div>
 
-        <h3 class="text-xs sm:text-sm font-extrabold text-stone-900 leading-snug font-['Outfit'] tracking-tight">
-          {{ activity().description }}
-        </h3>
-
-        <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-stone-100 text-[11px] text-stone-500">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="inline-flex items-center gap-1.5 font-bold text-stone-700 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200/60 shadow-2xs">
-              <app-icon name="user" className="w-4 h-4 text-[#8B251E]" />
-              {{ activity().responsible || 'Sin responsable asignado' }}
+        <div class="space-y-2.5 pt-2.5 border-t border-stone-100 text-[11px] text-stone-500">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="inline-flex items-center gap-1.5 font-bold text-stone-700 bg-stone-50 px-2 py-0.5 rounded-lg border border-stone-200/60 shadow-2xs">
+              <app-icon name="user" className="w-3.5 h-3.5 text-[#8B251E]" />
+              <span class="truncate max-w-[130px]">{{ activity().responsible || 'Sin responsable' }}</span>
               @if (isMember() && isAssigned()) {
-                <span class="text-[9.5px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded-md">Tu tarea</span>
+                <span class="text-[9px] font-black uppercase text-emerald-800 bg-emerald-100/90 px-1 py-0.2 rounded">Tú</span>
               }
             </span>
-            <span class="inline-flex items-center gap-1.5 text-stone-500 bg-stone-50 px-2.5 py-1 rounded-xl border border-stone-200/60">
-              <app-icon name="calendar" className="w-4 h-4 text-stone-400" />
+            <span class="inline-flex items-center gap-1 text-stone-500 bg-stone-50 px-2 py-0.5 rounded-lg border border-stone-200/60 text-[10px]">
+              <app-icon name="calendar" className="w-3 h-3 text-stone-400" />
               {{ fmtDate(activity().startDate) }} ➔ {{ fmtDate(activity().endDate) }}
             </span>
-            <span class="inline-flex items-center text-[10px] font-black text-[#8B251E] bg-[#8B251E]/10 px-2 py-0.5 rounded-lg border border-[#8B251E]/15">
+            <span class="inline-flex items-center text-[10px] font-black text-[#8B251E] bg-[#8B251E]/10 px-1.5 py-0.5 rounded-md border border-[#8B251E]/15">
               {{ activity().remainingWeeks }} sem. rest.
             </span>
           </div>
@@ -66,7 +72,7 @@ import { ActivityDetailsAccordionComponent } from './activityItem/activity-detai
           <button
             type="button"
             (click)="isExpanded.set(!isExpanded())"
-            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-600 hover:text-stone-900 font-bold text-[11px] transition cursor-pointer border border-stone-200/60 shadow-2xs"
+            class="w-full inline-flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-xl bg-stone-50 hover:bg-stone-100 text-stone-600 hover:text-stone-900 font-bold text-[11px] transition cursor-pointer border border-stone-200/60 shadow-2xs"
           >
             <span>{{ isExpanded() ? 'Ocultar diagnóstico' : 'Diagnóstico y metas' }}</span>
             <app-icon [name]="isExpanded() ? 'chevron-up' : 'chevron-down'" className="w-4 h-4" />

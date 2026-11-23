@@ -9,9 +9,9 @@ import { ActivityItemComponent } from '../activity-item.component';
   imports: [AppIconComponent, ActivityItemComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="p-5 sm:p-6 space-y-3 bg-[#FAF7F2]/40 min-h-[160px]">
+    <div class="min-h-[120px]">
       @if (activities().length === 0) {
-        <div class="bg-white rounded-xl border border-dashed border-stone-200 p-8 text-center flex flex-col items-center justify-center">
+        <div class="bg-white rounded-2xl border border-dashed border-stone-200 p-8 text-center flex flex-col items-center justify-center shadow-2xs">
           <div class="w-11 h-11 rounded-full bg-[#FAF7F2] flex items-center justify-center text-[#E67324] mb-2">
             <app-icon name="layers" className="w-6 h-6" />
           </div>
@@ -30,14 +30,16 @@ import { ActivityItemComponent } from '../activity-item.component';
           }
         </div>
       } @else {
-        @for (act of activities(); track act.id) {
-          <app-activity-item
-            [activity]="act"
-            (updated)="activityUpdated.emit($event)"
-            (deleted)="activityDeleted.emit($event)"
-            (edited)="activityEdited.emit($event)"
-          />
-        }
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-4.5">
+          @for (act of activities(); track act.id) {
+            <app-activity-item
+              [activity]="act"
+              (updated)="activityUpdated.emit($event)"
+              (deleted)="activityDeleted.emit($event)"
+              (edited)="activityEdited.emit($event)"
+            />
+          }
+        </div>
       }
     </div>
   `,

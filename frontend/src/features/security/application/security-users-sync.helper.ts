@@ -1,5 +1,6 @@
 import type { SystemRoleId } from '../domain/security.types';
 import type { CreateSystemUserDto } from '../domain/security-users.types';
+import type { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
 import { httpClient } from '../../../core/http/httpClient';
 
 export function mapSystemRoleToBackend(role: SystemRoleId): string {
@@ -63,4 +64,25 @@ export async function syncUserRoleToBackend(userId: string, newRole: SystemRoleI
     console.error(`Error al actualizar rol de ${userId} en el backend:`, err);
     return false;
   }
+}
+
+export async function syncUserUpdateToBackend(
+  user: { id: string; role?: SystemRoleId },
+  updates: { role?: SystemRoleId },
+  allUsers: any[],
+  outbox?: OutboxQueueService
+): Promise<boolean> {
+  if (updates.role) {
+    syncUserRoleToBackend(user.id, updates.role).catch(() => {});
+  }
+  const payload = { users: allUsers };
+  if (outbox) {
+    outbox.enqueue({ entityType: 'user', entityId: user.id, action: 'UPDATE', endpoint: '/security/users/sync', method: 'POST', payload })
+      .then((m) => {
+        httpClient.post('/security/users/sync', payload).then(() => outbox.markSuccess(m.id)).catch(() => {});
+      }).catch(() => {});
+  } else {
+    httpClient.post('/security/users/sync', payload).catch(() => {});
+  }
+  return true;
 }

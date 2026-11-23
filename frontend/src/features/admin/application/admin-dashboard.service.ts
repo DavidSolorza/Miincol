@@ -4,14 +4,18 @@ import type { PhaseType } from '../../plans/domain/plan.types';
 import { calculateNationalKpis } from './adminKpiCalculations';
 import { getTeamPhaseMetrics, PHASE_NAMES_MAP, createCustomPlanForTeam } from '../../plans/application/teamPhaseMetrics';
 import { SecurityUsersService } from '../../security/application/security-users.service';
+import { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
 import { syncTeamCreatedToBackend, syncTeamUpdatedToBackend, syncTeamDeletedToBackend } from './admin-teams-sync.helper';
+import { mergeBackendTeams, sanitizeLoadedStorageTeams } from './admin-teams-deduplication.helper';
 import { httpClient } from '../../../core/http/httpClient';
+import { INITIAL_NATIONAL_TEAMS } from './initialTeams';
 
 const STORAGE_KEY = 'misincol_admin_teams';
 
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
   private readonly securityUsersSvc = inject(SecurityUsersService);
+  private readonly outbox = inject(OutboxQueueService, { optional: true });
   readonly allTeams = signal<TeamSupervisionSummary[]>(this.loadInitialTeams());
   readonly searchTerm = signal('');
   readonly phaseFilter = signal<string>('ALL');
@@ -21,11 +25,9 @@ export class AdminDashboardService {
   readonly teams = computed(() => {
     const s = this.searchTerm().trim().toLowerCase(), pf = this.phaseFilter(), sf = this.statusFilter(), df = this.departmentFilter();
     return this.allTeams().filter((t) => {
-      const matchSearch = !s || (t.name || '').toLowerCase().includes(s) ||
-        (t.leader || '').toLowerCase().includes(s) || (t.ethnicity || '').toLowerCase().includes(s) ||
-        (t.region || '').toLowerCase().includes(s) || (t.department || '').toLowerCase().includes(s) ||
-        (t.leaderEmail || '').toLowerCase().includes(s) || (t.slug || '').toLowerCase().includes(s) ||
-        (t.members || []).some((m) => (m || '').toLowerCase().includes(s));
+      const matchSearch = !s || (t.name || '').toLowerCase().includes(s) || (t.leader || '').toLowerCase().includes(s) ||
+        (t.ethnicity || '').toLowerCase().includes(s) || (t.region || '').toLowerCase().includes(s) || (t.department || '').toLowerCase().includes(s) ||
+        (t.leaderEmail || '').toLowerCase().includes(s) || (t.slug || '').toLowerCase().includes(s) || (t.members || []).some((m) => (m || '').toLowerCase().includes(s));
       return matchSearch && (pf === 'ALL' || t.currentPhaseId === pf) && (sf === 'ALL' || t.healthStatus === sf) && (df === 'ALL' || (t.department || '').toLowerCase().includes(df.toLowerCase()));
     });
   });
@@ -44,27 +46,10 @@ export class AdminDashboardService {
     try {
       const teams = await httpClient.get<TeamSupervisionSummary[]>('/teams');
       if (Array.isArray(teams)) {
-        const currentList = this.allTeams();
-        const mapped = teams.map((t) => {
-          const existing = currentList.find((x) => x.id === t.id || x.slug === t.id || x.id === t.slug || x.name === t.name);
-          const [locDept, locReg] = (t.location || '').split(/\s*-\s*|\s*•\s*/);
-          const phaseMetrics = getTeamPhaseMetrics(t.id, t.currentPhaseId, t);
-          const totalBudget = (t.totalBudget && Number(t.totalBudget) > 0) ? Number(t.totalBudget)
-            : (existing?.totalBudget && Number(existing.totalBudget) > 0 ? Number(existing.totalBudget) : 15000000);
-          return {
-            ...t,
-            department: t.department || existing?.department || locDept || '',
-            region: t.region || existing?.region || locReg || '',
-            ethnicity: t.ethnicity || existing?.ethnicity || t.name.replace(/^Misi[oó]n\s+/i, '') || '',
-            leaderPhone: t.leaderPhone || existing?.leaderPhone || '+57 ',
-            themeColor: t.themeColor || existing?.themeColor || '#8B251E',
-            members: t.members && t.members.length > 0 ? t.members : (existing?.members || [t.leader]),
-            ...phaseMetrics,
-            totalBudget,
-          };
-        });
-        this.allTeams.set(mapped);
-        mapped.forEach((t) => this.securityUsersSvc.ensureTeamLeaderAndMembers(t));
+        const pending = this.outbox ? await this.outbox.getPendingEntityIds('team') : new Set<string>();
+        const merged = mergeBackendTeams(teams, this.allTeams(), pending);
+        this.allTeams.set(merged);
+        merged.forEach((t) => this.securityUsersSvc.ensureTeamLeaderAndMembers(t));
       }
     } catch { /* Usar estado local si el backend no responde */ }
   }
@@ -75,19 +60,11 @@ export class AdminDashboardService {
       if (stored) {
         const parsed: TeamSupervisionSummary[] = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((t) => {
-            const phaseMetrics = getTeamPhaseMetrics(t.id, t.currentPhaseId, t);
-            return {
-              ...t,
-              members: (t.members && t.members.length > 0) ? t.members : [t.leader],
-              ...phaseMetrics,
-              totalBudget: (t.totalBudget && Number(t.totalBudget) > 0) ? Number(t.totalBudget) : (phaseMetrics.totalBudget || 15000000),
-            };
-          });
+          return sanitizeLoadedStorageTeams(parsed, INITIAL_NATIONAL_TEAMS);
         }
       }
     } catch { /* ignore */ }
-    return [];
+    return INITIAL_NATIONAL_TEAMS.map((t) => ({ ...t, ...getTeamPhaseMetrics(t.id, t.currentPhaseId, t) }));
   }
 
   handleCreateTeam(dto: CreateTeamDto): TeamSupervisionSummary {
@@ -107,7 +84,7 @@ export class AdminDashboardService {
     createCustomPlanForTeam(newTeam.id, newTeam);
     this.allTeams.update((prev) => [newTeam, ...prev]);
     this.securityUsersSvc.ensureTeamLeaderAndMembers(newTeam, dto);
-    syncTeamCreatedToBackend(newTeam, dto);
+    syncTeamCreatedToBackend(newTeam, dto, this.outbox || undefined);
     return newTeam;
   }
 
@@ -119,7 +96,7 @@ export class AdminDashboardService {
           if (updates.currentPhaseId) merged.currentPhaseName = PHASE_NAMES_MAP[updates.currentPhaseId] || merged.currentPhaseName;
           if (updates.members) merged.membersCount = updates.members.length;
           this.securityUsersSvc.ensureTeamLeaderAndMembers(merged, updates as CreateTeamDto);
-          syncTeamUpdatedToBackend(teamId, updates);
+          syncTeamUpdatedToBackend(teamId, updates, this.outbox || undefined);
           return merged;
         }
         return t;
@@ -130,7 +107,7 @@ export class AdminDashboardService {
   handleDeleteTeam(teamId: string) {
     const target = this.allTeams().find((t) => t.id === teamId || t.slug === teamId);
     this.allTeams.update((prev) => prev.filter((t) => t.id !== teamId && t.slug !== teamId));
-    if (target) syncTeamDeletedToBackend(target);
+    if (target) syncTeamDeletedToBackend(target, this.outbox || undefined);
   }
 
   handlePhaseChange(id: string, phase: PhaseType) {

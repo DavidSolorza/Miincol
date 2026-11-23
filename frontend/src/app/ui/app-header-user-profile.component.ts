@@ -31,11 +31,12 @@ import type { AuthSession } from '../auth/appSession.types';
       <button
         type="button"
         (click)="handleLogoutClick()"
-        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-stone-100 hover:bg-rose-50 text-stone-500 hover:text-rose-600 border border-stone-200/80 hover:border-rose-200 shadow-2xs hover:shadow-xs active:scale-95 transition-all duration-200 flex items-center justify-center cursor-pointer group"
+        class="h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-xs hover:shadow active:scale-95 transition-all duration-200 flex items-center gap-1.5 cursor-pointer group ring-2 ring-red-400/50 hover:ring-red-500"
         title="Cerrar sesión del sistema"
         aria-label="Cerrar sesión"
       >
-        <app-icon name="log-out" className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+        <app-icon name="log-out" className="w-4 h-4 text-white transition-transform duration-200 group-hover:-translate-x-0.5" />
+        <span class="hidden sm:inline font-bold tracking-wide">Salir</span>
       </button>
     </div>
   `,

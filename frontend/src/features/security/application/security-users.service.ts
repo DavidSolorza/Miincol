@@ -5,21 +5,21 @@ import type { TeamSupervisionSummary, CreateTeamDto } from '../../admin/domain/a
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { INITIAL_SYSTEM_USERS } from './security-users.helpers';
 import { resolveTeamUsersToProvision } from './security-users-provision.helper';
-import { mapBackendRoleToSystem, syncUserCreateToBackend, syncUserRoleToBackend } from './security-users-sync.helper';
+import { mapBackendRoleToSystem, syncUserCreateToBackend, syncUserRoleToBackend, syncUserUpdateToBackend } from './security-users-sync.helper';
+import { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
 import { httpClient } from '../../../core/http/httpClient';
 import { serviceBus } from '../../../core/bus';
 
 const STORAGE_KEY = 'misincol_system_users_v1';
 const ROLE_NAMES: Record<SystemRoleId, string> = {
-  national_director: 'Coordinador de equipos',
-  director_general: 'Director general',
-  team_leader: 'Líder equipo',
-  team_member: 'Usuario equipo',
+  national_director: 'Coordinador de equipos', director_general: 'Director general',
+  team_leader: 'Líder equipo', team_member: 'Usuario equipo',
 };
 
 @Injectable({ providedIn: 'root' })
 export class SecurityUsersService {
   private readonly toastSvc = inject(ToastService);
+  private readonly outbox = inject(OutboxQueueService, { optional: true });
   readonly users = signal<SystemUser[]>(this.loadUsers());
   readonly isSaving = signal<boolean>(false);
 
@@ -31,13 +31,19 @@ export class SecurityUsersService {
     try {
       const res = await httpClient.get<any[]>('/users');
       if (Array.isArray(res) && res.length > 0) {
+        const pending = this.outbox ? await this.outbox.getPendingEntityIds('user') : new Set<string>();
         const remote: SystemUser[] = res.map((u: any) => ({
           id: u.id || `usr-${Date.now()}`, fullName: u.fullName || u.name || 'Usuario', email: u.email?.trim().toLowerCase(),
           role: mapBackendRoleToSystem(u.role), teamId: u.teamId || undefined, teamName: u.teamName || undefined,
           territory: u.territory || (u.role === 'ROLE_NACIONAL' ? 'Nacional • Colombia' : ''), phone: u.phone || '',
         }));
-        const merged = [...remote];
-        this.users().forEach((loc) => { if (!merged.some((r) => r.email === loc.email)) merged.push(loc); });
+        const current = this.users();
+        const merged = remote.map((r) => {
+          const loc = current.find((l) => l.id === r.id || l.email === r.email);
+          if (loc && (pending.has(loc.id) || pending.has(r.id))) return loc;
+          return loc ? { ...loc, ...r, role: loc.role || r.role } : r;
+        });
+        current.forEach((loc) => { if (!merged.some((r) => r.email === loc.email)) merged.push(loc); });
         this.persist(merged);
       }
     } catch { /* Usar respaldo de localStorage */ }
@@ -53,9 +59,8 @@ export class SecurityUsersService {
         const key = u.email ? u.email.trim().toLowerCase() : u.id;
         if (!seen.has(key)) {
           seen.add(key);
-          const role = ((u.teamId === 'team-pastos' || u.fullName.toLowerCase().includes('hugo')) && u.role === 'team_leader')
-            ? ('national_director' as const) : u.role;
-          deduped.push({ ...u, role });
+          const isHugo = (u.teamId === 'team-pastos' || u.fullName.toLowerCase().includes('hugo')) && u.role === 'team_leader';
+          deduped.push({ ...u, role: isHugo ? ('national_director' as const) : u.role });
         }
       });
       return deduped;
@@ -92,8 +97,10 @@ export class SecurityUsersService {
     const target = prev.find((u) => u.id === userId);
     if (!target) return undefined;
     const merged: SystemUser = { ...target, ...updates };
-    this.persist(prev.map((u) => (u.id === userId ? merged : u)));
+    const updatedUsers = prev.map((u) => (u.id === userId ? merged : u));
+    this.persist(updatedUsers);
     this.toastSvc.toast.success(`Datos de ${merged.fullName} actualizados`, 'Colaborador Editado');
+    syncUserUpdateToBackend(merged, updates, updatedUsers, this.outbox || undefined);
     return merged;
   }
 
