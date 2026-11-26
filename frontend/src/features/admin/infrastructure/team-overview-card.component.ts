@@ -19,7 +19,7 @@ import { TeamAuditModalComponent } from '../../audit/infrastructure/team-audit-m
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      (click)="select.emit()"
+      (click)="handleSelect()"
       [style.borderTopColor]="themeColor"
       style="border-top-width: 3.5px"
       [class]="'bg-white rounded-2xl border-x border-b transition-all duration-200 p-5 flex flex-col justify-between space-y-3.5 relative overflow-hidden group cursor-pointer h-full ' + (isSelected ? 'border-[#E67324] ring-2 ring-[#E67324]/30 shadow-md' : 'border-stone-200/90 hover:border-stone-300 hover:shadow-md')"
@@ -29,7 +29,7 @@ import { TeamAuditModalComponent } from '../../audit/infrastructure/team-audit-m
         [themeColor]="themeColor"
         (edit)="editTeam.emit(team)"
         (delete)="deleteTeam.emit(team)"
-        (inspect)="inspectTeam.emit(team.id)"
+        (inspect)="handleInspect()"
       />
 
       <app-team-card-metrics
@@ -75,6 +75,16 @@ export class TeamOverviewCardComponent implements OnChanges, OnDestroy {
         this.refreshTelemetry();
       }
     });
+  }
+
+  handleSelect(): void {
+    serviceBus.publish('team:select', { teamId: this.team.id });
+    this.select.emit();
+  }
+
+  handleInspect(): void {
+    serviceBus.publish('team:inspect', { teamId: this.team.id });
+    this.inspectTeam.emit(this.team.id);
   }
 
   ngOnChanges() {

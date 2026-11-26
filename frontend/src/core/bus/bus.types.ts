@@ -11,9 +11,15 @@ export interface AppEventMap {
   'auth:logout': void;
   'team:select': { teamId: string };
   'team:inspect': { teamId: string };
+  'team:created': { teamId: string; name: string; leader: string };
+  'team:updated': { teamId: string; updates: Record<string, unknown> };
+  'team:deleted': { teamId: string };
   'plan:phase_select': { phaseId: string };
   'pdm:phase_switch': { phaseId: string };
   'pdm:plan_persisted': { teamId: string; phaseId: string };
+  'activity:created': { activityId: string; teamId: string; phaseId: string };
+  'activity:updated': { activityId: string; teamId: string; phaseId: string; updatedFields: Record<string, unknown> };
+  'activity:deleted': { activityId: string; teamId: string; phaseId: string };
   'security:role_update': { userId: string; newRole: string };
   'security:matrix_update': { timestamp: number };
   'pwa:install_prompt': { canInstall: boolean };
@@ -25,6 +31,11 @@ export interface AppEventMap {
   };
   'ui:view_change': {
     view: 'dashboard' | 'phases' | 'supervision' | 'team-space' | 'reports' | 'security' | 'general' | 'plans' | 'superadmin';
+  };
+  'ui:modal': {
+    modal: 'team' | 'notes' | 'audit' | 'report' | 'special_expense';
+    open: boolean;
+    teamId?: string;
   };
   'perf:sync': { timestamp: number };
   'audit:log': {

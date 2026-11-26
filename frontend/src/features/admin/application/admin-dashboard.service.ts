@@ -9,6 +9,7 @@ import { syncTeamCreatedToBackend, syncTeamUpdatedToBackend, syncTeamDeletedToBa
 import { mergeBackendTeams, sanitizeLoadedStorageTeams } from './admin-teams-deduplication.helper';
 import { httpClient } from '../../../core/http/httpClient';
 import { INITIAL_NATIONAL_TEAMS } from './initialTeams';
+import { serviceBus } from '../../../core/bus';
 
 const STORAGE_KEY = 'misincol_admin_teams';
 
@@ -85,6 +86,7 @@ export class AdminDashboardService {
     this.allTeams.update((prev) => [newTeam, ...prev]);
     this.securityUsersSvc.ensureTeamLeaderAndMembers(newTeam, dto);
     syncTeamCreatedToBackend(newTeam, dto, this.outbox || undefined);
+    serviceBus.publish('team:created', { teamId: newTeam.id, name: newTeam.name, leader: newTeam.leader });
     return newTeam;
   }
 
@@ -97,6 +99,7 @@ export class AdminDashboardService {
           if (updates.members) merged.membersCount = updates.members.length;
           this.securityUsersSvc.ensureTeamLeaderAndMembers(merged, updates as CreateTeamDto);
           syncTeamUpdatedToBackend(teamId, updates, this.outbox || undefined);
+          serviceBus.publish('team:updated', { teamId, updates: updates as Record<string, unknown> });
           return merged;
         }
         return t;
@@ -108,6 +111,7 @@ export class AdminDashboardService {
     const target = this.allTeams().find((t) => t.id === teamId || t.slug === teamId);
     this.allTeams.update((prev) => prev.filter((t) => t.id !== teamId && t.slug !== teamId));
     if (target) syncTeamDeletedToBackend(target, this.outbox || undefined);
+    serviceBus.publish('team:deleted', { teamId });
   }
 
   handlePhaseChange(id: string, phase: PhaseType) {

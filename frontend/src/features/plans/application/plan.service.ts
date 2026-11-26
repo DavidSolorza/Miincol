@@ -26,6 +26,9 @@ export class PlanService {
     serviceBus.subscribe('cycle:year_changed', (evt) => {
       if (evt.teamId === this.activeTeamId()) this.persistPlans(cleanPlansForNewYear(this.allPlans()));
     });
+    serviceBus.subscribe('pdm:phase_switch', (evt) => {
+      if (evt.phaseId) this.switchPhase(evt.phaseId as PhaseType);
+    });
   }
 
   readonly plan = computed<PhasePlan>(() => this.allPlans()[this.activePhaseId()] || INITIAL_PLANS_BY_PHASE[this.activePhaseId()]);
@@ -61,6 +64,7 @@ export class PlanService {
     this.persistPlans({ ...prev, [phaseId]: applyUpdateActivity(cur, activityId, updatedFields) });
     queueActivityMutation(this.outbox, 'UPDATE', activityId, this.activeTeamId(), phaseId, updatedFields);
     logActivityUpdateAudit(this.activeTeamId(), this.activeLeader(), updatedFields, phaseId);
+    serviceBus.publish('activity:updated', { activityId, teamId: this.activeTeamId(), phaseId, updatedFields: updatedFields as Record<string, unknown> });
   }
 
   addActivity(objNum: 1 | 2 | 3 | 4, newAct: Omit<Activity, 'id' | 'objectiveNumber' | 'totalBudget'>): void {
@@ -68,8 +72,10 @@ export class PlanService {
     const updatedPlan = applyAddActivity(cur, objNum, newAct);
     this.persistPlans({ ...prev, [phaseId]: updatedPlan });
     const createdAct = updatedPlan.objectives.find((o) => o.number === objNum)?.activities[0];
-    queueActivityMutation(this.outbox, 'CREATE', createdAct?.id || `act-${Date.now()}`, this.activeTeamId(), phaseId, createdAct);
+    const actId = createdAct?.id || `act-${Date.now()}`;
+    queueActivityMutation(this.outbox, 'CREATE', actId, this.activeTeamId(), phaseId, createdAct);
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'activity_add', 'Agregó nueva actividad', newAct.description.slice(0, 40), phaseId);
+    serviceBus.publish('activity:created', { activityId: actId, teamId: this.activeTeamId(), phaseId });
   }
 
   deleteActivity(activityId: string): void {
@@ -77,6 +83,7 @@ export class PlanService {
     this.persistPlans({ ...prev, [phaseId]: applyDeleteActivity(cur, activityId) });
     queueActivityMutation(this.outbox, 'DELETE', activityId, this.activeTeamId(), phaseId);
     logPlanAudit(this.activeTeamId(), this.activeLeader(), 'activity_delete', 'Eliminó actividad', `Actividad eliminada de fase ${phaseId}`, phaseId);
+    serviceBus.publish('activity:deleted', { activityId, teamId: this.activeTeamId(), phaseId });
   }
 
   updateObjective(objNum: number, updates: Partial<Objective>): void {

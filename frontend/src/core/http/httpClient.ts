@@ -6,6 +6,7 @@
 
 import { ENV } from '../config/env.config';
 import { HttpError } from '../errors/app.error';
+import { AppLogger } from '../errors/app-logger';
 import { serviceBus } from '../bus';
 
 export interface HttpRequestOptions extends RequestInit {
@@ -55,6 +56,7 @@ export class NativeHttpClient {
   private async request<T>(path: string, options: HttpRequestOptions = {}): Promise<T> {
     const { timeoutMs = ENV.requestTimeoutMs, queryParams, headers, ...rest } = options;
     const url = this.buildUrl(path, queryParams);
+    const method = rest.method || 'GET';
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -81,36 +83,32 @@ export class NativeHttpClient {
 
       if (!response.ok) {
         let errMessage = `HTTP request failed with status ${response.status}`;
+        let errBody: unknown = undefined;
         try {
-          const errBody = await response.json();
-          if (errBody && typeof errBody.message === 'string') {
-            errMessage = errBody.message;
+          errBody = await response.json();
+          if (errBody && typeof (errBody as { message?: string }).message === 'string') {
+            errMessage = (errBody as { message: string }).message;
           }
-        } catch {
-          // Fallback to default message if body is not JSON
-        }
+        } catch { /* Fallback to default message */ }
 
         if (response.status === 401 && !url.includes('/auth/login')) {
           try {
-            if (typeof localStorage !== 'undefined') {
-              localStorage.removeItem('misincol_auth_token');
-            }
+            if (typeof localStorage !== 'undefined') localStorage.removeItem('misincol_auth_token');
             serviceBus.publish('auth:logout', undefined);
           } catch { /* ignore */ }
         }
 
+        AppLogger.logHttpError(method, url, response.status, errMessage, { status: response.status, body: errBody });
         throw new HttpError(response.status, errMessage, { url, status: response.status });
       }
 
-      if (response.status === 204) {
-        return undefined as unknown as T;
-      }
-
+      if (response.status === 204) return undefined as unknown as T;
       return (await response.json()) as T;
     } catch (err) {
       if (err instanceof HttpError) throw err;
       const isAbort = err instanceof Error && err.name === 'AbortError';
       const msg = isAbort ? `Request to ${url} timed out after ${timeoutMs}ms` : (err as Error).message;
+      AppLogger.logHttpError(method, url, isAbort ? 408 : 500, msg, { originalError: err });
       throw new HttpError(isAbort ? 408 : 500, msg, { originalError: err });
     } finally {
       clearTimeout(timeoutId);
@@ -119,9 +117,7 @@ export class NativeHttpClient {
 
   private buildUrl(path: string, queryParams?: Record<string, string | number | boolean | undefined>): string {
     let cleanPath = path.startsWith('/') ? path : `/${path}`;
-    if (this.baseUrl.endsWith('/api') && cleanPath.startsWith('/api/')) {
-      cleanPath = cleanPath.slice(4);
-    }
+    if (this.baseUrl.endsWith('/api') && cleanPath.startsWith('/api/')) cleanPath = cleanPath.slice(4);
     const fullUrl = this.baseUrl.startsWith('http://') || this.baseUrl.startsWith('https://')
       ? new URL(`${this.baseUrl}${cleanPath}`)
       : new URL(`${this.baseUrl}${cleanPath}`, typeof window !== 'undefined' ? window.location.origin : 'http://localhost');

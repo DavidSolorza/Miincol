@@ -3,6 +3,7 @@ import { AppIconComponent } from '../../../../shared/components/icon/app-icon.co
 import type { IconName } from '../../../../shared/components/icon/icon.types';
 import type { PhasePlan, PhaseType } from '../../domain/plan.types';
 import type { MissionaryTeam } from '../../../auth/domain/auth.types';
+import { serviceBus } from '../../../../core/bus';
 
 // Configuración estática de los 5 pilares ministeriales del PDM con su icono y etiqueta
 const PHASES_CONFIG: { id: PhaseType; label: string; icon: IconName }[] = [
@@ -101,9 +102,11 @@ export class SidebarPhasesListComponent {
 
   // Selecciona una fase y asegura que la vista activa sea la de planes
   handleSelectPhase(phaseId: PhaseType): void {
+    serviceBus.publish('pdm:phase_switch', { phaseId });
     this.phaseSelected.emit(phaseId);
     if (this.activeView() !== 'plans') {
       this.viewChanged.emit('plans');
+      serviceBus.publish('ui:view_change', { view: 'plans' });
     }
   }
 }

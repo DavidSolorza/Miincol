@@ -3,6 +3,7 @@ import { OutboxQueueService } from './outbox-queue.service';
 import { NetworkStatusService } from './network-status.service';
 import { httpClient } from '../../http/httpClient';
 import { serviceBus } from '../../bus';
+import { AppLogger } from '../../errors/app-logger';
 import type { OutboxMutation } from '../domain/offline.types';
 
 @Injectable({ providedIn: 'root' })
@@ -85,8 +86,14 @@ export class SyncCoordinatorService {
       return 'SUCCESS';
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error de sincronización';
-      const statusCode = (err as any)?.statusCode || (err as any)?.status;
+      const statusCode = (err as Record<string, unknown>)?.statusCode || (err as Record<string, unknown>)?.status;
       const isPermanent = typeof statusCode === 'number' && statusCode >= 400 && statusCode < 500 && statusCode !== 408 && statusCode !== 429;
+      AppLogger.logOperationalError(
+        'Sincronización Outbox',
+        message,
+        'Verificar conectividad o datos de la entidad en outbox',
+        { mutationId: mutation.id, endpoint: mutation.endpoint, method: mutation.method }
+      );
       if (isPermanent) {
         await this.outbox.markFailed(mutation.id, message, true);
       } else {
@@ -96,4 +103,3 @@ export class SyncCoordinatorService {
     }
   }
 }
-
