@@ -31,9 +31,9 @@ const DEFAULT_FORM: CreateTeamDto = {
       (close)="close.emit()"
       [title]="initialData ? 'Editar Misión: ' + initialData.name : 'Registrar Nueva Misión Territorial'"
       [subtitle]="initialData ? 'Actualice la información territorial, liderazgo pastoral y configuración de acceso' : 'Complete el formulario para desplegar una nueva misión indígena en el territorio nacional'"
-      maxWidth="2xl"
+      maxWidth="3xl"
     >
-      <form (submit)="handleSubmit($event)" class="space-y-4 max-h-[80vh] overflow-y-auto px-1 py-1 custom-scrollbar">
+      <form (submit)="handleSubmit($event)" class="space-y-4 px-1 py-1">
         <app-team-general-fields [formData]="formData()" (updateChange)="handleChange($event)" />
         <app-team-leader-fields
           [formData]="formData()"
@@ -71,17 +71,16 @@ const DEFAULT_FORM: CreateTeamDto = {
 export class TeamModalComponent implements OnChanges {
   private readonly toastSvc = inject(ToastService);
 
-  @Input() isOpen = false; // Indica si el modal está abierto
-  @Input() initialData: TeamSupervisionSummary | null = null; // Datos del equipo a editar o null si es creación
-  @Output() close = new EventEmitter<void>(); // Evento para cerrar el modal
-  @Output() submitTeam = new EventEmitter<CreateTeamDto>(); // Emite el DTO validado al guardar
+  @Input() isOpen = false;
+  @Input() initialData: TeamSupervisionSummary | null = null;
+  @Output() close = new EventEmitter<void>();
+  @Output() submitTeam = new EventEmitter<CreateTeamDto>();
 
-  readonly formData = signal<CreateTeamDto>({ ...DEFAULT_FORM }); // Estado reactivo del formulario
-  readonly membersInput = signal(''); // Cadena de miembros separados por coma
-  readonly showPassword = signal(false); // Alterna visibilidad del PIN de acceso
-  readonly saving = signal(false); // Indicador de guardado en curso
+  readonly formData = signal<CreateTeamDto>({ ...DEFAULT_FORM });
+  readonly membersInput = signal('');
+  readonly showPassword = signal(false);
+  readonly saving = signal(false);
 
-  // Sincroniza el formulario cuando cambia el equipo seleccionado para editar
   ngOnChanges() {
     if (this.initialData) {
       const derivedEthnicity = this.initialData.ethnicity || this.initialData.name.replace(/^Misi[oó]n\s+/i, '').trim();
@@ -122,12 +121,10 @@ export class TeamModalComponent implements OnChanges {
     }
   }
 
-  // Aplica actualizaciones parciales provenientes de los subcomponentes de campos
   handleChange(updates: Partial<CreateTeamDto>) {
     this.formData.update((prev) => ({ ...prev, ...updates }));
   }
 
-  // Envía los datos del formulario, notifica al usuario y cierra el modal
   handleSubmit(e: Event) {
     e.preventDefault();
     this.saving.set(true);
@@ -140,4 +137,3 @@ export class TeamModalComponent implements OnChanges {
     }
   }
 }
-

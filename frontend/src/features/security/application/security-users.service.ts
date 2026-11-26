@@ -5,7 +5,7 @@ import type { TeamSupervisionSummary, CreateTeamDto } from '../../admin/domain/a
 import { ToastService } from '../../../shared/components/toast/toast.service';
 import { INITIAL_SYSTEM_USERS } from './security-users.helpers';
 import { resolveTeamUsersToProvision } from './security-users-provision.helper';
-import { mapBackendRoleToSystem, syncUserCreateToBackend, syncUserRoleToBackend, syncUserUpdateToBackend } from './security-users-sync.helper';
+import { mapBackendRoleToSystem, syncUserCreateToBackend, syncNewUsersToBackend, syncUserRoleToBackend, syncUserUpdateToBackend } from './security-users-sync.helper';
 import { OutboxQueueService } from '../../../core/offline/application/outbox-queue.service';
 import { httpClient } from '../../../core/http/httpClient';
 import { serviceBus } from '../../../core/bus';
@@ -64,9 +64,7 @@ export class SecurityUsersService {
         }
       });
       return deduped;
-    } catch {
-      return INITIAL_SYSTEM_USERS;
-    }
+    } catch { return INITIAL_SYSTEM_USERS; }
   }
 
   private persist(users: SystemUser[]): void {
@@ -113,7 +111,10 @@ export class SecurityUsersService {
   }
 
   ensureTeamLeaderAndMembers(team: TeamSupervisionSummary, dto?: CreateTeamDto): void {
-    this.persist(resolveTeamUsersToProvision(team, this.users(), dto));
+    const prev = new Set(this.users().map((u) => u.email.toLowerCase()));
+    const updated = resolveTeamUsersToProvision(team, this.users(), dto);
+    this.persist(updated);
+    syncNewUsersToBackend(updated.filter((u) => !prev.has(u.email.toLowerCase())));
   }
 
   updateUserRole(userId: string, newRole: SystemRoleId): void {

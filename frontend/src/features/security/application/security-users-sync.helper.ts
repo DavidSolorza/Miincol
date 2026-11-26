@@ -54,6 +54,22 @@ export async function syncUserCreateToBackend(dto: CreateSystemUserDto): Promise
   }
 }
 
+export function syncNewUsersToBackend(
+  newlyAdded: Array<{ fullName: string; email: string; role: SystemRoleId; teamId?: string; teamName?: string; phone?: string; territory?: string }>
+): void {
+  newlyAdded.forEach((u) => {
+    syncUserCreateToBackend({
+      fullName: u.fullName,
+      email: u.email,
+      role: u.role,
+      teamId: u.teamId,
+      teamName: u.teamName,
+      phone: u.phone,
+      territory: u.territory,
+    }).catch(() => {});
+  });
+}
+
 export async function syncUserRoleToBackend(userId: string, newRole: SystemRoleId): Promise<boolean> {
   try {
     await httpClient.patch(`/users/${userId}/role`, {

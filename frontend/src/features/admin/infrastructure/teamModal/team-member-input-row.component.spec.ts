@@ -33,6 +33,42 @@ describe('TeamMemberInputRowComponent (Unit & Reactive Tests)', () => {
     });
   });
 
+  it('debe autocompletar al seleccionar un usuario del dropdown', () => {
+    const component = new TeamMemberInputRowComponent();
+    component.member = { fullName: '', email: '' };
+    component.index = 0;
+    component.availableUsers = [
+      { email: 'carlos@misincol.org', fullName: 'Carlos Gómez' },
+    ];
+
+    let emittedUpdate: { index: number; data: Partial<TeamMemberAccount> } | undefined;
+    component.update.subscribe((val) => (emittedUpdate = val));
+
+    component.onDropdownSelect('carlos@misincol.org');
+    expect(emittedUpdate).toEqual({
+      index: 0,
+      data: { email: 'carlos@misincol.org', fullName: 'Carlos Gómez' },
+    });
+  });
+
+  it('debe resetear los campos al seleccionar crear nuevo si antes habia un existente', () => {
+    const component = new TeamMemberInputRowComponent();
+    component.member = { fullName: 'Carlos Gómez', email: 'carlos@misincol.org' };
+    component.index = 0;
+    component.availableUsers = [
+      { email: 'carlos@misincol.org', fullName: 'Carlos Gómez' },
+    ];
+
+    let emittedUpdate: { index: number; data: Partial<TeamMemberAccount> } | undefined;
+    component.update.subscribe((val) => (emittedUpdate = val));
+
+    component.onDropdownSelect('__NEW__');
+    expect(emittedUpdate).toEqual({
+      index: 0,
+      data: { fullName: '', email: '' },
+    });
+  });
+
   it('debe detectar correctamente si el usuario ya existe en base de datos', () => {
     const component = new TeamMemberInputRowComponent();
     component.member = { fullName: 'Marta', email: 'marta.perez@misincol.org' };
@@ -47,4 +83,3 @@ describe('TeamMemberInputRowComponent (Unit & Reactive Tests)', () => {
     expect(component.isExistingUser()).toBe(false);
   });
 });
-

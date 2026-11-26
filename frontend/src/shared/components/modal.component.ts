@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, HostListener, OnChanges, OnDestroy } from '@angular/core';
 import { AppIconComponent } from './icon/app-icon.component';
 
-// Componente base de ventana modal con fondo desenfocado, cierre con tecla Escape y bloqueo de scroll
+// Componente base de ventana modal con fondo desenfocado, cierre con Escape y scroll vertical unificado
 @Component({
   selector: 'app-modal',
   standalone: true,
@@ -9,7 +9,7 @@ import { AppIconComponent } from './icon/app-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (isOpen) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-stone-900/40 backdrop-blur-sm animate-fadeIn">
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-hidden bg-stone-900/40 backdrop-blur-sm animate-fadeIn">
         <div class="fixed inset-0" (click)="handleClose()"></div>
 
         <div
@@ -18,7 +18,7 @@ import { AppIconComponent } from './icon/app-icon.component';
         >
           <div class="h-1 w-full bg-stone-900"></div>
 
-          <div class="flex items-start justify-between px-6 sm:px-7 py-4.5 sm:py-5 border-b border-stone-100 bg-gradient-to-b from-[#FFFDF9] via-[#FAF7F2]/60 to-white gap-3">
+          <div class="flex items-start justify-between px-6 sm:px-7 py-4.5 sm:py-5 border-b border-stone-100 bg-gradient-to-b from-[#FFFDF9] via-[#FAF7F2]/60 to-white gap-3 shrink-0">
             <div>
               <h3 class="text-lg sm:text-xl font-black text-stone-900 font-['Outfit'] tracking-tight">{{ title }}</h3>
               @if (subtitle) {
@@ -35,7 +35,7 @@ import { AppIconComponent } from './icon/app-icon.component';
             </button>
           </div>
 
-          <div class="p-5 sm:p-7 overflow-y-auto space-y-4 custom-scrollbar">
+          <div class="p-5 sm:p-7 overflow-y-auto space-y-4 custom-scrollbar flex-1 min-h-0">
             <ng-content />
           </div>
         </div>
@@ -44,11 +44,10 @@ import { AppIconComponent } from './icon/app-icon.component';
   `,
 })
 export class ModalComponent implements OnChanges, OnDestroy {
-  // Propiedades de visibilidad, textos de encabezado, ancho máximo y evento de cierre
   @Input() isOpen = false;
   @Input() title = '';
   @Input() subtitle?: string;
-  @Input() maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '4xl' = '2xl';
+  @Input() maxWidth: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' = '2xl';
   @Output() close = new EventEmitter<void>();
   @Output() closed = new EventEmitter<void>();
 
@@ -57,7 +56,6 @@ export class ModalComponent implements OnChanges, OnDestroy {
     this.closed.emit();
   }
 
-  // Traduce el tamaño configurado a la clase max-w-* de Tailwind
   get maxWidthClass(): string {
     const map = {
       sm: 'max-w-sm',
@@ -65,29 +63,27 @@ export class ModalComponent implements OnChanges, OnDestroy {
       lg: 'max-w-lg',
       xl: 'max-w-xl',
       '2xl': 'max-w-2xl',
+      '3xl': 'max-w-3xl',
       '4xl': 'max-w-4xl',
+      '5xl': 'max-w-5xl',
     };
     return map[this.maxWidth] || 'max-w-2xl';
   }
 
-  // Permite cerrar el modal presionando la tecla Escape
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.isOpen) this.handleClose();
   }
 
-  // Bloquea o restaura el scroll del body cuando el modal se abre o cierra
   ngOnChanges() {
     if (typeof document !== 'undefined') {
       document.body.style.overflow = this.isOpen ? 'hidden' : 'unset';
     }
   }
 
-  // Asegura restaurar el scroll al destruir el componente
   ngOnDestroy() {
     if (typeof document !== 'undefined') {
       document.body.style.overflow = 'unset';
     }
   }
 }
-
